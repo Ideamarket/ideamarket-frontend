@@ -10,7 +10,7 @@ import Portis from '../../assets/portis.svg'
 import DotRed from '../../assets/dotred.svg'
 import DotGreen from '../../assets/dotgreen.svg'
 
-import * as wallets from 'eth-wallets'
+import * as wallets from 'wallets'
 import classNames from 'classnames'
 
 export default function WalletInterface({
