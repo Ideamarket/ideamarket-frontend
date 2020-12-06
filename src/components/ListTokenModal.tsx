@@ -7,7 +7,7 @@ import {
   getTokenAllowance,
   approveToken,
 } from 'actions'
-import { userInputToTokenName } from 'store/ideaMarketsStore'
+import { getMarketSpecificsByMarketName } from 'store/markets/marketSpecifics'
 import { addresses, NETWORK } from 'utils'
 import { Modal, MarketSelect, TradeInterface } from './'
 import { useContractStore } from 'store/contractStore'
@@ -39,7 +39,9 @@ export default function ListTokenModal({
 
   async function tokenNameInputChanged(val) {
     setTokenName(val)
-    const finalTokenName = userInputToTokenName(selectedMarket.name, val)
+    const finalTokenName = getMarketSpecificsByMarketName(
+      selectedMarket.name
+    ).convertUserInputToTokenName(val)
     setIsValidTokenName(
       await verifyTokenName(finalTokenName, selectedMarket.marketID)
     )
@@ -62,7 +64,9 @@ export default function ListTokenModal({
   }
 
   async function listClicked() {
-    const finalTokenName = userInputToTokenName(selectedMarket.name, tokenName)
+    const finalTokenName = getMarketSpecificsByMarketName(
+      selectedMarket.name
+    ).convertUserInputToTokenName(tokenName)
 
     if (isWantBuyChecked) {
       if (buyPayWithAddress !== addresses.ZERO) {
@@ -160,7 +164,7 @@ export default function ListTokenModal({
         <div className="flex-grow ml-0.5">
           <input
             type="text"
-            disabled={isTxPending}
+            disabled={isTxPending || !selectedMarket}
             className={classNames(
               'w-full py-2 pl-1 pr-4 leading-tight bg-gray-200 border-2 rounded appearance-none focus:bg-white focus:outline-none',
               !isValidTokenName && tokenName.length > 0

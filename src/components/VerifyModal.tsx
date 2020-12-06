@@ -3,14 +3,8 @@ import classNames from 'classnames'
 
 import { GlobalContext } from '../pages/_app'
 import { requestVerification, submitVerification } from 'actions'
-import {
-  IdeaMarket,
-  IdeaToken,
-  getMarketVerificationExplanation,
-  getMarketUUIDPrompt,
-  getMarketUUIDPromptExplanation,
-  getMarketConfirmCheckboxText,
-} from 'store/ideaMarketsStore'
+import { IdeaMarket, IdeaToken } from 'store/ideaMarketsStore'
+import { getMarketSpecificsByMarketName } from 'store/markets/marketSpecifics'
 import { useWalletStore } from 'store/walletStore'
 import { isAddress, NETWORK } from '../utils'
 import { Modal, CircleSpinner } from './'
@@ -45,10 +39,11 @@ export default function VerifyModal({
 
   const [uuid, setUUID] = useState('')
   const [tx, setTx] = useState('')
-  const marketVerificationExplanation = getMarketVerificationExplanation(market)
-  const uuidPromptExplanation = getMarketUUIDPromptExplanation(market)
-  const uuidPrompt = getMarketUUIDPrompt(market, uuid)
-  const confirmCheckboxText = getMarketConfirmCheckboxText(market)
+  const marketSpecifics = getMarketSpecificsByMarketName(market.name)
+  const marketVerificationExplanation = marketSpecifics.getVerificationExplanation()
+  const uuidPromptExplanation = marketSpecifics.getVerificationUUIDPromptExplanation()
+  const uuidPrompt = marketSpecifics.getVerificationUUIDPrompt(uuid)
+  const confirmCheckboxText = marketSpecifics.getVerificationConfirmCheckboxLabel()
 
   const [confirmCheckboxChecked, setConfirmCheckboxChecked] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
