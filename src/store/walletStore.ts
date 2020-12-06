@@ -17,7 +17,7 @@ export const useWalletStore = create<State>((set) => ({
 }))
 
 export const initWalletStore = async () => {
-  const wallets = require('eth-wallets')
+  const wallets = require('../wallets')
   await wallets.setOption(
     wallets.WALLETS.WALLETCONNECT,
     wallets.OPTIONS.INFURA_KEY,
@@ -27,6 +27,12 @@ export const initWalletStore = async () => {
     wallets.WALLETS.COINBASE,
     wallets.OPTIONS.JSON_RPC_URL,
     'https://mainnet.infura.io/v3/3399077c10a24059be2a6c5b4fa77c03'
+  )
+
+  await wallets.setOption(
+    wallets.WALLETS.PORTIS,
+    wallets.OPTIONS.API_KEY,
+    'bbff3259-d19c-4791-9695-5a61f3146e51'
   )
 
   if (NETWORK === 'mainnet') {
@@ -44,6 +50,12 @@ export const initWalletStore = async () => {
 
     await wallets.setOption(
       wallets.WALLETS.FORTMATIC,
+      wallets.OPTIONS.CHAIN,
+      wallets.CHAINS.RINKEBY
+    )
+
+    await wallets.setOption(
+      wallets.WALLETS.PORTIS,
       wallets.OPTIONS.CHAIN,
       wallets.CHAINS.RINKEBY
     )

@@ -6,11 +6,11 @@ import Metamask from '../../assets/metamask.svg'
 import WalletConnect from '../../assets/walletconnect.svg'
 import Coinbase from '../../assets/coinbase.svg'
 import Fortmatic from '../../assets/fortmatic.svg'
-// import Portis from '../../assets/portis.svg'
+import Portis from '../../assets/portis.svg'
 import DotRed from '../../assets/dotred.svg'
 import DotGreen from '../../assets/dotgreen.svg'
 
-import * as wallets from 'eth-wallets'
+import * as wallets from 'wallets'
 import classNames from 'classnames'
 
 export default function WalletInterface({
@@ -151,11 +151,11 @@ export default function WalletInterface({
         name="Fortmatic"
         wallet={wallets.WALLETS.FORTMATIC}
       />
-      {/* <WalletButton
-          svg={<Portis className="w-7 h-7" />}
-          name="Portis"
-          wallet={wallets.WALLETS.PORTIS}
-        /> */}
+      <WalletButton
+        svg={<Portis className="w-7 h-7" />}
+        name="Portis"
+        wallet={wallets.WALLETS.PORTIS}
+      />
 
       <hr className="m-4" />
       <div className="flex flex-row items-center mx-4 mb-4 ">
