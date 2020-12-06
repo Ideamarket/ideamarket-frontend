@@ -3,6 +3,7 @@ import BigNumber from 'bignumber.js'
 import { useRouter } from 'next/dist/client/router'
 import { PreviewPriceChart, WatchingStar } from 'components'
 import { IdeaMarket, IdeaToken } from 'store/ideaMarketsStore'
+import { getMarketSpecificsByMarketName } from 'store/markets/marketSpecifics'
 import { calculateCurrentPriceBN, web3BNToFloatString } from 'utils'
 
 const tenPow18 = new BigNumber('10').pow(new BigNumber('18'))
@@ -42,6 +43,7 @@ export default function TokenRow({
   onTradeClicked: (token: IdeaToken, market: IdeaMarket) => void
 }) {
   const router = useRouter()
+  const marketSpecifics = getMarketSpecificsByMarketName(market.name)
 
   const yearIncome = (
     parseFloat(token.daiInToken) * compoundSupplyRate
@@ -52,7 +54,11 @@ export default function TokenRow({
       <tr
         className="grid grid-cols-3 cursor-pointer md:table-row hover:bg-brand-gray"
         onClick={() => {
-          router.push(`/details/${token.address}`)
+          router.push(
+            `/details/${marketSpecifics.getMarketNameURLRepresentation()}/${marketSpecifics.getTokenNameURLRepresentation(
+              token.name
+            )}`
+          )
         }}
       >
         <td className="col-span-3 px-6 py-4 whitespace-nowrap">
@@ -60,13 +66,13 @@ export default function TokenRow({
             <div className="flex-shrink-0 w-7.5 h-7.5">
               <img
                 className="w-full h-full rounded-full"
-                src={token.iconURL}
+                src={marketSpecifics.getTokenIconURL(token.name)}
                 alt=""
               />
             </div>
             <div className="ml-4 text-base font-medium leading-5 text-gray-900">
               <a
-                href={`${token.url}`}
+                href={`${marketSpecifics.getTokenURL(token.name)}`}
                 target="_blank"
                 rel="noreferrer"
                 className="hover:underline"

@@ -21,6 +21,7 @@ export default function TokenCard({
   isLoading?: boolean
 }) {
   const loading = (isLoading ? isLoading : false) || !(token && market)
+  const marketSpecifics = getMarketSpecificsByMarketName(market.name)
 
   return (
     <div
@@ -36,7 +37,7 @@ export default function TokenCard({
         ) : (
           <img
             className="rounded-full max-w-18 max-h-18"
-            src={token.iconURL}
+            src={marketSpecifics.getTokenIconURL(token.name)}
             alt=""
           />
         )}
@@ -59,9 +60,7 @@ export default function TokenCard({
         ) : (
           <>
             <div>on</div>
-            <div className="ml-2.5 mr-1">
-              {getMarketSpecificsByMarketName(market.name).getMarketSVG()}
-            </div>
+            <div className="ml-2.5 mr-1">{marketSpecifics.getMarketSVG()}</div>
             <div>{market.name}</div>
           </>
         )}

@@ -17,39 +17,46 @@ import { useWalletStore } from 'store/walletStore'
 import {
   querySingleToken,
   queryTokenChartData,
-  queryMarketFromTokenAddress,
+  queryMarket,
 } from 'store/ideaMarketsStore'
+import { getMarketSpecificsByMarketNameInURLRepresentation } from 'store/markets/marketSpecifics'
 import {
-  toChecksumedAddress,
-  isAddress,
   calculateCurrentPriceBN,
   web3BNToFloatString,
   addresses,
   NETWORK,
 } from 'utils'
-import { withdrawInterest } from '../../actions'
-import ArrowLeft from '../../assets/arrow-left.svg'
+import { withdrawInterest } from 'actions'
+import ArrowLeft from '../../../assets/arrow-left.svg'
 import { DateTime } from 'luxon'
 
 const tenPow18 = new BigNumber('10').pow(new BigNumber('18'))
 
 export default function TokenDetails() {
+  const router = useRouter()
+
   const { setIsWalletModalOpen } = useContext(GlobalContext)
   const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false)
   const web3 = useWalletStore((state) => state.web3)
   const connectedAddress = useWalletStore((state) => state.address)
-  const router = useRouter()
-  const address = isAddress(router.query.address as string)
-    ? toChecksumedAddress(router.query.address as string)
-    : undefined
+
+  const rawMarketName = router.query.marketName as string
+  const rawTokenName = router.query.tokenName as string
+  const marketSpecifics = getMarketSpecificsByMarketNameInURLRepresentation(
+    rawMarketName
+  )
+  const marketName = marketSpecifics?.getMarketName()
+  const tokenName = marketSpecifics?.getTokenNameFromURLRepresentation(
+    rawTokenName
+  )
 
   const { data: market, isLoading: isMarketLoading } = useQuery(
-    [`market-${address}`, address],
-    queryMarketFromTokenAddress
+    [`market-${marketName}`, marketName],
+    queryMarket
   )
 
   const { data: token, isLoading: isTokenLoading } = useQuery(
-    [`token-${address}`, address],
+    [`token-${marketName}-${tokenName}`, marketName, tokenName],
     querySingleToken
   )
 
@@ -59,7 +66,7 @@ export default function TokenDetails() {
     Math.floor(Date.now() / 1000) - 604800
   )
   const { data: rawChartData, isLoading: isRawChartDataLoading } = useQuery(
-    [`chartData-${address}`, address, chartFromTs],
+    [`chartData-${token?.address}`, token?.address, chartFromTs],
     queryTokenChartData
   )
   const [chartData, setChartData] = useState([])

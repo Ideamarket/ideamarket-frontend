@@ -64,8 +64,6 @@ export type IdeaToken = {
   listedAt: number
   lockedAmount: string
   rawLockedAmount: BN
-  url: string
-  iconURL: string
 }
 
 export type IdeaTokenMarketPair = {
@@ -206,22 +204,23 @@ export async function queryTokens(
 
 export async function querySingleToken(
   queryKey: string,
-  address: string
+  marketName: string,
+  tokenName: string
 ): Promise<IdeaToken> {
-  if (!address) {
+  if (!marketName || !tokenName) {
     return undefined
   }
 
   const result = await request(
     HTTP_GRAPHQL_ENDPOINT,
-    getQuerySingleToken(address.toLowerCase())
+    getQuerySingleToken(marketName, tokenName)
   )
 
-  if (!result || !result.ideaToken) {
-    return undefined
+  if (result?.ideaMarkets?.[0]?.tokens?.[0]) {
+    return apiResponseToIdeaToken(result.ideaMarkets[0].tokens[0])
   }
 
-  return apiResponseToIdeaToken(result.ideaToken)
+  return undefined
 }
 
 export async function queryTokenChartData(
@@ -246,27 +245,6 @@ export async function queryTokenChartData(
     latestPricePoint: result.ideaToken.latestPricePoint,
     pricePoints: result.ideaToken.pricePoints,
   } as IdeaToken
-}
-
-export async function queryMarketFromTokenAddress(
-  queryKey,
-  address: string
-): Promise<IdeaMarket> {
-  if (!address) {
-    return undefined
-  }
-
-  const result = await request(
-    HTTP_GRAPHQL_ENDPOINT,
-    getQueryMarketFromTokenAddress(address.toLowerCase())
-  )
-
-  if (!result || !result.ideaToken || !result.ideaToken.market) {
-    return undefined
-  }
-
-  const market = result.ideaToken.market
-  return apiResponseToIdeaMarket(market)
 }
 
 export function setIsWatching(token: IdeaToken, watching: boolean): void {
@@ -523,31 +501,30 @@ function getQueryTokenNameTextSearch(
   }`
 }
 
-function getQuerySingleToken(address: string): string {
+function getQuerySingleToken(marketName: string, tokenName: string): string {
   return gql`
   {
-    ideaToken(id:${'"' + address + '"'}) {
-        id
-        tokenID
-        market {
+    ideaMarkets(where:{name:${'"' + marketName + '"'}}) {
+      tokens(where:{name:${'"' + tokenName + '"'}}) {
+          id
+          tokenID
           name
-        }
-        name
-        supply
-        holders
-        marketCap
-        interestWithdrawer
-        daiInToken
-        invested
-        listedAt
-        latestPricePoint {
-          timestamp
-          oldPrice
-          price
-        }
-        dayVolume
-        dayChange
+          supply
+          holders
+          marketCap
+          interestWithdrawer
+          daiInToken
+          invested
+          listedAt
+          latestPricePoint {
+            timestamp
+            oldPrice
+            price
+          }
+          dayVolume
+          dayChange
       }
+    }
   }`
 }
 
@@ -564,26 +541,6 @@ function getQueryTokenChartData(address: string, fromTs: number): string {
           timestamp
           oldPrice
           price
-      }    
-    }
-  }`
-}
-
-function getQueryMarketFromTokenAddress(address: string): string {
-  return gql`
-  {
-    ideaToken(id:${'"' + address + '"'}) {
-      market {
-        marketID
-        name
-        baseCost
-        priceRise
-        hatchTokens
-        tradingFeeRate
-        platformFeeRate
-        platformFeeWithdrawer
-        platformFeeInvested
-        nameVerifier
       }    
     }
   }`
@@ -643,18 +600,6 @@ function apiResponseToIdeaToken(apiResponse, marketApiResponse?): IdeaToken {
     rawLockedAmount: apiResponse.lockedAmount
       ? new BN(apiResponse.lockedAmount)
       : undefined,
-    url:
-      market?.name && apiResponse.name
-        ? getMarketSpecificsByMarketName(market.name).getTokenURL(
-            apiResponse.name
-          )
-        : undefined,
-    iconURL:
-      market?.name && apiResponse.name
-        ? getMarketSpecificsByMarketName(market.name).getTokenIconURL(
-            apiResponse.name
-          )
-        : undefined,
   } as IdeaToken
 
   return ret

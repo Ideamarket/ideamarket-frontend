@@ -2,13 +2,21 @@ import { IMarketSpecifics } from './marketSpecifics'
 import TwitterBlack from '../../assets/twitter-black.svg'
 
 export default class TwitterMarketSpecifics implements IMarketSpecifics {
+  // Market
+
   getMarketName(): string {
     return 'Twitter'
+  }
+
+  getMarketNameURLRepresentation(): string {
+    return 'twitter'
   }
 
   getMarketSVG(): JSX.Element {
     return <TwitterBlack />
   }
+
+  // Tokens
 
   getTokenURL(tokenName: string): string {
     return `https://twitter.com/${tokenName.slice(1)}`
@@ -21,6 +29,18 @@ export default class TwitterMarketSpecifics implements IMarketSpecifics {
   convertUserInputToTokenName(userInput: string): string {
     return `@${userInput}`
   }
+
+  getTokenNameURLRepresentation(tokenName: string): string {
+    return tokenName.slice(1)
+  }
+
+  getTokenNameFromURLRepresentation(
+    tokenNameInURLRepresentation: string
+  ): string {
+    return `@${tokenNameInURLRepresentation}`
+  }
+
+  // Verification
 
   getVerificationExplanation(): string {
     return 'Upon initiation of the verification process you will be given a verification code. This code will be used to verify that you have access to the listed account by asking you to post a Tweet containing said code from the corresponding Twitter account.'

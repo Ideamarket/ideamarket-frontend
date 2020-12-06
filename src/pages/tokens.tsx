@@ -7,6 +7,7 @@ import {
   queryOwnedTokensMaybeMarket,
   queryTokensInterestReceiverMaybeMarket,
 } from '../store/ideaMarketsStore'
+import { getMarketSpecificsByMarketName } from 'store/markets/marketSpecifics'
 import { GlobalContext } from 'pages/_app'
 
 export default function MyTokens() {
@@ -72,7 +73,14 @@ export default function MyTokens() {
                   <div
                     key={'owned-' + pair.token.address}
                     onClick={() => {
-                      router.push(`/details/${pair.token.address}`)
+                      const marketSpecifics = getMarketSpecificsByMarketName(
+                        pair.market.name
+                      )
+                      router.push(
+                        `/details/${marketSpecifics.getMarketNameURLRepresentation()}/${marketSpecifics.getTokenNameURLRepresentation(
+                          pair.token.name
+                        )}`
+                      )
                     }}
                   >
                     <TokenCard
