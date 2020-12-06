@@ -52,7 +52,7 @@ export default function Nav() {
   return (
     <>
       <nav className="fixed top-0 z-20 w-full shadow bg-top-desktop">
-        <div className="px-2 mx-auto transform md:px-4 max-w-88 md:max-w-304">
+        <div className="px-2 mx-auto transform max-w-88 md:max-w-304">
           <div className="flex items-center justify-between h-16">
             <div
               className="z-20 flex items-center flex-shrink-0 cursor-pointer"

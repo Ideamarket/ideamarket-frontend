@@ -11,7 +11,7 @@ export default function WalletStatus({ openModal }: { openModal: () => void }) {
   return (
     <React.Fragment>
       <div
-        className="flex flex-row items-center w-32 px-2 cursor-pointer justify-self-end"
+        className="flex flex-row items-center px-2 cursor-pointer justify-self-end"
         onClick={() => openModal()}
       >
         {web3 === undefined && <DotRed className="w-4 h-4" />}
