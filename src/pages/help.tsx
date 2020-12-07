@@ -70,10 +70,12 @@ export default function Help() {
           <h2>1. HOW IT WORKS</h2>
           <p>
             Ideamarket uses markets to permanently change the incentives of
-            content curation. In the process, Ideamarket establishes a new
-            passive income stream for creators, without the conflicts of
-            interest attendant to ads, subscriptions, donations, and other
-            common business models.
+            content curation.
+            <br />
+            <br />
+            In the process, Ideamarket establishes a new passive income stream
+            for creators, without the conflicts of interest attendant to ads,
+            subscriptions, donations, and other common business models.
           </p>
         </div>
         <div id="how-it-works-overview">
