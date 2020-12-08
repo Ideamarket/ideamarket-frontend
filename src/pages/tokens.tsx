@@ -1,13 +1,12 @@
 import { useState, useContext, useEffect } from 'react'
 import { useQuery } from 'react-query'
 import { useRouter } from 'next/router'
-import { MarketSelect, TokenCard, Footer } from '../components'
+import { MarketSelect, TokenCard, Footer, OwnedTokenTable } from '../components'
 import { useWalletStore } from '../store/walletStore'
 import {
   queryOwnedTokensMaybeMarket,
   queryTokensInterestReceiverMaybeMarket,
 } from '../store/ideaMarketsStore'
-import { getMarketSpecificsByMarketName } from 'store/markets/marketSpecifics'
 import { GlobalContext } from 'pages/_app'
 
 export default function MyTokens() {
@@ -66,31 +65,8 @@ export default function MyTokens() {
               />
             </div>
           </div>
-          <div className="grid grid-cols-1 gap-2 mx-5 mt-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {isOwnedTokensLoading
-              ? ''
-              : ownedTokens.map((pair) => (
-                  <div
-                    key={'owned-' + pair.token.address}
-                    onClick={() => {
-                      const marketSpecifics = getMarketSpecificsByMarketName(
-                        pair.market.name
-                      )
-                      router.push(
-                        `/details/${marketSpecifics.getMarketNameURLRepresentation()}/${marketSpecifics.getTokenNameURLRepresentation(
-                          pair.token.name
-                        )}`
-                      )
-                    }}
-                  >
-                    <TokenCard
-                      token={pair.token}
-                      market={pair.market}
-                      enabled={true}
-                      classes={'bg-brand-gray'}
-                    />
-                  </div>
-                ))}
+          <div className="">
+            <OwnedTokenTable market={selectedMarketOwnedTokens} />
           </div>
 
           <div className="flex items-center mx-5 border-gray-400 pb-2.5 border-b mt-10">

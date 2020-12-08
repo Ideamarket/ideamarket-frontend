@@ -69,6 +69,8 @@ export type IdeaToken = {
 export type IdeaTokenMarketPair = {
   token: IdeaToken
   market: IdeaMarket
+  rawBalance: BN
+  balance: string
 }
 
 type State = {
@@ -115,11 +117,22 @@ export async function queryMarket(
 export async function queryOwnedTokensMaybeMarket(
   queryKey: string,
   market: IdeaMarket,
-  owner: string
+  owner: string,
+  skip: number,
+  num: number,
+  orderBy: string,
+  orderDirection: string
 ): Promise<IdeaTokenMarketPair[]> {
   const result = await request(
     HTTP_GRAPHQL_ENDPOINT,
-    getQueryOwnedTokensMaybeMarket(market ? market.marketID : undefined, owner)
+    getQueryOwnedTokensMaybeMarket(
+      market ? market.marketID : undefined,
+      owner,
+      skip,
+      num,
+      orderBy,
+      orderDirection
+    )
   )
 
   return result.ideaTokenBalances.map(
@@ -127,6 +140,10 @@ export async function queryOwnedTokensMaybeMarket(
       ({
         token: apiResponseToIdeaToken(balance.token, balance.market),
         market: apiResponseToIdeaMarket(balance.market),
+        rawBalance: balance.amount ? new BN(balance.amount) : undefined,
+        balance: balance.amount
+          ? web3BNToFloatString(new BN(balance.amount), tenPow18, 2)
+          : undefined,
       } as IdeaTokenMarketPair)
   )
 }
@@ -357,7 +374,11 @@ function getQueryTokens(
 
 function getQueryOwnedTokensMaybeMarket(
   marketID: number,
-  owner: string
+  owner: string,
+  skip: number,
+  num: number,
+  orderBy: string,
+  orderDirection: string
 ): string {
   let where
 
@@ -372,7 +393,7 @@ function getQueryOwnedTokensMaybeMarket(
   {
     ideaTokenBalances(${where}) {
       amount
-      token {
+      token(skip:${skip}, first:${num}, orderBy:${orderBy}, orderDirection:${orderDirection}) {
         id
         tokenID
         name

@@ -10,8 +10,8 @@ import { useState } from 'react'
 import { useQuery } from 'react-query'
 import { querySupplyRate } from 'store/compoundStore'
 import { useIdeaMarketsStore } from 'store/ideaMarketsStore'
-import TokenRow from './TokenRow'
-import TokenRowSkeleton from './TokenRowSkeleton'
+import TokenRow from './OverviewTokenRow'
+import TokenRowSkeleton from './OverviewTokenRowSkeleton'
 
 type Header = {
   title: string
