@@ -7,14 +7,14 @@ import { calculateCurrentPriceBN, web3BNToFloatString } from 'utils'
 
 const tenPow18 = new BigNumber('10').pow(new BigNumber('18'))
 
-export default function TokenRow({
+export default function MyTokenRow({
   token,
   market,
-  balance,
+  compoundSupplyRate,
 }: {
   token: IdeaToken
   market: IdeaMarket
-  balance: string
+  compoundSupplyRate: number
 }) {
   const router = useRouter()
   const marketSpecifics = getMarketSpecificsByMarketName(market.name)
@@ -120,32 +120,10 @@ export default function TokenRow({
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
           <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4">
-            Balance
+            1YR Income
           </p>
           <p className="text-base font-medium leading-4 tracking-tightest-2 text-very-dark-blue">
-            {balance}
-          </p>
-        </td>
-        <td className="px-6 py-4 whitespace-nowrap">
-          <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4">
-            Value
-          </p>
-          <p className="text-base font-medium leading-4 tracking-tightest-2 text-very-dark-blue">
-            $
-            {(
-              parseFloat(
-                web3BNToFloatString(
-                  calculateCurrentPriceBN(
-                    token.rawSupply,
-                    market.rawBaseCost,
-                    market.rawPriceRise,
-                    market.rawHatchTokens
-                  ),
-                  tenPow18,
-                  2
-                )
-              ) * parseFloat(balance)
-            ).toFixed(2)}
+            ${(parseFloat(token.daiInToken) * compoundSupplyRate).toFixed(2)}
           </p>
         </td>
       </tr>

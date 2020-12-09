@@ -141,17 +141,18 @@ export async function queryOwnedTokensMaybeMarket(
   )
 }
 
-export async function queryTokensInterestReceiverMaybeMarket(
+export async function queryMyTokensMaybeMarket(
   queryKey: string,
   market: IdeaMarket,
-  interestReceiver: string
+  owner: string
 ): Promise<IdeaTokenMarketPair[]> {
+  if (owner === undefined) {
+    return []
+  }
+
   const result = await request(
     HTTP_GRAPHQL_ENDPOINT,
-    getQueryTokensInterestReceiverMaybeMarket(
-      market ? market.marketID : undefined,
-      interestReceiver
-    )
+    getQueryMyTokensMaybeMarket(market ? market.marketID : undefined, owner)
   )
 
   return result.ideaTokens.map(
@@ -411,18 +412,17 @@ function getQueryOwnedTokensMaybeMarket(
   }`
 }
 
-function getQueryTokensInterestReceiverMaybeMarket(
-  marketID: number,
-  interestReceiver: string
-): string {
+function getQueryMyTokensMaybeMarket(marketID: number, owner: string): string {
   let where
 
   if (marketID) {
     const hexMarketID = marketID ? '0x' + marketID.toString(16) : ''
-    where = `where:{interestWithdrawer:"${interestReceiver.toLowerCase()}", market:"${hexMarketID}"}`
+    where = `where:{interestWithdrawer:"${owner.toLowerCase()}", market:"${hexMarketID}"}`
   } else {
-    where = `where:{interestWithdrawer:"${interestReceiver.toLowerCase()}"}`
+    where = `where:{interestWithdrawer:"${owner.toLowerCase()}"}`
   }
+
+  //where = 'where:{}'
 
   return gql`
   {
