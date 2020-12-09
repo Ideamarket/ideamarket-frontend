@@ -21,10 +21,6 @@ export default function MyTokens() {
   const [selectedMarketOwnedTokens, setSelectedMarketOwnedTokens] = useState(
     undefined
   )
-  const { data: ownedTokens, isLoading: isOwnedTokensLoading } = useQuery(
-    ['query-owned-tokens-maybe-market', selectedMarketOwnedTokens, address],
-    queryOwnedTokensMaybeMarket
-  )
 
   const [
     selectedMarketInterestReceiverTokens,
@@ -51,7 +47,7 @@ export default function MyTokens() {
         }}
       >
         <div className="min-h-screen py-5 bg-white border-b border-l border-r border-gray-400 rounded-b">
-          <div className="flex items-center mx-5 border-gray-400 pb-2.5 border-b">
+          <div className="flex items-center mx-5 pb-2.5">
             <div className="flex-grow text-2xl sm:text-3xl text-brand-gray-2">
               Tokens I Own
             </div>
@@ -65,7 +61,7 @@ export default function MyTokens() {
               />
             </div>
           </div>
-          <div className="">
+          <div className="mx-5 border border-gray-300 rounded">
             <OwnedTokenTable market={selectedMarketOwnedTokens} />
           </div>
 

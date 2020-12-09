@@ -123,6 +123,10 @@ export async function queryOwnedTokensMaybeMarket(
   orderBy: string,
   orderDirection: string
 ): Promise<IdeaTokenMarketPair[]> {
+  if (skip == undefined) {
+    return []
+  }
+
   const result = await request(
     HTTP_GRAPHQL_ENDPOINT,
     getQueryOwnedTokensMaybeMarket(
@@ -391,9 +395,9 @@ function getQueryOwnedTokensMaybeMarket(
 
   return gql`
   {
-    ideaTokenBalances(${where}) {
+    ideaTokenBalances(${where}, skip:${skip}, first:${num}) {
       amount
-      token(skip:${skip}, first:${num}, orderBy:${orderBy}, orderDirection:${orderDirection}) {
+      token(orderBy:name orderDirection:desc) {
         id
         tokenID
         name

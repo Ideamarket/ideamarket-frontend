@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import { useWindowSize } from 'utils'
 import { IdeaMarket } from 'store/ideaMarketsStore'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
 import { queryOwnedTokensMaybeMarket } from 'store/ideaMarketsStore'
 import { useWalletStore } from 'store/walletStore'
@@ -157,7 +157,7 @@ export default function OwnedTokenTable({ market }: { market: IdeaMarket }) {
                       ).map((a, b) => (
                         <tr
                           key={`${'filler-' + b.toString()}`}
-                          className="hidden h-18 md:table-row"
+                          className="hidden h-16 md:table-row"
                         ></tr>
                       ))}
                     </>
