@@ -40,12 +40,7 @@ export default function MyTokens() {
 
   return (
     <div className="min-h-screen bg-brand-gray">
-      <div
-        className="mx-auto"
-        style={{
-          maxWidth: '1500px',
-        }}
-      >
+      <div className="mx-auto md:px-4 max-w-88 md:max-w-304">
         <div className="min-h-screen py-5 bg-white border-b border-l border-r border-gray-400 rounded-b">
           <div className="flex items-center mx-5 pb-2.5">
             <div className="flex-grow text-2xl sm:text-3xl text-brand-gray-2">
