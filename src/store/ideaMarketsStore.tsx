@@ -117,26 +117,15 @@ export async function queryMarket(
 export async function queryOwnedTokensMaybeMarket(
   queryKey: string,
   market: IdeaMarket,
-  owner: string,
-  skip: number,
-  num: number,
-  orderBy: string,
-  orderDirection: string
+  owner: string
 ): Promise<IdeaTokenMarketPair[]> {
-  if (skip == undefined) {
+  if (owner == undefined) {
     return []
   }
 
   const result = await request(
     HTTP_GRAPHQL_ENDPOINT,
-    getQueryOwnedTokensMaybeMarket(
-      market ? market.marketID : undefined,
-      owner,
-      skip,
-      num,
-      orderBy,
-      orderDirection
-    )
+    getQueryOwnedTokensMaybeMarket(market ? market.marketID : undefined, owner)
   )
 
   return result.ideaTokenBalances.map(
@@ -378,11 +367,7 @@ function getQueryTokens(
 
 function getQueryOwnedTokensMaybeMarket(
   marketID: number,
-  owner: string,
-  skip: number,
-  num: number,
-  orderBy: string,
-  orderDirection: string
+  owner: string
 ): string {
   let where
 
@@ -395,9 +380,9 @@ function getQueryOwnedTokensMaybeMarket(
 
   return gql`
   {
-    ideaTokenBalances(${where}, skip:${skip}, first:${num}) {
+    ideaTokenBalances(${where}) {
       amount
-      token(orderBy:name orderDirection:desc) {
+      token {
         id
         tokenID
         name

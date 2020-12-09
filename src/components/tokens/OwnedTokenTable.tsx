@@ -1,10 +1,18 @@
 import classNames from 'classnames'
-import { useWindowSize } from 'utils'
-import { IdeaMarket } from 'store/ideaMarketsStore'
+import BigNumber from 'bignumber.js'
 import { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
-import { queryOwnedTokensMaybeMarket } from 'store/ideaMarketsStore'
+import {
+  queryOwnedTokensMaybeMarket,
+  IdeaTokenMarketPair,
+  IdeaMarket,
+} from 'store/ideaMarketsStore'
 import { useWalletStore } from 'store/walletStore'
+import {
+  calculateCurrentPriceBN,
+  web3BNToFloatString,
+  useWindowSize,
+} from 'utils'
 import OwnedTokenRow from './OwnedTokenRow'
 import OwnedTokenRowSkeleton from './OwnedTokenRowSkeleton'
 
@@ -13,6 +21,7 @@ type Header = {
   value: string
   sortable: boolean
 }
+
 const headers: Header[] = [
   {
     title: 'Name',
@@ -46,6 +55,8 @@ const headers: Header[] = [
   },
 ]
 
+const tenPow18 = new BigNumber('10').pow(new BigNumber('18'))
+
 export default function OwnedTokenTable({ market }: { market: IdeaMarket }) {
   const windowSize = useWindowSize()
   const TOKENS_PER_PAGE = windowSize.width < 768 ? 4 : 10
@@ -54,23 +65,110 @@ export default function OwnedTokenTable({ market }: { market: IdeaMarket }) {
 
   const [currentPage, setCurrentPage] = useState(0)
   const [currentHeader, setCurrentHeader] = useState('price')
-  const [orderBy, setOrderBy] = useState('supply')
+  const [orderBy, setOrderBy] = useState('price')
   const [orderDirection, setOrderDirection] = useState('desc')
 
-  const { data: pairs, isLoading: isPairsDataLoading } = useQuery(
-    [
-      'owned-tokens',
-      market,
-      address,
-      currentPage * TOKENS_PER_PAGE,
-      TOKENS_PER_PAGE,
-      orderBy,
-      orderDirection,
-    ],
+  const { data: rawPairs, isLoading: isPairsDataLoading } = useQuery(
+    ['owned-tokens', market, address],
     queryOwnedTokensMaybeMarket
   )
 
+  const [pairs, setPairs]: [IdeaTokenMarketPair[], any] = useState([])
+
   const isLoading = isPairsDataLoading
+
+  useEffect(() => {
+    if (!rawPairs) {
+      setPairs([])
+      return
+    }
+
+    let sorted
+    const strCmpFunc =
+      orderDirection === 'asc'
+        ? (a, b) => {
+            return a.localeCompare(b)
+          }
+        : (a, b) => {
+            return b.localeCompare(a)
+          }
+    const numCmpFunc =
+      orderDirection === 'asc'
+        ? (a, b) => {
+            return a - b
+          }
+        : (a, b) => {
+            return b - a
+          }
+
+    if (orderBy === 'name') {
+      sorted = rawPairs.sort((lhs, rhs) => {
+        return strCmpFunc(lhs.token.name, rhs.token.name)
+      })
+    } else if (orderBy === 'market') {
+      sorted = rawPairs.sort((lhs, rhs) => {
+        return strCmpFunc(lhs.market.name, rhs.market.name)
+      })
+    } else if (orderBy === 'price') {
+      sorted = rawPairs.sort((lhs, rhs) => {
+        return numCmpFunc(
+          parseFloat(lhs.token.supply),
+          parseFloat(rhs.token.supply)
+        )
+      })
+    } else if (orderBy === 'change') {
+      sorted = rawPairs.sort((lhs, rhs) => {
+        return numCmpFunc(
+          parseFloat(lhs.token.dayChange),
+          parseFloat(rhs.token.dayChange)
+        )
+      })
+    } else if (orderBy === 'balance') {
+      sorted = rawPairs.sort((lhs, rhs) => {
+        return numCmpFunc(parseFloat(lhs.balance), parseFloat(rhs.balance))
+      })
+    } else if (orderBy === 'value') {
+      sorted = rawPairs.sort((lhs, rhs) => {
+        const lhsValue =
+          parseFloat(
+            web3BNToFloatString(
+              calculateCurrentPriceBN(
+                lhs.token.rawSupply,
+                lhs.market.rawBaseCost,
+                lhs.market.rawPriceRise,
+                lhs.market.rawHatchTokens
+              ),
+              tenPow18,
+              2
+            )
+          ) * parseFloat(lhs.balance)
+
+        const rhsValue =
+          parseFloat(
+            web3BNToFloatString(
+              calculateCurrentPriceBN(
+                rhs.token.rawSupply,
+                rhs.market.rawBaseCost,
+                rhs.market.rawPriceRise,
+                rhs.market.rawHatchTokens
+              ),
+              tenPow18,
+              2
+            )
+          ) * parseFloat(rhs.balance)
+
+        return numCmpFunc(lhsValue, rhsValue)
+      })
+    } else {
+      sorted = rawPairs
+    }
+
+    const sliced = sorted.slice(
+      currentPage * TOKENS_PER_PAGE,
+      currentPage * TOKENS_PER_PAGE + TOKENS_PER_PAGE
+    )
+    setPairs(sliced)
+  }, [rawPairs, orderBy, orderDirection, currentPage])
 
   function headerClicked(headerValue: string) {
     if (currentHeader === headerValue) {
@@ -81,19 +179,7 @@ export default function OwnedTokenTable({ market }: { market: IdeaMarket }) {
       }
     } else {
       setCurrentHeader(headerValue)
-
-      if (headerValue === 'name') {
-        setOrderBy('name')
-      } else if (headerValue === 'price') {
-        setOrderBy('supply')
-      } else if (headerValue === 'change') {
-        setOrderBy('dayChange')
-      } else if (headerValue === 'volume') {
-        setOrderBy('dayVolume')
-      } else if (headerValue === 'locked') {
-        setOrderBy('lockedAmount')
-      }
-
+      setOrderBy(headerValue)
       setOrderDirection('desc')
     }
   }
