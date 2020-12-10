@@ -84,7 +84,7 @@ export default function TokenCard({
               <span className="invisible">$$$$$$$$$$$$</span>
             </div>
           ) : (
-            <span title={'$' + tokenPrice}>
+            <span title={'$' + tokenPrice} className="uppercase">
               ${numeral(Number(tokenPrice)).format('0.00a')}
             </span>
           )}
@@ -95,6 +95,7 @@ export default function TokenCard({
               &nbsp;(
               <span
                 className={classNames(
+                  'uppercase',
                   parseFloat(token.dayChange) < 0
                     ? 'text-brand-red'
                     : 'text-brand-green'

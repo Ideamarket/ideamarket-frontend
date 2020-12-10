@@ -115,7 +115,7 @@ export default function TokenRow({
             Price
           </p>
           <p
-            className="text-base font-medium leading-4 tracking-tightest-2 text-very-dark-blue"
+            className="text-base font-medium leading-4 tracking-tightest-2 text-very-dark-blue uppercase"
             title={tokenPrice}
           >
             ${numeral(Number(tokenPrice)).format('0.00a')}
@@ -126,7 +126,7 @@ export default function TokenRow({
             Deposits
           </p>
           <p
-            className="text-base font-medium leading-4 tracking-tightest-2 text-very-dark-blue"
+            className="text-base font-medium leading-4 tracking-tightest-2 text-very-dark-blue uppercase"
             title={token.daiInToken}
           >
             {parseFloat(token.daiInToken) > 0.0 ? (
@@ -141,7 +141,7 @@ export default function TokenRow({
             % Locked
           </p>
           <p
-            className="text-base font-medium leading-4 tracking-tightest-2 text-very-dark-blue"
+            className="text-base font-medium leading-4 tracking-tightest-2 text-very-dark-blue uppercase"
             title={
               (
                 (parseFloat(token.lockedAmount) / parseFloat(token.supply)) *
@@ -169,7 +169,7 @@ export default function TokenRow({
           </p>
           <p
             className={classNames(
-              'text-base font-medium leading-4 tracking-tightest-2 text-very-dark-blue',
+              'text-base font-medium leading-4 tracking-tightest-2 text-very-dark-blue uppercase',
               parseFloat(token.dayChange) >= 0.0
                 ? 'text-brand-green'
                 : 'text-brand-red'
@@ -193,7 +193,7 @@ export default function TokenRow({
             24H Volume
           </p>
           <p
-            className="text-base font-medium leading-4 tracking-tightest-2 text-very-dark-blue"
+            className="text-base font-medium leading-4 tracking-tightest-2 text-very-dark-blue uppercase"
             title={'$' + token.dayVolume}
           >
             ${numeral(Number(token.dayVolume)).format('0.00a')}
@@ -204,7 +204,7 @@ export default function TokenRow({
             1YR Income
           </p>
           <p
-            className="text-base font-medium leading-4 tracking-tightest-2 text-very-dark-blue"
+            className="text-base font-medium leading-4 tracking-tightest-2 text-very-dark-blue uppercase"
             title={'$' + yearIncome}
           >
             ${numeral(Number(yearIncome)).format('0.00a')}

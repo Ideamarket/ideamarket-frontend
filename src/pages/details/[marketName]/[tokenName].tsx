@@ -188,7 +188,7 @@ export default function TokenDetails() {
         style={{ borderRight: withBorder && '1px solid #cbd5e0' }}
       >
         <div className="text-xs text-brand-gray-2">{header}</div>
-        <div className="text-2xl" title={contentTitle}>
+        <div className="text-base md:text-2xl uppercase" title={contentTitle}>
           {content}
         </div>
       </div>
