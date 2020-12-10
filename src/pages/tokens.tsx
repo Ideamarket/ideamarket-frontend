@@ -7,6 +7,7 @@ import {
 } from '../components'
 import { useWalletStore } from '../store/walletStore'
 import { GlobalContext } from 'pages/_app'
+import { formatNumber } from 'utils'
 
 export default function MyTokens() {
   const address = useWalletStore((state) => state.address)
@@ -36,7 +37,10 @@ export default function MyTokens() {
               Tokens I Own
             </div>
             <div className="text-2xl sm:text-3xl text-brand-gray-2">
-              Total: ${ownedTokenTotalValue}
+              <span>Total: </span>
+              <span title={'$' + ownedTokenTotalValue} className="uppercase">
+                ${formatNumber(ownedTokenTotalValue)}
+              </span>
             </div>
             <div className="w-48 pr-0 md:w-64">
               <MarketSelect

@@ -2,6 +2,7 @@ import BN from 'bn.js'
 import BigNumber from 'bignumber.js'
 import Web3 from 'web3'
 import { useState, useEffect } from 'react'
+import numeral from 'numeral'
 
 export const NETWORK = process.env.NEXT_PUBLIC_NETWORK
   ? process.env.NEXT_PUBLIC_NETWORK
@@ -116,4 +117,8 @@ export function isAddress(addr: string): boolean {
   } catch (e) {
     return false
   }
+}
+
+export function formatNumber(number: string | number): string {
+  return numeral(Number(number)).format('0.[00]a')
 }

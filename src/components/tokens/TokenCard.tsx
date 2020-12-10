@@ -2,9 +2,12 @@ import classNames from 'classnames'
 import BigNumber from 'bignumber.js'
 import { IdeaMarket, IdeaToken } from 'store/ideaMarketsStore'
 import { getMarketSpecificsByMarketName } from 'store/markets/marketSpecifics'
-import numeral from 'numeral'
 import { WatchingStar } from '../'
-import { calculateCurrentPriceBN, web3BNToFloatString } from '../../utils'
+import {
+  calculateCurrentPriceBN,
+  formatNumber,
+  web3BNToFloatString,
+} from '../../utils'
 
 const tenPow18 = new BigNumber('10').pow(new BigNumber('18'))
 
@@ -85,7 +88,7 @@ export default function TokenCard({
             </div>
           ) : (
             <span title={'$' + tokenPrice} className="uppercase">
-              ${numeral(Number(tokenPrice)).format('0.00a')}
+              ${formatNumber(tokenPrice)}
             </span>
           )}
           {isLoading ? (
@@ -108,7 +111,7 @@ export default function TokenCard({
               >
                 {!isLoading &&
                   (parseFloat(token.dayChange) >= 0.0 ? '+' : '') +
-                    numeral(Number(token.dayChange)).format('0.00a') +
+                    formatNumber(token.dayChange) +
                     '%'}
               </span>
               )

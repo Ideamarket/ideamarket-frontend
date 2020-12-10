@@ -3,7 +3,11 @@ import BigNumber from 'bignumber.js'
 import { useRouter } from 'next/dist/client/router'
 import { IdeaMarket, IdeaToken } from 'store/ideaMarketsStore'
 import { getMarketSpecificsByMarketName } from 'store/markets/marketSpecifics'
-import { calculateCurrentPriceBN, web3BNToFloatString } from 'utils'
+import {
+  calculateCurrentPriceBN,
+  formatNumber,
+  web3BNToFloatString,
+} from 'utils'
 
 const tenPow18 = new BigNumber('10').pow(new BigNumber('18'))
 
@@ -18,6 +22,30 @@ export default function TokenRow({
 }) {
   const router = useRouter()
   const marketSpecifics = getMarketSpecificsByMarketName(market.name)
+  const tokenPrice = web3BNToFloatString(
+    calculateCurrentPriceBN(
+      token.rawSupply,
+      market.rawBaseCost,
+      market.rawPriceRise,
+      market.rawHatchTokens
+    ),
+    tenPow18,
+    2
+  )
+  const balanceValue = (
+    parseFloat(
+      web3BNToFloatString(
+        calculateCurrentPriceBN(
+          token.rawSupply,
+          market.rawBaseCost,
+          market.rawPriceRise,
+          market.rawHatchTokens
+        ),
+        tenPow18,
+        2
+      )
+    ) * parseFloat(balance)
+  ).toFixed(2)
 
   return (
     <>
@@ -86,18 +114,11 @@ export default function TokenRow({
           <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4">
             Price
           </p>
-          <p className="text-base font-medium leading-4 tracking-tightest-2 text-very-dark-blue">
-            $
-            {web3BNToFloatString(
-              calculateCurrentPriceBN(
-                token.rawSupply,
-                market.rawBaseCost,
-                market.rawPriceRise,
-                market.rawHatchTokens
-              ),
-              tenPow18,
-              2
-            )}
+          <p
+            className="text-base font-medium leading-4 tracking-tightest-2 text-very-dark-blue uppercase"
+            title={'$' + tokenPrice}
+          >
+            ${formatNumber(tokenPrice)}
           </p>
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
@@ -106,15 +127,20 @@ export default function TokenRow({
           </p>
           <p
             className={classNames(
-              'text-base font-medium leading-4 tracking-tightest-2 text-very-dark-blue',
+              'text-base font-medium leading-4 tracking-tightest-2 text-very-dark-blue uppercase',
               parseFloat(token.dayChange) >= 0.0
                 ? 'text-brand-green'
                 : 'text-brand-red'
             )}
+            title={
+              parseFloat(token.dayChange) >= 0.0
+                ? `+ ${token.dayChange}%`
+                : `- ${token.dayChange.slice(1)}%`
+            }
           >
             {parseFloat(token.dayChange) >= 0.0
-              ? `+ ${token.dayChange}`
-              : `- ${token.dayChange.slice(1)}`}
+              ? `+ ${formatNumber(token.dayChange)}`
+              : `- ${formatNumber(token.dayChange.slice(1))}`}
             %
           </p>
         </td>
@@ -122,30 +148,22 @@ export default function TokenRow({
           <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4">
             Balance
           </p>
-          <p className="text-base font-medium leading-4 tracking-tightest-2 text-very-dark-blue">
-            {balance}
+          <p
+            className="text-base font-medium leading-4 tracking-tightest-2 text-very-dark-blue uppercase"
+            title={balance}
+          >
+            {formatNumber(balance)}
           </p>
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
           <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4">
             Value
           </p>
-          <p className="text-base font-medium leading-4 tracking-tightest-2 text-very-dark-blue">
-            $
-            {(
-              parseFloat(
-                web3BNToFloatString(
-                  calculateCurrentPriceBN(
-                    token.rawSupply,
-                    market.rawBaseCost,
-                    market.rawPriceRise,
-                    market.rawHatchTokens
-                  ),
-                  tenPow18,
-                  2
-                )
-              ) * parseFloat(balance)
-            ).toFixed(2)}
+          <p
+            className="text-base font-medium leading-4 tracking-tightest-2 text-very-dark-blue uppercase"
+            title={'$' + balanceValue}
+          >
+            ${formatNumber(balanceValue)}
           </p>
         </td>
       </tr>

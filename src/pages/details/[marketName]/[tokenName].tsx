@@ -3,7 +3,6 @@ import { useRouter } from 'next/router'
 import { ReactNode, useContext, useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
 import BigNumber from 'bignumber.js'
-import numeral from 'numeral'
 import { GlobalContext } from 'pages/_app'
 import {
   PriceChart,
@@ -26,6 +25,7 @@ import {
   web3BNToFloatString,
   addresses,
   NETWORK,
+  formatNumber,
 } from 'utils'
 import { withdrawInterest } from 'actions'
 import ArrowLeft from '../../../assets/arrow-left.svg'
@@ -309,7 +309,7 @@ export default function TokenDetails() {
                         isLoading ? (
                           <DetailsSkeleton />
                         ) : (
-                          '$' + numeral(Number(tokenPrice)).format('0.00a')
+                          '$' + formatNumber(tokenPrice)
                         )
                       }
                       withBorder={true}
@@ -324,9 +324,7 @@ export default function TokenDetails() {
                         ) : parseFloat(token.daiInToken) <= 0.0 ? (
                           <>&mdash;</>
                         ) : (
-                          `$${numeral(Number(token.daiInToken)).format(
-                            '0.00a'
-                          )}`
+                          `$${formatNumber(token.daiInToken)}`
                         )
                       }
                       withBorder={true}
@@ -341,11 +339,11 @@ export default function TokenDetails() {
                         ) : parseFloat(token.supply) <= 0.0 ? (
                           <>&mdash;</>
                         ) : (
-                          `${numeral(Number(token.supply)).format('0.00a')}`
+                          `${formatNumber(token.supply)}`
                         )
                       }
                       withBorder={true}
-                      contentTitle={token.supply}
+                      contentTitle={'$' + token.supply}
                     />
 
                     <DetailsOverChartEntry
@@ -354,7 +352,7 @@ export default function TokenDetails() {
                         isLoading ? (
                           <DetailsSkeleton />
                         ) : (
-                          numeral(Number(token.holders)).format('0.00a')
+                          formatNumber(token.holders)
                         )
                       }
                       withBorder={false}
@@ -429,7 +427,7 @@ export default function TokenDetails() {
                         isLoading ? (
                           <DetailsSkeleton />
                         ) : (
-                          '$' + numeral(Number(tokenPrice)).format('0.00a')
+                          '$' + formatNumber(tokenPrice)
                         )
                       }
                       contentTitle={'$' + tokenPrice}
@@ -443,9 +441,7 @@ export default function TokenDetails() {
                         ) : parseFloat(token.daiInToken) <= 0.0 ? (
                           <>&mdash;</>
                         ) : (
-                          `$${numeral(Number(token.daiInToken)).format(
-                            '0.00a'
-                          )}`
+                          `$${formatNumber(token.daiInToken)}`
                         )
                       }
                       contentTitle={'$' + token.daiInToken}
@@ -459,7 +455,7 @@ export default function TokenDetails() {
                         ) : parseFloat(token.supply) <= 0.0 ? (
                           <>&mdash;</>
                         ) : (
-                          `${numeral(Number(token.supply)).format('0.00a')}`
+                          `${formatNumber(token.supply)}`
                         )
                       }
                       contentTitle={token.supply}
@@ -478,7 +474,7 @@ export default function TokenDetails() {
                                 : 'text-brand-red'
                             }
                           >
-                            {numeral(Number(token.dayChange)).format('0.00a')}%
+                            {formatNumber(token.dayChange)}%
                           </div>
                         )
                       }
@@ -491,7 +487,7 @@ export default function TokenDetails() {
                         isLoading ? (
                           <DetailsSkeleton />
                         ) : (
-                          `$${numeral(Number(token.dayVolume)).format('0.00a')}`
+                          `$${formatNumber(token.dayVolume)}`
                         )
                       }
                       contentTitle={'$' + token.dayVolume}
@@ -502,11 +498,11 @@ export default function TokenDetails() {
                         isLoading ? (
                           <DetailsSkeleton />
                         ) : (
-                          `$${numeral(
+                          `$${formatNumber(
                             (
                               parseFloat(token.daiInToken) * compoundSupplyRate
                             ).toFixed(2)
-                          ).format('0.00a')}`
+                          )}`
                         )
                       }
                       contentTitle={
@@ -536,7 +532,7 @@ export default function TokenDetails() {
                         isLoading ? (
                           <DetailsSkeleton />
                         ) : (
-                          numeral(token.holders).format('0.00a')
+                          formatNumber(token.holders)
                         )
                       }
                       contentTitle={token.holders.toString()}

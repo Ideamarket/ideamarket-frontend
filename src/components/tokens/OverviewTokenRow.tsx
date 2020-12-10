@@ -3,9 +3,12 @@ import BigNumber from 'bignumber.js'
 import { useRouter } from 'next/dist/client/router'
 import { PreviewPriceChart, WatchingStar } from 'components'
 import { IdeaMarket, IdeaToken } from 'store/ideaMarketsStore'
-import numeral from 'numeral'
 import { getMarketSpecificsByMarketName } from 'store/markets/marketSpecifics'
-import { calculateCurrentPriceBN, web3BNToFloatString } from 'utils'
+import {
+  calculateCurrentPriceBN,
+  formatNumber,
+  web3BNToFloatString,
+} from 'utils'
 
 const tenPow18 = new BigNumber('10').pow(new BigNumber('18'))
 
@@ -116,9 +119,9 @@ export default function TokenRow({
           </p>
           <p
             className="text-base font-medium leading-4 tracking-tightest-2 text-very-dark-blue uppercase"
-            title={tokenPrice}
+            title={'$' + tokenPrice}
           >
-            ${numeral(Number(tokenPrice)).format('0.00a')}
+            ${formatNumber(tokenPrice)}
           </p>
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
@@ -127,10 +130,10 @@ export default function TokenRow({
           </p>
           <p
             className="text-base font-medium leading-4 tracking-tightest-2 text-very-dark-blue uppercase"
-            title={token.daiInToken}
+            title={'$' + token.daiInToken}
           >
             {parseFloat(token.daiInToken) > 0.0 ? (
-              `$` + numeral(Number(token.daiInToken)).format('0.00a')
+              `$` + formatNumber(token.daiInToken)
             ) : (
               <>&mdash;</>
             )}
@@ -152,12 +155,12 @@ export default function TokenRow({
             {(parseFloat(token.lockedAmount) / parseFloat(token.supply)) *
               100.0 >
             0.0 ? (
-              numeral(
+              formatNumber(
                 (
                   (parseFloat(token.lockedAmount) / parseFloat(token.supply)) *
                   100.0
                 ).toFixed(2)
-              ).format('0.00a') + ' %'
+              ) + ' %'
             ) : (
               <>&mdash;</>
             )}
@@ -181,10 +184,8 @@ export default function TokenRow({
             }%`}
           >
             {parseFloat(token.dayChange) >= 0.0
-              ? `+ ${numeral(Number(token.dayChange)).format('0.00a')}`
-              : `- ${numeral(Number(token.dayChange.slice(1))).format(
-                  '0.00a'
-                )}`}
+              ? `+ ${formatNumber(token.dayChange)}`
+              : `- ${formatNumber(token.dayChange.slice(1))}`}
             %
           </p>
         </td>
@@ -196,7 +197,7 @@ export default function TokenRow({
             className="text-base font-medium leading-4 tracking-tightest-2 text-very-dark-blue uppercase"
             title={'$' + token.dayVolume}
           >
-            ${numeral(Number(token.dayVolume)).format('0.00a')}
+            ${formatNumber(token.dayVolume)}
           </p>
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
@@ -207,7 +208,7 @@ export default function TokenRow({
             className="text-base font-medium leading-4 tracking-tightest-2 text-very-dark-blue uppercase"
             title={'$' + yearIncome}
           >
-            ${numeral(Number(yearIncome)).format('0.00a')}
+            ${formatNumber(yearIncome)}
           </p>
         </td>
 
