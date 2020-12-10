@@ -194,12 +194,12 @@ export default function Home() {
               </label>
               <div className="relative h-full rounded-md shadow-sm">
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                  <Search className="w-4 h-4 text-gray-400" />
+                  <Search className="w-8 h-8 text-gray-400" />
                 </div>
                 <input
                   type="text"
                   id="search-input"
-                  className="block w-full h-full pl-10 border-0 border-gray-300 rounded-none md:border-l focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  className="block w-full h-full pl-12 border-0 border-gray-300 rounded-none md:border-l focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   placeholder="Search"
                   onChange={(event) => {
                     onNameSearchChanged(

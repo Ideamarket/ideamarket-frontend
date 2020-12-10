@@ -27,6 +27,7 @@ export default function PreviewPriceChart({ chartData }) {
             pointRadius: 0,
             fill: false,
             borderColor: '#0857e0',
+            borderWidth: 1.5,
             lineTension: 0,
           },
         ],
