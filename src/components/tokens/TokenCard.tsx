@@ -2,6 +2,7 @@ import classNames from 'classnames'
 import BigNumber from 'bignumber.js'
 import { IdeaMarket, IdeaToken } from 'store/ideaMarketsStore'
 import { getMarketSpecificsByMarketName } from 'store/markets/marketSpecifics'
+import numeral from 'numeral'
 import { WatchingStar } from '../'
 import { calculateCurrentPriceBN, web3BNToFloatString } from '../../utils'
 
@@ -22,7 +23,18 @@ export default function TokenCard({
 }) {
   const loading = (isLoading ? isLoading : false) || !(token && market)
   const marketSpecifics = getMarketSpecificsByMarketName(market.name)
-
+  const tokenPrice = isLoading
+    ? ''
+    : web3BNToFloatString(
+        calculateCurrentPriceBN(
+          token.rawSupply,
+          market.rawBaseCost,
+          market.rawPriceRise,
+          market.rawHatchTokens
+        ),
+        tenPow18,
+        2
+      )
   return (
     <div
       className={classNames(
@@ -72,17 +84,9 @@ export default function TokenCard({
               <span className="invisible">$$$$$$$$$$$$</span>
             </div>
           ) : (
-            '$' +
-            web3BNToFloatString(
-              calculateCurrentPriceBN(
-                token.rawSupply,
-                market.rawBaseCost,
-                market.rawPriceRise,
-                market.rawHatchTokens
-              ),
-              tenPow18,
-              2
-            )
+            <span title={'$' + tokenPrice}>
+              ${numeral(Number(tokenPrice)).format('0.00a')}
+            </span>
           )}
           {isLoading ? (
             ''
@@ -95,10 +99,15 @@ export default function TokenCard({
                     ? 'text-brand-red'
                     : 'text-brand-green'
                 )}
+                title={
+                  (parseFloat(token.dayChange) >= 0.0 ? '+' : '') +
+                  token.dayChange +
+                  '%'
+                }
               >
                 {!isLoading &&
                   (parseFloat(token.dayChange) >= 0.0 ? '+' : '') +
-                    token.dayChange +
+                    numeral(Number(token.dayChange)).format('0.00a') +
                     '%'}
               </span>
               )

@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import { ReactNode, useContext, useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
 import BigNumber from 'bignumber.js'
+import numeral from 'numeral'
 import { GlobalContext } from 'pages/_app'
 import {
   PriceChart,
@@ -143,9 +144,11 @@ export default function TokenDetails() {
   function DetailsEntry({
     header,
     content,
+    contentTitle,
   }: {
     header: ReactNode
     content: ReactNode
+    contentTitle?: string
   }) {
     return (
       <div
@@ -153,7 +156,9 @@ export default function TokenDetails() {
         style={{ backgroundColor: '#fafafa', border: '1px solid #cbd5e0' }}
       >
         <div className="text-xs text-brand-gray-2">{header}</div>
-        <div className="text-xl">{content}</div>
+        <div className="text-xl uppercase" title={contentTitle}>
+          {content}
+        </div>
       </div>
     )
   }
@@ -170,10 +175,12 @@ export default function TokenDetails() {
     header,
     content,
     withBorder,
+    contentTitle,
   }: {
     header: ReactNode
     content: ReactNode
     withBorder: boolean
+    contentTitle?: string
   }) {
     return (
       <div
@@ -181,7 +188,9 @@ export default function TokenDetails() {
         style={{ borderRight: withBorder && '1px solid #cbd5e0' }}
       >
         <div className="text-xs text-brand-gray-2">{header}</div>
-        <div className="text-2xl">{content}</div>
+        <div className="text-2xl" title={contentTitle}>
+          {content}
+        </div>
       </div>
     )
   }
@@ -238,6 +247,16 @@ export default function TokenDetails() {
     )
   }
 
+  const tokenPrice = web3BNToFloatString(
+    calculateCurrentPriceBN(
+      token.rawSupply,
+      market.rawBaseCost,
+      market.rawPriceRise,
+      market.rawHatchTokens
+    ),
+    tenPow18,
+    2
+  )
   return (
     <div className="min-h-screen bg-brand-gray">
       <div
@@ -290,20 +309,11 @@ export default function TokenDetails() {
                         isLoading ? (
                           <DetailsSkeleton />
                         ) : (
-                          '$' +
-                          web3BNToFloatString(
-                            calculateCurrentPriceBN(
-                              token.rawSupply,
-                              market.rawBaseCost,
-                              market.rawPriceRise,
-                              market.rawHatchTokens
-                            ),
-                            tenPow18,
-                            2
-                          )
+                          '$' + numeral(Number(tokenPrice)).format('0.00a')
                         )
                       }
                       withBorder={true}
+                      contentTitle={'$' + tokenPrice}
                     />
 
                     <DetailsOverChartEntry
@@ -314,10 +324,13 @@ export default function TokenDetails() {
                         ) : parseFloat(token.daiInToken) <= 0.0 ? (
                           <>&mdash;</>
                         ) : (
-                          `$${token.daiInToken}`
+                          `$${numeral(Number(token.daiInToken)).format(
+                            '0.00a'
+                          )}`
                         )
                       }
                       withBorder={true}
+                      contentTitle={'$' + token.daiInToken}
                     />
 
                     <DetailsOverChartEntry
@@ -328,16 +341,24 @@ export default function TokenDetails() {
                         ) : parseFloat(token.supply) <= 0.0 ? (
                           <>&mdash;</>
                         ) : (
-                          `${token.supply}`
+                          `${numeral(Number(token.supply)).format('0.00a')}`
                         )
                       }
                       withBorder={true}
+                      contentTitle={token.supply}
                     />
 
                     <DetailsOverChartEntry
                       header="Holders"
-                      content={isLoading ? <DetailsSkeleton /> : token.holders}
+                      content={
+                        isLoading ? (
+                          <DetailsSkeleton />
+                        ) : (
+                          numeral(Number(token.holders)).format('0.00a')
+                        )
+                      }
                       withBorder={false}
+                      contentTitle={token.holders.toString()}
                     />
                   </div>
                   <div style={{ minHeight: '200px' }} className="flex flex-col">
@@ -399,7 +420,7 @@ export default function TokenDetails() {
               content={
                 <div className="flex flex-col h-full pb-2">
                   <div
-                    className="grid w-full grid-cols-3 p-5 border-gray-400 gap-7"
+                    className="grid w-full md:grid-cols-3 sm:grid-cols-2 p-5 border-gray-400 gap-7"
                     style={{ borderBottomWidth: '1px' }}
                   >
                     <DetailsEntry
@@ -408,19 +429,10 @@ export default function TokenDetails() {
                         isLoading ? (
                           <DetailsSkeleton />
                         ) : (
-                          '$' +
-                          web3BNToFloatString(
-                            calculateCurrentPriceBN(
-                              token.rawSupply,
-                              market.rawBaseCost,
-                              market.rawPriceRise,
-                              market.rawHatchTokens
-                            ),
-                            tenPow18,
-                            2
-                          )
+                          '$' + numeral(Number(tokenPrice)).format('0.00a')
                         )
                       }
+                      contentTitle={'$' + tokenPrice}
                     />
 
                     <DetailsEntry
@@ -431,9 +443,12 @@ export default function TokenDetails() {
                         ) : parseFloat(token.daiInToken) <= 0.0 ? (
                           <>&mdash;</>
                         ) : (
-                          `$${token.daiInToken}`
+                          `$${numeral(Number(token.daiInToken)).format(
+                            '0.00a'
+                          )}`
                         )
                       }
+                      contentTitle={'$' + token.daiInToken}
                     />
 
                     <DetailsEntry
@@ -444,9 +459,10 @@ export default function TokenDetails() {
                         ) : parseFloat(token.supply) <= 0.0 ? (
                           <>&mdash;</>
                         ) : (
-                          `${token.supply}`
+                          `${numeral(Number(token.supply)).format('0.00a')}`
                         )
                       }
+                      contentTitle={token.supply}
                     />
 
                     <DetailsEntry
@@ -462,29 +478,42 @@ export default function TokenDetails() {
                                 : 'text-brand-red'
                             }
                           >
-                            {token.dayChange}%
+                            {numeral(Number(token.dayChange)).format('0.00a')}%
                           </div>
                         )
                       }
+                      contentTitle={token.dayChange + '%'}
                     />
 
                     <DetailsEntry
                       header="24H Volume"
                       content={
-                        isLoading ? <DetailsSkeleton /> : `$${token.dayVolume}`
+                        isLoading ? (
+                          <DetailsSkeleton />
+                        ) : (
+                          `$${numeral(Number(token.dayVolume)).format('0.00a')}`
+                        )
                       }
+                      contentTitle={'$' + token.dayVolume}
                     />
-
                     <DetailsEntry
                       header="1YR Income"
                       content={
                         isLoading ? (
                           <DetailsSkeleton />
                         ) : (
-                          `$${(
-                            parseFloat(token.daiInToken) * compoundSupplyRate
-                          ).toFixed(2)}`
+                          `$${numeral(
+                            (
+                              parseFloat(token.daiInToken) * compoundSupplyRate
+                            ).toFixed(2)
+                          ).format('0.00a')}`
                         )
+                      }
+                      contentTitle={
+                        '$' +
+                        (
+                          parseFloat(token.daiInToken) * compoundSupplyRate
+                        ).toFixed(2)
                       }
                     />
 
@@ -503,7 +532,14 @@ export default function TokenDetails() {
 
                     <DetailsEntry
                       header="Holders"
-                      content={isLoading ? <DetailsSkeleton /> : token.holders}
+                      content={
+                        isLoading ? (
+                          <DetailsSkeleton />
+                        ) : (
+                          numeral(token.holders).format('0.00a')
+                        )
+                      }
+                      contentTitle={token.holders.toString()}
                     />
 
                     <DetailsEntry
@@ -512,7 +548,7 @@ export default function TokenDetails() {
                         isLoading ? (
                           <DetailsSkeleton />
                         ) : (
-                          <div className="flex justify-center mt-1">
+                          <div className="flex justify-center mt-1 mb-1">
                             <WatchingStar token={token} />
                           </div>
                         )

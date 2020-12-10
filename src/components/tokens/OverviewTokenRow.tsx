@@ -3,6 +3,7 @@ import BigNumber from 'bignumber.js'
 import { useRouter } from 'next/dist/client/router'
 import { PreviewPriceChart, WatchingStar } from 'components'
 import { IdeaMarket, IdeaToken } from 'store/ideaMarketsStore'
+import numeral from 'numeral'
 import { getMarketSpecificsByMarketName } from 'store/markets/marketSpecifics'
 import { calculateCurrentPriceBN, web3BNToFloatString } from 'utils'
 
@@ -49,6 +50,16 @@ export default function TokenRow({
     parseFloat(token.daiInToken) * compoundSupplyRate
   ).toFixed(2)
 
+  const tokenPrice = web3BNToFloatString(
+    calculateCurrentPriceBN(
+      token.rawSupply,
+      market.rawBaseCost,
+      market.rawPriceRise,
+      market.rawHatchTokens
+    ),
+    tenPow18,
+    2
+  )
   return (
     <>
       <tr
@@ -103,27 +114,23 @@ export default function TokenRow({
           <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4">
             Price
           </p>
-          <p className="text-base font-medium leading-4 tracking-tightest-2 text-very-dark-blue">
-            $
-            {web3BNToFloatString(
-              calculateCurrentPriceBN(
-                token.rawSupply,
-                market.rawBaseCost,
-                market.rawPriceRise,
-                market.rawHatchTokens
-              ),
-              tenPow18,
-              2
-            )}
+          <p
+            className="text-base font-medium leading-4 tracking-tightest-2 text-very-dark-blue"
+            title={tokenPrice}
+          >
+            ${numeral(Number(tokenPrice)).format('0.00a')}
           </p>
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
           <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4">
             Deposits
           </p>
-          <p className="text-base font-medium leading-4 tracking-tightest-2 text-very-dark-blue">
+          <p
+            className="text-base font-medium leading-4 tracking-tightest-2 text-very-dark-blue"
+            title={token.daiInToken}
+          >
             {parseFloat(token.daiInToken) > 0.0 ? (
-              `$` + token.daiInToken
+              `$` + numeral(Number(token.daiInToken)).format('0.00a')
             ) : (
               <>&mdash;</>
             )}
@@ -133,14 +140,24 @@ export default function TokenRow({
           <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4">
             % Locked
           </p>
-          <p className="text-base font-medium leading-4 tracking-tightest-2 text-very-dark-blue">
-            {(parseFloat(token.lockedAmount) / parseFloat(token.supply)) *
-              100.0 >
-            0.0 ? (
+          <p
+            className="text-base font-medium leading-4 tracking-tightest-2 text-very-dark-blue"
+            title={
               (
                 (parseFloat(token.lockedAmount) / parseFloat(token.supply)) *
                 100.0
               ).toFixed(2) + ' %'
+            }
+          >
+            {(parseFloat(token.lockedAmount) / parseFloat(token.supply)) *
+              100.0 >
+            0.0 ? (
+              numeral(
+                (
+                  (parseFloat(token.lockedAmount) / parseFloat(token.supply)) *
+                  100.0
+                ).toFixed(2)
+              ).format('0.00a') + ' %'
             ) : (
               <>&mdash;</>
             )}
@@ -157,10 +174,17 @@ export default function TokenRow({
                 ? 'text-brand-green'
                 : 'text-brand-red'
             )}
+            title={`${
+              parseFloat(token.dayChange) >= 0.0
+                ? `+ ${token.dayChange}`
+                : `- ${token.dayChange.slice(1)}`
+            }%`}
           >
             {parseFloat(token.dayChange) >= 0.0
-              ? `+ ${token.dayChange}`
-              : `- ${token.dayChange.slice(1)}`}
+              ? `+ ${numeral(Number(token.dayChange)).format('0.00a')}`
+              : `- ${numeral(Number(token.dayChange.slice(1))).format(
+                  '0.00a'
+                )}`}
             %
           </p>
         </td>
@@ -168,16 +192,22 @@ export default function TokenRow({
           <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4">
             24H Volume
           </p>
-          <p className="text-base font-medium leading-4 tracking-tightest-2 text-very-dark-blue">
-            ${token.dayVolume}
+          <p
+            className="text-base font-medium leading-4 tracking-tightest-2 text-very-dark-blue"
+            title={'$' + token.dayVolume}
+          >
+            ${numeral(Number(token.dayVolume)).format('0.00a')}
           </p>
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
           <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4">
             1YR Income
           </p>
-          <p className="text-base font-medium leading-4 tracking-tightest-2 text-very-dark-blue">
-            ${yearIncome}
+          <p
+            className="text-base font-medium leading-4 tracking-tightest-2 text-very-dark-blue"
+            title={'$' + yearIncome}
+          >
+            ${numeral(Number(yearIncome)).format('0.00a')}
           </p>
         </td>
 
