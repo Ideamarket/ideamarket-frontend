@@ -28,7 +28,7 @@ export default function ListTokenModal({
 
   const [tokenName, setTokenName] = useState('')
   const [isValidTokenName, setIsValidTokenName] = useState(false)
-  const [isTokenIconLoading, setisTokenIconLoading] = useState(true)
+  const [isTokenIconLoading, setIsTokenIconLoading] = useState(true)
 
   const [isWantBuyChecked, setIsWantBuyChecked] = useState(false)
   const [buyPayWithAddress, setBuyPayWithAddress] = useState(undefined)
@@ -39,7 +39,7 @@ export default function ListTokenModal({
   const [isBuyValid, setIsBuyValid] = useState(false)
 
   async function tokenNameInputChanged(val) {
-    setisTokenIconLoading(true)
+    setIsTokenIconLoading(true)
     setTokenName(val)
     const finalTokenName = getMarketSpecificsByMarketName(
       selectedMarket.name
@@ -165,12 +165,12 @@ export default function ListTokenModal({
       <p className="mx-5 mt-5 text-sm text-brand-gray-2">Token Name</p>
       <div className="flex items-center mx-5">
         <div className="text-base text-brand-gray-2 text-semibold">@</div>
-        <div className="flex-grow ml-0.5">
+        <div className="flex justify-between items-center flex-grow ml-0.5">
           <input
             type="text"
             disabled={isTxPending || !selectedMarket}
             className={classNames(
-              'w-2/3 sm:w-3/4 py-2 pl-1 pr-4 leading-tight bg-gray-200 border-2 rounded appearance-none focus:bg-white focus:outline-none',
+              'flex-grow py-2 pl-1 pr-4 leading-tight bg-gray-200 border-2 rounded appearance-none focus:bg-white focus:outline-none',
               !isValidTokenName && tokenName.length > 0
                 ? 'border-brand-red focus:border-brand-red'
                 : 'border-gray-200 focus:border-brand-blue'
@@ -179,22 +179,40 @@ export default function ListTokenModal({
               tokenNameInputChanged(e.target.value)
             }}
           />
-          {isTokenIconLoading && (
-            <div className="bg-gray-400 rounded-full w-16 h-16 animate animate-pulse align-middle ml-2 inline-block"></div>
+          {(isTokenIconLoading || !isValidTokenName) && (
+            <div
+              className={classNames(
+                'inline-block w-12 h-12 ml-3 align-middle bg-gray-400 rounded-full',
+                isValidTokenName && 'animate animate-pulse'
+              )}
+            ></div>
           )}
-          <img
-            className={classNames(
-              'rounded-full max-w-16 max-h-16 ml-2 inline-block',
-              isTokenIconLoading && 'hidden'
-            )}
-            onLoad={() => setisTokenIconLoading(false)}
-            src={
-              selectedMarket &&
-              marketSpecifics &&
-              marketSpecifics.getTokenIconURL('@' + tokenName)
+          <a
+            href={
+              !marketSpecifics
+                ? ''
+                : marketSpecifics.getTokenURL(
+                    marketSpecifics.convertUserInputToTokenName(tokenName)
+                  )
             }
-            alt=""
-          />
+            target="_blank"
+          >
+            <img
+              className={classNames(
+                'rounded-full max-w-12 max-h-12 ml-3 inline-block',
+                (isTokenIconLoading || !isValidTokenName) && 'hidden'
+              )}
+              onLoad={() => setIsTokenIconLoading(false)}
+              src={
+                selectedMarket &&
+                marketSpecifics &&
+                marketSpecifics.getTokenIconURL(
+                  marketSpecifics.convertUserInputToTokenName(tokenName)
+                )
+              }
+              alt=""
+            />
+          </a>
         </div>
       </div>
       <div className="flex items-center justify-center mt-5 text-sm">
