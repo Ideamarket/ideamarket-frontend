@@ -28,6 +28,7 @@ export default function ListTokenModal({
 
   const [tokenName, setTokenName] = useState('')
   const [isValidTokenName, setIsValidTokenName] = useState(false)
+  const [isTokenIconLoading, setisTokenIconLoading] = useState(true)
 
   const [isWantBuyChecked, setIsWantBuyChecked] = useState(false)
   const [buyPayWithAddress, setBuyPayWithAddress] = useState(undefined)
@@ -38,6 +39,7 @@ export default function ListTokenModal({
   const [isBuyValid, setIsBuyValid] = useState(false)
 
   async function tokenNameInputChanged(val) {
+    setisTokenIconLoading(true)
     setTokenName(val)
     const finalTokenName = getMarketSpecificsByMarketName(
       selectedMarket.name
@@ -141,6 +143,8 @@ export default function ListTokenModal({
   if (!isOpen) {
     return <></>
   }
+  const marketSpecifics =
+    selectedMarket && getMarketSpecificsByMarketName(selectedMarket.name)
 
   return (
     <Modal isOpen={isOpen} close={() => setIsOpen(false)}>
@@ -166,7 +170,7 @@ export default function ListTokenModal({
             type="text"
             disabled={isTxPending || !selectedMarket}
             className={classNames(
-              'w-full py-2 pl-1 pr-4 leading-tight bg-gray-200 border-2 rounded appearance-none focus:bg-white focus:outline-none',
+              'w-2/3 sm:w-3/4 py-2 pl-1 pr-4 leading-tight bg-gray-200 border-2 rounded appearance-none focus:bg-white focus:outline-none',
               !isValidTokenName && tokenName.length > 0
                 ? 'border-brand-red focus:border-brand-red'
                 : 'border-gray-200 focus:border-brand-blue'
@@ -174,6 +178,22 @@ export default function ListTokenModal({
             onChange={(e) => {
               tokenNameInputChanged(e.target.value)
             }}
+          />
+          {isTokenIconLoading && (
+            <div className="bg-gray-400 rounded-full w-16 h-16 animate animate-pulse align-middle ml-2 inline-block"></div>
+          )}
+          <img
+            className={classNames(
+              'rounded-full max-w-16 max-h-16 ml-2 inline-block',
+              isTokenIconLoading && 'hidden'
+            )}
+            onLoad={() => setisTokenIconLoading(false)}
+            src={
+              selectedMarket &&
+              marketSpecifics &&
+              marketSpecifics.getTokenIconURL('@' + tokenName)
+            }
+            alt=""
           />
         </div>
       </div>
