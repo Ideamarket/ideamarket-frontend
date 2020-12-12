@@ -119,7 +119,7 @@ export default function Home() {
           onClick={() => {
             onListTokenClicked()
           }}
-          className="py-2 mx-auto text-lg font-bold text-white rounded-lg mt-7 md:px-5 font-sf-compact-medium bg-brand-blue hover:bg-blue-800"
+          className="py-2 mx-auto text-lg font-bold text-white rounded-lg mt-7 px-5 font-sf-compact-medium bg-brand-blue hover:bg-blue-800"
         >
           Launch Your Token
         </button>
