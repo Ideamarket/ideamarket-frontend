@@ -7,6 +7,7 @@ import WalletConnect from '../../assets/walletconnect.svg'
 import Coinbase from '../../assets/coinbase.svg'
 import Fortmatic from '../../assets/fortmatic.svg'
 import Portis from '../../assets/portis.svg'
+import CreditCard from '../../assets/credit-card.svg'
 import DotRed from '../../assets/dotred.svg'
 import DotGreen from '../../assets/dotgreen.svg'
 
@@ -66,10 +67,12 @@ export default function WalletInterface({
     svg,
     name,
     wallet,
+    rightSvg,
   }: {
     svg: JSX.Element
     name: string
     wallet: number
+    rightSvg?: JSX.Element
   }) {
     return (
       <div className="flex pl-4 pr-4 mt-4">
@@ -123,6 +126,11 @@ export default function WalletInterface({
                 />
               </svg>
             </div>
+            {rightSvg && (
+              <div className="flex flex-row justify-end ml-auto pl-2">
+                {rightSvg}
+              </div>
+            )}
           </div>
         </button>
       </div>
@@ -152,7 +160,8 @@ export default function WalletInterface({
         wallet={wallets.WALLETS.FORTMATIC}
       />
       <WalletButton
-        svg={<Portis className="w-7 h-7" />}
+        svg={<CreditCard className="w-7 h-7" />}
+        rightSvg={<Portis className="w-7 h-7" />}
         name="Portis"
         wallet={wallets.WALLETS.PORTIS}
       />
