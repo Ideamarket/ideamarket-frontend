@@ -16,12 +16,14 @@ export default function WalletStatus({ openModal }: { openModal: () => void }) {
       >
         {web3 === undefined && <DotRed className="w-4 h-4" />}
         {web3 === undefined && (
-          <div className="ml-3 text-gray-400 align-middle">No wallet</div>
+          <div className="ml-3 text-gray-400 align-middle whitespace-nowrap">
+            No wallet
+          </div>
         )}
 
         {web3 !== undefined && <DotGreen className="w-4 h-4" />}
         {web3 !== undefined && (
-          <div className="ml-3 text-gray-400 align-middle">
+          <div className="ml-3 text-gray-400 align-middle whitespace-nowrap">
             {address.slice(0, 6)}...{address.slice(-4)}
           </div>
         )}
