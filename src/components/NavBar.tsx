@@ -69,7 +69,7 @@ export default function Nav() {
               </span>
             </div>
 
-            <div className="fixed hidden w-full -ml-4 space-x-8 text-center px-68 md:inline md:-ml-6 lg:-ml-8">
+            <div className="hidden w-full space-x-8 text-center md:inline">
               {menuItems.map((menuItem) => (
                 <a
                   key={menuItem.value}
