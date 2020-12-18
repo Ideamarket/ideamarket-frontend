@@ -159,7 +159,7 @@ export default function WalletInterface({
         <WalletButton
           svg={<CreditCard className="w-7 h-7" />}
           rightSvg={<Portis className="w-7 h-7" />}
-          name="Credit Card / Portis"
+          name="Credit Card (Portis)"
           wallet={wallets.WALLETS.PORTIS}
         />
       </div>
