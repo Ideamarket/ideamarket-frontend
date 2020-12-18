@@ -7,7 +7,9 @@ import WalletConnect from '../../assets/walletconnect.svg'
 import Coinbase from '../../assets/coinbase.svg'
 import Fortmatic from '../../assets/fortmatic.svg'
 import Portis from '../../assets/portis.svg'
+import WalletIcon from '../../assets/wallet.svg'
 import CreditCard from '../../assets/credit-card.svg'
+import ArrowLeft from '../../assets/arrow-left.svg'
 import DotRed from '../../assets/dotred.svg'
 import DotGreen from '../../assets/dotgreen.svg'
 
@@ -20,6 +22,7 @@ export default function WalletInterface({
   onWalletConnected?: () => void
 }) {
   const [connectingWallet, setConnectingWallet] = useState(0)
+  const [showAllWallets, setshowAllWallets] = useState(false)
   const {
     onWalletConnectedCallback,
     setOnWalletConnectedCallback,
@@ -28,6 +31,10 @@ export default function WalletInterface({
   const address = useWalletStore((state) => state.address)
 
   async function onWalletClicked(wallet) {
+    if (!wallet) {
+      setshowAllWallets(true)
+      return
+    }
     setConnectingWallet(wallet)
 
     let web3
@@ -71,7 +78,7 @@ export default function WalletInterface({
   }: {
     svg: JSX.Element
     name: string
-    wallet: number
+    wallet?: number
     rightSvg?: JSX.Element
   }) {
     return (
@@ -139,33 +146,67 @@ export default function WalletInterface({
 
   return (
     <div className="lg:min-w-100">
-      <WalletButton
-        svg={<Metamask className="w-8 h-8" />}
-        name="Metamask"
-        wallet={wallets.WALLETS.METAMASK}
-      />
-      <WalletButton
-        svg={<WalletConnect className="w-8 h-8" />}
-        name="WalletConnect"
-        wallet={wallets.WALLETS.WALLETCONNECT}
-      />
-      <WalletButton
-        svg={<Coinbase className="w-7 h-7" />}
-        name="Coinbase"
-        wallet={wallets.WALLETS.COINBASE}
-      />
-      <WalletButton
-        svg={<Fortmatic className="w-7 h-7" />}
-        name="Fortmatic"
-        wallet={wallets.WALLETS.FORTMATIC}
-      />
-      <WalletButton
-        svg={<CreditCard className="w-7 h-7" />}
-        rightSvg={<Portis className="w-7 h-7" />}
-        name="Credit Card / Portis"
-        wallet={wallets.WALLETS.PORTIS}
-      />
-
+      <div
+        className={classNames(
+          'absolute w-full transition-all ease-in-out duration-1000 transform',
+          showAllWallets ? '-translate-x-full' : 'translate-x-0'
+        )}
+      >
+        <WalletButton
+          svg={<WalletIcon className="w-8 h-8" />}
+          name="Crypto Wallets"
+        />
+        <WalletButton
+          svg={<CreditCard className="w-7 h-7" />}
+          rightSvg={<Portis className="w-7 h-7" />}
+          name="Credit Card / Portis"
+          wallet={wallets.WALLETS.PORTIS}
+        />
+      </div>
+      <div
+        className={classNames(
+          'transition-all ease-in-out duration-1000 transform',
+          !showAllWallets ? 'translate-x-full' : 'translate-x-0'
+        )}
+      >
+        <div className="flex pl-4 pr-4 mt-4">
+          <button
+            onClick={() => setshowAllWallets(false)}
+            className="hover:border-transparent hover:bg-brand-blue hover:text-brand-gray cursor-pointer p-0 border-2 rounded-lg border-brand-gray-1"
+          >
+            <div className="flex flex-row items-center">
+              <div className="flex-none">
+                <ArrowLeft className="w-8 h-8" />
+              </div>
+            </div>
+          </button>
+        </div>
+        <WalletButton
+          svg={<Metamask className="w-8 h-8" />}
+          name="Metamask"
+          wallet={wallets.WALLETS.METAMASK}
+        />
+        <WalletButton
+          svg={<WalletConnect className="w-8 h-8" />}
+          name="WalletConnect"
+          wallet={wallets.WALLETS.WALLETCONNECT}
+        />
+        <WalletButton
+          svg={<Coinbase className="w-7 h-7" />}
+          name="Coinbase"
+          wallet={wallets.WALLETS.COINBASE}
+        />
+        <WalletButton
+          svg={<Fortmatic className="w-7 h-7" />}
+          name="Fortmatic"
+          wallet={wallets.WALLETS.FORTMATIC}
+        />
+        <WalletButton
+          svg={<Portis className="w-7 h-7" />}
+          name="Portis"
+          wallet={wallets.WALLETS.PORTIS}
+        />
+      </div>
       <hr className="m-4" />
       <div className="flex flex-row items-center mx-4 mb-4 ">
         {web3 === undefined && <DotRed className="w-3 h-3" />}
