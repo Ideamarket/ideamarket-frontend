@@ -22,7 +22,7 @@ export default function WalletInterface({
   onWalletConnected?: () => void
 }) {
   const [connectingWallet, setConnectingWallet] = useState(0)
-  const [showAllWallets, setshowAllWallets] = useState(false)
+  const [showAllWallets, setShowAllWallets] = useState(false)
   const {
     onWalletConnectedCallback,
     setOnWalletConnectedCallback,
@@ -32,7 +32,7 @@ export default function WalletInterface({
 
   async function onWalletClicked(wallet) {
     if (!wallet) {
-      setshowAllWallets(true)
+      setShowAllWallets(true)
       return
     }
     setConnectingWallet(wallet)
@@ -171,13 +171,14 @@ export default function WalletInterface({
       >
         <div className="flex pl-4 pr-4 mt-4">
           <button
-            onClick={() => setshowAllWallets(false)}
-            className="hover:border-transparent hover:bg-brand-blue hover:text-brand-gray cursor-pointer p-0 border-2 rounded-lg border-brand-gray-1"
+            onClick={() => setShowAllWallets(false)}
+            className="hover:border-transparent hover:bg-brand-blue hover:text-brand-gray cursor-pointer p-0 border-2 rounded-lg border-brand-gray-1 font-sf-compact-medium"
           >
             <div className="flex flex-row items-center">
               <div className="flex-none">
                 <ArrowLeft className="w-8 h-8" />
               </div>
+              <div className="flex-none ml-1 mr-2">Back</div>
             </div>
           </button>
         </div>
