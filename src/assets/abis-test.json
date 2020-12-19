@@ -396,25 +396,6 @@
       "inputs": [
         {
           "indexed": false,
-          "internalType": "address",
-          "name": "ideaToken",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "investmentToken",
-          "type": "uint256"
-        }
-      ],
-      "name": "DaiRedeemed",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
           "internalType": "uint256",
           "name": "marketID",
           "type": "uint256"
@@ -428,7 +409,7 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "daiInToken",
+          "name": "dai",
           "type": "uint256"
         },
         {
@@ -531,6 +512,44 @@
     },
     {
       "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "marketID",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "investmentToken",
+          "type": "uint256"
+        }
+      ],
+      "name": "PlatformInterestRedeemed",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "ideaToken",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "investmentToken",
+          "type": "uint256"
+        }
+      ],
+      "name": "TokenInterestRedeemed",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
       "inputs": [],
       "name": "TradingFeeRedeemed",
       "type": "event"
@@ -623,6 +642,11 @@
               "internalType": "uint256",
               "name": "platformFeeRate",
               "type": "uint256"
+            },
+            {
+              "internalType": "bool",
+              "name": "allInterestToPlatform",
+              "type": "bool"
             }
           ],
           "internalType": "struct MarketDetails",
@@ -685,6 +709,15 @@
     },
     {
       "inputs": [
+        { "internalType": "uint256", "name": "marketID", "type": "uint256" }
+      ],
+      "name": "getPlatformInterestPayable",
+      "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
         { "internalType": "address", "name": "ideaToken", "type": "address" },
         { "internalType": "uint256", "name": "amount", "type": "uint256" }
       ],
@@ -734,6 +767,11 @@
               "internalType": "uint256",
               "name": "platformFeeRate",
               "type": "uint256"
+            },
+            {
+              "internalType": "bool",
+              "name": "allInterestToPlatform",
+              "type": "bool"
             }
           ],
           "internalType": "struct MarketDetails",
@@ -874,6 +912,15 @@
       "type": "function"
     },
     {
+      "inputs": [
+        { "internalType": "uint256", "name": "marketID", "type": "uint256" }
+      ],
+      "name": "withdrawPlatformInterest",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
       "inputs": [],
       "name": "withdrawTradingFee",
       "outputs": [],
@@ -926,6 +973,12 @@
           "internalType": "uint256",
           "name": "platformFeeRate",
           "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "bool",
+          "name": "allInterestToPlatform",
+          "type": "bool"
         },
         {
           "indexed": false,
@@ -1064,6 +1117,11 @@
           "internalType": "uint256",
           "name": "platformFeeRate",
           "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "allInterestToPlatform",
+          "type": "bool"
         }
       ],
       "name": "addMarket",
@@ -1126,6 +1184,11 @@
               "internalType": "uint256",
               "name": "platformFeeRate",
               "type": "uint256"
+            },
+            {
+              "internalType": "bool",
+              "name": "allInterestToPlatform",
+              "type": "bool"
             }
           ],
           "internalType": "struct MarketDetails",
@@ -1181,6 +1244,11 @@
               "internalType": "uint256",
               "name": "platformFeeRate",
               "type": "uint256"
+            },
+            {
+              "internalType": "bool",
+              "name": "allInterestToPlatform",
+              "type": "bool"
             }
           ],
           "internalType": "struct MarketDetails",
@@ -1236,6 +1304,11 @@
               "internalType": "uint256",
               "name": "platformFeeRate",
               "type": "uint256"
+            },
+            {
+              "internalType": "bool",
+              "name": "allInterestToPlatform",
+              "type": "bool"
             }
           ],
           "internalType": "struct MarketDetails",
@@ -1434,6 +1507,11 @@
           "internalType": "uint256",
           "name": "platformFeeRate",
           "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "allInterestToPlatform",
+          "type": "bool"
         }
       ],
       "name": "execute",
