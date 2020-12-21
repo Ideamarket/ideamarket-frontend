@@ -257,7 +257,7 @@ export default function Table({
                                 investmentTokenToUnderlying(
                                   market.rawPlatformFeeInvested,
                                   compoundExchangeRate
-                                ),
+                                ).add(market.rawPlatformFeeRedeemed),
                                 bigNumberTenPow18,
                                 4
                               )
