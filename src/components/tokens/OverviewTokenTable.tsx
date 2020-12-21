@@ -251,18 +251,19 @@ export default function Table({
                     >
                       {!isAllMarkets && !isLoading && (
                         <div className="text-center">
-                          {formatNumber(
-                            parseFloat(
-                              web3BNToFloatString(
-                                investmentTokenToUnderlying(
-                                  market.rawPlatformFeeInvested,
-                                  compoundExchangeRate
-                                ).add(market.rawPlatformFeeRedeemed),
-                                bigNumberTenPow18,
-                                4
+                          {'$' +
+                            formatNumber(
+                              parseFloat(
+                                web3BNToFloatString(
+                                  investmentTokenToUnderlying(
+                                    market.rawPlatformFeeInvested,
+                                    compoundExchangeRate
+                                  ).add(market.rawPlatformFeeRedeemed),
+                                  bigNumberTenPow18,
+                                  4
+                                )
                               )
-                            )
-                          )}
+                            )}
                           <br />
                           earned for {market.name}
                         </div>
