@@ -35,6 +35,9 @@ export const addresses = {
       : '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
 }
 
+export const web3TenPow18 = new BN('10').pow(new BN('18'))
+export const bigNumberTenPow18 = new BigNumber('10').pow(new BigNumber('18'))
+
 export function web3BNToFloatString(
   bn: BN,
   divideBy: BigNumber,
