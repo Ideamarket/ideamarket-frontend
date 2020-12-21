@@ -38,11 +38,13 @@ function getChartData(token: IdeaToken) {
 export default function TokenRow({
   token,
   market,
+  showMarketSVG,
   compoundSupplyRate,
   onTradeClicked,
 }: {
   token: IdeaToken
   market: IdeaMarket
+  showMarketSVG: boolean
   compoundSupplyRate: number
   onTradeClicked: (token: IdeaToken, market: IdeaMarket) => void
 }) {
@@ -77,7 +79,13 @@ export default function TokenRow({
       >
         <td className="col-span-3 px-6 py-4 whitespace-nowrap">
           <div className="flex items-center">
-            <div className="flex-shrink-0 w-7.5 h-7.5">
+            {showMarketSVG && marketSpecifics.getMarketSVGBlack()}
+            <div
+              className={classNames(
+                'flex-shrink-0 w-7.5 h-7.5',
+                showMarketSVG && 'ml-2'
+              )}
+            >
               <img
                 className="w-full h-full rounded-full"
                 src={marketSpecifics.getTokenIconURL(token.name)}

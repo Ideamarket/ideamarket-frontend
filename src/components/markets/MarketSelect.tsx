@@ -26,7 +26,7 @@ export default function MarketSelect({
         // TODO: Remove filter when we do not want to hide "Substack" market anymore (launch)
         markets
           .filter((v) => {
-            return v.name === 'Twitter'
+            return v.name === 'Twitter' || v.name === 'Substack'
           })
           .map((market) => ({
             value: market.marketID.toString(),

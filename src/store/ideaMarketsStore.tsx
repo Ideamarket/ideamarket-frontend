@@ -217,6 +217,56 @@ export async function queryTokens(
   return result.map((token) => apiResponseToIdeaToken(token, market))
 }
 
+export async function queryTokensAllMarkets(
+  queryKey: string,
+  skip: number,
+  num: number,
+  orderBy: string,
+  orderDirection: string,
+  search: string,
+  filterTokens: string[]
+): Promise<IdeaTokenMarketPair[]> {
+  let result
+  if (search.length >= 2) {
+    result = (
+      await request(
+        HTTP_GRAPHQL_ENDPOINT,
+        getQueryTokenNameTextSearchAllMarkets(
+          skip,
+          num,
+          orderBy,
+          orderDirection,
+          search,
+          filterTokens
+        )
+      )
+    ).tokenNameSearch
+  } else {
+    result = (
+      await request(
+        HTTP_GRAPHQL_ENDPOINT,
+        getQueryTokensAllMarkets(
+          skip,
+          num,
+          orderBy,
+          orderDirection,
+          filterTokens
+        )
+      )
+    ).ideaTokens
+  }
+
+  return result.map(
+    (t) =>
+      ({
+        token: apiResponseToIdeaToken(t, t.market),
+        market: apiResponseToIdeaMarket(t.market),
+        rawBalance: undefined,
+        balance: undefined,
+      } as IdeaTokenMarketPair)
+  )
+}
+
 export async function querySingleToken(
   queryKey: string,
   marketName: string,
@@ -371,6 +421,71 @@ function getQueryTokens(
   }`
 }
 
+function getQueryTokensAllMarkets(
+  skip: number,
+  num: number,
+  orderBy: string,
+  orderDirection: string,
+  filterTokens: string[]
+): string {
+  let filterTokensQuery = ''
+  if (filterTokens) {
+    filterTokensQuery = ',where:{id_in:['
+    filterTokens.forEach((value, index) => {
+      if (index > 0) {
+        filterTokensQuery += ','
+      }
+      filterTokensQuery += `"${value}"`
+    })
+    filterTokensQuery += ']}'
+  }
+
+  const currentTs = Math.floor(Date.now() / 1000)
+  const weekBack = currentTs - 604800
+
+  return gql`
+  {
+    ideaTokens(skip:${skip}, first:${num}, orderBy:${orderBy}, orderDirection:${orderDirection}${filterTokensQuery}) {
+        id
+        tokenID
+        name
+        market {
+          marketID
+          name
+          baseCost
+          priceRise
+          hatchTokens
+          tradingFeeRate
+          platformFeeRate
+          platformFeeWithdrawer
+          platformFeeInvested
+          nameVerifier
+        }
+        supply
+        holders
+        marketCap
+        interestWithdrawer
+        daiInToken
+        invested
+        listedAt
+        lockedAmount
+        lockedPercentage
+        latestPricePoint {
+          timestamp
+          oldPrice
+          price
+        }
+        dayVolume
+        dayChange
+        pricePoints(where:{timestamp_gt:${weekBack}} orderBy:timestamp) {
+          timestamp
+          oldPrice
+          price
+        }
+      }
+  }`
+}
+
 function getQueryOwnedTokensMaybeMarket(
   marketID: number,
   owner: string
@@ -493,6 +608,74 @@ function getQueryTokenNameTextSearch(
         id
         tokenID
         name
+        supply
+        holders
+        marketCap
+        interestWithdrawer
+        daiInToken
+        invested
+        listedAt
+        lockedAmount
+        lockedPercentage
+        latestPricePoint {
+          timestamp
+          oldPrice
+          price
+        }
+        dayVolume
+        dayChange
+        pricePoints(where:{timestamp_gt:${weekBack}} orderBy:timestamp) {
+          timestamp
+          oldPrice
+          price
+        }
+      }
+  }`
+}
+
+function getQueryTokenNameTextSearchAllMarkets(
+  skip: number,
+  num: number,
+  orderBy: string,
+  orderDirection: string,
+  search: string,
+  filterTokens: string[]
+): string {
+  let filterTokensQuery = ''
+  if (filterTokens) {
+    filterTokensQuery = 'id_in:['
+    filterTokens.forEach((value, index) => {
+      if (index > 0) {
+        filterTokensQuery += ','
+      }
+      filterTokensQuery += `"${value}"`
+    })
+    filterTokensQuery += ']'
+  }
+
+  const currentTs = Math.floor(Date.now() / 1000)
+  const weekBack = currentTs - 604800
+
+  return gql`
+  {
+    tokenNameSearch(skip:${skip}, first:${num}, orderBy:${orderBy}, orderDirection:${orderDirection}, where:{${filterTokensQuery}}, text:${
+    '"' + search + ':*"'
+  }) {
+        id
+        tokenID
+        name
+        market {
+          marketID
+          name
+          baseCost
+          priceRise
+          hatchTokens
+          tradingFeeRate
+          platformFeeRate
+          platformFeeWithdrawer
+          platformFeeInvested
+          nameVerifier
+        }
         supply
         holders
         marketCap

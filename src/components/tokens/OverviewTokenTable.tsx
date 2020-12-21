@@ -2,9 +2,11 @@ import classNames from 'classnames'
 import { useWindowSize } from 'utils'
 import {
   IdeaToken,
+  IdeaTokenMarketPair,
   IdeaMarket,
   queryMarket,
   queryTokens,
+  queryTokensAllMarkets,
 } from 'store/ideaMarketsStore'
 import { useState } from 'react'
 import { useQuery } from 'react-query'
@@ -88,6 +90,8 @@ export default function Table({
   onOrderByChanged: (o: string, d: string) => void
   onTradeClicked: (token: IdeaToken, market: IdeaMarket) => void
 }) {
+  const isAllMarkets = selectedMarketName === 'ALL'
+
   const windowSize = useWindowSize()
   const TOKENS_PER_PAGE = windowSize.width < 768 ? 4 : 10
 
@@ -99,33 +103,61 @@ export default function Table({
     data: compoundSupplyRate,
     isLoading: isCompoundSupplyRateLoading,
   } = useQuery('compound-supply-rate', querySupplyRate)
+
   const { data: market, isLoading: isMarketLoading } = useQuery(
-    ['market', selectedMarketName],
+    [
+      `market-${selectedMarketName}`,
+      isAllMarkets ? undefined : selectedMarketName,
+    ],
     queryMarket
   )
 
   const watchingTokens = Object.keys(
     useIdeaMarketsStore((store) => store.watching)
   )
+
   const filterTokens = selectedCategoryId === 4 ? watchingTokens : undefined
-  const { data: tokens, isLoading: isTokensDataLoading } = useQuery(
-    [
-      'tokens',
-      market,
-      currentPage * TOKENS_PER_PAGE,
-      TOKENS_PER_PAGE,
-      selectedCategoryId === 2
-        ? 'dayChange'
-        : selectedCategoryId === 3
-        ? 'listedAt'
-        : orderBy,
-      selectedCategoryId === 2 || selectedCategoryId === 3
-        ? 'desc'
-        : orderDirection,
-      nameSearch,
-      filterTokens,
-    ],
-    queryTokens
+
+  const {
+    data: rowData,
+    isLoading: isTokensDataLoading,
+  }: {
+    data: IdeaToken[] | IdeaTokenMarketPair[]
+    isLoading: boolean
+  } = useQuery(
+    isAllMarkets
+      ? [
+          'tokens-ALL',
+          currentPage * TOKENS_PER_PAGE,
+          TOKENS_PER_PAGE,
+          selectedCategoryId === 2
+            ? 'dayChange'
+            : selectedCategoryId === 3
+            ? 'listedAt'
+            : orderBy,
+          selectedCategoryId === 2 || selectedCategoryId === 3
+            ? 'desc'
+            : orderDirection,
+          nameSearch,
+          filterTokens,
+        ]
+      : [
+          `tokens-${selectedMarketName}`,
+          market,
+          currentPage * TOKENS_PER_PAGE,
+          TOKENS_PER_PAGE,
+          selectedCategoryId === 2
+            ? 'dayChange'
+            : selectedCategoryId === 3
+            ? 'listedAt'
+            : orderBy,
+          selectedCategoryId === 2 || selectedCategoryId === 3
+            ? 'desc'
+            : orderDirection,
+          nameSearch,
+          filterTokens,
+        ],
+    (isAllMarkets ? queryTokensAllMarkets : queryTokens) as any
   )
 
   const isLoading =
@@ -211,22 +243,39 @@ export default function Table({
                 <tbody className="bg-white divide-y divide-gray-200">
                   {isLoading ? (
                     Array.from(Array(TOKENS_PER_PAGE).keys()).map((token) => (
-                      <TokenRowSkeleton key={token} />
+                      <TokenRowSkeleton
+                        key={token}
+                        showMarketSVG={isAllMarkets}
+                      />
                     ))
                   ) : (
                     <>
-                      {tokens.map((token) => (
-                        <TokenRow
-                          key={token.tokenID}
-                          token={token}
-                          market={market}
-                          compoundSupplyRate={compoundSupplyRate}
-                          onTradeClicked={onTradeClicked}
-                        />
-                      ))}
+                      {isAllMarkets
+                        ? (rowData as IdeaTokenMarketPair[]).map((pair) => (
+                            <TokenRow
+                              key={
+                                pair.market.marketID + '-' + pair.token.tokenID
+                              }
+                              token={pair.token}
+                              market={pair.market}
+                              showMarketSVG={true}
+                              compoundSupplyRate={compoundSupplyRate}
+                              onTradeClicked={onTradeClicked}
+                            />
+                          ))
+                        : (rowData as IdeaToken[]).map((token) => (
+                            <TokenRow
+                              key={market.marketID + '-' + token.tokenID}
+                              token={token}
+                              market={market}
+                              showMarketSVG={false}
+                              compoundSupplyRate={compoundSupplyRate}
+                              onTradeClicked={onTradeClicked}
+                            />
+                          ))}
 
                       {Array.from(
-                        Array(TOKENS_PER_PAGE - (tokens?.length ?? 0))
+                        Array(TOKENS_PER_PAGE - (rowData?.length ?? 0))
                       ).map((a, b) => (
                         <tr
                           key={`${'filler-' + b.toString()}`}
@@ -258,16 +307,16 @@ export default function Table({
         </button>
         <button
           onClick={() => {
-            if (tokens && tokens.length === TOKENS_PER_PAGE)
+            if (rowData && rowData.length === TOKENS_PER_PAGE)
               setCurrentPage(currentPage + 1)
           }}
           className={classNames(
             'px-4 py-2 text-sm font-medium leading-none cursor-pointer focus:outline-none font-sf-pro-text text-brand-gray-4 tracking-tightest',
-            tokens?.length !== TOKENS_PER_PAGE
+            rowData?.length !== TOKENS_PER_PAGE
               ? 'cursor-not-allowed opacity-50'
               : 'hover:bg-brand-gray'
           )}
-          disabled={tokens?.length !== TOKENS_PER_PAGE}
+          disabled={rowData?.length !== TOKENS_PER_PAGE}
         >
           Next &rarr;
         </button>
