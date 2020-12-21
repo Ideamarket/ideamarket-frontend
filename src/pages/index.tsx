@@ -5,12 +5,14 @@ import { getMarketSpecificsByMarketName } from 'store/markets'
 import { Table, TradeModal, ListTokenModal, Footer } from 'components'
 
 import Search from '../assets/search.svg'
+import AllBlack from '../assets/all-black.svg'
+import AllWhite from '../assets/all-white.svg'
 import { GlobalContext } from './_app'
 import { useWalletStore } from 'store/walletStore'
 
 export default function Home() {
   const [selectedCategoryId, setSelectedCategoryId] = useState(1)
-  const [selectedMarketName, setSelectedMarketName] = useState('Twitter')
+  const [selectedMarketName, setSelectedMarketName] = useState('ALL')
   const [nameSearch, setNameSearch] = useState('')
   const [tablePage, setTablePage] = useState(0)
 
@@ -44,6 +46,11 @@ export default function Home() {
       value: 'Starred',
     },
   ]
+
+  function onMarketChanged(market) {
+    setTablePage(0)
+    setSelectedMarketName(market)
+  }
 
   function onNameSearchChanged(nameSearch) {
     setTablePage(0)
@@ -118,7 +125,7 @@ export default function Home() {
           onClick={() => {
             onListTokenClicked()
           }}
-          className="py-2 mx-auto text-lg font-bold text-white rounded-lg mt-7 px-5 font-sf-compact-medium bg-brand-blue hover:bg-blue-800"
+          className="px-5 py-2 mx-auto text-lg font-bold text-white rounded-lg mt-7 font-sf-compact-medium bg-brand-blue hover:bg-blue-800"
         >
           Launch Your Token
         </button>
@@ -129,10 +136,24 @@ export default function Home() {
           <div
             className={classNames(
               'cursor-pointer flex md:justify-center items-center p-5 space-x-2.5 text-white rounded-tl-xlg md:rounded-tr-none border-2 md:border-r-0 md:border-b-0',
+              selectedMarketName === 'ALL' && 'bg-white text-very-dark-blue'
+            )}
+            onClick={() => {
+              onMarketChanged('ALL')
+            }}
+          >
+            <div>
+              {selectedMarketName === 'ALL' ? <AllBlack /> : <AllWhite />}
+            </div>
+            <p className="text-lg leading-none">All</p>
+          </div>
+          <div
+            className={classNames(
+              'cursor-pointer flex md:justify-center items-center p-5 space-x-2.5 text-white rounded-tr-xlg md:rounded-none border-2 border-l-0 md:border-b-0',
               selectedMarketName === 'Twitter' && 'bg-white text-very-dark-blue'
             )}
             onClick={() => {
-              setSelectedMarketName('Twitter')
+              onMarketChanged('Twitter')
             }}
           >
             <div>
@@ -144,30 +165,23 @@ export default function Home() {
           </div>
           <div
             className={classNames(
-              'cursor-pointer flex md:justify-center items-center p-5 space-x-2.5 text-white rounded-tr-xlg md:rounded-none border-2 border-l-0 md:border-b-0',
+              'flex md:justify-center items-center p-5 space-x-2.5 text-white border-2 border-t-0 md:border-t-2 md:border-l-0 md:border-r-2 md:border-b-0',
               selectedMarketName === 'Substack' &&
                 'bg-white text-very-dark-blue'
             )}
             onClick={() => {
-              //setSelectedMarketName('Substack')
+              onMarketChanged('Substack')
             }}
           >
             <div>
-              {/*selectedMarketName === 'Substack'
+              {selectedMarketName === 'Substack'
                 ? getMarketSpecificsByMarketName('Substack').getMarketSVGBlack()
                 : getMarketSpecificsByMarketName(
                     'Substack'
-                  ).getMarketSVGWhite()
-                */}
+                  ).getMarketSVGWhite()}
             </div>
-            <p className="text-lg leading-none">{/*Substack*/}</p>
+            <p className="text-lg leading-none">{'Substack'}</p>
           </div>
-          <div
-            className={classNames(
-              'hidden md:flex md:justify-center items-center p-5 space-x-2.5 text-white border-2 border-t-0 md:border-t-2 md:border-l-0 md:border-r-2 md:border-b-0',
-              selectedMarketName === 'Youtube' && 'bg-white text-very-dark-blue'
-            )}
-          ></div>
           <div
             className={classNames(
               'hidden md:flex md:justify-center items-center p-5 space-x-2.5 text-white border-2 border-l-0 border-t-0 md:border-t-2 md:border-l-0 md:border-r-2 md:border-b-0 ',
