@@ -1,11 +1,12 @@
 import { request, gql } from 'graphql-request'
 import BN from 'bn.js'
+import BigNumber from 'bignumber.js'
 
 const DAI_ADDRESS = '0x6b175474e89094c44da98b954eedeac495271d0f'
 const HTTP_GRAPHQL_ENDPOINT =
   'https://subgraph.backend.ideamarket.io:8080/subgraphs/name/graphprotocol/compound-v2'
 
-export async function querySupplyRate(queryKey: string) {
+export async function querySupplyRate(queryKey: string): Promise<number> {
   const result = await request(
     HTTP_GRAPHQL_ENDPOINT,
     getQuerySupplyRate(DAI_ADDRESS)
@@ -14,13 +15,17 @@ export async function querySupplyRate(queryKey: string) {
   return parseFloat(market.supplyRate)
 }
 
-export async function queryExchangeRate(queryKey: string) {
+export async function queryExchangeRate(queryKey: string): Promise<BN> {
   const result = await request(
     HTTP_GRAPHQL_ENDPOINT,
     getQueryExchangeRate(DAI_ADDRESS)
   )
   const market = result.markets[0]
-  return new BN(market.exchangeRate)
+  return new BN(
+    new BigNumber(market.exchangeRate)
+      .multipliedBy(new BigNumber('10').exponentiatedBy(new BigNumber('10')))
+      .toFixed(0)
+  )
 }
 
 function getQuerySupplyRate(address: string) {
