@@ -1,4 +1,5 @@
 import { request, gql } from 'graphql-request'
+import { web3TenPow18 } from '../utils'
 import BN from 'bn.js'
 import BigNumber from 'bignumber.js'
 
@@ -23,9 +24,16 @@ export async function queryExchangeRate(queryKey: string): Promise<BN> {
   const market = result.markets[0]
   return new BN(
     new BigNumber(market.exchangeRate)
-      .multipliedBy(new BigNumber('10').exponentiatedBy(new BigNumber('10')))
+      .multipliedBy(new BigNumber('10').exponentiatedBy(new BigNumber('28')))
       .toFixed(0)
   )
+}
+
+export function investmentTokenToUnderlying(
+  invested: BN,
+  exchangeRate: BN
+): BN {
+  return invested.mul(exchangeRate).div(web3TenPow18)
 }
 
 function getQuerySupplyRate(address: string) {
