@@ -31,6 +31,10 @@ export type IdeaMarket = {
   platformFeeRate: string
   rawPlatformFeeRate: BN
   platformFeeWithdrawer: string
+  platformInterestRedeemed: string
+  rawPlatformInterestRedeemed: BN
+  platformFeeRedeemed: string
+  rawPlatformFeeRedeemed: BN
   nameVerifierAddress: string
 }
 
@@ -55,6 +59,8 @@ export type IdeaToken = {
   rawDaiInToken: BN
   invested: string
   rawInvested: BN
+  tokenInterestRedeemed: string
+  rawTokenInterestRedeemed: BN
   latestPricePoint: IdeaTokenPricePoint
   weekPricePoints: IdeaTokenPricePoint[]
   pricePoints: IdeaTokenPricePoint[]
@@ -360,6 +366,8 @@ function getQueryMarket(marketName: string): string {
       platformFeeRate
       platformFeeWithdrawer
       platformFeeInvested
+      platformFeeRedeemed
+      platformInterestRedeemed
       nameVerifier
     }
   }`
@@ -459,6 +467,8 @@ function getQueryTokensAllMarkets(
           platformFeeRate
           platformFeeWithdrawer
           platformFeeInvested
+          platformFeeRedeemed
+          platformInterestRedeemed
           nameVerifier
         }
         supply
@@ -467,6 +477,7 @@ function getQueryTokensAllMarkets(
         interestWithdrawer
         daiInToken
         invested
+        tokenInterestRedeemed
         listedAt
         lockedAmount
         lockedPercentage
@@ -785,6 +796,16 @@ function apiResponseToIdeaToken(apiResponse, marketApiResponse?): IdeaToken {
     rawInvested: apiResponse.invested
       ? new BN(apiResponse.invested)
       : undefined,
+    tokenInterestRedeemed: apiResponse.tokenInterestRedeemed
+      ? web3BNToFloatString(
+          new BN(apiResponse.tokenInterestRedeemed),
+          tenPow18,
+          2
+        )
+      : undefined,
+    rawTokenInterestRedeemed: apiResponse.tokenInterestRedeemed
+      ? new BN(apiResponse.tokenInterestRedeemed)
+      : undefined,
     latestPricePoint: apiResponse.latestPricePoint,
     weekPricePoints: apiResponse.pricePoints,
     dayChange: apiResponse.dayChange
@@ -853,6 +874,22 @@ function apiResponseToIdeaMarket(apiResponse): IdeaMarket {
       ? new BN(apiResponse.platformFeeRate)
       : undefined,
     platformFeeWithdrawer: apiResponse.platformFeeWithdrawer,
+    platformInterestRedeemed: apiResponse.platformInterestRedeemed
+      ? web3BNToFloatString(
+          new BN(apiResponse.platformInterestRedeemed),
+          tenPow2,
+          2
+        )
+      : undefined,
+    rawPlatformInterestRedeemed: apiResponse.platformInterestRedeemed
+      ? new BN(apiResponse.platformInterestRedeemed)
+      : undefined,
+    platformFeeRedeemed: apiResponse.platformFeeRedeemed
+      ? web3BNToFloatString(new BN(apiResponse.platformFeeRedeemed), tenPow2, 2)
+      : undefined,
+    rawPlatformFeeRedeemed: apiResponse.platformFeeRedeemed
+      ? new BN(apiResponse.platformFeeRedeemed)
+      : undefined,
     nameVerifierAddress: apiResponse.nameVerifier,
   } as IdeaMarket
 
