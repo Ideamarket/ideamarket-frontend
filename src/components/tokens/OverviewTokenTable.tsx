@@ -15,7 +15,11 @@ import {
 } from 'store/ideaMarketsStore'
 import { useState } from 'react'
 import { useQuery } from 'react-query'
-import { querySupplyRate, queryExchangeRate } from 'store/compoundStore'
+import {
+  querySupplyRate,
+  queryExchangeRate,
+  investmentTokenToUnderlying,
+} from 'store/compoundStore'
 import { useIdeaMarketsStore } from 'store/ideaMarketsStore'
 import TokenRow from './OverviewTokenRow'
 import TokenRowSkeleton from './OverviewTokenRowSkeleton'
@@ -250,7 +254,8 @@ export default function Table({
                           {formatNumber(
                             parseFloat(
                               web3BNToFloatString(
-                                market.rawPlatformFeeInvested.mul(
+                                investmentTokenToUnderlying(
+                                  market.rawPlatformFeeInvested,
                                   compoundExchangeRate
                                 ),
                                 bigNumberTenPow18,

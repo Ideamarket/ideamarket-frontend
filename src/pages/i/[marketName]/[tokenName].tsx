@@ -12,7 +12,11 @@ import {
   Footer,
   VerifyModal,
 } from 'components'
-import { querySupplyRate, queryExchangeRate } from 'store/compoundStore'
+import {
+  querySupplyRate,
+  queryExchangeRate,
+  investmentTokenToUnderlying,
+} from 'store/compoundStore'
 import { useWalletStore } from 'store/walletStore'
 import {
   querySingleToken,
@@ -23,6 +27,7 @@ import { getMarketSpecificsByMarketNameInURLRepresentation } from 'store/markets
 import {
   calculateCurrentPriceBN,
   web3BNToFloatString,
+  bigNumberTenPow18,
   addresses,
   NETWORK,
   formatNumber,
@@ -613,10 +618,11 @@ export default function TokenDetails() {
                         <div className="italic mt-2.5">
                           Available interest:{' '}
                           {web3BNToFloatString(
-                            token.rawInvested
-                              .mul(compoundExchangeRate)
-                              .sub(token.rawDaiInToken),
-                            new BigNumber('10').exponentiatedBy('36'),
+                            investmentTokenToUnderlying(
+                              token.rawInvested,
+                              compoundExchangeRate
+                            ).sub(token.rawDaiInToken),
+                            bigNumberTenPow18,
                             2
                           )}{' '}
                           DAI
