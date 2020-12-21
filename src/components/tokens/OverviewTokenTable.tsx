@@ -1,5 +1,10 @@
 import classNames from 'classnames'
-import { useWindowSize } from 'utils'
+import {
+  useWindowSize,
+  formatNumber,
+  bigNumberTenPow18,
+  web3BNToFloatString,
+} from 'utils'
 import {
   IdeaToken,
   IdeaTokenMarketPair,
@@ -10,7 +15,7 @@ import {
 } from 'store/ideaMarketsStore'
 import { useState } from 'react'
 import { useQuery } from 'react-query'
-import { querySupplyRate } from 'store/compoundStore'
+import { querySupplyRate, queryExchangeRate } from 'store/compoundStore'
 import { useIdeaMarketsStore } from 'store/ideaMarketsStore'
 import TokenRow from './OverviewTokenRow'
 import TokenRowSkeleton from './OverviewTokenRowSkeleton'
@@ -61,16 +66,6 @@ const headers: Header[] = [
     value: 'chart',
     sortable: false,
   },
-  {
-    title: '',
-    value: 'trade',
-    sortable: false,
-  },
-  {
-    title: '',
-    value: 'watch',
-    sortable: false,
-  },
 ]
 
 export default function Table({
@@ -98,6 +93,11 @@ export default function Table({
   const [currentHeader, setCurrentHeader] = useState('price')
   const [orderBy, setOrderBy] = useState('supply')
   const [orderDirection, setOrderDirection] = useState('desc')
+
+  const {
+    data: compoundExchangeRate,
+    isLoading: isCompoundExchangeRateLoading,
+  } = useQuery('compound-exchange-rate', queryExchangeRate)
 
   const {
     data: compoundSupplyRate,
@@ -161,7 +161,10 @@ export default function Table({
   )
 
   const isLoading =
-    isMarketLoading || isTokensDataLoading || isCompoundSupplyRateLoading
+    isMarketLoading ||
+    isTokensDataLoading ||
+    isCompoundSupplyRateLoading ||
+    isCompoundExchangeRateLoading
 
   function headerClicked(headerValue: string) {
     setCurrentPage(0)
@@ -238,6 +241,28 @@ export default function Table({
                         {header.title}
                       </th>
                     ))}
+                    <th
+                      colSpan={2}
+                      className="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase bg-gray-50"
+                    >
+                      {!isAllMarkets && !isLoading && (
+                        <div className="text-center">
+                          {formatNumber(
+                            parseFloat(
+                              web3BNToFloatString(
+                                market.rawPlatformFeeInvested.mul(
+                                  compoundExchangeRate
+                                ),
+                                bigNumberTenPow18,
+                                4
+                              )
+                            )
+                          )}
+                          <br />
+                          earned for {market.name}
+                        </div>
+                      )}
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
