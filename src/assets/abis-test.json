@@ -505,6 +505,12 @@
           "internalType": "uint256",
           "name": "marketID",
           "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "daiRedeemed",
+          "type": "uint256"
         }
       ],
       "name": "PlatformFeeRedeemed",
@@ -523,6 +529,12 @@
           "indexed": false,
           "internalType": "uint256",
           "name": "investmentToken",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "daiRedeemed",
           "type": "uint256"
         }
       ],
@@ -543,6 +555,12 @@
           "internalType": "uint256",
           "name": "investmentToken",
           "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "daiRedeemed",
+          "type": "uint256"
         }
       ],
       "name": "TokenInterestRedeemed",
@@ -550,7 +568,14 @@
     },
     {
       "anonymous": false,
-      "inputs": [],
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "daiRedeemed",
+          "type": "uint256"
+        }
+      ],
       "name": "TradingFeeRedeemed",
       "type": "event"
     },
