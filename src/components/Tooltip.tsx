@@ -44,27 +44,31 @@ export default function Tooltip({ children }: { children?: ReactNode }) {
   }
   return (
     <div
-      className="inline-block ml-3"
+      className="inline-block"
       onMouseEnter={handleShowToolTip}
       onMouseLeave={() => setShowToolTip(false)}
     >
-      {ReactDOM.createPortal(
-        <div
-          ref={contentRef}
-          className={classNames(
-            'fixed z-50 pb-5',
-            showToolTip ? 'visible' : 'invisible'
-          )}
-          style={{
-            bottom: toolTipProperties.tooltipBottom,
-            left: toolTipProperties.tooltipLeft,
-          }}
-        >
-          <div className="p-3 mb-1 text-sm bg-gray-300 rounded-lg">
-            {children}
-          </div>
-        </div>,
-        document.body
+      {process.browser ? (
+        ReactDOM.createPortal(
+          <div
+            ref={contentRef}
+            className={classNames(
+              'fixed z-50 pb-5',
+              showToolTip ? 'visible' : 'invisible'
+            )}
+            style={{
+              bottom: toolTipProperties.tooltipBottom,
+              left: toolTipProperties.tooltipLeft,
+            }}
+          >
+            <div className="p-3 mb-1 text-sm bg-gray-300 rounded-lg">
+              {children}
+            </div>
+          </div>,
+          document.body
+        )
+      ) : (
+        <div></div>
       )}
 
       <div className="w-5 h-5" ref={ref}>
