@@ -23,7 +23,7 @@ import { useContractStore } from 'store/contractStore'
 import Select from 'react-select'
 import BigNumber from 'bignumber.js'
 import BN from 'bn.js'
-import Tooltip from 'components/Tooltip'
+import { Tooltip } from '..'
 
 export default function TradeInterface({
   ideaToken,
