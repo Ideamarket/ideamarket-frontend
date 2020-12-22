@@ -135,7 +135,7 @@ export default function Home() {
         <div className="grid grid-cols-2 md:grid-cols-5">
           <div
             className={classNames(
-              'cursor-pointer flex md:justify-center items-center p-5 space-x-2.5 text-white rounded-tl-xlg md:rounded-tr-none border-2 md:border-r-0 md:border-b-0',
+              'cursor-pointer flex md:justify-center items-center p-5 space-x-2.5 text-white rounded-tl-xlg md:rounded-tr-none border-2 md:border-b-0',
               selectedMarketName === 'ALL' && 'bg-white text-very-dark-blue'
             )}
             onClick={() => {
