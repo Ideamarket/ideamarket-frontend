@@ -5,12 +5,12 @@ import Info from '../assets/info.svg'
 
 export default function Tooltip({
   icon,
-  text,
+  children,
   width,
   className,
 }: {
   icon?: ReactNode
-  text?: ReactNode
+  children?: ReactNode
   width?: number
   className?: string
 }) {
@@ -63,7 +63,7 @@ export default function Tooltip({
             left: toolTipProperties.tooltipLeft,
           }}
         >
-          {text}
+          {children}
         </div>,
         document.body
       )}
