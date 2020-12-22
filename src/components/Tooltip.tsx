@@ -1,4 +1,5 @@
 import { ReactNode, useEffect, useState } from 'react'
+import ReactDOM from 'react-dom'
 import classNames from 'classnames'
 import Info from '../assets/info.svg'
 
@@ -46,23 +47,26 @@ export default function Tooltip({
   }
   return (
     <div
-      className={'relative ml-3 inline-block ' + (className || '')}
+      className={'ml-3 inline-block ' + (className || '')}
       onMouseEnter={handleShowToolTip}
       onMouseLeave={() => setShowToolTip(false)}
     >
-      <div
-        className={classNames(
-          'fixed border-solid bg-gray-300 p-2 mb-1 rounded-t-m z-50',
-          showToolTip ? 'visible' : 'invisible'
-        )}
-        style={{
-          bottom: toolTipProperties.tooltipBottom,
-          width: toolTipProperties.tooltipWidth,
-          left: toolTipProperties.tooltipLeft,
-        }}
-      >
-        {text}
-      </div>
+      {ReactDOM.createPortal(
+        <div
+          className={classNames(
+            'fixed border-solid bg-gray-300 p-3 mb-1 rounded-t-m z-50 text-sm',
+            showToolTip ? 'visible' : 'invisible'
+          )}
+          style={{
+            bottom: toolTipProperties.tooltipBottom,
+            width: toolTipProperties.tooltipWidth,
+            left: toolTipProperties.tooltipLeft,
+          }}
+        >
+          {text}
+        </div>,
+        document.body
+      )}
       {icon || (
         <Info
           className="w-5 h-5 cursor-pointer text-brand-gray-4"
