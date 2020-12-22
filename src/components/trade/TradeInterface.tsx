@@ -23,6 +23,7 @@ import { useContractStore } from 'store/contractStore'
 import Select from 'react-select'
 import BigNumber from 'bignumber.js'
 import BN from 'bn.js'
+import Tooltip from 'components/Tooltip'
 
 export default function TradeInterface({
   ideaToken,
@@ -498,6 +499,11 @@ export default function TradeInterface({
         >
           Lock purchased tokens for 1YR
         </label>
+        <Tooltip>
+          Lock tokens to show your long-term confidence in a listing. You will
+          be unable to sell or withdraw locked tokens for the time period
+          specified.
+        </Tooltip>
       </div>
       {showTradeButton && (
         <>
