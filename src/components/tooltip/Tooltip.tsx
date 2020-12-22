@@ -1,7 +1,11 @@
 import { ReactNode, useEffect, useState, useRef } from 'react'
-import ReactDOM from 'react-dom'
+import dynamic from 'next/dynamic'
 import classNames from 'classnames'
-import Info from '../assets/info.svg'
+import Info from '../../assets/info.svg'
+
+const NoSSRTooltipContent = dynamic(() => import('./TooltipContent'), {
+  ssr: false,
+})
 
 export default function Tooltip({
   children,
@@ -54,29 +58,14 @@ export default function Tooltip({
       onMouseEnter={handleShowToolTip}
       onMouseLeave={() => setShowToolTip(false)}
     >
-      {process.browser ? (
-        ReactDOM.createPortal(
-          <div
-            ref={contentRef}
-            className={classNames(
-              'fixed z-50 pb-5',
-              showToolTip ? 'visible' : 'invisible'
-            )}
-            style={{
-              bottom: toolTipProperties.tooltipBottom,
-              left: toolTipProperties.tooltipLeft,
-            }}
-          >
-            <div className="p-3 mb-1 text-sm bg-gray-300 rounded-lg">
-              {children}
-            </div>
-          </div>,
-          document.body
-        )
-      ) : (
-        <div></div>
-      )}
-
+      <NoSSRTooltipContent
+        contentRef={contentRef}
+        show={showToolTip}
+        bottom={toolTipProperties.tooltipBottom}
+        left={toolTipProperties.tooltipLeft}
+      >
+        {children}
+      </NoSSRTooltipContent>
       <div className="w-5 h-5" ref={ref}>
         <Info
           className="w-5 h-5 cursor-pointer text-brand-gray-4"

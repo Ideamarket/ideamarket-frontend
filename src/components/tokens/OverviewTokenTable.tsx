@@ -23,7 +23,7 @@ import {
 import { useIdeaMarketsStore } from 'store/ideaMarketsStore'
 import TokenRow from './OverviewTokenRow'
 import TokenRowSkeleton from './OverviewTokenRowSkeleton'
-import Tooltip from 'components/Tooltip'
+import Tooltip from '../tooltip/Tooltip'
 
 type Header = {
   content: ReactNode | string
