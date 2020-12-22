@@ -4,12 +4,10 @@ import classNames from 'classnames'
 import Info from '../assets/info.svg'
 
 export default function Tooltip({
-  icon,
   children,
   width,
   className,
 }: {
-  icon?: ReactNode
   children?: ReactNode
   width?: number
   className?: string
@@ -46,7 +44,7 @@ export default function Tooltip({
     }
     setToolTipProperties({
       ...toolTipProperties,
-      tooltipBottom: h - rect.y,
+      tooltipBottom: h - rect.y - rect.height,
       tooltipLeft: tooltipLeft,
     })
     setShowToolTip(true)
@@ -60,7 +58,7 @@ export default function Tooltip({
       {ReactDOM.createPortal(
         <div
           className={classNames(
-            'fixed bg-gray-300 p-3 mb-1 rounded-lg z-50 text-sm',
+            'fixed z-50 pb-5',
             showToolTip ? 'visible' : 'invisible'
           )}
           style={{
@@ -69,18 +67,19 @@ export default function Tooltip({
             left: toolTipProperties.tooltipLeft,
           }}
         >
-          {children}
+          <div className="p-3 mb-1 text-sm bg-gray-300 rounded-lg">
+            {children}
+          </div>
         </div>,
         document.body
       )}
-      {icon || (
-        <div className="w-5 h-5" ref={ref}>
-          <Info
-            className="w-5 h-5 cursor-pointer text-brand-gray-4"
-            onClick={handleShowToolTip}
-          />
-        </div>
-      )}
+
+      <div className="w-5 h-5" ref={ref}>
+        <Info
+          className="w-5 h-5 cursor-pointer text-brand-gray-4"
+          onClick={handleShowToolTip}
+        />
+      </div>
     </div>
   )
 }
