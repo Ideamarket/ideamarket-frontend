@@ -499,7 +499,7 @@ export default function TradeInterface({
         >
           Lock purchased tokens for 1YR
         </label>
-        <Tooltip>
+        <Tooltip className="ml-2">
           <div className="w-32 md:w-64">
             Lock tokens to show your long-term confidence in a listing. You will
             be unable to sell or withdraw locked tokens for the time period

@@ -13,7 +13,7 @@ import {
   queryTokens,
   queryTokensAllMarkets,
 } from 'store/ideaMarketsStore'
-import { useState } from 'react'
+import { ReactNode, useState } from 'react'
 import { useQuery } from 'react-query'
 import {
   querySupplyRate,
@@ -23,50 +23,72 @@ import {
 import { useIdeaMarketsStore } from 'store/ideaMarketsStore'
 import TokenRow from './OverviewTokenRow'
 import TokenRowSkeleton from './OverviewTokenRowSkeleton'
+import Tooltip from 'components/Tooltip'
 
 type Header = {
-  title: string
+  content: ReactNode | string
   value: string
   sortable: boolean
 }
 const headers: Header[] = [
   {
-    title: 'Name',
+    content: 'Name',
     value: 'name',
     sortable: true,
   },
   {
-    title: 'Price',
+    content: 'Price',
     value: 'price',
     sortable: true,
   },
   {
-    title: 'Deposits',
+    content: 'Deposits',
     value: 'deposits',
     sortable: true,
   },
   {
-    title: '% Locked',
+    content: '% Locked',
     value: 'locked',
     sortable: true,
   },
   {
-    title: '24H Change',
+    content: '24H Change',
     value: 'change',
     sortable: true,
   },
   {
-    title: '24H Volume',
+    content: '24H Volume',
     value: 'volume',
     sortable: true,
   },
   {
-    title: '1YR Income',
+    content: (
+      <>
+        1YR
+        <br />
+        <div className="flex items-center">
+          Income
+          <Tooltip className="ml-1">
+            <div className="w-32 md:w-64">
+              Estimated annual passive income paid to the listing owner.
+              Calculated by Deposits * Lending APY at{' '}
+              <a
+                href="https://compound.finance"
+                target="_blank"
+                className="underline"
+              >
+                compound.finance
+              </a>
+            </div>
+          </Tooltip>
+        </div>
+      </>
+    ),
     value: 'income',
     sortable: true,
   },
   {
-    title: '7D Chart',
+    content: '7D Chart',
     value: 'chart',
     sortable: false,
   },
@@ -242,7 +264,7 @@ export default function Table({
                             &nbsp;
                           </>
                         )}
-                        {header.title}
+                        {header.content}
                       </th>
                     ))}
                     <th

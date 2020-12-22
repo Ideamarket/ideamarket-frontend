@@ -3,7 +3,13 @@ import ReactDOM from 'react-dom'
 import classNames from 'classnames'
 import Info from '../assets/info.svg'
 
-export default function Tooltip({ children }: { children?: ReactNode }) {
+export default function Tooltip({
+  children,
+  className,
+}: {
+  children?: ReactNode
+  className?: string
+}) {
   const ref = useRef(null)
   const contentRef = useRef(null)
 
@@ -44,7 +50,7 @@ export default function Tooltip({ children }: { children?: ReactNode }) {
   }
   return (
     <div
-      className="inline-block"
+      className={classNames('inline-block', className)}
       onMouseEnter={handleShowToolTip}
       onMouseLeave={() => setShowToolTip(false)}
     >
