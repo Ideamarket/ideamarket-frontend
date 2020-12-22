@@ -3,19 +3,11 @@ import ReactDOM from 'react-dom'
 import classNames from 'classnames'
 import Info from '../assets/info.svg'
 
-export default function Tooltip({
-  children,
-  width,
-  className,
-}: {
-  children?: ReactNode
-  width?: number
-  className?: string
-}) {
+export default function Tooltip({ children }: { children?: ReactNode }) {
   const ref = useRef(null)
+  const contentRef = useRef(null)
 
   const [toolTipProperties, setToolTipProperties] = useState({
-    tooltipWidth: width || 230,
     tooltipBottom: 0,
     tooltipLeft: 0,
   })
@@ -32,7 +24,8 @@ export default function Tooltip({
 
     const w = window.innerWidth
     const h = window.innerHeight
-    const toolTipHalfWidth = toolTipProperties.tooltipWidth / 2
+    const toolTipHalfWidth =
+      contentRef.current.getBoundingClientRect().width / 2
     let tooltipLeft = rect.x - toolTipHalfWidth
     // If tooltip is crossing window width
     if (w < rect.x + toolTipHalfWidth) {
@@ -51,19 +44,19 @@ export default function Tooltip({
   }
   return (
     <div
-      className={'ml-3 inline-block ' + (className || '')}
+      className="inline-block ml-3"
       onMouseEnter={handleShowToolTip}
       onMouseLeave={() => setShowToolTip(false)}
     >
       {ReactDOM.createPortal(
         <div
+          ref={contentRef}
           className={classNames(
             'fixed z-50 pb-5',
             showToolTip ? 'visible' : 'invisible'
           )}
           style={{
             bottom: toolTipProperties.tooltipBottom,
-            width: toolTipProperties.tooltipWidth,
             left: toolTipProperties.tooltipLeft,
           }}
         >
