@@ -79,6 +79,12 @@ export type IdeaTokenMarketPair = {
   balance: string
 }
 
+export type LockedAmount = {
+  rawAmount: BN
+  amount: string
+  lockedUntil: number
+}
+
 type State = {
   watching: { [address: string]: boolean }
 }
@@ -316,6 +322,40 @@ export async function queryTokenChartData(
     latestPricePoint: result.ideaToken.latestPricePoint,
     pricePoints: result.ideaToken.pricePoints,
   } as IdeaToken
+}
+
+export async function queryLockedAmounts(
+  queryKey,
+  tokenAddress: string,
+  ownerAddress: string,
+  skip: number,
+  num: number,
+  orderBy: string,
+  orderDirection: string
+): Promise<LockedAmount[]> {
+  if (!tokenAddress || !ownerAddress) {
+    return []
+  }
+
+  const result = await request(
+    HTTP_GRAPHQL_ENDPOINT,
+    getQueryLockedAmounts(
+      tokenAddress.toLowerCase(),
+      ownerAddress.toLowerCase(),
+      skip,
+      num,
+      orderBy,
+      orderDirection
+    )
+  )
+
+  if (!result || !result.lockedIdeaTokenAmounts) {
+    return []
+  }
+
+  return result.lockedIdeaTokenAmounts.map((locked) =>
+    apiResponseToLockedAmount(locked)
+  )
 }
 
 export function setIsWatching(token: IdeaToken, watching: boolean): void {
@@ -757,6 +797,25 @@ function getQueryTokenChartData(address: string, fromTs: number): string {
   }`
 }
 
+function getQueryLockedAmounts(
+  tokenAddress: string,
+  ownerAddress: string,
+  skip: number,
+  num: number,
+  orderBy: string,
+  orderDirection: string
+) {
+  return gql`
+  {
+    lockedIdeaTokenAmounts(skip:${skip}, first:${num}, orderBy:${orderBy}, orderDirection:${orderDirection}, where:{token:${
+    '"' + tokenAddress + '"'
+  }, owner:${'"' + ownerAddress + '"'}}) {
+      amount
+      lockedUntil
+    }
+  }`
+}
+
 function apiResponseToIdeaToken(apiResponse, marketApiResponse?): IdeaToken {
   let market
   if (apiResponse.market) {
@@ -892,6 +951,18 @@ function apiResponseToIdeaMarket(apiResponse): IdeaMarket {
       : undefined,
     nameVerifierAddress: apiResponse.nameVerifier,
   } as IdeaMarket
+
+  return ret
+}
+
+function apiResponseToLockedAmount(apiResponse): LockedAmount {
+  const ret = {
+    amount: apiResponse.amount
+      ? web3BNToFloatString(new BN(apiResponse.amount), tenPow18, 2)
+      : undefined,
+    rawAmount: apiResponse.amount ? new BN(apiResponse.amount) : undefined,
+    lockedUntil: parseInt(apiResponse.lockedUntil),
+  } as LockedAmount
 
   return ret
 }

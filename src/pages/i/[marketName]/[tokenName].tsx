@@ -11,6 +11,7 @@ import {
   TokenCard,
   Footer,
   VerifyModal,
+  LockedTokenTable,
 } from 'components'
 import {
   querySupplyRate,
@@ -32,7 +33,7 @@ import {
   NETWORK,
   formatNumber,
 } from 'utils'
-import { withdrawInterest } from 'actions'
+import { withdrawInterest, useBalance, useOutputAmount } from 'actions'
 import ArrowLeft from '../../../assets/arrow-left.svg'
 import { DateTime } from 'luxon'
 
@@ -176,6 +177,16 @@ export default function TokenDetails() {
   const { data: token, isLoading: isTokenLoading } = useQuery(
     [`token-${marketName}-${tokenName}`, marketName, tokenName],
     querySingleToken
+  )
+
+  const [isBalanceLoading, balanceBN, balance] = useBalance(token?.address, 18)
+  const [isValueLoading, valueBN, value] = useOutputAmount(
+    token,
+    market,
+    addresses.dai,
+    balance,
+    18,
+    'sell'
   )
 
   const [selectedChartDuration, setSelectedChartDuration] = useState('1W')
@@ -750,10 +761,59 @@ export default function TokenDetails() {
                     }}
                     className="p-2.5 text-base font-medium text-white border-2 rounded-lg border-brand-blue tracking-tightest-2 font-sf-compact-medium bg-brand-blue"
                   >
-                    Connect wallet to Trade
+                    Connect Wallet to Trade
                   </button>
                 </div>
               )}
+            </ContainerWithHeader>
+
+            <ContainerWithHeader header="My Wallet">
+              <div
+                style={{
+                  minHeight: '518px',
+                }}
+              >
+                {isLoading ? (
+                  <div>loading</div>
+                ) : web3 ? (
+                  <div>
+                    <div
+                      className="px-2 mt-2.5 border-gray-400 text-sm text-brand-gray-2"
+                      style={{ borderBottomWidth: '1px' }}
+                    >
+                      Balance
+                    </div>
+                    <div className="px-2 mt-5 text-2xl text-center text-medium">
+                      {!isBalanceLoading && formatNumber(balance)} tokens ={' '}
+                      {!isValueLoading && formatNumber(value)} USD
+                    </div>
+
+                    <div
+                      className="px-2 mt-5 text-sm border-gray-400 text-brand-gray-2"
+                      style={{ borderBottomWidth: '1px' }}
+                    >
+                      Locked
+                    </div>
+                    <LockedTokenTable token={token} owner={connectedAddress} />
+                  </div>
+                ) : (
+                  <div
+                    className="flex items-center justify-center"
+                    style={{
+                      minHeight: '518px',
+                    }}
+                  >
+                    <button
+                      onClick={() => {
+                        setIsWalletModalOpen(true)
+                      }}
+                      className="p-2.5 text-base font-medium text-white border-2 rounded-lg border-brand-blue tracking-tightest-2 font-sf-compact-medium bg-brand-blue"
+                    >
+                      Connect Wallet to View
+                    </button>
+                  </div>
+                )}
+              </div>
             </ContainerWithHeader>
           </div>
         </div>
