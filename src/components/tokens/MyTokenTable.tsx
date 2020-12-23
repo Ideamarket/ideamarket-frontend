@@ -1,5 +1,4 @@
 import classNames from 'classnames'
-import BigNumber from 'bignumber.js'
 import { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
 import {
@@ -9,11 +8,7 @@ import {
 } from 'store/ideaMarketsStore'
 import { querySupplyRate } from 'store/compoundStore'
 import { useWalletStore } from 'store/walletStore'
-import {
-  calculateCurrentPriceBN,
-  web3BNToFloatString,
-  useWindowSize,
-} from 'utils'
+import { useWindowSize } from 'utils'
 import MyTokenRow from './MyTokenRow'
 import MyTokenRowSkeleton from './MyTokenRowSkeleton'
 
