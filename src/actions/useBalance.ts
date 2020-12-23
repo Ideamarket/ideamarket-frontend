@@ -10,20 +10,21 @@ export default function useBalance(address: string, decimals: number) {
   const [balanceBN, setBalanceBN] = useState(undefined)
   const [balance, setBalance] = useState(undefined)
 
+  const web3 = useWalletStore((state) => state.web3)
+
   useEffect(() => {
     let isCancelled = false
 
     function getBalance() {
       return new Promise<BN>((resolve) => {
-        if (!useWalletStore.getState().web3 || !address) {
+        if (!web3 || !address) {
           resolve(new BN('0'))
           return
         }
 
         if (address === addresses.ZERO) {
-          useWalletStore
-            .getState()
-            .web3.eth.getBalance(useWalletStore.getState().address)
+          web3.eth
+            .getBalance(useWalletStore.getState().address)
             .then((value) => {
               resolve(new BN(value))
             })
@@ -63,7 +64,7 @@ export default function useBalance(address: string, decimals: number) {
     return () => {
       isCancelled = true
     }
-  }, [address])
+  }, [address, web3])
 
   return [isLoading, balanceBN, balance]
 }
