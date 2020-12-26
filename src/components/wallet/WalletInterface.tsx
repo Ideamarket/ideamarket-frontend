@@ -97,7 +97,7 @@ export default function WalletInterface({
         >
           <div className="flex flex-row items-center">
             <div className="flex-none">{svg}</div>
-            <div className="flex-none ml-2">{name}</div>
+            <div className="ml-2">{name}</div>
             <div
               className={classNames(
                 connectingWallet !== wallet && 'display: hidden',
