@@ -277,15 +277,6 @@
       "type": "function"
     },
     {
-      "inputs": [
-        { "internalType": "uint256", "name": "amount", "type": "uint256" }
-      ],
-      "name": "donateInterest",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
       "inputs": [],
       "name": "getOwner",
       "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
@@ -338,15 +329,6 @@
       ],
       "name": "redeem",
       "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        { "internalType": "uint256", "name": "amount", "type": "uint256" }
-      ],
-      "name": "redeemDonated",
-      "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
     },
@@ -1079,6 +1061,12 @@
           "internalType": "address",
           "name": "addr",
           "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "lister",
+          "type": "address"
         }
       ],
       "name": "NewToken",
@@ -1157,7 +1145,8 @@
     {
       "inputs": [
         { "internalType": "string", "name": "tokenName", "type": "string" },
-        { "internalType": "uint256", "name": "marketID", "type": "uint256" }
+        { "internalType": "uint256", "name": "marketID", "type": "uint256" },
+        { "internalType": "address", "name": "lister", "type": "address" }
       ],
       "name": "addToken",
       "outputs": [],
