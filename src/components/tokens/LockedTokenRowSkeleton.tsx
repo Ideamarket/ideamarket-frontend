@@ -1,14 +1,20 @@
 export default function LockedTokenRowSkeleton() {
   return (
     <>
-      <tr className="grid grid-cols-3 md:table-row animate animate-pulse">
-        <td className="px-6 py-4 whitespace-nowrap">
-          <p className="w-10 h-4 bg-gray-400 rounded md:hidden"></p>
-          <p className="h-4 mt-1 bg-gray-400 rounded"></p>
+      <tr className="table-row cursor-pointer bg-brand-gray animate animate-pulse bg-brand-gray">
+        <td className="px-6 py-3 whitespace-nowrap">
+          <div className="flex items-center">
+            <div className="w-10 h-auto bg-white rounded">
+              <div className="invisible">123</div>
+            </div>
+          </div>
         </td>
-        <td className="px-6 py-4 whitespace-nowrap">
-          <p className="w-10 h-4 bg-gray-400 rounded md:hidden"></p>
-          <p className="h-4 mt-1 bg-gray-400 rounded"></p>
+        <td className="px-6 py-3 whitespace-nowrap">
+          <div className="flex items-center">
+            <div className="w-10 h-auto invisible bg-white rounded">
+              <div className="invisible">123</div>
+            </div>
+          </div>
         </td>
       </tr>
     </>

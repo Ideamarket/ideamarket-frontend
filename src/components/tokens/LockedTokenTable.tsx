@@ -125,7 +125,7 @@ export default function LockedTokenTable({
                       ).map((a, b) => (
                         <tr
                           key={`${'filler-' + b.toString()}`}
-                          className="hidden h-16 md:table-row"
+                          className="hidden h-12 md:table-row"
                         ></tr>
                       ))}
                     </>
@@ -136,7 +136,7 @@ export default function LockedTokenTable({
           </div>
         </div>
       </div>
-      <div className="flex flex-row items-stretch justify-between px-10 md:justify-center md:flex md:border-b md:space-x-10">
+      <div className="flex flex-row items-stretch justify-between px-10 md:justify-center md:flex md:border-b md:space-x-10 py-4">
         <button
           onClick={() => {
             if (page > 0) setPage(page - 1)
