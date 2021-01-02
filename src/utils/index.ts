@@ -154,6 +154,10 @@ export function formatNumber(number: string | number): string {
   return numeral(Number(number)).format('0.00a')
 }
 
+export function formatNumberInt(number: string | number): string {
+  return numeral(Number(number)).format('0 a')
+}
+
 export function calculateMaxIdeaTokensBuyable(
   daiBN: BN,
   supplyBN: BN,

@@ -32,6 +32,7 @@ import {
   addresses,
   NETWORK,
   formatNumber,
+  formatNumberInt,
 } from 'utils'
 import { withdrawInterest, useBalance, useOutputAmount } from 'actions'
 import ArrowLeft from '../../../assets/arrow-left.svg'
@@ -370,12 +371,12 @@ export default function TokenDetails() {
                   <DetailsOverChartEntry
                     header="Holders"
                     withBorder={false}
-                    contentTitle={token.holders.toString()}
+                    contentTitle={formatNumberInt(token.holders)}
                   >
                     {isLoading ? (
                       <DetailsSkeleton />
                     ) : (
-                      <>{formatNumber(token.holders)}</>
+                      <>{formatNumberInt(token.holders)}</>
                     )}
                   </DetailsOverChartEntry>
                 </div>
@@ -549,12 +550,12 @@ export default function TokenDetails() {
 
                   <DetailsEntry
                     header="Holders"
-                    contentTitle={token.holders.toString()}
+                    contentTitle={formatNumberInt(token.holders)}
                   >
                     {isLoading ? (
                       <DetailsSkeleton />
                     ) : (
-                      <>{formatNumber(token.holders)}</>
+                      <>{formatNumberInt(token.holders)}</>
                     )}
                   </DetailsEntry>
 
