@@ -13,7 +13,7 @@ type Header = {
 
 const headers: Header[] = [
   {
-    title: 'Locked until',
+    title: 'Locked until (UTC)',
     value: 'lockedUntil',
     sortable: true,
   },
@@ -74,7 +74,7 @@ export default function LockedTokenTable({
           <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
             <div className="overflow-hidden border-b border-gray-200 sm:rounded-t-lg">
               <table className="min-w-full divide-y divide-gray-200">
-                <thead className="hidden md:table-header-group">
+                <thead className="table-header-group">
                   <tr>
                     {headers.map((header) => (
                       <th
@@ -125,7 +125,7 @@ export default function LockedTokenTable({
                       ).map((a, b) => (
                         <tr
                           key={`${'filler-' + b.toString()}`}
-                          className="hidden h-12 md:table-row"
+                          className="h-12 table-row"
                         ></tr>
                       ))}
                     </>
