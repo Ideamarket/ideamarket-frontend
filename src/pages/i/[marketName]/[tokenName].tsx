@@ -795,6 +795,11 @@ export default function TokenDetails() {
                       Locked
                     </div>
                     <LockedTokenTable token={token} owner={connectedAddress} />
+                    <div className="flex justify-end mt-4">
+                      <button className="py-1 mr-2 px-1 ml-5 text-sm font-medium bg-white border-2 rounded-lg  tracking-tightest-2 font-sf-compact-medium cursor-default text-brand-gray-2">
+                        Withdraw unlocked
+                      </button>
+                    </div>
                   </div>
                 ) : (
                   <div
