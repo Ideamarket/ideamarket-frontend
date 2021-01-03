@@ -145,7 +145,7 @@ export default function WalletInterface({
   }
 
   return (
-    <div className="lg:min-w-100 lg:min-w-100 relative overflow-hidden">
+    <div className="lg:min-w-100 relative overflow-hidden">
       <div
         className={classNames(
           'absolute w-full transition-all ease-in-out duration-1000 transform',
