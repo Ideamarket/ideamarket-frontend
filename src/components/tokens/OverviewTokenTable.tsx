@@ -145,7 +145,7 @@ export default function Table({
   const filterTokens = selectedCategoryId === 4 ? watchingTokens : undefined
 
   const {
-    data: rowData,
+    data: rowData = [],
     isLoading: isTokensDataLoading,
   }: {
     data: IdeaToken[] | IdeaTokenMarketPair[]

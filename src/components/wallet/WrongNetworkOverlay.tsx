@@ -35,7 +35,7 @@ export default function WrongNetworkOverlay() {
 
   return (
     <div className="absolute top-0 left-0 z-50 w-screen h-screen bg-gray-200">
-      <div className="flex items-center justify-center w-full h-full">
+      <div className="flex items-center justify-center w-full h-full overflow-auto">
         <div className="flex flex-col items-center">
           <img
             className="block w-auto h-32 md:h-64"
