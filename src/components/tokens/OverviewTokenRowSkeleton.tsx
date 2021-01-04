@@ -7,7 +7,7 @@ export default function TokenRowSkeleton({
 }) {
   return (
     <>
-      <tr className="grid grid-cols-3 md:table-row animate animate-pulse">
+      <tr className="grid grid-cols-3 cursor-pointer md:table-row hover:bg-brand-gray max-w-100">
         <td className="col-span-3 px-6 py-4 whitespace-nowrap">
           <div className="flex items-center">
             {showMarketSVG && <div className="w-4 h-4 bg-gray-400"></div>}

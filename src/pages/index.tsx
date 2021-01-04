@@ -235,15 +235,17 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <Table
-            currentPage={tablePage}
-            setCurrentPage={setTablePage}
-            nameSearch={nameSearch}
-            selectedMarketName={selectedMarketName}
-            selectedCategoryId={selectedCategoryId}
-            onOrderByChanged={onOrderByChanged}
-            onTradeClicked={onTradeClicked}
-          />
+          <div key={selectedMarketName}>
+            <Table
+              currentPage={tablePage}
+              setCurrentPage={setTablePage}
+              nameSearch={nameSearch}
+              selectedMarketName={selectedMarketName}
+              selectedCategoryId={selectedCategoryId}
+              onOrderByChanged={onOrderByChanged}
+              onTradeClicked={onTradeClicked}
+            />
+          </div>
         </div>
 
         <Footer />

@@ -13,7 +13,7 @@ import {
   queryTokens,
   queryTokensAllMarkets,
 } from 'store/ideaMarketsStore'
-import { ReactNode, useState } from 'react'
+import { ReactNode, useEffect, useRef, useState } from 'react'
 import { useQuery } from 'react-query'
 import {
   querySupplyRate,
@@ -114,11 +114,13 @@ export default function Table({
   const isAllMarkets = selectedMarketName === 'ALL'
 
   const windowSize = useWindowSize()
-  const TOKENS_PER_PAGE = windowSize.width < 768 ? 4 : 10
+  const TOKENS_PER_PAGE = windowSize.width < 768 ? 4 : 4
 
   const [currentHeader, setCurrentHeader] = useState('price')
   const [orderBy, setOrderBy] = useState('supply')
   const [orderDirection, setOrderDirection] = useState('desc')
+  const [tableData, setTableData] = useState([])
+  const scrollhere = useRef()
 
   const {
     data: compoundExchangeRate,
@@ -143,13 +145,16 @@ export default function Table({
   )
 
   const filterTokens = selectedCategoryId === 4 ? watchingTokens : undefined
-
   const {
-    data: rowData,
+    data: rowData = [],
     isLoading: isTokensDataLoading,
+    isFetching,
+    isPreviousData,
   }: {
     data: IdeaToken[] | IdeaTokenMarketPair[]
     isLoading: boolean
+    isFetching: boolean
+    isPreviousData: boolean
   } = useQuery(
     isAllMarkets
       ? [
@@ -183,8 +188,31 @@ export default function Table({
           nameSearch,
           filterTokens,
         ],
-    (isAllMarkets ? queryTokensAllMarkets : queryTokens) as any
+    (isAllMarkets ? queryTokensAllMarkets : queryTokens) as any,
+    { keepPreviousData: true }
   )
+  useEffect(() => {
+    if (!isPreviousData && rowData && rowData.length > 0) {
+      const allData = [...tableData, ...rowData]
+      // Find unique tokens and set to table
+      setTableData(
+        allData.filter((e, i) =>
+          isAllMarkets
+            ? allData.findIndex(
+                (a) =>
+                  e.market?.marketID === a.market?.marketID &&
+                  e.token?.tokenID === a.token?.tokenID
+              ) === i
+            : allData.findIndex((a) => e.tokenID === a.tokenID) === i
+        )
+      )
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rowData])
+
+  useEffect(() => {
+    setTableData([])
+  }, [selectedMarketName, nameSearch])
 
   const isLoading =
     isMarketLoading ||
@@ -229,6 +257,7 @@ export default function Table({
 
       setOrderDirection('desc')
     }
+    setTableData([])
   }
 
   return (
@@ -294,17 +323,10 @@ export default function Table({
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {isLoading ? (
-                    Array.from(Array(TOKENS_PER_PAGE).keys()).map((token) => (
-                      <TokenRowSkeleton
-                        key={token}
-                        showMarketSVG={isAllMarkets}
-                      />
-                    ))
-                  ) : (
+                  {!isLoading && (
                     <>
                       {isAllMarkets
-                        ? (rowData as IdeaTokenMarketPair[]).map((pair) => (
+                        ? (tableData as IdeaTokenMarketPair[]).map((pair) => (
                             <TokenRow
                               key={
                                 pair.market.marketID + '-' + pair.token.tokenID
@@ -316,7 +338,7 @@ export default function Table({
                               onTradeClicked={onTradeClicked}
                             />
                           ))
-                        : (rowData as IdeaToken[]).map((token) => (
+                        : (tableData as IdeaToken[]).map((token) => (
                             <TokenRow
                               key={market.marketID + '-' + token.tokenID}
                               token={token}
@@ -326,17 +348,28 @@ export default function Table({
                               onTradeClicked={onTradeClicked}
                             />
                           ))}
-
-                      {Array.from(
-                        Array(TOKENS_PER_PAGE - (rowData?.length ?? 0))
-                      ).map((a, b) => (
-                        <tr
-                          key={`${'filler-' + b.toString()}`}
-                          className="hidden h-18 md:table-row"
-                        ></tr>
-                      ))}
+                      {!isFetching &&
+                        Array.from(
+                          Array(
+                            TOKENS_PER_PAGE - (tableData?.length ?? 0) <= 0
+                              ? 0
+                              : TOKENS_PER_PAGE - (tableData?.length ?? 0)
+                          )
+                        ).map((a, b) => (
+                          <tr
+                            key={`${'filler-' + b.toString()}`}
+                            className="hidden h-18 md:table-row"
+                          ></tr>
+                        ))}
                     </>
                   )}
+                  {(isLoading || isFetching) &&
+                    Array.from(Array(TOKENS_PER_PAGE).keys()).map((token) => (
+                      <TokenRowSkeleton
+                        key={token}
+                        showMarketSVG={isAllMarkets}
+                      />
+                    ))}
                 </tbody>
               </table>
             </div>
@@ -344,20 +377,6 @@ export default function Table({
         </div>
       </div>
       <div className="flex flex-row items-stretch justify-between px-10 py-5 md:justify-center md:flex md:border-b md:space-x-10">
-        <button
-          onClick={() => {
-            if (currentPage > 0) setCurrentPage(currentPage - 1)
-          }}
-          className={classNames(
-            'px-4 py-2 text-sm font-medium leading-none cursor-pointer focus:outline-none font-sf-pro-text text-brand-gray-4 tracking-tightest',
-            currentPage <= 0
-              ? 'cursor-not-allowed opacity-50'
-              : 'hover:bg-brand-gray'
-          )}
-          disabled={currentPage <= 0}
-        >
-          &larr; Previous
-        </button>
         <button
           onClick={() => {
             if (rowData && rowData.length === TOKENS_PER_PAGE)

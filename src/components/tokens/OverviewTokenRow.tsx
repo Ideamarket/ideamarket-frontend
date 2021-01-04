@@ -68,7 +68,7 @@ export default function TokenRow({
   return (
     <>
       <tr
-        className="grid grid-cols-3 cursor-pointer md:table-row hover:bg-brand-gray"
+        className="grid grid-cols-3 cursor-pointer md:table-row hover:bg-brand-gray max-w-100"
         onClick={() => {
           router.push(
             `/i/${marketSpecifics.getMarketNameURLRepresentation()}/${marketSpecifics.getTokenNameURLRepresentation(
@@ -77,7 +77,7 @@ export default function TokenRow({
           )
         }}
       >
-        <td className="col-span-3 px-6 py-4 whitespace-nowrap">
+        <td className="col-span-3 px-6 py-4">
           <div className="flex items-center">
             {showMarketSVG && marketSpecifics.getMarketSVGBlack()}
             <div
