@@ -152,7 +152,7 @@ function ChartDurationEntry({
         setChartDurationSeconds(durationSeconds)
       }}
       className={classNames(
-        'ml-2.5 mr-2.5 text-center px-1 text-sm leading-none tracking-tightest whitespace-nowrap border-b-2 focus:outline-none cursor-pointer',
+        'ml-1 mr-1 md:ml-2.5 md:mr-2.5 text-center px-1 text-sm leading-none tracking-tightest whitespace-nowrap border-b-2 focus:outline-none cursor-pointer',
         selectedChartDuration === durationString
           ? 'font-semibold text-brand-gray border-brand-new-blue focus:text-brand-gray-3 focus:border-brand-gray-2'
           : 'font-medium text-brand-gray-2 border-transparent'
@@ -340,7 +340,7 @@ export default function TokenDetails() {
 
   return (
     <div className="min-h-screen bg-brand-gray">
-      <div className="w-screen px-6 pt-12 md:pt-10 pb-5 text-white bg-top-mobile md:bg-top-desktop h-156.5 md:max-h-96">
+      <div className="px-4 md:px-6 pt-12 md:pt-10 pb-5 text-white bg-top-mobile md:bg-top-desktop h-156.5 md:max-h-96">
         <div className="mx-auto max-w-88 md:max-w-304">
           <span className="text-brand-alto font-sf-compact-medium">
             <span
@@ -393,7 +393,7 @@ export default function TokenDetails() {
                   setSelectedChart(CHART.PRICE)
                 }}
                 className={classNames(
-                  'ml-2.5 mr-2.5 text-center px-1 text-sm leading-none tracking-tightest whitespace-nowrap border-b-2 focus:outline-none cursor-pointer',
+                  'ml-1 mr-1 md:ml-2.5 md:mr-2.5 text-center px-1 text-sm leading-none tracking-tightest whitespace-nowrap border-b-2 focus:outline-none cursor-pointer',
                   selectedChart === CHART.PRICE
                     ? 'font-semibold text-brand-gray border-brand-new-blue focus:text-brand-gray-3 focus:border-brand-gray-2'
                     : 'font-medium text-brand-gray-2 border-transparent'
@@ -407,7 +407,7 @@ export default function TokenDetails() {
                   setSelectedChart(CHART.LOCKED)
                 }}
                 className={classNames(
-                  'ml-2.5 mr-2.5 text-center px-1 text-sm leading-none tracking-tightest whitespace-nowrap border-b-2 focus:outline-none cursor-pointer',
+                  'ml-1 mr-1 md:ml-2.5 md:mr-2.5 text-center px-1 text-sm leading-none tracking-tightest whitespace-nowrap border-b-2 focus:outline-none cursor-pointer',
                   selectedChart === CHART.LOCKED
                     ? 'font-semibold text-brand-gray border-brand-new-blue focus:text-brand-gray-3 focus:border-brand-gray-2'
                     : 'font-medium text-brand-gray-2 border-transparent'
@@ -578,7 +578,7 @@ export default function TokenDetails() {
                         setSelectedChart(CHART.PRICE)
                       }}
                       className={classNames(
-                        'ml-2.5 mr-2.5 text-center px-1 text-sm leading-none tracking-tightest whitespace-nowrap border-b-2 focus:outline-none cursor-pointer',
+                        'ml-1 mr-1 md:ml-2.5 md:mr-2.5 text-center px-1 text-sm leading-none tracking-tightest whitespace-nowrap border-b-2 focus:outline-none cursor-pointer',
                         selectedChart === CHART.PRICE
                           ? 'font-semibold text-very-dark-blue border-very-dark-blue focus:text-very-dark-blue-3 focus:border-very-dark-blue-2'
                           : 'font-medium text-brand-gray-2 border-transparent hover:text-gray-700 hover:border-gray-300 focus:text-gray-700 focus:border-gray-300'
@@ -592,7 +592,7 @@ export default function TokenDetails() {
                         setSelectedChart(CHART.LOCKED)
                       }}
                       className={classNames(
-                        'ml-2.5 mr-2.5 text-center px-1 text-sm leading-none tracking-tightest whitespace-nowrap border-b-2 focus:outline-none cursor-pointer',
+                        'ml-1 mr-1 md:ml-2.5 md:mr-2.5 text-center px-1 text-sm leading-none tracking-tightest whitespace-nowrap border-b-2 focus:outline-none cursor-pointer',
                         selectedChart === CHART.LOCKED
                           ? 'font-semibold text-very-dark-blue border-very-dark-blue focus:text-very-dark-blue-3 focus:border-very-dark-blue-2'
                           : 'font-medium text-brand-gray-2 border-transparent hover:text-gray-700 hover:border-gray-300 focus:text-gray-700 focus:border-gray-300'
