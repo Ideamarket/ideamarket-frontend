@@ -19,6 +19,8 @@ module.exports = {
         'very-dark-blue-3': 'hsl(235, 42%, 5%)',
         'brand-green': '#329300',
         'brand-red': '#8f0033',
+        'brand-alto': '#d8d8d8',
+        'brand-new-blue': '#074ef0',
       },
       fontFamily: {
         sans: ['Inter var', ...defaultTheme.fontFamily.sans],

@@ -9,3 +9,7 @@ button:focus, [type='checkbox']:focus, [type='radio']:focus {
   outline: none;
   box-shadow: none;
 }
+
+span svg {
+  display: inline-block;
+}

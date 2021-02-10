@@ -6,9 +6,11 @@ import { useQuery } from 'react-query'
 import BigNumber from 'bignumber.js'
 import { GlobalContext } from 'pages/_app'
 import {
+  TimeXFloatYChartInLine,
   TimeXFloatYChart,
   WatchingStar,
   TradeInterface,
+  ListingOverview,
   TokenCard,
   Footer,
   VerifyModal,
@@ -152,8 +154,8 @@ function ChartDurationEntry({
       className={classNames(
         'ml-2.5 mr-2.5 text-center px-1 text-sm leading-none tracking-tightest whitespace-nowrap border-b-2 focus:outline-none cursor-pointer',
         selectedChartDuration === durationString
-          ? 'font-semibold text-very-dark-blue border-very-dark-blue focus:text-very-dark-blue-3 focus:border-very-dark-blue-2'
-          : 'font-medium text-brand-gray-2 border-transparent hover:text-gray-700 hover:border-gray-300 focus:text-gray-700 focus:border-gray-300'
+          ? 'font-semibold text-brand-gray border-brand-new-blue focus:text-brand-gray-3 focus:border-brand-gray-2'
+          : 'font-medium text-brand-gray-2 border-transparent'
       )}
     >
       {durationString}
@@ -338,12 +340,124 @@ export default function TokenDetails() {
 
   return (
     <div className="min-h-screen bg-brand-gray">
-      <div
-        className="mx-auto"
-        style={{
-          maxWidth: '1500px',
-        }}
-      >
+      <div className="w-screen px-6 pt-12 md:pt-10 pb-5 text-white bg-top-mobile md:bg-top-desktop h-156.5 md:max-h-96">
+        <div className="mx-auto max-w-88 md:max-w-304">
+          <span className="text-brand-alto font-sf-compact-medium">
+            <span
+              className="cursor-pointer text-base font-medium text-brand-gray text-opacity-60 hover:text-brand-gray-2"
+              onClick={() => router.push('/')}
+            >
+              Listings
+            </span>
+            <span>
+              <img
+                className="inline-block w-2 mr-2 ml-2"
+                src="/arrow@3x.png"
+                alt=""
+              />
+            </span>
+            <span className="text-base font-medium text-brand-gray text-opacity-60">
+              {market.name}
+            </span>
+          </span>
+          <div className="flex flex-wrap md:flex-nowrap items-center justify-between">
+            <ListingOverview
+              token={token}
+              market={market}
+              isLoading={isLoading}
+            />
+          </div>
+          <div style={{ minHeight: '80px' }} className="flex flex-col">
+            {isLoading ||
+            isRawPriceChartDataLoading ||
+            isRawLockedChartDataLoading ? (
+              <div
+                className="w-full mx-auto bg-gray-400 rounded animate animate-pulse"
+                style={{
+                  minHeight: '70px',
+                  marginTop: '5px',
+                  marginBottom: '5px',
+                }}
+              ></div>
+            ) : selectedChart === CHART.PRICE ? (
+              <TimeXFloatYChartInLine chartData={priceChartData} />
+            ) : (
+              <TimeXFloatYChartInLine chartData={lockedChartData} />
+            )}
+          </div>
+          <div className="mt-1"></div>
+          <nav className="flex flex-row justify-between">
+            <div>
+              <a
+                onClick={() => {
+                  setSelectedChart(CHART.PRICE)
+                }}
+                className={classNames(
+                  'ml-2.5 mr-2.5 text-center px-1 text-sm leading-none tracking-tightest whitespace-nowrap border-b-2 focus:outline-none cursor-pointer',
+                  selectedChart === CHART.PRICE
+                    ? 'font-semibold text-brand-gray border-brand-new-blue focus:text-brand-gray-3 focus:border-brand-gray-2'
+                    : 'font-medium text-brand-gray-2 border-transparent'
+                )}
+              >
+                Price
+              </a>
+
+              <a
+                onClick={() => {
+                  setSelectedChart(CHART.LOCKED)
+                }}
+                className={classNames(
+                  'ml-2.5 mr-2.5 text-center px-1 text-sm leading-none tracking-tightest whitespace-nowrap border-b-2 focus:outline-none cursor-pointer',
+                  selectedChart === CHART.LOCKED
+                    ? 'font-semibold text-brand-gray border-brand-new-blue focus:text-brand-gray-3 focus:border-brand-gray-2'
+                    : 'font-medium text-brand-gray-2 border-transparent'
+                )}
+              >
+                Locked
+              </a>
+            </div>
+            <div className="pt-0">
+              <ChartDurationEntry
+                durationString="1H"
+                durationSeconds={HOUR_SECONDS}
+                selectedChartDuration={selectedChartDuration}
+                setChartDurationSeconds={setChartDurationSeconds}
+                setSelectedChartDuration={setSelectedChartDuration}
+              />
+              <ChartDurationEntry
+                durationString="1D"
+                durationSeconds={DAY_SECONDS}
+                selectedChartDuration={selectedChartDuration}
+                setChartDurationSeconds={setChartDurationSeconds}
+                setSelectedChartDuration={setSelectedChartDuration}
+              />
+              <ChartDurationEntry
+                durationString="1W"
+                durationSeconds={WEEK_SECONDS}
+                selectedChartDuration={selectedChartDuration}
+                setChartDurationSeconds={setChartDurationSeconds}
+                setSelectedChartDuration={setSelectedChartDuration}
+              />
+              <ChartDurationEntry
+                durationString="1M"
+                durationSeconds={MONTH_SECONDS}
+                selectedChartDuration={selectedChartDuration}
+                setChartDurationSeconds={setChartDurationSeconds}
+                setSelectedChartDuration={setSelectedChartDuration}
+              />
+              <ChartDurationEntry
+                durationString="1Y"
+                durationSeconds={YEAR_SECONDS}
+                selectedChartDuration={selectedChartDuration}
+                setChartDurationSeconds={setChartDurationSeconds}
+                setSelectedChartDuration={setSelectedChartDuration}
+              />
+            </div>
+          </nav>
+        </div>
+      </div>
+
+      <div className="mx-auto max-w-88 md:max-w-304">
         <div className="min-h-screen pb-5 bg-white border-b border-l border-r border-gray-400 rounded-b">
           <div
             className="relative w-full p-5 mx-auto border-gray-400 bg-brand-gray"
