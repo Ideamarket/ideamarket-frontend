@@ -357,7 +357,7 @@ export default function TokenDetails() {
               />
             </span>
             <span className="text-base font-medium text-brand-gray text-opacity-60">
-              {market.name}
+              {market?.name || '..'}
             </span>
           </span>
           <div className="flex flex-wrap md:flex-nowrap items-center justify-between">
