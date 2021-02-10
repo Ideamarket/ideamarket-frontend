@@ -16,6 +16,7 @@ import {
   VerifyModal,
   LockedTokenTable,
   CircleSpinner,
+  WatchingStarButton,
 } from 'components'
 import {
   querySupplyRate,
@@ -457,6 +458,91 @@ export default function TokenDetails() {
         </div>
       </div>
 
+      <div className="px-0 md:px-6 pt-12 md:pt-10 pb-5 text-white transform -translate-y-30 md:-translate-y-28 mx-auto max-w-88 md:max-w-304">
+        <div className="flex flex-col md:flex-row">
+          <div className="flex-1 bg-white mb-5 md:mb-0 md:mr-5 rounded-md p-5">
+            <div className="flex flex-col md:flex-row justify-between">
+              <div>
+                {isLoading ? (
+                  <DetailsSkeleton />
+                ) : (
+                  <>
+                    <div className="inline-block pr-6">
+                      <div className="text-brand-new-dark font-semibold text-sm">
+                        Listed on
+                      </div>
+                      <div className="text-brand-new-dark font-semibold text-base mt-2">
+                        {DateTime.fromSeconds(Number(token.listedAt)).toFormat(
+                          'MMM dd yyyy'
+                        )}
+                      </div>
+                    </div>
+                    <div className="inline-block">
+                      <div className="text-brand-new-dark font-semibold text-sm">
+                        Token Owner
+                      </div>
+                      <div className="text-brand-new-dark font-semibold text-base mt-2">
+                        {addresses.ZERO === token.address
+                          ? 'Not yet set'
+                          : `${token.address.slice(
+                              0,
+                              8
+                            )}...${token.address.slice(-6)}`}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+              <div>
+                {isLoading ? (
+                  <DetailsSkeleton />
+                ) : (
+                  <div className="flex justify-center mt-1 mb-1">
+                    <WatchingStarButton token={token} />
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="flex-1 bg-white rounded-md">
+            {isLoading ? (
+              <div
+                className="w-full mx-auto bg-gray-400 rounded animate animate-pulse"
+                style={{
+                  minHeight: 242,
+                }}
+              ></div>
+            ) : web3 ? (
+              <TradeInterface
+                ideaToken={token}
+                market={market}
+                onTradeSuccessful={() => {}}
+                onValuesChanged={() => {}}
+                resetOn={false}
+                showTypeSelection={true}
+                showTradeButton={true}
+                disabled={false}
+                bgcolor="#f6f6f6"
+              />
+            ) : (
+              <div
+                className="flex items-center justify-center"
+                style={{ minHeight: 242 }}
+              >
+                <button
+                  onClick={() => {
+                    setIsWalletModalOpen(true)
+                  }}
+                  className="p-2.5 text-base font-medium text-white border-2 rounded-lg border-brand-blue tracking-tightest-2 font-sf-compact-medium bg-brand-blue"
+                >
+                  Connect Wallet to Trade
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+      {/* OLD */}
       <div className="mx-auto max-w-88 md:max-w-304">
         <div className="min-h-screen pb-5 bg-white border-b border-l border-r border-gray-400 rounded-b">
           <div

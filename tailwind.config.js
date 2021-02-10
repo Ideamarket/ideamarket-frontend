@@ -13,7 +13,6 @@ module.exports = {
         'brand-gray-2': '#708090',
         'brand-gray-3': '#dc2e9',
         'brand-gray-4': '#435366',
-        // #1a1d3f
         'very-dark-blue': 'hsl(235, 42%, 17%)',
         'very-dark-blue-2': 'hsl(235, 42%, 10%)',
         'very-dark-blue-3': 'hsl(235, 42%, 5%)',
@@ -21,6 +20,7 @@ module.exports = {
         'brand-red': '#8f0033',
         'brand-alto': '#d8d8d8',
         'brand-new-blue': '#074ef0',
+        'brand-new-dark': '#1a1d3f',
       },
       fontFamily: {
         sans: ['Inter var', ...defaultTheme.fontFamily.sans],
