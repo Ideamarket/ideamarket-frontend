@@ -179,7 +179,9 @@ export default function TradeInterface({
       </div>
       <div className="ml-2.5">
         <div>{entry.token.symbol}</div>
-        <div className="text-xs text-brand-gray-2">{entry.token.name}</div>
+        <div className="text-xs text-brand-new-dark font-semibold">
+          {entry.token.name}
+        </div>
       </div>
     </div>
   )
@@ -253,304 +255,304 @@ export default function TradeInterface({
 
   return (
     <>
-      <div
-        className="lg:min-w-100"
-        style={bgcolor ? { backgroundColor: bgcolor } : {}}
-      >
-        {showTypeSelection && (
-          <>
-            <nav className="flex">
-              <a
-                onClick={() => {
-                  if (!txManager.isPending) setTradeType('buy')
-                }}
-                className={classNames(
-                  'ml-5 mr-2.5 text-center flex-grow px-1 py-4 text-base leading-none tracking-tightest whitespace-nowrap border-b-2 focus:outline-none cursor-pointer',
-                  tradeType === 'buy'
-                    ? 'font-semibold text-brand-green border-brand-green focus:text-brand-green focus:border-very-dark-blue-2'
-                    : 'font-medium text-brand-gray-2 border-transparent hover:text-gray-700 hover:border-gray-300 focus:text-gray-700 focus:border-gray-300'
-                )}
-              >
-                Buy
-              </a>
-              <a
-                onClick={() => {
-                  if (!txManager.isPending) setTradeType('sell')
-                }}
-                className={classNames(
-                  'ml-2.5 mr-5 text-center flex-grow px-1 py-4 text-base leading-none tracking-tightest whitespace-nowrap border-b-2 focus:outline-none cursor-pointer',
-                  tradeType === 'sell'
-                    ? 'font-semibold text-brand-red border-brand-red focus:text-brand-red focus:border-brand-red'
-                    : 'font-medium text-brand-gray-2 border-transparent hover:text-gray-700 hover:border-gray-300 focus:text-gray-700 focus:border-gray-300'
-                )}
-              >
-                Sell
-              </a>
-            </nav>
-            <hr className="my-2.5" />
-          </>
-        )}
-        <p className="mx-5 mt-5 text-sm text-brand-gray-2">
-          {tradeType === 'buy' ? 'Pay with' : 'Receive'}
-        </p>
-        <div className="mx-5">
-          <Select
-            isClearable={false}
-            isSearchable={false}
-            isDisabled={txManager.isPending || disabled}
-            onChange={(value) => {
-              setSelectedToken(value.token)
+      {showTypeSelection && (
+        <nav className="flex">
+          <a
+            onClick={() => {
+              if (!txManager.isPending) setTradeType('buy')
             }}
-            options={selectTokensValues}
-            formatOptionLabel={selectTokensFormat}
-            defaultValue={selectTokensValues[0]}
-            theme={(theme) => ({
-              ...theme,
-              borderRadius: 2,
-              colors: {
-                ...theme.colors,
-                primary25: '#f6f6f6', // brand-gray
-                primary: '#0857e0', // brand-blue
-              },
-            })}
-            styles={{
-              valueContainer: (provided) => ({
-                ...provided,
-                minHeight: '50px',
-              }),
-            }}
-          />
-        </div>
-
-        <div className="flex flex-row justify-between mx-5 mt-5">
-          <p className="text-sm text-brand-gray-2">
-            {tradeType === 'buy'
-              ? 'Amount of tokens to buy'
-              : 'Amount of tokens to sell'}
-          </p>
-          <p
             className={classNames(
-              'text-sm',
-              exceedsBalance ? 'text-brand-red font-bold' : 'text-brand-gray-2'
+              'text-base cursor-pointer pb-4 px-3 m-1 font-semibold',
+              tradeType === 'buy'
+                ? 'text-brand-new-dark border-brand-new-dark border-b-2'
+                : 'text-brand-new-dark font-semibold border-transparent'
             )}
           >
-            {tradeType === 'buy'
-              ? ''
-              : 'Available: ' +
-                (isIdeaTokenBalanceLoading ? '...' : ideaTokenBalance)}
-          </p>
-        </div>
-        <div className="flex items-center mx-5">
-          <input
-            className="flex-grow w-full px-4 py-2 leading-tight bg-gray-200 border-2 border-gray-200 rounded appearance-none focus:outline-none focus:bg-white focus:border-brand-blue"
-            type="number"
-            min="0"
-            value={ideaTokenAmount}
-            onChange={(event) => {
-              setIdeaTokenAmount(event.target.value)
+            Buy
+          </a>
+          <a
+            onClick={() => {
+              if (!txManager.isPending) setTradeType('sell')
             }}
-            disabled={txManager.isPending || disabled}
-          />
-          <button
             className={classNames(
-              'w-20 py-1 ml-2 text-sm font-medium bg-white border-2 rounded-lg tracking-tightest-2',
-              txManager.isPending || disabled
-                ? 'border-brand-gray-2 text-brand-gray-2 cursor-default'
-                : 'border-brand-blue text-brand-blue hover:text-white hover:bg-brand-blue'
-            )}
-            disabled={txManager.isPending || disabled}
-            onClick={maxButtonClicked}
-          >
-            Max
-          </button>
-        </div>
-
-        <div className="flex flex-row justify-between mx-5 mt-5">
-          <p className="text-sm text-brand-gray-2">
-            {tradeType === 'buy' ? 'You will pay' : 'You will receive'}
-          </p>
-          <p
-            className={classNames(
-              'text-sm',
-              exceedsBalance ? 'text-brand-red font-bold' : 'text-brand-gray-2'
+              'text-base cursor-pointer pb-4 px-3 m-1 font-semibold',
+              tradeType === 'sell'
+                ? 'text-brand-new-dark border-brand-new-dark border-b-2'
+                : 'text-brand-new-dark font-semibold border-transparent'
             )}
           >
-            {tradeType === 'buy'
-              ? 'Available: ' + (isTokenBalanceLoading ? '...' : tokenBalance)
-              : ''}
+            Sell
+          </a>
+        </nav>
+      )}
+      <div className="mx-auto" style={{ maxWidth: 550 }}>
+        <div style={bgcolor ? { backgroundColor: bgcolor } : {}}>
+          <p className="mx-5 mt-5 mb-2 text-sm text-brand-new-dark font-semibold">
+            {tradeType === 'buy' ? 'Pay with' : 'Receive'}
           </p>
-        </div>
-
-        <div className="mx-5">
-          <input
-            className="w-full px-4 py-2 leading-tight bg-gray-200 border-2 border-gray-200 rounded appearance-none focus:outline-none focus:bg-white focus:border-brand-blue"
-            type="text"
-            disabled={true}
-            value={isTokenAmountLoading ? '...' : tokenAmount}
-          />
-        </div>
-
-        <div className="grid grid-cols-2 mx-5 mt-5 text-xs text-brand-gray-2">
-          <div className="flex items-center">
-            Trading fee:{' '}
-            {market && market.platformFeeRate && market.tradingFeeRate
-              ? (
-                  parseFloat(market.platformFeeRate) +
-                  parseFloat(market.tradingFeeRate)
-                ).toFixed(2)
-              : '-'}
-            %
-          </div>
-          <div>
+          <div className="mx-5">
             <Select
               isClearable={false}
               isSearchable={false}
               isDisabled={txManager.isPending || disabled}
-              onChange={(option: SlippageValue) => {
-                slippage = option.value
+              onChange={(value) => {
+                setSelectedToken(value.token)
               }}
-              options={slippageValues}
-              defaultValue={slippageValues[0]}
+              options={selectTokensValues}
+              formatOptionLabel={selectTokensFormat}
+              defaultValue={selectTokensValues[0]}
               theme={(theme) => ({
                 ...theme,
                 borderRadius: 2,
                 colors: {
                   ...theme.colors,
-                  primary25: '#f6f6f6', // brand-gray
+                  primary25: '#708090', // brand-gray
                   primary: '#0857e0', // brand-blue
                 },
               })}
+              styles={{
+                valueContainer: (provided) => ({
+                  ...provided,
+                  minHeight: '50px',
+                }),
+              }}
             />
           </div>
-        </div>
-      </div>
-      <hr className="mt-5" />
+          <div className="flex flex-row justify-between mx-5 mt-5">
+            <p className="text-sm text-brand-new-dark font-semibold mb-2">
+              {tradeType === 'buy'
+                ? 'Amount of tokens to buy'
+                : 'Amount of tokens to sell'}
+            </p>
+            <p
+              className={classNames(
+                'text-sm  mb-2',
+                exceedsBalance
+                  ? 'text-brand-red font-bold'
+                  : 'text-brand-new-dark font-semibold'
+              )}
+            >
+              {tradeType === 'buy'
+                ? ''
+                : 'Available: ' +
+                  (isIdeaTokenBalanceLoading ? '...' : ideaTokenBalance)}
+            </p>
+          </div>
+          <div className="flex items-center mx-5">
+            <input
+              className="flex-grow w-full px-4 py-2 border-2 border-gray-200 text-brand-gray-2 rounded-md focus:outline-none focus:bg-white focus:border-brand-blue"
+              type="number"
+              min="0"
+              value={ideaTokenAmount}
+              onChange={(event) => {
+                setIdeaTokenAmount(event.target.value)
+              }}
+              disabled={txManager.isPending || disabled}
+            />
+            <button
+              className={classNames(
+                'w-20 py-1 ml-2 text-sm font-medium bg-white border-2 rounded-lg tracking-tightest-2',
+                txManager.isPending || disabled
+                  ? 'border-brand-gray-2 text-brand-new-dark font-semibold cursor-default'
+                  : 'border-brand-blue text-brand-blue hover:text-white hover:bg-brand-blue'
+              )}
+              disabled={txManager.isPending || disabled}
+              onClick={maxButtonClicked}
+            >
+              Max
+            </button>
+          </div>
 
-      <div
-        className={classNames(
-          'flex items-center justify-center mt-5 text-sm',
-          tradeType === 'sell' && 'invisible'
-        )}
-      >
-        <input
-          type="checkbox"
-          id="lockCheckbox"
-          disabled={txManager.isPending || disabled}
-          checked={isLockChecked}
-          onChange={(e) => {
-            setIsLockChecked(e.target.checked)
-          }}
-        />
-        <label
-          htmlFor="lockCheckbox"
+          <div className="flex flex-row justify-between mx-5 mt-5">
+            <p className="text-sm text-brand-new-dark font-semibold mb-2">
+              {tradeType === 'buy' ? 'You will pay' : 'You will receive'}
+            </p>
+            <p
+              className={classNames(
+                'text-sm mb-2',
+                exceedsBalance
+                  ? 'text-brand-red font-bold'
+                  : 'text-brand-new-dark font-semibold'
+              )}
+            >
+              {tradeType === 'buy'
+                ? 'Available: ' + (isTokenBalanceLoading ? '...' : tokenBalance)
+                : ''}
+            </p>
+          </div>
+
+          <div className="mx-5">
+            <input
+              className="w-full px-4 py-2 border-2 border-gray-200 rounded text-brand-gray-2 focus:outline-none focus:bg-white focus:border-brand-blue"
+              type="text"
+              disabled={true}
+              value={isTokenAmountLoading ? '...' : tokenAmount}
+            />
+          </div>
+
+          <div className="grid grid-cols-2 mx-5 mt-5 text-sm text-brand-gray-2 font-semibold">
+            <div className="flex items-center">
+              Trading fee:{' '}
+              {market && market.platformFeeRate && market.tradingFeeRate
+                ? (
+                    parseFloat(market.platformFeeRate) +
+                    parseFloat(market.tradingFeeRate)
+                  ).toFixed(2)
+                : '-'}
+              %
+            </div>
+            <div className="text-base text-brand-gray-2">
+              <Select
+                isClearable={false}
+                isSearchable={false}
+                isDisabled={txManager.isPending || disabled}
+                onChange={(option: SlippageValue) => {
+                  slippage = option.value
+                }}
+                options={slippageValues}
+                defaultValue={slippageValues[0]}
+                theme={(theme) => ({
+                  ...theme,
+                  borderRadius: 2,
+                  colors: {
+                    ...theme.colors,
+                    primary25: '#708090', // brand-gray
+                    primary: '#0857e0', // brand-blue
+                  },
+                })}
+              />
+            </div>
+          </div>
+        </div>
+        <div
           className={classNames(
-            'ml-2',
-            isLockChecked ? 'text-brand-blue font-medium' : 'text-brand-gray-2'
+            'flex items-center mt-5 text-sm mx-5',
+            tradeType === 'sell' && 'invisible'
           )}
         >
-          Lock purchased tokens for 1YR
-        </label>
-        <Tooltip className="ml-2">
-          <div className="w-32 md:w-64">
-            Lock tokens to show your long-term confidence in a listing. You will
-            be unable to sell or withdraw locked tokens for the time period
-            specified.
-            <br />
-            <br />
-            For more information, see{' '}
-            <a
-              href="https://docs.ideamarket.io/user-guide/hiw-buy-and-sell#locking-tokens"
-              target="_blank"
-              className="underline"
-            >
-              locking tokens
-            </a>
-            .
-          </div>
-        </Tooltip>
-      </div>
-      {showTradeButton && (
-        <>
-          <div
+          <input
+            type="checkbox"
+            id="lockCheckbox"
+            disabled={txManager.isPending || disabled}
+            checked={isLockChecked}
+            onChange={(e) => {
+              setIsLockChecked(e.target.checked)
+            }}
+          />
+          <label
+            htmlFor="lockCheckbox"
             className={classNames(
-              'flex items-center justify-center mt-5 text-xs'
+              'ml-2',
+              isLockChecked
+                ? 'text-brand-blue font-medium'
+                : 'text-brand-new-dark font-semibold'
             )}
           >
-            {!exceedsBalance && (
-              <ApproveButton
-                tokenAddress={spendToken}
-                spenderAddress={spender}
-                requiredAllowance={requiredAllowance}
-                unlockPermanent={isUnlockPermanentChecked}
-                txManager={txManager}
-                setIsMissingAllowance={setIsMissingAllowance}
-                isBuy={tradeType === 'buy'}
-                key={approveButtonKey}
-              />
-            )}
-            {(!isMissingAllowance || exceedsBalance) && (
-              <button
-                className={classNames(
-                  'w-40 h-12 text-base font-medium bg-white border-2 rounded-lg tracking-tightest-2 font-sf-compact-medium',
-                  txManager.isPending ||
+            Lock purchased tokens for 1YR
+          </label>
+          <Tooltip className="ml-2">
+            <div className="w-32 md:w-64">
+              Lock tokens to show your long-term confidence in a listing. You
+              will be unable to sell or withdraw locked tokens for the time
+              period specified.
+              <br />
+              <br />
+              For more information, see{' '}
+              <a
+                href="https://docs.ideamarket.io/user-guide/hiw-buy-and-sell#locking-tokens"
+                target="_blank"
+                className="underline"
+              >
+                locking tokens
+              </a>
+              .
+            </div>
+          </Tooltip>
+        </div>
+        <AdvancedOptions
+          disabled={txManager.isPending || disabled}
+          isUnlockOnceChecked={isUnlockOnceChecked}
+          setIsUnlockOnceChecked={setIsUnlockOnceChecked}
+          isUnlockPermanentChecked={isUnlockPermanentChecked}
+          setIsUnlockPermanentChecked={setIsUnlockPermanentChecked}
+        />
+        {showTradeButton && (
+          <>
+            <div
+              className={classNames(
+                'flex items-center justify-center mt-5 text-xs'
+              )}
+            >
+              {!exceedsBalance && (
+                <ApproveButton
+                  tokenAddress={spendToken}
+                  spenderAddress={spender}
+                  requiredAllowance={requiredAllowance}
+                  unlockPermanent={isUnlockPermanentChecked}
+                  txManager={txManager}
+                  setIsMissingAllowance={setIsMissingAllowance}
+                  isBuy={tradeType === 'buy'}
+                  key={approveButtonKey}
+                />
+              )}
+              {(!isMissingAllowance || exceedsBalance) && (
+                <button
+                  className={classNames(
+                    'w-40 h-12 text-base font-medium bg-white border-2 rounded-lg tracking-tightest-2 font-sf-compact-medium',
+                    txManager.isPending ||
+                      exceedsBalance ||
+                      !parseFloat(ideaTokenAmount) ||
+                      parseFloat(ideaTokenAmount) <= 0.0
+                      ? 'border-brand-gray-2 text-brand-new-dark font-semibold cursor-default'
+                      : tradeType === 'buy'
+                      ? 'border-brand-green text-brand-green hover:bg-brand-green hover:text-white'
+                      : 'border-brand-red text-brand-red hover:bg-brand-red hover:text-white'
+                  )}
+                  disabled={
+                    txManager.isPending ||
                     exceedsBalance ||
                     !parseFloat(ideaTokenAmount) ||
                     parseFloat(ideaTokenAmount) <= 0.0
-                    ? 'border-brand-gray-2 text-brand-gray-2 cursor-default'
-                    : tradeType === 'buy'
-                    ? 'border-brand-green text-brand-green hover:bg-brand-green hover:text-white'
-                    : 'border-brand-red text-brand-red hover:bg-brand-red hover:text-white'
-                )}
-                disabled={
-                  txManager.isPending ||
-                  exceedsBalance ||
-                  !parseFloat(ideaTokenAmount) ||
-                  parseFloat(ideaTokenAmount) <= 0.0
-                }
-                onClick={onTradeClicked}
-              >
-                {tradeType === 'buy' ? 'Buy' : 'Sell'}
-              </button>
-            )}
-          </div>
+                  }
+                  onClick={onTradeClicked}
+                >
+                  {tradeType === 'buy' ? 'Buy' : 'Sell'}
+                </button>
+              )}
+            </div>
 
-          <AdvancedOptions
-            disabled={txManager.isPending || disabled}
-            isUnlockOnceChecked={isUnlockOnceChecked}
-            setIsUnlockOnceChecked={setIsUnlockOnceChecked}
-            isUnlockPermanentChecked={isUnlockPermanentChecked}
-            setIsUnlockPermanentChecked={setIsUnlockPermanentChecked}
-          />
-
-          <div
-            className={classNames(
-              'grid grid-cols-3 my-5 text-sm text-brand-gray-2',
-              txManager.isPending ? '' : 'invisible'
-            )}
-          >
-            <div className="font-bold justify-self-center">
-              {txManager.name}
+            <div
+              className={classNames(
+                'grid grid-cols-3 my-5 text-sm text-brand-new-dark font-semibold',
+                txManager.isPending ? '' : 'invisible'
+              )}
+            >
+              <div className="font-bold justify-self-center">
+                {txManager.name}
+              </div>
+              <div className="justify-self-center">
+                <a
+                  className={classNames(
+                    'underline',
+                    txManager.hash === '' ? 'hidden' : ''
+                  )}
+                  href={`https://${
+                    NETWORK === 'rinkeby' || NETWORK === 'test'
+                      ? 'rinkeby.'
+                      : ''
+                  }etherscan.io/tx/${txManager.hash}`}
+                  target="_blank"
+                >
+                  {txManager.hash.slice(0, 8)}...{txManager.hash.slice(-6)}
+                </a>
+              </div>
+              <div className="justify-self-center">
+                <CircleSpinner color="#0857e0" bgcolor={bgcolor} />
+              </div>
             </div>
-            <div className="justify-self-center">
-              <a
-                className={classNames(
-                  'underline',
-                  txManager.hash === '' ? 'hidden' : ''
-                )}
-                href={`https://${
-                  NETWORK === 'rinkeby' || NETWORK === 'test' ? 'rinkeby.' : ''
-                }etherscan.io/tx/${txManager.hash}`}
-                target="_blank"
-              >
-                {txManager.hash.slice(0, 8)}...{txManager.hash.slice(-6)}
-              </a>
-            </div>
-            <div className="justify-self-center">
-              <CircleSpinner color="#0857e0" bgcolor={bgcolor} />
-            </div>
-          </div>
-        </>
-      )}
+          </>
+        )}
+      </div>
     </>
   )
 }

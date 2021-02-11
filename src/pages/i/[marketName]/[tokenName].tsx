@@ -681,19 +681,17 @@ export default function TokenDetails() {
             {isLoading ? (
               <div className="h-full p-18 md:p-0">loading</div>
             ) : (
-              <div className="mx-auto" style={{ maxWidth: 550 }}>
-                <TradeInterface
-                  ideaToken={token}
-                  market={market}
-                  onTradeSuccessful={() => {}}
-                  onValuesChanged={() => {}}
-                  resetOn={false}
-                  showTypeSelection={true}
-                  showTradeButton={true}
-                  disabled={false}
-                  bgcolor="#ffffff"
-                />
-              </div>
+              <TradeInterface
+                ideaToken={token}
+                market={market}
+                onTradeSuccessful={() => {}}
+                onValuesChanged={() => {}}
+                resetOn={false}
+                showTypeSelection={true}
+                showTradeButton={true}
+                disabled={false}
+                bgcolor="#ffffff"
+              />
             )}
           </div>
         )}
