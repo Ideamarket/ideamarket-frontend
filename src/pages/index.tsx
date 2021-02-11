@@ -104,13 +104,17 @@ export default function Home() {
     <div className="overflow-x-hidden bg-brand-gray">
       <div className="w-screen px-6 pt-12 md:pt-10 pb-5 text-center text-white bg-top-mobile md:bg-top-desktop h-156.5 md:h-140">
         <div>
-          <div className="flex items-center justify-center space-x-5">
+          <div className="flex items-center justify-center space-x-12">
             <div className="w-20 md:w-36">
               <p className="text-xs text-gray-600">as seen in</p>
               <img src="/coindesk.png" alt="" />
             </div>
             <div className="w-20 md:w-36">
               <img src="/ethereum.png" alt="" />
+            </div>
+            <div className="w-20 md:w-36">
+              <p className="text-xs text-gray-600">auditted by</p>
+              <img src="/qs.png" alt="" />
             </div>
           </div>
           <h2 className="mt-8 md:mt-18 text-3xl md:text-6+xl font-gilroy-bold">
@@ -172,32 +176,14 @@ export default function Home() {
           </div>
           <div
             className={classNames(
-              'flex md:justify-center cursor-pointer items-center p-5 space-x-2.5 text-white border-2 border-t-0 md:border-t-2 md:border-l-0 md:border-r-2 md:border-b-0',
-              selectedMarketName === 'Mirror' && 'bg-white text-very-dark-blue'
+              'flex md:justify-center items-center p-5 space-x-2.5 text-white border-2 border-t-0 md:border-t-2 md:border-l-0 md:border-r-2 md:border-b-0'
             )}
-            onClick={() => {
-              onMarketChanged('Mirror')
-            }}
-          >
-            <div>
-              {selectedMarketName === 'Mirror'
-                ? getMarketSpecificsByMarketName('Mirror').getMarketSVGBlack()
-                : getMarketSpecificsByMarketName('Mirror').getMarketSVGWhite()}
-            </div>
-            <p className="text-lg leading-none">{'Mirror'}</p>
-          </div>
+          ></div>
           <div
             className={classNames(
               'flex md:justify-center items-center p-5 space-x-2.5 text-white border-2 border-l-0 border-t-0 md:border-t-2 md:border-l-0 md:border-r-2 md:border-b-0 '
             )}
-          >
-            <div>
-              {selectedMarketName === 'Youtube'
-                ? getMarketSpecificsByMarketName('Youtube').getMarketSVGBlack()
-                : getMarketSpecificsByMarketName('Youtube').getMarketSVGWhite()}
-            </div>
-            <p className="text-lg leading-none">{'Youtube (2/21)'}</p>
-          </div>
+          ></div>
           <div className="hidden md:flex md:justify-center items-center p-5 space-x-2.5 text-white border-l-2 md:border-t-2 md:border-l-0 md:border-r-2 md:border-b-0 md:rounded-tr-xlg"></div>
           <div className="border-r-2 md:hidden"></div>
         </div>
