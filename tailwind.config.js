@@ -21,6 +21,7 @@ module.exports = {
         'brand-alto': '#d8d8d8',
         'brand-new-blue': '#074ef0',
         'brand-new-dark': '#1a1d3f',
+        'brand-border-gray': '#dce2e9',
       },
       fontFamily: {
         sans: ['Inter var', ...defaultTheme.fontFamily.sans],

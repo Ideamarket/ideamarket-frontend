@@ -17,6 +17,7 @@ import {
   LockedTokenTable,
   CircleSpinner,
   WatchingStarButton,
+  LockedTokenRowsTable,
 } from 'components'
 import {
   querySupplyRate,
@@ -460,7 +461,7 @@ export default function TokenDetails() {
 
       <div className="px-2 pt-12 md:pt-10 pb-5 text-white transform -translate-y-30 md:-translate-y-28 mx-auto max-w-88 md:max-w-304">
         <div className="flex flex-col md:flex-row">
-          <div className="flex-1 bg-white mb-5 md:mb-0 md:mr-5 rounded-md p-5">
+          <div className="flex-1 bg-white mb-5 md:mr-5 rounded-md p-5 border border-brand-border-gray">
             <div className="flex flex-col md:flex-row justify-between">
               <div>
                 {isLoading ? (
@@ -503,56 +504,158 @@ export default function TokenDetails() {
                 )}
               </div>
             </div>
-            <div className="mt-5 md:mt-8 font-medium text-brand-gray-2">
-              <div className="text-sm mb-3">Token Owner Options</div>
-              <div className="text-xs">
-                The owner of this token is not yet listed. If this token
-                represents your account you can get listed as owner of this
-                token by verifying access to the account. After successful
-                verification you will be able to withdraw the accumulated
-                interest.
-              </div>
+            <div className="text-sm font-semibold mb-3 mt-5 md:mt-8 text-brand-gray-2">
+              Token Owner Options
             </div>
-            <div className="mt-3 md-2 md:mb-5 text-sm text-brand-blue">
-              {marketSpecifics.isVerificationEnabled() ? (
-                <div
-                  className="font-medium cursor-pointer"
-                  onClick={() => {
-                    setIsVerifyModalOpen(true)
-                  }}
-                >
-                  Verify Ownership
-                </div>
-              ) : (
-                <div className="font-semibold">
-                  Verification not yet enabled
-                </div>
-              )}
-            </div>
-          </div>
-          <div className="flex-1 bg-white rounded-md">
             {isLoading ? (
-              <div>loading</div>
+              <>
+                <div className="w-full mx-auto bg-gray-400 rounded animate animate-pulse">
+                  <div className="invisible">
+                    A<br />A
+                  </div>
+                </div>
+                <div className="flex justify-center ">
+                  <div className="w-20 py-1 mt-1 text-sm font-medium bg-gray-400 border-2 border-gray-400 rounded animate animate-pulse tracking-tightest-2 font-sf-compact-medium">
+                    <span className="invisible">A</span>
+                  </div>
+                </div>
+              </>
+            ) : token.tokenOwner === addresses.ZERO ? (
+              <>
+                <div className="font-medium text-brand-gray-2">
+                  <div className="text-xs">
+                    The owner of this token is not yet listed. If this token
+                    represents your account you can get listed as owner of this
+                    token by verifying access to the account. After successful
+                    verification you will be able to withdraw the accumulated
+                    interest.
+                  </div>
+                </div>
+                <div className="mt-3 mb-2 md:mb-5 text-sm text-brand-blue">
+                  {marketSpecifics.isVerificationEnabled() ? (
+                    <div
+                      className="font-semibold cursor-pointer"
+                      onClick={() => {
+                        setIsVerifyModalOpen(true)
+                      }}
+                    >
+                      Verify Ownership
+                    </div>
+                  ) : (
+                    <div className="font-semibold">
+                      Verification not yet enabled
+                    </div>
+                  )}
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="md:mt-8 font-medium text-brand-gray-2">
+                  <div className="text-xs">
+                    {!web3 ||
+                    connectedAddress.toLowerCase() !==
+                      token.tokenOwner.toLowerCase()
+                      ? `The owner of this token is listed as ${token.tokenOwner.slice(
+                          0,
+                          8
+                        )}...${token.tokenOwner.slice(
+                          -6
+                        )}. This address does not match the wallet you have connected. If you are the owner of this token please connect the correct wallet to be able to withdraw interest.`
+                      : 'Your connected wallet is listed as owner of this token. You are able to withdraw the accumulated interest below.'}
+                  </div>
+                </div>
+                <div className="mt-2.5 text-sm text-brand-blue">
+                  Available interest:{' '}
+                  {web3BNToFloatString(
+                    investmentTokenToUnderlying(
+                      token.rawInvested,
+                      compoundExchangeRate
+                    ).sub(token.rawDaiInToken),
+                    bigNumberTenPow18,
+                    2
+                  )}{' '}
+                  DAI
+                </div>
+                <div className="flex mt-3 mb-2 md:mb-5 text-sm text-brand-blue">
+                  <button
+                    disabled={
+                      !web3 ||
+                      txManager.isPending ||
+                      connectedAddress.toLowerCase() !==
+                        token.tokenOwner.toLowerCase()
+                    }
+                    className={classNames(
+                      'font-semibold text-sm text-brand-blue',
+                      !web3 ||
+                        txManager.isPending ||
+                        connectedAddress.toLowerCase() !==
+                          token.tokenOwner.toLowerCase()
+                        ? 'cursor-default'
+                        : 'cursor-pointer'
+                    )}
+                    onClick={onWithdrawClicked}
+                  >
+                    Withdraw
+                  </button>
+                </div>
+                <div
+                  className={classNames(
+                    'grid grid-cols-3 mt-2 text-sm text-brand-gray-2',
+                    txManager.isPending ? '' : 'invisible'
+                  )}
+                >
+                  <div className="font-bold justify-self-center">
+                    {txManager.name}
+                  </div>
+                  <div className="justify-self-center">
+                    <a
+                      className={classNames(
+                        'underline',
+                        txManager.hash === '' ? 'hidden' : ''
+                      )}
+                      href={`https://${
+                        NETWORK === 'rinkeby' || NETWORK === 'test'
+                          ? 'rinkeby.'
+                          : ''
+                      }etherscan.io/tx/${txManager.hash}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {txManager.hash.slice(0, 8)}...
+                      {txManager.hash.slice(-6)}
+                    </a>
+                  </div>
+                  <div className="justify-self-center">
+                    <CircleSpinner color="#0857e0" bgcolor="#f6f6f6" />
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+          <div className="flex-1 bg-white mb-5 rounded-md p-5 border border-brand-border-gray">
+            {isLoading ? (
+              <div className="h-full p-18 md:p-0">loading</div>
             ) : web3 ? (
               <div>
-                <div
-                  className="px-2 mt-2.5 border-gray-400 text-sm text-brand-gray-2"
-                  style={{ borderBottomWidth: '1px' }}
-                >
+                <div className="font-semibold text-base text-brand-new-dark">
+                  My Wallet
+                </div>
+                <div className="font-semibold text-sm text-brand-new-dark mt-3">
                   Balance
                 </div>
-                <div className="px-2 mt-5 text-2xl text-center text-medium">
-                  {!isBalanceLoading && formatNumber(balance)} tokens ={' '}
-                  {!isValueLoading && formatNumber(value)} USD
-                </div>
 
-                <div
-                  className="px-2 mt-5 text-sm border-gray-400 text-brand-gray-2"
-                  style={{ borderBottomWidth: '1px' }}
-                >
+                <div className="flex font-semibold text-center text-brand-new-dark text-2xl mt-2">
+                  <span className="flex-1 text-left md:text-right mr-5">
+                    {!isBalanceLoading && formatNumber(balance)} tokens
+                  </span>
+                  <span className="font-normal flex-1 text-left text-brand-gray-2">
+                    {!isValueLoading && formatNumber(value)} USD
+                  </span>
+                </div>
+                <div className="font-semibold text-sm text-brand-new-dark mt-3 mb-2">
                   Locked
                 </div>
-                <LockedTokenTable token={token} owner={connectedAddress} />
+                <LockedTokenRowsTable token={token} owner={connectedAddress} />
                 <div className="flex justify-end mt-4">
                   <button className="px-1 py-1 ml-5 mr-2 text-sm font-medium bg-white border-2 rounded-lg cursor-default tracking-tightest-2 font-sf-compact-medium text-brand-gray-2">
                     Withdraw unlocked
@@ -573,461 +676,12 @@ export default function TokenDetails() {
             )}
           </div>
         </div>
-      </div>
-      {/* OLD */}
-      <div className="mx-auto max-w-88 md:max-w-304">
-        <div className="min-h-screen pb-5 bg-white border-b border-l border-r border-gray-400 rounded-b">
-          <div
-            className="relative w-full p-5 mx-auto border-gray-400 bg-brand-gray"
-            style={{ borderBottomWidth: '1px' }}
-          >
-            <div className="flex justify-center">
-              <div className="w-80">
-                <TokenCard
-                  token={token}
-                  market={market}
-                  enabled={false}
-                  classes={'bg-white'}
-                  isLoading={isLoading}
-                />
-              </div>
-            </div>
-            <div className="absolute top-0 left-0 flex items-center">
-              <ArrowLeft
-                className="cursor-pointer"
-                onClick={() => {
-                  router.push('/')
-                }}
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 gap-5 mx-5 mt-5 text-black md:grid-cols-2">
-            <ContainerWithHeader header="Chart" customClasses="md:col-span-2">
-              <>
-                <div
-                  className="grid grid-cols-4 p-1 mb-1"
-                  style={{
-                    backgroundColor: '#fafafa',
-                    borderBottom: '1px solid #cbd5e0',
-                  }}
-                >
-                  <DetailsOverChartEntry
-                    header="Price"
-                    withBorder={true}
-                    contentTitle={'$' + tokenPrice}
-                  >
-                    {isLoading ? (
-                      <DetailsSkeleton />
-                    ) : (
-                      <>{'$' + formatNumber(tokenPrice)}</>
-                    )}
-                  </DetailsOverChartEntry>
-
-                  <DetailsOverChartEntry
-                    header="Deposits"
-                    withBorder={true}
-                    contentTitle={'$' + token.daiInToken}
-                  >
-                    {isLoading ? (
-                      <DetailsSkeleton />
-                    ) : parseFloat(token.daiInToken) <= 0.0 ? (
-                      <>&mdash;</>
-                    ) : (
-                      <>{`$${formatNumber(token.daiInToken)}`}</>
-                    )}
-                  </DetailsOverChartEntry>
-
-                  <DetailsOverChartEntry
-                    header="Supply"
-                    withBorder={true}
-                    contentTitle={'$' + token.supply}
-                  >
-                    {isLoading ? (
-                      <DetailsSkeleton />
-                    ) : parseFloat(token.supply) <= 0.0 ? (
-                      <>&mdash;</>
-                    ) : (
-                      <>{`${formatNumber(token.supply)}`}</>
-                    )}
-                  </DetailsOverChartEntry>
-
-                  <DetailsOverChartEntry
-                    header="Holders"
-                    withBorder={false}
-                    contentTitle={formatNumberInt(token.holders)}
-                  >
-                    {isLoading ? (
-                      <DetailsSkeleton />
-                    ) : (
-                      <>{formatNumberInt(token.holders)}</>
-                    )}
-                  </DetailsOverChartEntry>
-                </div>
-                <div style={{ minHeight: '200px' }} className="flex flex-col">
-                  {isLoading ||
-                  isRawPriceChartDataLoading ||
-                  isRawLockedChartDataLoading ? (
-                    <div
-                      className="w-full mx-auto bg-gray-400 rounded animate animate-pulse"
-                      style={{
-                        minHeight: '190px',
-                        marginTop: '5px',
-                        marginBottom: '5px',
-                      }}
-                    ></div>
-                  ) : selectedChart === CHART.PRICE ? (
-                    <TimeXFloatYChart chartData={priceChartData} />
-                  ) : (
-                    <TimeXFloatYChart chartData={lockedChartData} />
-                  )}
-                </div>
-                <div
-                  className="mt-1"
-                  style={{ borderBottom: '1px solid #cbd5e0' }}
-                ></div>
-                <nav
-                  className="flex flex-col md:flex-row items-begin md:justify-between py-1.5 bg-gray-50"
-                  style={{ backgroundColor: '#fafafa' }}
-                >
-                  <div>
-                    <a
-                      onClick={() => {
-                        setSelectedChart(CHART.PRICE)
-                      }}
-                      className={classNames(
-                        'ml-1 mr-1 md:ml-2.5 md:mr-2.5 text-center px-1 text-sm leading-none tracking-tightest whitespace-nowrap border-b-2 focus:outline-none cursor-pointer',
-                        selectedChart === CHART.PRICE
-                          ? 'font-semibold text-very-dark-blue border-very-dark-blue focus:text-very-dark-blue-3 focus:border-very-dark-blue-2'
-                          : 'font-medium text-brand-gray-2 border-transparent hover:text-gray-700 hover:border-gray-300 focus:text-gray-700 focus:border-gray-300'
-                      )}
-                    >
-                      Price
-                    </a>
-
-                    <a
-                      onClick={() => {
-                        setSelectedChart(CHART.LOCKED)
-                      }}
-                      className={classNames(
-                        'ml-1 mr-1 md:ml-2.5 md:mr-2.5 text-center px-1 text-sm leading-none tracking-tightest whitespace-nowrap border-b-2 focus:outline-none cursor-pointer',
-                        selectedChart === CHART.LOCKED
-                          ? 'font-semibold text-very-dark-blue border-very-dark-blue focus:text-very-dark-blue-3 focus:border-very-dark-blue-2'
-                          : 'font-medium text-brand-gray-2 border-transparent hover:text-gray-700 hover:border-gray-300 focus:text-gray-700 focus:border-gray-300'
-                      )}
-                    >
-                      Locked
-                    </a>
-                  </div>
-                  <div className="pt-2 md:pt-0">
-                    <ChartDurationEntry
-                      durationString="1H"
-                      durationSeconds={HOUR_SECONDS}
-                      selectedChartDuration={selectedChartDuration}
-                      setChartDurationSeconds={setChartDurationSeconds}
-                      setSelectedChartDuration={setSelectedChartDuration}
-                    />
-                    <ChartDurationEntry
-                      durationString="1D"
-                      durationSeconds={DAY_SECONDS}
-                      selectedChartDuration={selectedChartDuration}
-                      setChartDurationSeconds={setChartDurationSeconds}
-                      setSelectedChartDuration={setSelectedChartDuration}
-                    />
-                    <ChartDurationEntry
-                      durationString="1W"
-                      durationSeconds={WEEK_SECONDS}
-                      selectedChartDuration={selectedChartDuration}
-                      setChartDurationSeconds={setChartDurationSeconds}
-                      setSelectedChartDuration={setSelectedChartDuration}
-                    />
-                    <ChartDurationEntry
-                      durationString="1M"
-                      durationSeconds={MONTH_SECONDS}
-                      selectedChartDuration={selectedChartDuration}
-                      setChartDurationSeconds={setChartDurationSeconds}
-                      setSelectedChartDuration={setSelectedChartDuration}
-                    />
-                    <ChartDurationEntry
-                      durationString="1Y"
-                      durationSeconds={YEAR_SECONDS}
-                      selectedChartDuration={selectedChartDuration}
-                      setChartDurationSeconds={setChartDurationSeconds}
-                      setSelectedChartDuration={setSelectedChartDuration}
-                    />
-                  </div>
-                </nav>
-              </>
-            </ContainerWithHeader>
-
-            <ContainerWithHeader header="Details">
-              <div className="flex flex-col h-full pb-2">
-                <div
-                  className="grid w-full grid-cols-2 p-5 border-gray-400 md:grid-cols-3 gap-7"
-                  style={{ borderBottomWidth: '1px' }}
-                >
-                  <DetailsEntry header="Price" contentTitle={'$' + tokenPrice}>
-                    {isLoading ? (
-                      <DetailsSkeleton />
-                    ) : (
-                      <>{'$' + formatNumber(tokenPrice)}</>
-                    )}
-                  </DetailsEntry>
-                  <DetailsEntry
-                    header="Deposits"
-                    contentTitle={'$' + token.daiInToken}
-                  >
-                    {isLoading ? (
-                      <DetailsSkeleton />
-                    ) : parseFloat(token.daiInToken) <= 0.0 ? (
-                      <>&mdash;</>
-                    ) : (
-                      <>{`$${formatNumber(token.daiInToken)}`}</>
-                    )}
-                  </DetailsEntry>
-
-                  <DetailsEntry header="Supply" contentTitle={token.supply}>
-                    {isLoading ? (
-                      <DetailsSkeleton />
-                    ) : parseFloat(token.supply) <= 0.0 ? (
-                      <>&mdash;</>
-                    ) : (
-                      <>{`${formatNumber(token.supply)}`}</>
-                    )}
-                  </DetailsEntry>
-
-                  <DetailsEntry
-                    header="24H Change"
-                    contentTitle={token.dayChange + '%'}
-                  >
-                    {isLoading ? (
-                      <DetailsSkeleton />
-                    ) : (
-                      <div
-                        className={
-                          parseFloat(token.dayChange) >= 0.0
-                            ? 'text-brand-green'
-                            : 'text-brand-red'
-                        }
-                      >
-                        {formatNumber(token.dayChange)}%
-                      </div>
-                    )}
-                  </DetailsEntry>
-
-                  <DetailsEntry
-                    header="24H Volume"
-                    contentTitle={'$' + token.dayVolume}
-                  >
-                    {isLoading ? (
-                      <DetailsSkeleton />
-                    ) : (
-                      <>{`$${formatNumber(token.dayVolume)}`}</>
-                    )}
-                  </DetailsEntry>
-
-                  <DetailsEntry
-                    header="1YR Income"
-                    contentTitle={
-                      '$' +
-                      (
-                        parseFloat(token.daiInToken) * compoundSupplyRate
-                      ).toFixed(2)
-                    }
-                  >
-                    {isLoading ? (
-                      <DetailsSkeleton />
-                    ) : (
-                      <>{`$${formatNumber(
-                        (
-                          parseFloat(token.daiInToken) * compoundSupplyRate
-                        ).toFixed(2)
-                      )}`}</>
-                    )}
-                  </DetailsEntry>
-
-                  <DetailsEntry header={'Listed at'}>
-                    {isLoading ? (
-                      <DetailsSkeleton />
-                    ) : (
-                      <>
-                        {DateTime.fromSeconds(Number(token.listedAt)).toFormat(
-                          'MMM dd yyyy'
-                        )}
-                      </>
-                    )}
-                  </DetailsEntry>
-
-                  <DetailsEntry
-                    header="Holders"
-                    contentTitle={formatNumberInt(token.holders)}
-                  >
-                    {isLoading ? (
-                      <DetailsSkeleton />
-                    ) : (
-                      <>{formatNumberInt(token.holders)}</>
-                    )}
-                  </DetailsEntry>
-
-                  <DetailsEntry header="Watch">
-                    {isLoading ? (
-                      <DetailsSkeleton />
-                    ) : (
-                      <div className="flex justify-center mt-1 mb-1">
-                        <WatchingStar token={token} />
-                      </div>
-                    )}
-                  </DetailsEntry>
-                </div>
-                <div className="flex-grow px-2 mt-5">
-                  <span className="text-xl">Description</span>
-                  <div className="mt-2.5 mb-5 text-sm italic">
-                    No description provided by token owner.
-                  </div>
-                </div>
-                <div className="text-sm text-gray-500">
-                  <div
-                    className="px-2 mb-1 border-gray-400"
-                    style={{ borderBottomWidth: '1px' }}
-                  >
-                    Token Owner Options
-                  </div>
-                  <div className="px-2 pb-2 text-xs">
-                    {isLoading ? (
-                      <>
-                        <div className="w-full mx-auto bg-gray-400 rounded animate animate-pulse">
-                          <div className="invisible">
-                            A<br />A
-                          </div>
-                        </div>
-                        <div className="flex justify-center ">
-                          <div className="w-20 py-1 mt-1 text-sm font-medium bg-gray-400 border-2 border-gray-400 rounded animate animate-pulse tracking-tightest-2 font-sf-compact-medium">
-                            <span className="invisible">A</span>
-                          </div>
-                        </div>
-                      </>
-                    ) : token.tokenOwner === addresses.ZERO ? (
-                      <>
-                        <div className="italic">
-                          The owner of this token is not yet listed. If this
-                          token represents your account you can get listed as
-                          owner of this token by verifying access to the
-                          account. After successful verification you will be
-                          able to withdraw the accumulated interest.
-                        </div>
-                        <div className="flex justify-center">
-                          {marketSpecifics.isVerificationEnabled() ? (
-                            <button
-                              className="w-20 py-1 mt-2 text-sm font-medium bg-white border-2 rounded-lg border-brand-blue text-brand-blue hover:text-white tracking-tightest-2 font-sf-compact-medium hover:bg-brand-blue"
-                              onClick={() => {
-                                setIsVerifyModalOpen(true)
-                              }}
-                            >
-                              Verify
-                            </button>
-                          ) : (
-                            <div className="mt-2 font-semibold">
-                              Verification not yet enabled
-                            </div>
-                          )}
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        <div className="italic">
-                          {!web3 ||
-                          connectedAddress.toLowerCase() !==
-                            token.tokenOwner.toLowerCase()
-                            ? `The owner of this token is listed as ${token.tokenOwner.slice(
-                                0,
-                                8
-                              )}...${token.tokenOwner.slice(
-                                -6
-                              )}. This address does not match the wallet you have connected. If you are the owner of this token please connect the correct wallet to be able to withdraw interest.`
-                            : 'Your connected wallet is listed as owner of this token. You are able to withdraw the accumulated interest below.'}
-                        </div>
-                        <div className="italic mt-2.5">
-                          Available interest:{' '}
-                          {web3BNToFloatString(
-                            investmentTokenToUnderlying(
-                              token.rawInvested,
-                              compoundExchangeRate
-                            ).sub(token.rawDaiInToken),
-                            bigNumberTenPow18,
-                            2
-                          )}{' '}
-                          DAI
-                        </div>
-                        <div className="flex justify-center">
-                          <button
-                            disabled={
-                              !web3 ||
-                              txManager.isPending ||
-                              connectedAddress.toLowerCase() !==
-                                token.tokenOwner.toLowerCase()
-                            }
-                            className={classNames(
-                              'w-20 py-1 ml-5 text-sm font-medium bg-white border-2 rounded-lg  tracking-tightest-2 font-sf-compact-medium',
-                              !web3 ||
-                                txManager.isPending ||
-                                connectedAddress.toLowerCase() !==
-                                  token.tokenOwner.toLowerCase()
-                                ? 'cursor-default'
-                                : 'border-brand-blue text-brand-blue hover:text-white hover:bg-brand-blue'
-                            )}
-                            onClick={onWithdrawClicked}
-                          >
-                            Withdraw
-                          </button>
-                        </div>
-                        <div
-                          className={classNames(
-                            'grid grid-cols-3 mt-2 text-sm text-brand-gray-2',
-                            txManager.isPending ? '' : 'invisible'
-                          )}
-                        >
-                          <div className="font-bold justify-self-center">
-                            {txManager.name}
-                          </div>
-                          <div className="justify-self-center">
-                            <a
-                              className={classNames(
-                                'underline',
-                                txManager.hash === '' ? 'hidden' : ''
-                              )}
-                              href={`https://${
-                                NETWORK === 'rinkeby' || NETWORK === 'test'
-                                  ? 'rinkeby.'
-                                  : ''
-                              }etherscan.io/tx/${txManager.hash}`}
-                              target="_blank"
-                            >
-                              {txManager.hash.slice(0, 8)}...
-                              {txManager.hash.slice(-6)}
-                            </a>
-                          </div>
-                          <div className="justify-self-center">
-                            <CircleSpinner color="#0857e0" bgcolor="#f6f6f6" />
-                          </div>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </ContainerWithHeader>
-
-            <ContainerWithHeader header="Trade">
-              {isLoading ? (
-                <div
-                  className="w-full mx-auto bg-gray-400 rounded animate animate-pulse"
-                  style={{
-                    minHeight: '518px',
-                    marginTop: '5px',
-                    marginBottom: '5px',
-                  }}
-                ></div>
-              ) : web3 ? (
+        {web3 && (
+          <div className="flex-1 bg-white rounded-md p-5 mb-5 border border-brand-border-gray">
+            {isLoading ? (
+              <div className="h-full p-18 md:p-0">loading</div>
+            ) : (
+              <div className="mx-auto" style={{ maxWidth: 550 }}>
                 <TradeInterface
                   ideaToken={token}
                   market={market}
@@ -1037,85 +691,12 @@ export default function TokenDetails() {
                   showTypeSelection={true}
                   showTradeButton={true}
                   disabled={false}
-                  bgcolor="#f6f6f6"
+                  bgcolor="#ffffff"
                 />
-              ) : (
-                <div
-                  className="flex items-center justify-center"
-                  style={{
-                    minHeight: '518px',
-                  }}
-                >
-                  <button
-                    onClick={() => {
-                      setIsWalletModalOpen(true)
-                    }}
-                    className="p-2.5 text-base font-medium text-white border-2 rounded-lg border-brand-blue tracking-tightest-2 font-sf-compact-medium bg-brand-blue"
-                  >
-                    Connect Wallet to Trade
-                  </button>
-                </div>
-              )}
-            </ContainerWithHeader>
-
-            <ContainerWithHeader header="My Wallet">
-              <div
-                style={{
-                  minHeight: '518px',
-                }}
-              >
-                {isLoading ? (
-                  <div>loading</div>
-                ) : web3 ? (
-                  <div>
-                    <div
-                      className="px-2 mt-2.5 border-gray-400 text-sm text-brand-gray-2"
-                      style={{ borderBottomWidth: '1px' }}
-                    >
-                      Balance
-                    </div>
-                    <div className="px-2 mt-5 text-2xl text-center text-medium">
-                      {!isBalanceLoading && formatNumber(balance)} tokens ={' '}
-                      {!isValueLoading && formatNumber(value)} USD
-                    </div>
-
-                    <div
-                      className="px-2 mt-5 text-sm border-gray-400 text-brand-gray-2"
-                      style={{ borderBottomWidth: '1px' }}
-                    >
-                      Locked
-                    </div>
-                    <LockedTokenTable token={token} owner={connectedAddress} />
-                    <div className="flex justify-end mt-4">
-                      <button className="px-1 py-1 ml-5 mr-2 text-sm font-medium bg-white border-2 rounded-lg cursor-default tracking-tightest-2 font-sf-compact-medium text-brand-gray-2">
-                        Withdraw unlocked
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <div
-                    className="flex items-center justify-center"
-                    style={{
-                      minHeight: '518px',
-                    }}
-                  >
-                    <button
-                      onClick={() => {
-                        setIsWalletModalOpen(true)
-                      }}
-                      className="p-2.5 text-base font-medium text-white border-2 rounded-lg border-brand-blue tracking-tightest-2 font-sf-compact-medium bg-brand-blue"
-                    >
-                      Connect Wallet to View
-                    </button>
-                  </div>
-                )}
               </div>
-            </ContainerWithHeader>
+            )}
           </div>
-        </div>
-        <div className="px-1">
-          <Footer />
-        </div>
+        )}
       </div>
       {!isLoading && (
         <VerifyModal
