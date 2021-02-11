@@ -458,7 +458,7 @@ export default function TokenDetails() {
         </div>
       </div>
 
-      <div className="px-0 md:px-6 pt-12 md:pt-10 pb-5 text-white transform -translate-y-30 md:-translate-y-28 mx-auto max-w-88 md:max-w-304">
+      <div className="px-2 pt-12 md:pt-10 pb-5 text-white transform -translate-y-30 md:-translate-y-28 mx-auto max-w-88 md:max-w-304">
         <div className="flex flex-col md:flex-row">
           <div className="flex-1 bg-white mb-5 md:mb-0 md:mr-5 rounded-md p-5">
             <div className="flex flex-col md:flex-row justify-between">
@@ -503,6 +503,32 @@ export default function TokenDetails() {
                 )}
               </div>
             </div>
+            <div className="mt-8 font-medium text-brand-gray-2">
+              <div className="text-sm mb-3">Token Owner Options</div>
+              <div className="text-xs">
+                The owner of this token is not yet listed. If this token
+                represents your account you can get listed as owner of this
+                token by verifying access to the account. After successful
+                verification you will be able to withdraw the accumulated
+                interest.
+              </div>
+            </div>
+            <div className="mt-3 mb-5 text-sm text-brand-blue">
+              {marketSpecifics.isVerificationEnabled() ? (
+                <div
+                  className="font-medium cursor-pointer"
+                  onClick={() => {
+                    setIsVerifyModalOpen(true)
+                  }}
+                >
+                  Verify Ownership
+                </div>
+              ) : (
+                <div className="font-semibold">
+                  Verification not yet enabled
+                </div>
+              )}
+            </div>
           </div>
           <div className="flex-1 bg-white rounded-md">
             {isLoading ? (
@@ -526,7 +552,7 @@ export default function TokenDetails() {
               />
             ) : (
               <div
-                className="flex items-center justify-center"
+                className="flex items-center justify-center h-full"
                 style={{ minHeight: 242 }}
               >
                 <button
