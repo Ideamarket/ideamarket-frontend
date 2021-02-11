@@ -497,13 +497,13 @@ export default function TokenDetails() {
                 {isLoading ? (
                   <DetailsSkeleton />
                 ) : (
-                  <div className="flex justify-center mt-1 mb-1">
+                  <div className="flex mt-5 md:mt-0">
                     <WatchingStarButton token={token} />
                   </div>
                 )}
               </div>
             </div>
-            <div className="mt-8 font-medium text-brand-gray-2">
+            <div className="mt-5 md:mt-8 font-medium text-brand-gray-2">
               <div className="text-sm mb-3">Token Owner Options</div>
               <div className="text-xs">
                 The owner of this token is not yet listed. If this token
@@ -513,7 +513,7 @@ export default function TokenDetails() {
                 interest.
               </div>
             </div>
-            <div className="mt-3 mb-5 text-sm text-brand-blue">
+            <div className="mt-3 md-2 md:mb-5 text-sm text-brand-blue">
               {marketSpecifics.isVerificationEnabled() ? (
                 <div
                   className="font-medium cursor-pointer"
@@ -532,36 +532,42 @@ export default function TokenDetails() {
           </div>
           <div className="flex-1 bg-white rounded-md">
             {isLoading ? (
-              <div
-                className="w-full mx-auto bg-gray-400 rounded animate animate-pulse"
-                style={{
-                  minHeight: 242,
-                }}
-              ></div>
+              <div>loading</div>
             ) : web3 ? (
-              <TradeInterface
-                ideaToken={token}
-                market={market}
-                onTradeSuccessful={() => {}}
-                onValuesChanged={() => {}}
-                resetOn={false}
-                showTypeSelection={true}
-                showTradeButton={true}
-                disabled={false}
-                bgcolor="#f6f6f6"
-              />
+              <div>
+                <div
+                  className="px-2 mt-2.5 border-gray-400 text-sm text-brand-gray-2"
+                  style={{ borderBottomWidth: '1px' }}
+                >
+                  Balance
+                </div>
+                <div className="px-2 mt-5 text-2xl text-center text-medium">
+                  {!isBalanceLoading && formatNumber(balance)} tokens ={' '}
+                  {!isValueLoading && formatNumber(value)} USD
+                </div>
+
+                <div
+                  className="px-2 mt-5 text-sm border-gray-400 text-brand-gray-2"
+                  style={{ borderBottomWidth: '1px' }}
+                >
+                  Locked
+                </div>
+                <LockedTokenTable token={token} owner={connectedAddress} />
+                <div className="flex justify-end mt-4">
+                  <button className="px-1 py-1 ml-5 mr-2 text-sm font-medium bg-white border-2 rounded-lg cursor-default tracking-tightest-2 font-sf-compact-medium text-brand-gray-2">
+                    Withdraw unlocked
+                  </button>
+                </div>
+              </div>
             ) : (
-              <div
-                className="flex items-center justify-center h-full"
-                style={{ minHeight: 242 }}
-              >
+              <div className="flex items-center justify-center h-full p-18 md:p-0">
                 <button
                   onClick={() => {
                     setIsWalletModalOpen(true)
                   }}
                   className="p-2.5 text-base font-medium text-white border-2 rounded-lg border-brand-blue tracking-tightest-2 font-sf-compact-medium bg-brand-blue"
                 >
-                  Connect Wallet to Trade
+                  Connect Wallet to View
                 </button>
               </div>
             )}
