@@ -113,15 +113,16 @@ export default function Home() {
               <img src="/ethereum.png" alt="" />
             </div>
             <div className="w-20 md:w-36">
-              <p className="text-xs text-gray-600">auditted by</p>
+              <p className="text-xs text-gray-600">audited by</p>
               <img src="/qs.png" alt="" />
             </div>
           </div>
           <h2 className="mt-8 md:mt-18 text-3xl md:text-6+xl font-gilroy-bold">
-            Cash in on your <span className="text-brand-blue">clout.</span>
+            The common knowledge{' '}
+            <span className="text-brand-blue">exchange</span>
           </h2>
           <p className="mt-8 text-lg md:text-2xl font-sf-compact-medium">
-            Earn passive income from your community's confidence in you.
+            Make lying expensive.
           </p>
         </div>
         <button
