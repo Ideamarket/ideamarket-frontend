@@ -91,7 +91,19 @@ export default function TokenCard({
             </div>
           ) : (
             <div>
-              <span className="align-middle">{token.name}</span>
+              <span className="align-middle">
+                <a
+                  href={`${marketSpecifics.getTokenURL(token.name)}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="hover:underline"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                  }}
+                >
+                  {token.name}
+                </a>
+              </span>
               <span className="ml-2.5 mr-1">
                 {marketSpecifics.getMarketSVGWhite()}
               </span>

@@ -483,12 +483,24 @@ export default function TokenDetails() {
                         Token Owner
                       </div>
                       <div className="text-brand-new-dark font-semibold text-base mt-2">
-                        {addresses.ZERO === token.address
-                          ? 'Not yet set'
-                          : `${token.address.slice(
+                        {addresses.ZERO === token.address ? (
+                          'Not yet set'
+                        ) : (
+                          <a
+                            href={`https://etherscan.io/address/${token.address}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="hover:underline"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                            }}
+                          >
+                            {`${token.address.slice(
                               0,
                               8
                             )}...${token.address.slice(-6)}`}
+                          </a>
+                        )}
                       </div>
                     </div>
                   </>
@@ -534,7 +546,7 @@ export default function TokenDetails() {
                 <div className="mt-3 mb-2 md:mb-5 text-sm text-brand-blue">
                   {marketSpecifics.isVerificationEnabled() ? (
                     <div
-                      className="font-semibold cursor-pointer"
+                      className="font-semibold cursor-pointer hover:underline"
                       onClick={() => {
                         setIsVerifyModalOpen(true)
                       }}
@@ -591,7 +603,7 @@ export default function TokenDetails() {
                         connectedAddress.toLowerCase() !==
                           token.tokenOwner.toLowerCase()
                         ? 'cursor-default'
-                        : 'cursor-pointer'
+                        : 'cursor-pointer hover:underline'
                     )}
                     onClick={onWithdrawClicked}
                   >
@@ -656,11 +668,6 @@ export default function TokenDetails() {
                   Locked
                 </div>
                 <LockedTokenRowsTable token={token} owner={connectedAddress} />
-                <div className="flex justify-end mt-4">
-                  <button className="px-1 py-1 ml-5 mr-2 text-sm font-medium bg-white border-2 rounded-lg cursor-default tracking-tightest-2 font-sf-compact-medium text-brand-gray-2">
-                    Withdraw unlocked
-                  </button>
-                </div>
               </div>
             ) : (
               <div className="flex items-center justify-center h-full p-18 md:p-0">

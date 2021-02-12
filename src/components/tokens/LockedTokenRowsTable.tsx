@@ -68,35 +68,47 @@ export default function LockedTokenTable({
           </>
         )}
       </div>
-      <div className="flex flex-row absolute" style={{ top: -38, right: 0 }}>
-        <button
-          onClick={() => {
-            if (page > 0) setPage(page - 1)
-          }}
-          className={classNames(
-            'cursor-pointer',
-            page <= 0 ? 'cursor-not-allowed opacity-50' : ''
-          )}
-          disabled={page <= 0}
-        >
-          <ChevronLeft style={{ width: 20 }} />
-        </button>
-        <button
-          onClick={() => {
-            if (lockedTokens && lockedTokens.length === TOKENS_PER_PAGE)
-              setPage(page + 1)
-          }}
-          className={classNames(
-            'cursor-pointer',
-            lockedTokens?.length !== TOKENS_PER_PAGE
-              ? 'cursor-not-allowed opacity-50'
-              : ''
-          )}
-          disabled={lockedTokens?.length !== TOKENS_PER_PAGE}
-        >
-          <ChevronRight style={{ width: 20 }} />
-        </button>
-      </div>
+      {lockedTokens?.length && (
+        <>
+          <div
+            className="flex flex-row absolute"
+            style={{ top: -38, right: 0 }}
+          >
+            <button
+              onClick={() => {
+                if (page > 0) setPage(page - 1)
+              }}
+              className={classNames(
+                'cursor-pointer',
+                page <= 0 ? 'cursor-not-allowed opacity-50' : ''
+              )}
+              disabled={page <= 0}
+            >
+              <ChevronLeft style={{ width: 20 }} />
+            </button>
+            <button
+              onClick={() => {
+                if (lockedTokens && lockedTokens.length === TOKENS_PER_PAGE)
+                  setPage(page + 1)
+              }}
+              className={classNames(
+                'cursor-pointer',
+                lockedTokens?.length !== TOKENS_PER_PAGE
+                  ? 'cursor-not-allowed opacity-50'
+                  : ''
+              )}
+              disabled={lockedTokens?.length !== TOKENS_PER_PAGE}
+            >
+              <ChevronRight style={{ width: 20 }} />
+            </button>
+          </div>
+          <div className="flex justify-end mt-4">
+            <button className="px-1 py-1 ml-5 mr-2 text-sm font-medium bg-white border-2 rounded-lg cursor-default tracking-tightest-2 font-sf-compact-medium text-brand-gray-2">
+              Withdraw unlocked
+            </button>
+          </div>
+        </>
+      )}
     </div>
   )
 }

@@ -402,7 +402,7 @@ export default function TradeInterface({
                 : '-'}
               %
             </div>
-            <div className="flex-1 md:ml-6 mb-3 md:mb-0 text-base text-brand-gray-2">
+            <div className="flex-1 md:ml-8 mb-3 md:mb-0 text-base text-brand-gray-2">
               <Select
                 className="border-2 border-gray-200 text-brand-gray-2 rounded-md trade-select"
                 isClearable={false}
