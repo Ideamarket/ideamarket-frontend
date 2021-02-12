@@ -15,7 +15,7 @@ export default function LockedTokenTable({
   token: IdeaToken
   owner: string
 }) {
-  const TOKENS_PER_PAGE = 5
+  const TOKENS_PER_PAGE = 3
 
   const [page, setPage] = useState(0)
 
@@ -68,7 +68,7 @@ export default function LockedTokenTable({
           </>
         )}
       </div>
-      {lockedTokens?.length && (
+      {lockedTokens?.length ? (
         <>
           <div
             className="flex flex-row absolute"
@@ -108,6 +108,10 @@ export default function LockedTokenTable({
             </button>
           </div>
         </>
+      ) : (
+        <div className="text-center font-semibold text-brand-gray-2 text-lg">
+          No Locked Tokens
+        </div>
       )}
     </div>
   )
