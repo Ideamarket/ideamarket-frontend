@@ -350,14 +350,6 @@ export default function ListTokenModal({
             )}
           </div>
 
-          <AdvancedOptions
-            isUnlockOnceChecked={isUnlockOnceChecked}
-            setIsUnlockOnceChecked={setIsUnlockOnceChecked}
-            isUnlockPermanentChecked={isUnlockPermanentChecked}
-            setIsUnlockPermanentChecked={setIsUnlockPermanentChecked}
-            disabled={txManager.isPending}
-          />
-
           <div
             className={classNames(
               'grid grid-cols-3 my-5 text-sm text-brand-gray-2',

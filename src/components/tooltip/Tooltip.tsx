@@ -66,9 +66,9 @@ export default function Tooltip({
       >
         {children}
       </NoSSRTooltipContent>
-      <div className="w-5 h-5" ref={ref}>
+      <div className="w-4 h-4" ref={ref}>
         <Info
-          className="w-5 h-5 cursor-pointer text-brand-gray-4"
+          className="w-4 h-4 cursor-pointer text-brand-gray-4"
           onClick={handleShowToolTip}
         />
       </div>

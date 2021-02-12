@@ -13,3 +13,11 @@ button:focus, [type='checkbox']:focus, [type='radio']:focus {
 span svg {
   display: inline-block;
 }
+
+.trade-select > div {
+  border: none;
+}
+
+.trade-select > div:first-child > div:first-child > div {
+  color: #708090;
+}

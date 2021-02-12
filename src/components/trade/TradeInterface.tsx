@@ -292,6 +292,7 @@ export default function TradeInterface({
           </p>
           <div className="mx-5">
             <Select
+              className="border-2 border-gray-200 text-brand-gray-4 rounded-md trade-select"
               isClearable={false}
               isSearchable={false}
               isDisabled={txManager.isPending || disabled}
@@ -306,7 +307,7 @@ export default function TradeInterface({
                 borderRadius: 2,
                 colors: {
                   ...theme.colors,
-                  primary25: '#708090', // brand-gray
+                  primary25: '#d8d8d8', // brand-gray
                   primary: '#0857e0', // brand-blue
                 },
               })}
@@ -390,7 +391,7 @@ export default function TradeInterface({
             />
           </div>
 
-          <div className="grid grid-cols-2 mx-5 mt-5 text-sm text-brand-gray-2 font-semibold">
+          <div className="flex flex-col flex-col-reverse md:flex-row justify-between mx-5 mt-5 text-sm text-brand-gray-2 font-semibold">
             <div className="flex items-center">
               Trading fee:{' '}
               {market && market.platformFeeRate && market.tradingFeeRate
@@ -401,8 +402,9 @@ export default function TradeInterface({
                 : '-'}
               %
             </div>
-            <div className="text-base text-brand-gray-2">
+            <div className="flex-1 md:ml-6 mb-3 md:mb-0 text-base text-brand-gray-2">
               <Select
+                className="border-2 border-gray-200 text-brand-gray-2 rounded-md trade-select"
                 isClearable={false}
                 isSearchable={false}
                 isDisabled={txManager.isPending || disabled}
@@ -416,7 +418,7 @@ export default function TradeInterface({
                   borderRadius: 2,
                   colors: {
                     ...theme.colors,
-                    primary25: '#708090', // brand-gray
+                    primary25: '#d8d8d8', // brand-gray
                     primary: '#0857e0', // brand-blue
                   },
                 })}
@@ -426,12 +428,13 @@ export default function TradeInterface({
         </div>
         <div
           className={classNames(
-            'flex items-center mt-5 text-sm mx-5',
+            'cursor-pointer flex items-center mt-5 text-sm mx-5',
             tradeType === 'sell' && 'invisible'
           )}
         >
           <input
             type="checkbox"
+            className="border-2 border-gray-200 rounded-sm"
             id="lockCheckbox"
             disabled={txManager.isPending || disabled}
             checked={isLockChecked}
@@ -503,7 +506,7 @@ export default function TradeInterface({
                       exceedsBalance ||
                       !parseFloat(ideaTokenAmount) ||
                       parseFloat(ideaTokenAmount) <= 0.0
-                      ? 'border-brand-gray-2 text-brand-new-dark font-semibold cursor-default'
+                      ? 'text-brand-blue font-semibold cursor-default border-brand-blue text-brand-blue'
                       : tradeType === 'buy'
                       ? 'border-brand-green text-brand-green hover:bg-brand-green hover:text-white'
                       : 'border-brand-red text-brand-red hover:bg-brand-red hover:text-white'

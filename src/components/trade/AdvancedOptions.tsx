@@ -19,7 +19,7 @@ export default function AdvancedOptions({
   return (
     <>
       <div
-        className="mt-5 text-xs text-center underline cursor-pointer text-brand-gray-2"
+        className="mx-5 mt-5 text-sm  underline cursor-pointer text-brand-gray-2 font-semibold"
         onClick={() => {
           setShow(!show)
         }}
@@ -31,7 +31,7 @@ export default function AdvancedOptions({
           <input
             type="checkbox"
             id="unlockOnceCheckbox"
-            className="cursor-pointer"
+            className="cursor-pointer border-2 border-gray-200 rounded-sm"
             disabled={disabled}
             checked={isUnlockOnceChecked}
             onChange={(e) => {
@@ -56,7 +56,7 @@ export default function AdvancedOptions({
           <input
             type="checkbox"
             id="unlockPermanentCheckbox"
-            className="cursor-pointer"
+            className="cursor-pointer border-2 border-gray-200 rounded-sm"
             disabled={disabled}
             checked={isUnlockPermanentChecked}
             onChange={(e) => {
