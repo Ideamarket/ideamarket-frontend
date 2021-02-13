@@ -77,7 +77,7 @@ export default function MyTokenRow({
             <div className="w-full h-full md:w-auto md:h-auto">
               {marketSpecifics.getMarketSVGBlack()}
             </div>
-            <div className="ml-1 md:ml-3">
+            <div className="ml-1 md:ml-3 text-base font-semibold leading-4 text-brand-gray-4">
               {marketSpecifics.getMarketName()}
             </div>
           </div>
