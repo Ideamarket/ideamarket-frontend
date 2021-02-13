@@ -1,3 +1,4 @@
+import classNames from 'classnames'
 import { useState, useContext, useEffect } from 'react'
 import {
   MarketSelect,
@@ -28,65 +29,107 @@ export default function MyTokens() {
     undefined
   )
 
+  const [table, setTable] = useState('holdings')
   return (
     <div className="min-h-screen bg-brand-gray">
-      <div className="mx-auto md:px-4 max-w-88 md:max-w-304">
-        <div className="min-h-screen py-5 bg-white border-b border-l border-r border-gray-400 rounded-b">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between mx-5 pb-2.5">
-            <div className="text-2xl sm:text-3xl text-brand-gray-2">
-              My Holdings
-            </div>
-            <div className="text-2xl sm:text-3xl text-brand-gray-2">
-              <span>Total value: </span>
-              <span title={'$' + ownedTokenTotalValue} className="uppercase">
+      <div className="px-4 md:px-6 pt-8 md:pt-6 pb-5 text-white bg-top-mobile md:bg-top-desktop h-64 md:h-96">
+        <div className="mx-auto md:px-4 max-w-88 md:max-w-304">
+          <div className="flex justify-between">
+            <div className="text-2xl mb-10 font-semibold">My Tokens</div>
+            <div className=" text-center">
+              <div className="text-sm font-semibold text-brand-gray text-opacity-60">
+                Total Value
+              </div>
+              <div
+                className="text-2xl mb-10 font-semibold uppercase"
+                title={'$' + ownedTokenTotalValue}
+              >
                 ${formatNumber(ownedTokenTotalValue)}
-              </span>
-            </div>
-            <div className="w-48 pr-0 md:w-64">
-              <MarketSelect
-                isClearable={true}
-                onChange={(value) => {
-                  setOwnedTokensTablePage(0)
-                  setSelectedMarketOwnedTokens(value?.market)
-                }}
-                disabled={false}
-              />
+              </div>
             </div>
           </div>
-          <div className="mx-5 border border-gray-300 rounded">
-            <OwnedTokenTable
-              market={selectedMarketOwnedTokens}
-              currentPage={ownedTokensTablePage}
-              setCurrentPage={setOwnedTokensTablePage}
-              setTotalValue={setOwnedTokensTotalValue}
-            />
-          </div>
-
-          <div className="flex items-center mx-5 pb-2.5 mt-10">
-            <div className="flex-grow text-2xl sm:text-3xl text-brand-gray-2">
-              My Listings
+          {/* <div className="text-sm font-semibold mb-10">
+            Holding: 14 tokens | Listing: 1 token
+          </div> */}
+          <div className="pt-2 bg-white border rounded-md border-brand-border-gray">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between mx-5">
+              <div>
+                <div
+                  className={classNames(
+                    'text-base text-brand-new-dark font-semibold px-2 mr-5 py-3 pt-2 inline-block cursor-pointer',
+                    table === 'holdings'
+                      ? 'border-b-2 border-brand-new-dark'
+                      : ''
+                  )}
+                  onClick={() => {
+                    setSelectedMarketOwnedTokens(undefined)
+                    setTable('holdings')
+                  }}
+                >
+                  My Holdings
+                </div>
+                <div
+                  className={classNames(
+                    'text-base text-brand-new-dark font-semibold px-2 py-3 pt-2 inline-block cursor-pointer',
+                    table === 'listings'
+                      ? 'border-b-2 border-brand-new-dark'
+                      : ''
+                  )}
+                  onClick={() => {
+                    setSelectedMarketMyTokens(undefined)
+                    setTable('listings')
+                  }}
+                >
+                  My Listings
+                </div>
+              </div>
+              <div
+                className="w-48 pr-0 md:w-80 pt-6 mb-4 md:pt-0 md:mb-0"
+                style={{ marginTop: -8 }}
+              >
+                {table === 'holdings' && (
+                  <MarketSelect
+                    isClearable={true}
+                    onChange={(value) => {
+                      setMyTokensTablePage(0)
+                      setSelectedMarketOwnedTokens(value?.market)
+                    }}
+                    disabled={false}
+                  />
+                )}
+                {table === 'listings' && (
+                  <MarketSelect
+                    isClearable={true}
+                    onChange={(value) => {
+                      setMyTokensTablePage(0)
+                      setSelectedMarketMyTokens(value?.market)
+                    }}
+                    disabled={false}
+                  />
+                )}
+              </div>
             </div>
-            <div className="w-48 pr-0 md:w-64">
-              <MarketSelect
-                isClearable={true}
-                onChange={(value) => {
-                  setMyTokensTablePage(0)
-                  setSelectedMarketMyTokens(value?.market)
-                }}
-                disabled={false}
-              />
+            <div className="border-t border-brand-border-gray shadow-home ">
+              {table === 'holdings' && (
+                <OwnedTokenTable
+                  market={selectedMarketOwnedTokens}
+                  currentPage={ownedTokensTablePage}
+                  setCurrentPage={setOwnedTokensTablePage}
+                  setTotalValue={setOwnedTokensTotalValue}
+                />
+              )}
+              {table === 'listings' && (
+                <MyTokenTable
+                  currentPage={myTokensTablePage}
+                  setCurrentPage={setMyTokensTablePage}
+                  market={selectedMarketMyTokens}
+                />
+              )}
             </div>
           </div>
-          <div className="mx-5 border border-gray-300 rounded">
-            <MyTokenTable
-              currentPage={myTokensTablePage}
-              setCurrentPage={setMyTokensTablePage}
-              market={selectedMarketMyTokens}
-            />
+          <div className="px-1 mt-12">
+            <Footer />
           </div>
-        </div>
-        <div className="px-1">
-          <Footer />
         </div>
       </div>
     </div>

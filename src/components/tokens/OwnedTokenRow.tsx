@@ -50,7 +50,7 @@ export default function TokenRow({
   return (
     <>
       <tr
-        className="grid grid-cols-3 cursor-pointer md:table-row hover:bg-brand-gray"
+        className="grid grid-cols-3 cursor-pointer md:table-row hover:bg-brand-gray border-b border-brand-border-gray"
         onClick={() => {
           router.push(
             `/i/${marketSpecifics.getMarketNameURLRepresentation()}/${marketSpecifics.getTokenNameURLRepresentation(
@@ -68,7 +68,7 @@ export default function TokenRow({
                 alt=""
               />
             </div>
-            <div className="ml-4 text-base font-medium leading-5 text-gray-900">
+            <div className="ml-4 text-base font-semibold leading-5 text-gray-900">
               <a
                 href={`${marketSpecifics.getTokenURL(token.name)}`}
                 target="_blank"
@@ -98,36 +98,36 @@ export default function TokenRow({
           </div>
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
-          <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4">
+          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4">
             Market
           </p>
           <div className="flex items-center">
             <div className="w-full h-full md:w-auto md:h-auto">
               {marketSpecifics.getMarketSVGBlack()}
             </div>
-            <div className="ml-1 md:ml-3">
+            <div className="ml-1 md:ml-3 text-base font-semibold leading-4 text-brand-gray-4">
               {marketSpecifics.getMarketName()}
             </div>
           </div>
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
-          <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4">
+          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4">
             Price
           </p>
           <p
-            className="text-base font-medium leading-4 uppercase tracking-tightest-2 text-very-dark-blue"
+            className="text-base font-semibold leading-4 uppercase tracking-tightest-2 text-very-dark-blue"
             title={'$' + tokenPrice}
           >
             ${formatNumber(tokenPrice)}
           </p>
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
-          <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4">
+          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4">
             24H Change
           </p>
           <p
             className={classNames(
-              'text-base font-medium leading-4 tracking-tightest-2 text-very-dark-blue uppercase',
+              'text-base font-semibold leading-4 tracking-tightest-2 text-very-dark-blue uppercase',
               parseFloat(token.dayChange) >= 0.0
                 ? 'text-brand-green'
                 : 'text-brand-red'
@@ -145,22 +145,22 @@ export default function TokenRow({
           </p>
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
-          <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4">
+          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4">
             Balance
           </p>
           <p
-            className="text-base font-medium leading-4 uppercase tracking-tightest-2 text-very-dark-blue"
+            className="text-base font-semibold leading-4 uppercase tracking-tightest-2 text-very-dark-blue"
             title={balance}
           >
             {formatNumber(balance)}
           </p>
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
-          <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4">
+          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4">
             Value
           </p>
           <p
-            className="text-base font-medium leading-4 uppercase tracking-tightest-2 text-very-dark-blue"
+            className="text-base font-semibold leading-4 uppercase tracking-tightest-2 text-very-dark-blue"
             title={'$' + balanceValue}
           >
             ${formatNumber(balanceValue)}

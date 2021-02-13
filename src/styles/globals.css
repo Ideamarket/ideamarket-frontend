@@ -14,10 +14,14 @@ span svg {
   display: inline-block;
 }
 
-.trade-select > div {
+.trade-select > div, .market-select > div {
   border: none;
 }
 
-.trade-select > div:first-child > div:first-child > div {
+.trade-select > div:first-child > div:first-child > div, .market-select > div:first-child > div:first-child > div {
   color: #708090;
+}
+
+.market-select > div, .market-select > div > div:first-child {
+  min-height: initial !important;
 }

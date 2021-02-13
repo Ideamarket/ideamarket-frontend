@@ -22,7 +22,7 @@ export default function MyTokenRow({
   return (
     <>
       <tr
-        className="grid grid-cols-3 cursor-pointer md:table-row hover:bg-brand-gray"
+        className="grid grid-cols-3 cursor-pointer md:table-row hover:bg-brand-gray border-b border-brand-border-gray"
         onClick={() => {
           router.push(
             `/i/${marketSpecifics.getMarketNameURLRepresentation()}/${marketSpecifics.getTokenNameURLRepresentation(
@@ -40,7 +40,7 @@ export default function MyTokenRow({
                 alt=""
               />
             </div>
-            <div className="ml-4 text-base font-medium leading-5 text-gray-900">
+            <div className="ml-4 text-base font-semibold leading-5 text-gray-900">
               <a
                 href={`${marketSpecifics.getTokenURL(token.name)}`}
                 target="_blank"
@@ -70,7 +70,7 @@ export default function MyTokenRow({
           </div>
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
-          <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4">
+          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4">
             Market
           </p>
           <div className="flex items-center">
@@ -83,10 +83,10 @@ export default function MyTokenRow({
           </div>
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
-          <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4">
+          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4">
             Price
           </p>
-          <p className="text-base font-medium leading-4 tracking-tightest-2 text-very-dark-blue">
+          <p className="text-base font-semibold leading-4 tracking-tightest-2 text-very-dark-blue">
             $
             {web3BNToFloatString(
               calculateCurrentPriceBN(
@@ -101,12 +101,12 @@ export default function MyTokenRow({
           </p>
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
-          <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4">
+          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4">
             24H Change
           </p>
           <p
             className={classNames(
-              'text-base font-medium leading-4 tracking-tightest-2 text-very-dark-blue',
+              'text-base font-semibold leading-4 tracking-tightest-2 text-very-dark-blue',
               parseFloat(token.dayChange) >= 0.0
                 ? 'text-brand-green'
                 : 'text-brand-red'
@@ -119,10 +119,10 @@ export default function MyTokenRow({
           </p>
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
-          <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4">
+          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4">
             1YR Income
           </p>
-          <p className="text-base font-medium leading-4 tracking-tightest-2 text-very-dark-blue">
+          <p className="text-base font-semibold leading-4 tracking-tightest-2 text-very-dark-blue">
             ${(parseFloat(token.daiInToken) * compoundSupplyRate).toFixed(2)}
           </p>
         </td>
