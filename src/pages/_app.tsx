@@ -4,6 +4,7 @@ import '../styles/fonts/gilroy/style.css'
 import '../styles/fonts/sf-compact-display/style.css'
 import '../styles/nprogress.css'
 
+import CookieConsent from 'react-cookie-consent'
 import { createContext, useEffect, useState } from 'react'
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
@@ -91,6 +92,16 @@ function MyApp({ Component, pageProps }: AppProps) {
           <Component {...pageProps} />
         </div>
       </div>
+      <CookieConsent
+        style={{ background: '#708090' }}
+        buttonStyle={{
+          background: '#0857e0',
+          color: 'white',
+          fontSize: '13px',
+        }}
+      >
+        This website uses cookies to enhance the user experience.
+      </CookieConsent>
       <WalletModal />
       <WrongNetworkOverlay />
       <EmailNewsletterModal />

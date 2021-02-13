@@ -348,7 +348,7 @@ export default function VerifyModal({
                   {txManager.hash && txManager.hash.slice(0, 8)}...
                   {txManager.hash && txManager.hash.slice(-6)}
                 </a>{' '}
-                to confirm
+                to confirm. Do not close or refresh the page.
               </div>
             </>
           )}

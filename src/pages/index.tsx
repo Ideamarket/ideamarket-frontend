@@ -2,10 +2,17 @@ import classNames from 'classnames'
 import { useContext, useState } from 'react'
 import { IdeaMarket, IdeaToken } from 'store/ideaMarketsStore'
 import { getMarketSpecificsByMarketName } from 'store/markets'
-import { Table, TradeModal, ListTokenModal, Footer } from 'components'
+import {
+  Table,
+  TradeModal,
+  ListTokenModal,
+  PromoVideoModal,
+  Footer,
+} from 'components'
 
 import Search from '../assets/search.svg'
 import Plus from '../assets/plus-white.svg'
+import Play from '../assets/play.svg'
 import { GlobalContext } from './_app'
 import { useWalletStore } from 'store/walletStore'
 
@@ -14,6 +21,8 @@ export default function Home() {
   const [selectedMarketName, setSelectedMarketName] = useState('Twitter')
   const [nameSearch, setNameSearch] = useState('')
   const [tablePage, setTablePage] = useState(0)
+  const [isHoveringWatchVideo, setIsHoveringWatchVideo] = useState(false)
+  const [isPromoVideoModalOpen, setIsPromoVideoModalOpen] = useState(false)
 
   const {
     setIsWalletModalOpen,
@@ -102,7 +111,7 @@ export default function Home() {
 
   return (
     <div className="overflow-x-hidden bg-brand-gray">
-      <div className="w-screen px-6 pt-12 md:pt-10 pb-5 text-center text-white bg-top-mobile md:bg-top-desktop h-156.5 md:h-140">
+      <div className="w-screen px-6 pt-12 md:pt-10 text-center text-white bg-top-mobile md:bg-top-desktop pb-40">
         <div>
           <div className="flex items-center justify-center space-x-12">
             <div className="w-20 md:w-36">
@@ -117,7 +126,7 @@ export default function Home() {
               <img src="/qs.png" alt="" />
             </div>
           </div>
-          <h2 className="mt-8 md:mt-18 text-3xl md:text-6+xl font-gilroy-bold">
+          <h2 className="mt-8 md:mt-18 text-3xl md:text-6xl font-gilroy-bold">
             The common knowledge{' '}
             <span className="text-brand-blue">exchange</span>
           </h2>
@@ -125,20 +134,48 @@ export default function Home() {
             Make lying expensive.
           </p>
         </div>
-        <button
-          onClick={() => {
-            onListTokenClicked()
-          }}
-          className="px-5 py-2 mx-auto text-lg font-bold text-white rounded-lg mt-7 font-sf-compact-medium bg-brand-blue hover:bg-blue-800"
-        >
-          <div className="flex flex-row items-center">
-            <Plus width="30" height="30" />
-            <div className="ml-2">Add Listing</div>
-          </div>
-        </button>
+        <div className="flex justify-center mt-7">
+          <button
+            onClick={() => {
+              setIsPromoVideoModalOpen(true)
+            }}
+            onMouseEnter={() => {
+              setIsHoveringWatchVideo(true)
+            }}
+            onMouseLeave={() => {
+              setIsHoveringWatchVideo(false)
+            }}
+            className="w-44 py-2 text-lg text-white rounded-lg font-sf-compact-medium border-white border  hover:bg-white hover:text-black hover:font-bold"
+          >
+            <div className="flex flex-row items-center justify-center">
+              <Play
+                width="30"
+                height="30"
+                stroke={isHoveringWatchVideo ? '#000000' : '#ffffff'}
+              />
+              <div className="ml-0.5 md:ml-2">
+                <div className="flex">
+                  Watch<div className="hidden md:block">&nbsp;Video</div>
+                </div>
+              </div>
+            </div>
+          </button>
+
+          <button
+            onClick={() => {
+              onListTokenClicked()
+            }}
+            className="w-44 py-2 text-lg font-bold text-white rounded-lg font-sf-compact-medium bg-brand-blue hover:bg-blue-800 ml-5"
+          >
+            <div className="flex flex-row items-center justify-center">
+              <Plus width="30" height="30" />
+              <div className="ml-0.5 md:ml-2">Add Listing</div>
+            </div>
+          </button>
+        </div>
       </div>
 
-      <div className="px-2 mx-auto transform md:px-4 max-w-88 md:max-w-304 -translate-y-60 md:-translate-y-28 font-sf-compact-medium">
+      <div className="px-2 mx-auto transform md:px-4 max-w-88 md:max-w-304 -translate-y-28 font-sf-compact-medium">
         <div className="grid grid-cols-2 md:grid-cols-5">
           <div
             className={classNames(
@@ -177,12 +214,12 @@ export default function Home() {
           </div>
           <div
             className={classNames(
-              'flex md:justify-center items-center p-5 space-x-2.5 text-white border-2 border-t-0 md:border-t-2 md:border-l-0 md:border-r-2 md:border-b-0'
+              'hidden md:flex md:justify-center items-center p-5 space-x-2.5 text-white border-2 border-t-0 md:border-t-2 md:border-l-0 md:border-r-2 md:border-b-0'
             )}
           ></div>
           <div
             className={classNames(
-              'flex md:justify-center items-center p-5 space-x-2.5 text-white border-2 border-l-0 border-t-0 md:border-t-2 md:border-l-0 md:border-r-2 md:border-b-0 '
+              'hidden md:flex md:justify-center items-center p-5 space-x-2.5 text-white border-2 border-l-0 border-t-0 md:border-t-2 md:border-l-0 md:border-r-2 md:border-b-0 '
             )}
           ></div>
           <div className="hidden md:flex md:justify-center items-center p-5 space-x-2.5 text-white border-l-2 md:border-t-2 md:border-l-0 md:border-r-2 md:border-b-0 md:rounded-tr-xlg"></div>
@@ -254,6 +291,10 @@ export default function Home() {
       <ListTokenModal
         isOpen={isListTokenModalOpen}
         setIsOpen={setIsListTokenModalOpen}
+      />
+      <PromoVideoModal
+        isOpen={isPromoVideoModalOpen}
+        setIsOpen={setIsPromoVideoModalOpen}
       />
     </div>
   )

@@ -65,7 +65,7 @@ export default function Modal({
                 <Close className="w-full h-full" />
               </button>
             </div>
-            <div className="pb-1 overflow-hidden bg-white rounded-lg">
+            <div className="overflow-hidden bg-white rounded-lg">
               {children}
             </div>
           </Transition>

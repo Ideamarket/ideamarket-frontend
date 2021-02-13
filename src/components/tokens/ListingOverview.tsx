@@ -112,7 +112,7 @@ export default function TokenCard({
             </div>
           ) : (
             <div className="mt-1 text-sm">
-              Token Rank #{token.rank ? token.rank : '1'}
+              Rank {token.rank ? token.rank : '-'}
             </div>
           )}
         </div>

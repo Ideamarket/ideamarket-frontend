@@ -480,7 +480,7 @@ export default function TokenDetails() {
                     </div>
                     <div className="inline-block">
                       <div className="text-sm font-semibold text-brand-new-dark">
-                        Token Owner
+                        Listing Owner
                       </div>
                       <div className="mt-2 text-base font-semibold text-brand-new-dark">
                         {addresses.ZERO === token.tokenOwner ? (
@@ -517,7 +517,7 @@ export default function TokenDetails() {
               </div>
             </div>
             <div className="mt-5 mb-3 text-sm font-semibold md:mt-8 text-brand-gray-2">
-              Token Owner Options
+              Listing Owner Options
             </div>
             {isLoading ? (
               <>
@@ -536,11 +536,9 @@ export default function TokenDetails() {
               <>
                 <div className="font-medium text-brand-gray-2">
                   <div className="text-xs">
-                    The owner of this token is not yet listed. If this token
-                    represents your account you can get listed as owner of this
-                    token by verifying access to the account. After successful
-                    verification you will be able to withdraw the accumulated
-                    interest.
+                    If you own the account represented by this token, verify
+                    access to the account to enable withdrawal of the
+                    accumulated interest.
                   </div>
                 </div>
                 <div className="mt-3 mb-2 text-sm md:mb-5 text-brand-blue">
@@ -567,13 +565,13 @@ export default function TokenDetails() {
                     {!web3 ||
                     connectedAddress.toLowerCase() !==
                       token.tokenOwner.toLowerCase()
-                      ? `The owner of this token is listed as ${token.tokenOwner.slice(
+                      ? `The owner of this listing is ${token.tokenOwner.slice(
                           0,
                           8
                         )}...${token.tokenOwner.slice(
                           -6
-                        )}. This address does not match the wallet you have connected. If you are the owner of this token please connect the correct wallet to be able to withdraw interest.`
-                      : 'Your connected wallet is listed as owner of this token. You are able to withdraw the accumulated interest below.'}
+                        )}. This address does not match the wallet you have connected. If you are the owner of this listing please connect the correct wallet to be able to withdraw interest.`
+                      : 'Your connected wallet the owner of this listing. You are able to withdraw the accumulated interest below.'}
                   </div>
                 </div>
                 <div className="mt-2.5 text-sm text-brand-blue">

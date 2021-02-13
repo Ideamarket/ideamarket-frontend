@@ -19,6 +19,7 @@ export default function getQuerySingleToken(
             invested
             listedAt
             lockedAmount
+            rank
             latestPricePoint {
               timestamp
               counter
