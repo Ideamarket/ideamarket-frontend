@@ -28,13 +28,13 @@ export default function MyTokens() {
   const [table, setTable] = useState('holdings')
   return (
     <div className="min-h-screen bg-brand-gray">
-      <div className="px-4 md:px-6 pt-8 md:pt-6 pb-5 text-white bg-top-mobile md:bg-top-desktop h-64 md:h-96">
+      <div className="h-64 px-4 pt-8 pb-5 text-white md:px-6 md:pt-6 bg-top-mobile md:bg-top-desktop md:h-96">
         <div className="mx-auto md:px-4 max-w-88 md:max-w-304">
           <div className="flex justify-between">
             <div className="text-2xl font-semibold flex flex-col justify-end mb-2.5">
-              My Account
+              My Wallet
             </div>
-            <div className=" text-center">
+            <div className="text-center ">
               <div className="text-sm font-semibold text-brand-gray text-opacity-60">
                 Total Value
               </div>
@@ -47,7 +47,7 @@ export default function MyTokens() {
             </div>
           </div>
           <div className="pt-2 bg-white border rounded-md border-brand-border-gray">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between mx-5">
+            <div className="flex flex-col mx-5 md:flex-row md:items-center md:justify-between">
               <div>
                 <div
                   className={classNames(
@@ -79,7 +79,7 @@ export default function MyTokens() {
                 </div>
               </div>
               <div
-                className="w-48 pr-0 md:w-80 pt-6 mb-4 md:pt-0 md:mb-0"
+                className="w-48 pt-6 pr-0 mb-4 md:w-80 md:pt-0 md:mb-0"
                 style={{ marginTop: -8 }}
               >
                 {table === 'holdings' && (

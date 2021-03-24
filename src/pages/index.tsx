@@ -29,7 +29,7 @@ import { GlobalContext } from './_app'
 import { useWalletStore } from 'store/walletStore'
 
 export default function Home() {
-  const [selectedCategoryId, setSelectedCategoryId] = useState(1)
+  const [selectedCategoryId, setSelectedCategoryId] = useState(2)
   const [selectedMarketName, setSelectedMarketName] = useState('Twitter')
   const [nameSearch, setNameSearch] = useState('')
   const [tablePage, setTablePage] = useState(0)
@@ -77,7 +77,7 @@ export default function Home() {
   const categories = [
     {
       id: 1,
-      value: 'All',
+      value: 'Top',
     },
     {
       id: 2,

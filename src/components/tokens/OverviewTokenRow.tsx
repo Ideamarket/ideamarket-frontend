@@ -80,10 +80,10 @@ export default function TokenRow({
           )
         }}
       >
-        <td className="hidden py-4 pl-3 pr-1 text-sm leading-5 text-center text-gray-500 md:block whitespace-nowrap">
+        <td className="hidden py-4 pl-3 pr-1 text-sm leading-5 text-center text-gray-500 md:table-cell whitespace-nowrap">
           {token.rank}
         </td>
-        <td className="col-span-3 px-6 py-4 whitespace-nowrap">
+        <td className="col-span-3 py-4 pl-6 whitespace-nowrap">
           <div className="flex items-center">
             {showMarketSVG && marketSpecifics.getMarketSVGBlack()}
             <div
@@ -127,7 +127,7 @@ export default function TokenRow({
             </div>
           </div>
         </td>
-        <td className="px-6 py-4 whitespace-nowrap">
+        <td className="py-4 pl-6 whitespace-nowrap">
           <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4">
             Price
           </p>
@@ -138,7 +138,7 @@ export default function TokenRow({
             ${formatNumber(tokenPrice)}
           </p>
         </td>
-        <td className="px-6 py-4 whitespace-nowrap">
+        <td className="py-4 pl-6 whitespace-nowrap">
           <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4">
             Deposits
           </p>
@@ -153,7 +153,7 @@ export default function TokenRow({
             )}
           </p>
         </td>
-        <td className="px-6 py-4 whitespace-nowrap">
+        <td className="py-4 pl-6 whitespace-nowrap">
           <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4">
             % Locked
           </p>
@@ -168,7 +168,7 @@ export default function TokenRow({
             )}
           </p>
         </td>
-        <td className="px-6 py-4 whitespace-nowrap">
+        <td className="py-4 pl-6 whitespace-nowrap">
           <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4">
             24H Change
           </p>
@@ -186,12 +186,12 @@ export default function TokenRow({
             }%`}
           >
             {parseFloat(token.dayChange) >= 0.0
-              ? `+ ${formatNumber(token.dayChange)}`
-              : `- ${formatNumber(token.dayChange.slice(1))}`}
+              ? `+ ${token.dayChange}`
+              : `- ${token.dayChange.slice(1)}`}
             %
           </p>
         </td>
-        <td className="px-6 py-4 whitespace-nowrap">
+        <td className="py-4 pl-6 whitespace-nowrap">
           <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4">
             24H Volume
           </p>
@@ -202,7 +202,7 @@ export default function TokenRow({
             ${formatNumber(token.dayVolume)}
           </p>
         </td>
-        <td className="px-6 py-4 whitespace-nowrap">
+        <td className="py-4 pl-6 whitespace-nowrap">
           <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4">
             1YR Income
           </p>
