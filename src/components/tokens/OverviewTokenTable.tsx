@@ -219,15 +219,14 @@ export default function Table({
                   </tr>
                 </thead>
                 <tbody className="bg-white w-full divide-y divide-gray-200">
+                  <TokenRowSkeleton key={'fafafaf'} />
                   {(tokenData as IdeaToken[]).map((token) => (
                     <TokenRow
                       key={market.marketID + '-' + token.tokenID}
                       token={token}
                       market={market}
-                      holders={token.holders}
                       showMarketSVG={false}
                       compoundSupplyRate={compoundSupplyRate}
-                      chartDuration={WEEK_SECONDS}
                       onTradeClicked={onTradeClicked}
                     />
                   ))}

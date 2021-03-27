@@ -39,11 +39,6 @@ const headers: Header[] = [
     sortable: true,
   },
   {
-    content: 'Holders',
-    value: 'holders',
-    sortable: true,
-  },
-  {
     content: '24H Change',
     value: 'change',
     sortable: true,

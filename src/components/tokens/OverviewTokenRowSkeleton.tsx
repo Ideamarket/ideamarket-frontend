@@ -4,7 +4,7 @@ export default function TokenRowSkeleton() {
   return (
     <>
       <tr className="grid grid-cols-3 md:table-row animate animate-pulse">
-        <td className="px-3 py-4 whitespace-nowrap">
+        <td className="px-3 py-4 whitespace-nowrap hidden md:table-cell">
           <div className="w-8 h-5 bg-gray-400 rounded"></div>
         </td>
         <td className="col-span-3 px-6 py-4 whitespace-nowrap">
@@ -40,17 +40,15 @@ export default function TokenRowSkeleton() {
           <p className="w-10 h-4 bg-gray-400 rounded md:hidden"></p>
           <p className="h-4 mt-1 bg-gray-400 rounded"></p>
         </td>
-
-        <td className="col-span-3 row-span-1 row-start-4 px-6 py-4 text-sm leading-5 text-gray-500 whitespace-nowrap col-start-0">
-          <p className="h-4 mt-1 bg-gray-400 rounded"></p>
-        </td>
         <td className="hidden px-5 py-4 whitespace-nowrap md:table-cell">
-          <button className="h-10 bg-gray-400 rounded-lg w-28">
+          <button className="h-10 bg-gray-400 rounded-lg w-24">
             <span className="invisible">Trade</span>
           </button>
         </td>
         <td className="px-3 py-4 whitespace-nowrap">
-          <div className="w-5 h-5 bg-gray-400 rounded"></div>
+          <div className="flex justify-center items-center h-full">
+            <div className="w-5 h-5 bg-gray-400 rounded"></div>
+          </div>
         </td>
       </tr>
     </>

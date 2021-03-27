@@ -18,8 +18,6 @@ type Props = {
   market: IdeaMarket
   showMarketSVG: boolean
   compoundSupplyRate: number
-  chartDuration: number
-  holders: number
   onTradeClicked: (token: IdeaToken, market: IdeaMarket) => void
 }
 
@@ -28,11 +26,8 @@ export default function TokenRow({
   market,
   showMarketSVG,
   compoundSupplyRate,
-  chartDuration,
-  holders,
   onTradeClicked,
 }: Props) {
-  const fromTs = Math.floor(Date.now() / 1000) - chartDuration
   const router = useRouter()
   const marketSpecifics = getMarketSpecificsByMarketName(market.name)
 
@@ -84,7 +79,7 @@ export default function TokenRow({
             <div className="ml-4 text-base font-medium leading-5 text-gray-900">
               <span className="hover:underline">{token.name}</span>
             </div>
-            <div className="flex items-center justify-center ml-auto md:hidden">
+            <div className="flex items-center justify-center ml-auto md:hidden mr-2 md:mr-0">
               <svg
                 className="w-7.5 text-brand-blue"
                 xmlns="http://www.w3.org/2000/svg"
@@ -144,18 +139,6 @@ export default function TokenRow({
             )}
           </p>
         </td>
-
-        <td className="py-4 pl-6 whitespace-nowrap">
-          <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4">
-            Holders
-          </p>
-          <p
-            className="text-base font-medium leading-4 uppercase tracking-tightest-2 text-very-dark-blue"
-            title={`Holders: ${holders}`}
-          >
-            {holders}
-          </p>
-        </td>
         <td className="py-4 pl-6 whitespace-nowrap">
           <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4">
             24H Change
@@ -203,7 +186,9 @@ export default function TokenRow({
           </button>
         </td>
         <td className="py-4 pl-3 pr-6 text-sm leading-5 text-gray-500 whitespace-nowrap">
-          <WatchingStar token={token} />
+          <div className="flex items-center justify-center h-full">
+            <WatchingStar token={token} />
+          </div>
         </td>
       </tr>
     </>
