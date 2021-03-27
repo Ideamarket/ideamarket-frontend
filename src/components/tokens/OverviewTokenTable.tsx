@@ -219,7 +219,6 @@ export default function Table({
                   </tr>
                 </thead>
                 <tbody className="bg-white w-full divide-y divide-gray-200">
-                  <TokenRowSkeleton key={'fafafaf'} />
                   {(tokenData as IdeaToken[]).map((token) => (
                     <TokenRow
                       key={market.marketID + '-' + token.tokenID}

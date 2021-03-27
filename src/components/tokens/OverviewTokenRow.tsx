@@ -182,7 +182,7 @@ export default function TokenRow({
             }}
             className="w-24 h-10 text-base font-medium bg-white border-2 rounded-lg border-brand-blue text-brand-blue hover:text-white tracking-tightest-2 font-sf-compact-medium hover:bg-brand-blue"
           >
-            Trade
+            Buy
           </button>
         </td>
         <td className="py-4 pl-3 pr-6 text-sm leading-5 text-gray-500 whitespace-nowrap">
