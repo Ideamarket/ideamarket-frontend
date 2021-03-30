@@ -68,7 +68,7 @@ export default class ShowtimeMarketSpecifics implements IMarketSpecifics {
   }
 
   getVerificationExplanation(): string {
-    return 'Verification explanation'
+    return `To verify, you will be asked to add a verification code to your account's Bio. After verification is complete you can remove it.`
   }
 
   getVerificationSHAPrompt(sha: string): string {
@@ -76,10 +76,10 @@ export default class ShowtimeMarketSpecifics implements IMarketSpecifics {
   }
 
   getVerificationSHAPromptExplanation(): string {
-    return 'Please do something to verify'
+    return `This is your verification code. Please edit your account's Bio to contain the below content. After you made the edit, click Next.`
   }
 
   getVerificationConfirmCheckboxLabel(): string {
-    return `I have done XYZ.`
+    return `I have edited my Bio.`
   }
 }
