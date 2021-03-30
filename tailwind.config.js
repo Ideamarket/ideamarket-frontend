@@ -23,6 +23,7 @@ module.exports = {
         'brand-new-blue': '#074ef0',
         'brand-new-dark': '#1a1d3f',
         'brand-border-gray': '#dce2e9',
+        'brand-purple': '#08245A',
       },
       fontFamily: {
         sans: ['Inter var', ...defaultTheme.fontFamily.sans],

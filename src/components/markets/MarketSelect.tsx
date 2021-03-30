@@ -3,6 +3,7 @@ import Select from 'react-select'
 import { getMarketSpecificsByMarketName } from 'store/markets'
 import { useQuery } from 'react-query'
 import { queryMarkets } from 'store/ideaMarketsStore'
+import { isShowtimeMarketVisible } from 'utils'
 
 export default function MarketSelect({
   onChange,
@@ -23,10 +24,14 @@ export default function MarketSelect({
   useEffect(() => {
     if (markets) {
       setSelectMarketValues(
-        markets.map((market) => ({
-          value: market.marketID.toString(),
-          market: market,
-        }))
+        markets
+          .filter(
+            (market) => isShowtimeMarketVisible || market.name !== 'Showtime'
+          )
+          .map((market) => ({
+            value: market.marketID.toString(),
+            market: market,
+          }))
       )
     } else {
       setSelectMarketValues([])

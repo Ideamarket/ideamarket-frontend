@@ -13,6 +13,7 @@ import {
   web3BNToFloatString,
   bigNumberTenPow18,
   formatNumberWithCommasAsThousandsSerperator,
+  isShowtimeMarketVisible,
 } from 'utils'
 import { Table, TradeModal, ListTokenModal, PromoVideoModal } from 'components'
 
@@ -205,7 +206,9 @@ export default function Home() {
           <div
             className={classNames(
               'cursor-pointer flex md:justify-center items-center p-5 space-x-2.5 text-white rounded-tl-xlg md:rounded-tr-none border-2 md:border-b-0',
-              selectedMarketName === 'Twitter' && 'bg-white text-very-dark-blue'
+              selectedMarketName === 'Twitter'
+                ? 'bg-white text-very-dark-blue'
+                : 'bg-brand-purple'
             )}
             onClick={() => {
               onMarketChanged('Twitter')
@@ -221,8 +224,9 @@ export default function Home() {
           <div
             className={classNames(
               'cursor-pointer flex md:justify-center items-center p-5 space-x-2.5 text-white rounded-tr-xlg md:rounded-none border-2 border-l-0 md:border-b-0',
-              selectedMarketName === 'Substack' &&
-                'bg-white text-very-dark-blue'
+              selectedMarketName === 'Substack'
+                ? 'bg-white text-very-dark-blue'
+                : 'bg-brand-purple'
             )}
             onClick={() => {
               onMarketChanged('Substack')
@@ -237,18 +241,45 @@ export default function Home() {
             </div>
             <p className="text-lg leading-none">{'Substack'}</p>
           </div>
-          <div
-            className={classNames(
-              'hidden md:flex md:justify-center items-center p-5 space-x-2.5 text-white border-2 border-t-0 md:border-t-2 md:border-l-0 md:border-r-2 md:border-b-0'
-            )}
-          ></div>
+          {isShowtimeMarketVisible ? (
+            <>
+              <div
+                className={classNames(
+                  'cursor-pointer border-t-0 flex md:justify-center items-center p-5 space-x-2.5 text-white bg-brand-gr md:rounded-none border-2 md:border-t-2 md:border-l-0 md:border-b-0',
+                  selectedMarketName === 'Showtime'
+                    ? 'bg-white text-very-dark-blue'
+                    : 'bg-brand-purple'
+                )}
+                onClick={() => {
+                  onMarketChanged('Showtime')
+                }}
+              >
+                <div>
+                  {selectedMarketName === 'Showtime'
+                    ? getMarketSpecificsByMarketName(
+                        'Showtime'
+                      ).getMarketSVGBlack()
+                    : getMarketSpecificsByMarketName(
+                        'Showtime'
+                      ).getMarketSVGWhite()}
+                </div>
+                <p className="text-lg leading-none">{'Showtime'}</p>
+              </div>
+              <div className="bg-brand-purple border-r-2 border-b-2 md:hidden"></div>
+            </>
+          ) : (
+            <div
+              className={classNames(
+                'hidden md:flex md:justify-center items-center p-5 space-x-2.5 text-white border-2 border-l-0 border-t-0 md:border-t-2 md:border-l-0 md:border-r-2 md:border-b-0 '
+              )}
+            ></div>
+          )}
           <div
             className={classNames(
               'hidden md:flex md:justify-center items-center p-5 space-x-2.5 text-white border-2 border-l-0 border-t-0 md:border-t-2 md:border-l-0 md:border-r-2 md:border-b-0 '
             )}
           ></div>
           <div className="hidden md:flex md:justify-center items-center p-5 space-x-2.5 text-white border-l-2 md:border-t-2 md:border-l-0 md:border-r-2 md:border-b-0 md:rounded-tr-xlg"></div>
-          <div className="border-r-2 md:hidden"></div>
         </div>
         <div className="bg-white border border-brand-gray-3 rounded-b-xlg shadow-home">
           <div className="flex flex-col border-b md:flex-row border-brand-gray-3">

@@ -2,6 +2,7 @@ import _ from 'lodash'
 
 import TwitterMarketSpecifics from './twitter'
 import SubstackMarketSpecifics from './substack'
+import ShowtimeMarketSpecifics from './showtime'
 
 export type IMarketSpecifics = {
   // Market
@@ -35,6 +36,7 @@ export type IMarketSpecifics = {
 const specifics: IMarketSpecifics[] = [
   new TwitterMarketSpecifics(),
   new SubstackMarketSpecifics(),
+  new ShowtimeMarketSpecifics(),
 ]
 
 export function getMarketSpecificsByMarketName(
