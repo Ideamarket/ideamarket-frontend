@@ -204,84 +204,53 @@ export default function Home() {
       </div>
 
       <div className="px-2 mx-auto transform md:px-4 max-w-88 md:max-w-304 -translate-y-28 font-sf-compact-medium">
-        <div className="grid grid-cols-2 md:grid-cols-5">
-          <div
+        <div className="grid auto-cols-min grid-flow-col gap-x-2 bg-white rounded-t-lg p-4 justify-center md:justify-start">
+          <button
             className={classNames(
-              'cursor-pointer flex md:justify-center items-center p-5 space-x-2.5 text-white rounded-tl-xlg md:rounded-tr-none border-2 md:border-b-0',
-              selectedMarketName === 'Twitter'
-                ? 'bg-white text-very-dark-blue'
-                : 'bg-brand-purple'
+              'p-1 border rounded-md px-3 text-sm',
+              {
+                'bg-very-dark-blue text-white':
+                  selectedMarketName === 'Twitter',
+              },
+              { 'text-brand-gray-4': selectedMarketName !== 'Twitter' }
             )}
             onClick={() => {
               onMarketChanged('Twitter')
             }}
           >
-            <div>
-              {selectedMarketName === 'Twitter'
-                ? getMarketSpecificsByMarketName('Twitter').getMarketSVGBlack()
-                : getMarketSpecificsByMarketName('Twitter').getMarketSVGWhite()}
-            </div>
-            <p className="text-lg leading-none">Twitter</p>
-          </div>
-          <div
+            Twitter
+          </button>
+          <button
             className={classNames(
-              'cursor-pointer flex md:justify-center items-center p-5 space-x-2.5 text-white rounded-tr-xlg md:rounded-none border-2 border-l-0 md:border-b-0',
-              selectedMarketName === 'Substack'
-                ? 'bg-white text-very-dark-blue'
-                : 'bg-brand-purple'
+              'p-1 border rounded-md px-3 text-sm',
+              {
+                'bg-very-dark-blue text-white':
+                  selectedMarketName === 'Substack',
+              },
+              { 'text-brand-gray-4': selectedMarketName !== 'Substack' }
             )}
             onClick={() => {
               onMarketChanged('Substack')
             }}
           >
-            <div>
-              {selectedMarketName === 'Substack'
-                ? getMarketSpecificsByMarketName('Substack').getMarketSVGBlack()
-                : getMarketSpecificsByMarketName(
-                    'Substack'
-                  ).getMarketSVGWhite()}
-            </div>
-            <p className="text-lg leading-none">{'Substack'}</p>
-          </div>
-          {isShowtimeMarketVisible ? (
-            <>
-              <div
-                className={classNames(
-                  'cursor-pointer border-t-0 flex md:justify-center items-center p-5 space-x-2.5 text-white bg-brand-gr md:rounded-none border-2 md:border-t-2 md:border-l-0 md:border-b-0',
-                  selectedMarketName === 'Showtime'
-                    ? 'bg-white text-very-dark-blue'
-                    : 'bg-brand-purple'
-                )}
-                onClick={() => {
-                  onMarketChanged('Showtime')
-                }}
-              >
-                <div>
-                  {selectedMarketName === 'Showtime'
-                    ? getMarketSpecificsByMarketName(
-                        'Showtime'
-                      ).getMarketSVGBlack()
-                    : getMarketSpecificsByMarketName(
-                        'Showtime'
-                      ).getMarketSVGWhite()}
-                </div>
-                <p className="text-lg leading-none">{'Showtime'}</p>
-              </div>
-              <div className="bg-brand-purple border-r-2 border-b-2 md:hidden"></div>
-            </>
-          ) : (
-            <div
-              className={classNames(
-                'hidden md:flex md:justify-center items-center p-5 space-x-2.5 text-white border-2 border-l-0 border-t-0 md:border-t-2 md:border-l-0 md:border-r-2 md:border-b-0 '
-              )}
-            ></div>
-          )}
-          <div
+            Substack
+          </button>
+          <button
             className={classNames(
-              'hidden md:flex md:justify-center items-center p-5 space-x-2.5 text-white border-2 border-l-0 border-t-0 md:border-t-2 md:border-l-0 md:border-r-2 md:border-b-0 '
+              'p-1 border rounded-md px-3 text-sm',
+              {
+                'bg-very-dark-blue text-white':
+                  selectedMarketName === 'Showtime',
+              },
+              { 'text-brand-gray-4': selectedMarketName !== 'Showtime' },
+              { hidden: !isShowtimeMarketVisible }
             )}
-          ></div>
-          <div className="hidden md:flex md:justify-center items-center p-5 space-x-2.5 text-white border-l-2 md:border-t-2 md:border-l-0 md:border-r-2 md:border-b-0 md:rounded-tr-xlg"></div>
+            onClick={() => {
+              onMarketChanged('Showtime')
+            }}
+          >
+            Showtime
+          </button>
         </div>
         <div className="bg-white border border-brand-gray-3 rounded-b-xlg shadow-home">
           <div className="flex flex-col border-b md:flex-row border-brand-gray-3">
