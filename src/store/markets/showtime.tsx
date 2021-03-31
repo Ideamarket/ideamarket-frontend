@@ -24,13 +24,11 @@ export default class ShowtimeMarketSpecifics implements IMarketSpecifics {
   // Tokens
 
   getTokenURL(tokenName: string): string {
-    return `https://tryshowtime.com/${tokenName.slice(1)}`
+    return `https://tryshowtime.com/${tokenName}`
   }
 
   getTokenIconURL(tokenName: string): string {
-    return `https://unavatar.backend.ideamarket.io/showtime/${tokenName.slice(
-      1
-    )}`
+    return `https://unavatar.backend.ideamarket.io/showtime/${tokenName}`
   }
 
   normalizeUserInputTokenName(userInput: string): string {
@@ -38,23 +36,23 @@ export default class ShowtimeMarketSpecifics implements IMarketSpecifics {
   }
 
   convertUserInputToTokenName(userInput: string): string {
-    return `@${userInput}`
+    return userInput
   }
 
   getTokenNameURLRepresentation(tokenName: string): string {
-    return tokenName.slice(1)
+    return tokenName
   }
 
   getTokenNameFromURLRepresentation(
     tokenNameInURLRepresentation: string
   ): string {
-    return `@${tokenNameInURLRepresentation}`
+    return tokenNameInURLRepresentation
   }
 
   // List Token
 
   getListTokenPrefix(): string {
-    return '@'
+    return 'tryshowtime.com/'
   }
 
   getListTokenSuffix(): string {
