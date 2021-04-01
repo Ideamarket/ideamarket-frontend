@@ -12,14 +12,13 @@ export default function EmailForm() {
       <form
         className="bg-white rounded-r-lg flex items-center px-2 ml-auto space-x-2"
         onSubmit={async (e) => {
+          e.preventDefault()
           if (!toastId.current) {
             const id = toast.loading('Adding to our list...')
             toastId.current = id
           } else {
             toast.loading('Adding to our list...', { id: toastId.current })
           }
-          console.log('starting')
-          e.preventDefault()
           setIsError(false)
           if (email.trim() === '') {
             return
