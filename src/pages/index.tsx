@@ -23,6 +23,7 @@ import { GlobalContext } from './_app'
 import { useWalletStore } from 'store/walletStore'
 import { Categories } from 'store/models/category'
 import { ScrollToTop } from 'components/tokens/ScrollToTop'
+import EmailForm from 'components/EmailForm'
 
 export default function Home() {
   const [selectedCategoryId, setSelectedCategoryId] = useState(
@@ -156,54 +157,58 @@ export default function Home() {
       </div>
 
       <div className="px-2 mx-auto transform md:px-4 max-w-88 md:max-w-304 -translate-y-28 font-sf-compact-medium">
-        <div className="grid auto-cols-min grid-flow-col gap-x-2 bg-white rounded-t-lg p-4 justify-center md:justify-start">
-          <button
-            className={classNames(
-              'p-1 border rounded-md px-3 text-sm',
-              {
-                'bg-very-dark-blue text-white':
-                  selectedMarketName === 'Twitter',
-              },
-              { 'text-brand-gray-4': selectedMarketName !== 'Twitter' }
-            )}
-            onClick={() => {
-              onMarketChanged('Twitter')
-            }}
-          >
-            Twitter
-          </button>
-          <button
-            className={classNames(
-              'p-1 border rounded-md px-3 text-sm',
-              {
-                'bg-very-dark-blue text-white':
-                  selectedMarketName === 'Substack',
-              },
-              { 'text-brand-gray-4': selectedMarketName !== 'Substack' }
-            )}
-            onClick={() => {
-              onMarketChanged('Substack')
-            }}
-          >
-            Substack
-          </button>
-          <button
-            className={classNames(
-              'p-1 border rounded-md px-3 text-sm',
-              {
-                'bg-very-dark-blue text-white':
-                  selectedMarketName === 'Showtime',
-              },
-              { 'text-brand-gray-4': selectedMarketName !== 'Showtime' },
-              { hidden: !isShowtimeMarketVisible }
-            )}
-            onClick={() => {
-              onMarketChanged('Showtime')
-            }}
-          >
-            Showtime
-          </button>
+        <div className="flex">
+          <div className="flex-1 grid auto-cols-min grid-flow-col gap-x-2 bg-white rounded-l-lg p-4 justify-center md:justify-start">
+            <button
+              className={classNames(
+                'p-1 border rounded-md px-3 text-sm',
+                {
+                  'bg-very-dark-blue text-white':
+                    selectedMarketName === 'Twitter',
+                },
+                { 'text-brand-gray-4': selectedMarketName !== 'Twitter' }
+              )}
+              onClick={() => {
+                onMarketChanged('Twitter')
+              }}
+            >
+              Twitter
+            </button>
+            <button
+              className={classNames(
+                'p-1 border rounded-md px-3 text-sm',
+                {
+                  'bg-very-dark-blue text-white':
+                    selectedMarketName === 'Substack',
+                },
+                { 'text-brand-gray-4': selectedMarketName !== 'Substack' }
+              )}
+              onClick={() => {
+                onMarketChanged('Substack')
+              }}
+            >
+              Substack
+            </button>
+            <button
+              className={classNames(
+                'p-1 border rounded-md px-3 text-sm',
+                {
+                  'bg-very-dark-blue text-white':
+                    selectedMarketName === 'Showtime',
+                },
+                { 'text-brand-gray-4': selectedMarketName !== 'Showtime' },
+                { hidden: !isShowtimeMarketVisible }
+              )}
+              onClick={() => {
+                onMarketChanged('Showtime')
+              }}
+            >
+              Showtime
+            </button>
+          </div>
+          <EmailForm />
         </div>
+
         <div className="bg-white border border-brand-gray-3 rounded-b-xlg shadow-home">
           <div className="flex flex-col border-b md:flex-row border-brand-gray-3">
             <div className="px-4 md:px-10">
