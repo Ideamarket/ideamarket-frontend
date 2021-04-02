@@ -7,6 +7,9 @@ module.exports = {
   },
   theme: {
     extend: {
+      gridTemplateColumns: {
+        'mobile-row': 'minmax(160px, 1fr) 1fr',
+      },
       colors: {
         'brand-blue': '#0857e0',
         'brand-gray': '#f6f6f6',

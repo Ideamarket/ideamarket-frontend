@@ -49,7 +49,7 @@ export default function TokenRow({
   return (
     <>
       <tr
-        className="grid grid-cols-3 cursor-pointer md:table-row hover:bg-brand-gray"
+        className="grid grid-cols-mobile-row grid-flow-col cursor-pointer md:table-row hover:bg-brand-gray"
         onClick={() => {
           router.push(
             `/i/${marketSpecifics.getMarketNameURLRepresentation()}/${marketSpecifics.getTokenNameURLRepresentation(
@@ -58,11 +58,13 @@ export default function TokenRow({
           )
         }}
       >
+        {/* Rank */}
         <td className="hidden py-4 pl-3 pr-1 text-sm leading-5 text-center text-gray-500 md:table-cell whitespace-nowrap">
           {token.rank}
         </td>
-        <td className="col-span-3 py-4 pl-6 whitespace-nowrap">
-          <div className="flex items-center">
+        {/* Icon and Name */}
+        <td className="flex md:table-cell md:col-span-3 py-4 pl-2 md:pl-6 whitespace-nowrap">
+          <div className="w-full flex items-center">
             {showMarketSVG && marketSpecifics.getMarketSVGBlack()}
             <div
               className={classNames(
@@ -76,26 +78,13 @@ export default function TokenRow({
                 alt=""
               />
             </div>
-            <div className="ml-4 text-base font-medium leading-5 text-gray-900">
-              <span className="hover:underline">{token.name}</span>
-            </div>
-            <div className="flex items-center justify-center ml-auto md:hidden mr-2 md:mr-0">
-              <svg
-                className="w-7.5 text-brand-blue"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z"
-                  clipRule="evenodd"
-                />
-              </svg>
+            <div className="truncate hover:underline ml-4 text-base font-medium leading-5 text-gray-900">
+              <span>{token.name}</span>
             </div>
           </div>
         </td>
-        <td className="py-4 pl-6 whitespace-nowrap">
+        {/* Price */}
+        <td className="hidden md:table-cell py-4 pl-6 whitespace-nowrap">
           <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4">
             Price
           </p>
@@ -106,7 +95,8 @@ export default function TokenRow({
             ${formatNumber(tokenPrice)}
           </p>
         </td>
-        <td className="py-4 pl-6 whitespace-nowrap">
+        {/* Deposits */}
+        <td className="hidden md:table-cell py-4 pl-6 whitespace-nowrap">
           <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4">
             Deposits
           </p>
@@ -124,7 +114,8 @@ export default function TokenRow({
             )}
           </p>
         </td>
-        <td className="py-4 pl-6 whitespace-nowrap">
+        {/* %Locked */}
+        <td className="hidden md:table-cell py-4 pl-6 whitespace-nowrap">
           <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4">
             % Locked
           </p>
@@ -139,10 +130,8 @@ export default function TokenRow({
             )}
           </p>
         </td>
-        <td className="py-4 pl-6 whitespace-nowrap">
-          <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4">
-            24H Change
-          </p>
+        {/* Day Change */}
+        <td className="flex md:table-cell items-center py-4 pl-4 md:pl-6 whitespace-nowrap">
           <p
             className={classNames(
               'text-base font-medium leading-4 tracking-tightest-2 text-very-dark-blue uppercase',
@@ -162,10 +151,8 @@ export default function TokenRow({
             %
           </p>
         </td>
-        <td className="py-4 pl-6 whitespace-nowrap">
-          <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4">
-            1YR Income
-          </p>
+        {/* Year Income */}
+        <td className="hidden md:table-cell py-4 pl-6 whitespace-nowrap">
           <p
             className="text-base font-medium leading-4 uppercase tracking-tightest-2 text-very-dark-blue"
             title={'$' + yearIncome}
@@ -173,19 +160,31 @@ export default function TokenRow({
             ${formatNumberWithCommasAsThousandsSerperator(parseInt(yearIncome))}
           </p>
         </td>
-
-        <td className="hidden px-6 py-4 whitespace-nowrap md:table-cell">
+        {/* Buy Button */}
+        <td className="hidden md:table-cell px-6 py-4 whitespace-nowrap">
           <button
             onClick={(e) => {
               e.stopPropagation()
               onTradeClicked(token, market)
             }}
-            className="w-24 h-10 text-base font-medium bg-white border-2 rounded-lg border-brand-blue text-brand-blue hover:text-white tracking-tightest-2 font-sf-compact-medium hover:bg-brand-blue"
+            className="md:table-cell w-24 h-10 text-base font-medium bg-white border-2 rounded-lg border-brand-blue text-brand-blue hover:text-white tracking-tightest-2 font-sf-compact-medium hover:bg-brand-blue"
           >
             Buy
           </button>
         </td>
-        <td className="py-4 pl-3 pr-6 text-sm leading-5 text-gray-500 whitespace-nowrap">
+        {/* Buy Button mobile */}
+        <td className="md:hidden pl-4 py-4 whitespace-nowrap">
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              onTradeClicked(token, market)
+            }}
+            className="px-2 py-1 text-base font-medium bg-white border-2 rounded-lg border-brand-blue text-brand-blue hover:text-white tracking-tightest-2 font-sf-compact-medium hover:bg-brand-blue"
+          >
+            ${formatNumber(tokenPrice)}
+          </button>
+        </td>
+        <td className="py-4 px-3 md:pl-3 md:pr-6 text-sm leading-5 text-gray-500 whitespace-nowrap">
           <div className="flex items-center justify-center h-full">
             <WatchingStar token={token} />
           </div>
