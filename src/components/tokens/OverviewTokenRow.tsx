@@ -95,6 +95,27 @@ export default function TokenRow({
             ${formatNumber(tokenPrice)}
           </p>
         </td>
+        {/* Day Change */}
+        <td className="flex md:table-cell items-center py-4 pl-4 md:pl-6 whitespace-nowrap">
+          <p
+            className={classNames(
+              'text-base font-medium leading-4 tracking-tightest-2 text-very-dark-blue uppercase',
+              parseFloat(token.dayChange) >= 0.0
+                ? 'text-brand-green'
+                : 'text-brand-red'
+            )}
+            title={`${
+              parseFloat(token.dayChange) >= 0.0
+                ? `+ ${parseInt(token.dayChange)}`
+                : `- ${parseInt(token.dayChange.slice(1))}`
+            }%`}
+          >
+            {parseFloat(token.dayChange) >= 0.0
+              ? `+ ${parseInt(token.dayChange)}`
+              : `- ${parseInt(token.dayChange.slice(1))}`}
+            %
+          </p>
+        </td>
         {/* Deposits */}
         <td className="hidden md:table-cell py-4 pl-6 whitespace-nowrap">
           <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4">
@@ -130,27 +151,6 @@ export default function TokenRow({
             )}
           </p>
         </td>
-        {/* Day Change */}
-        <td className="flex md:table-cell items-center py-4 pl-4 md:pl-6 whitespace-nowrap">
-          <p
-            className={classNames(
-              'text-base font-medium leading-4 tracking-tightest-2 text-very-dark-blue uppercase',
-              parseFloat(token.dayChange) >= 0.0
-                ? 'text-brand-green'
-                : 'text-brand-red'
-            )}
-            title={`${
-              parseFloat(token.dayChange) >= 0.0
-                ? `+ ${parseInt(token.dayChange)}`
-                : `- ${parseInt(token.dayChange.slice(1))}`
-            }%`}
-          >
-            {parseFloat(token.dayChange) >= 0.0
-              ? `+ ${parseInt(token.dayChange)}`
-              : `- ${parseInt(token.dayChange.slice(1))}`}
-            %
-          </p>
-        </td>
         {/* Year Income */}
         <td className="hidden md:table-cell py-4 pl-6 whitespace-nowrap">
           <p
@@ -184,6 +184,7 @@ export default function TokenRow({
             ${formatNumber(tokenPrice)}
           </button>
         </td>
+        {/* Star */}
         <td className="py-4 px-3 md:pl-3 md:pr-6 text-sm leading-5 text-gray-500 whitespace-nowrap">
           <div className="flex items-center justify-center h-full">
             <WatchingStar token={token} />
