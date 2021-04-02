@@ -62,7 +62,7 @@ export default function EmailForm() {
                 ? 'border-red-300 text-brand-red placeholder-red-300 focus:ring-red-500 focus:border-brand-red'
                 : 'border-gray-300 focus:ring-brand-blue focus:border-brand-blue'
             )}
-            placeholder="foo@bar.com"
+            placeholder="you@example.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
