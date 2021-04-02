@@ -34,7 +34,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
       [
         {
           fields: {
-            email,
+            [fieldName]: email,
           },
         },
       ],
