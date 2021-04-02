@@ -17,6 +17,7 @@ import {
   WalletModal,
   EmailNewsletterModal,
 } from 'components'
+import { Toaster } from 'react-hot-toast'
 
 export const GlobalContext = createContext({
   isWalletModalOpen: false,
@@ -66,6 +67,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         setIsEmailNewsletterModalOpen,
       }}
     >
+      <Toaster />
       <Head>
         <title>Ideamarket</title>
       </Head>

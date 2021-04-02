@@ -23,7 +23,7 @@ import { GlobalContext } from './_app'
 import { useWalletStore } from 'store/walletStore'
 import { Categories } from 'store/models/category'
 import { ScrollToTop } from 'components/tokens/ScrollToTop'
-import EmailForm from 'components/EmailForm'
+import { EmailForm } from 'components'
 
 export default function Home() {
   const [selectedCategoryId, setSelectedCategoryId] = useState(
@@ -148,7 +148,7 @@ export default function Home() {
             <div className="ml-0.5 md:ml-2">Add Listing</div>
           </div>
         </button>
-        <div className="mt-10 text-md md:text-3xl font-gilroy-bold flex flex-col md:flex-row justify-center items-center">
+        <div className="flex flex-col items-center justify-center mt-10 text-md md:text-3xl font-gilroy-bold md:flex-row">
           <div className="text-2xl text-brand-blue md:text-5xl">
             ${cDaiBalanceInDai}
           </div>
@@ -157,8 +157,8 @@ export default function Home() {
       </div>
 
       <div className="px-2 mx-auto transform md:px-4 max-w-88 md:max-w-304 -translate-y-28 font-sf-compact-medium">
-        <div className="flex">
-          <div className="flex-1 grid auto-cols-min grid-flow-col gap-x-2 bg-white rounded-l-lg p-4 justify-center md:justify-start">
+        <div className="flex flex-col md:flex-row">
+          <div className="grid justify-center flex-1 grid-flow-col p-4 bg-white rounded-t-lg auto-cols-min gap-x-2 md:rounded-tr-none md:justify-start">
             <button
               className={classNames(
                 'p-1 border rounded-md px-3 text-sm',
