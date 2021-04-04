@@ -2,7 +2,7 @@ import { getMarketSpecificsByMarketNameInURLRepresentation } from 'store/markets
 import { FileType } from '../_lib/types'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getScreenshot } from '../_lib/chromium'
-import { getOGImageHTML } from 'store/ideaMarketsStore'
+import { getOGImageHTML } from '../_lib/getOGImageHTML'
 
 const isDev = !process.env.AWS_REGION
 const isHtmlDebug = process.env.OG_HTML_DEBUG === '1'
