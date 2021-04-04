@@ -45,6 +45,7 @@ import {
 import { withdrawTokenInterest, useBalance, useOutputAmount } from 'actions'
 import { DateTime } from 'luxon'
 import { NextSeo } from 'next-seo'
+import { getURL } from 'utils/seo-constants'
 
 const tenPow18 = new BigNumber('10').pow(new BigNumber('18'))
 
@@ -255,7 +256,7 @@ export default function TokenDetails() {
       openGraph={{
         images: [
           {
-            url: `http://localhost:3000/api/${marketName}/${tokenName}.png`,
+            url: `${getURL()}/api/${marketName}/${tokenName}.png`,
           },
         ],
       }}

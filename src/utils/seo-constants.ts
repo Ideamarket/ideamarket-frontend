@@ -8,3 +8,13 @@ export const DEFAULT_OG_IMAGE = `${DEFAULT_CANONICAL}/twitter-large-card.jpg`
 export const TWITTER_HANDLE = '@ideamarkets_'
 export const TWITTER_CARD_TYPE = 'summary_large_image'
 export const FAVICON_LINK = '/logo.png'
+
+export const getURL = (): string => {
+  const url =
+    process?.env?.URL && process.env.URL !== ''
+      ? process.env.URL
+      : process?.env?.VERCEL_URL && process.env.VERCEL_URL !== ''
+      ? process.env.VERCEL_URL
+      : 'http://localhost:3000'
+  return url.includes('http') ? url : `https://${url}`
+}
