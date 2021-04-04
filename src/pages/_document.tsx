@@ -35,23 +35,6 @@ class MyDocument extends Document {
     return (
       <Html lang="en">
         <Head>
-          <link rel="shortcut icon" href="/logo.png" />
-
-          <meta name="twitter:card" content="summary_large_image" />
-          <meta name="twitter:site" content="@ideamarkets_" />
-          <meta
-            name="twitter:title"
-            content="Credibility without corporations"
-          />
-          <meta
-            name="twitter:description"
-            content="Vote with your dollars, and give underrated voices the visibility they deserve."
-          />
-          <meta
-            name="twitter:image"
-            content="https://app.ideamarket.io/twitter-large-card.jpg"
-          />
-
           <script
             async
             src={`https://www.googletagmanager.com/gtag/js?id=${MyDocument.GA_TRACKING_ID}`}
