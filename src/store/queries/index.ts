@@ -10,4 +10,3 @@ export { default as getQueryTokenLockedChartData } from './getQueryTokenLockedCh
 export { default as getQueryLockedAmounts } from './getQueryLockedAmounts'
 export { default as getQuerySinglePricePoint } from './getQuerySinglePricePoint'
 export { default as getQueryTokensChartData } from './getQueryTokensChartData'
-export { default as getQueryTokenForOGImage } from './getQueryTokenForOGImage'

@@ -1,7 +1,7 @@
 import { request } from 'graphql-request'
 import { HTTP_GRAPHQL_ENDPOINT } from 'store/ideaMarketsStore'
 import { getMarketSpecificsByMarketNameInURLRepresentation } from 'store/markets'
-import { getQueryTokenForOGImage } from 'store/queries'
+import getQueryTokenForOGImage from './getQueryTokenForOGImage'
 import { getHtml } from './template'
 import { FileType } from './types'
 
