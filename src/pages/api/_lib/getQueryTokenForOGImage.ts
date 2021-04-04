@@ -1,5 +1,5 @@
-import { WEEK_SECONDS } from './../../../utils/index'
 import { gql } from 'graphql-request'
+const WEEK_SECONDS = 604800
 
 export default function getQueryTokenForOGImage(
   marketName: string,
