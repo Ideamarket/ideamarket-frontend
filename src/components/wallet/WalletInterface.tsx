@@ -8,9 +8,6 @@ import WalletConnect from '../../assets/walletconnect.svg'
 import Coinbase from '../../assets/coinbase.svg'
 import Fortmatic from '../../assets/fortmatic.svg'
 import Portis from '../../assets/portis.svg'
-import WalletIcon from '../../assets/wallet.svg'
-import CreditCard from '../../assets/credit-card.svg'
-import ArrowLeft from '../../assets/arrow-left.svg'
 import DotRed from '../../assets/dotred.svg'
 import DotGreen from '../../assets/dotgreen.svg'
 
@@ -23,7 +20,6 @@ export default function WalletInterface({
   onWalletConnected?: () => void
 }) {
   const [connectingWallet, setConnectingWallet] = useState(0)
-  const [showAllWallets, setShowAllWallets] = useState(false)
   const {
     onWalletConnectedCallback,
     setOnWalletConnectedCallback,
@@ -32,10 +28,6 @@ export default function WalletInterface({
   const address = useWalletStore((state) => state.address)
 
   async function onWalletClicked(wallet) {
-    if (!wallet) {
-      setShowAllWallets(true)
-      return
-    }
     setConnectingWallet(wallet)
 
     let web3
@@ -120,41 +112,7 @@ export default function WalletInterface({
 
   return (
     <div className="relative overflow-hidden lg:min-w-100">
-      <div
-        className={classNames(
-          'absolute w-full transition-all ease-in-out duration-1000 transform',
-          showAllWallets ? '-translate-x-full' : 'translate-x-0'
-        )}
-      >
-        <WalletButton
-          svg={<WalletIcon className="w-8 h-8" />}
-          name="Pay with Crypto"
-        />
-        <WalletButton
-          svg={<CreditCard className="w-7 h-7" />}
-          name="Pay with Credit Card (via Portis)"
-          wallet={wallets.WALLETS.PORTIS}
-        />
-      </div>
-      <div
-        className={classNames(
-          'transition-all ease-in-out duration-1000 transform',
-          !showAllWallets ? 'translate-x-full' : 'translate-x-0'
-        )}
-      >
-        <div className="flex pl-4 pr-4 mt-4">
-          <button
-            onClick={() => setShowAllWallets(false)}
-            className="p-0 border-2 rounded-lg cursor-pointer hover:border-transparent hover:bg-brand-blue hover:text-brand-gray border-brand-gray-1 font-sf-compact-medium"
-          >
-            <div className="flex flex-row items-center">
-              <div className="flex-none">
-                <ArrowLeft className="w-8 h-8" />
-              </div>
-              <div className="flex-none ml-1 mr-2">Back</div>
-            </div>
-          </button>
-        </div>
+      <div className="transition-all duration-1000 ease-in-out">
         <WalletButton
           svg={<Metamask className="w-8 h-8" />}
           name="Metamask"
