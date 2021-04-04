@@ -68,7 +68,6 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <DefaultSeo
-        title={DEFAULT_TITLE}
         titleTemplate={DEFAULT_TITLE_TEMPLATE}
         description={DEFAULT_DESCRIPTION}
         canonical={DEFAULT_CANONICAL}
@@ -77,7 +76,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           locale: 'en_US',
           url: DEFAULT_CANONICAL,
           site_name: SITE_NAME,
-          title: SITE_NAME,
+          title: DEFAULT_TITLE,
           description: DEFAULT_DESCRIPTION,
           images: [
             {
@@ -111,9 +110,6 @@ function MyApp({ Component, pageProps }: AppProps) {
         }}
       >
         <Toaster />
-        <Head>
-          <title>Ideamarket</title>
-        </Head>
         <div className="min-h-screen bg-brand-gray">
           <NavBar />
           <div className="py-16">
