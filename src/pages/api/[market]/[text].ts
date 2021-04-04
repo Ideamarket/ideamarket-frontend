@@ -1,3 +1,5 @@
+import { MarketType } from './../_lib/types'
+import { getMarketSpecificsByMarketNameInURLRepresentation } from 'store/markets'
 import { FileType } from '../_lib/types'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { request, gql } from 'graphql-request'
@@ -22,22 +24,20 @@ export type TokenAmount = {
 const ENDPOINT =
   'https://subgraph.backend.ideamarket.io/subgraphs/name/Ideamarket/Ideamarket'
 
-function capitalize(val: string) {
-  return val.charAt(0).toUpperCase() + val.slice(1)
-}
-
 export default async function Handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const rawMarket = req.query.market as string
   const text = req.query.text as string
   const textArray = text.split('.')
+  const marketSpecifics = getMarketSpecificsByMarketNameInURLRepresentation(
+    req.query.market as string
+  )
   if (
     textArray.length < 2 ||
     (textArray[textArray.length - 1] !== 'png' &&
       textArray[textArray.length - 1] !== 'jpeg') ||
-    (rawMarket !== 'substack' && rawMarket !== 'twitter')
+    !marketSpecifics
   ) {
     res.statusCode = 400
     res.setHeader('Content-Type', 'text/html')
@@ -46,16 +46,17 @@ export default async function Handler(
     )
     return
   }
-  const market = capitalize(rawMarket)
   const rawToken = textArray.slice(0, -1).join('.')
   const fileType = textArray[textArray.length - 1] as FileType
-  const tokenInQuery = (market === 'Twitter' ? '@' : '') + rawToken
+  const tokenInQuery = marketSpecifics.getTokenNameFromURLRepresentation(
+    rawToken
+  )
   try {
     const currentTs = Math.floor(Date.now() / 1000)
     const weekBack = currentTs - 604800
     const query = gql`
       {
-        ideaMarkets(where: { name: "${market}" }) {
+        ideaMarkets(where: { name: "${marketSpecifics.getMarketName()}" }) {
           tokens(where: { name: "${tokenInQuery}" }) {
             name
             rank
@@ -93,7 +94,7 @@ export default async function Handler(
         weeklyChange,
         price: Number(token.latestPricePoint.price).toFixed(2),
         fileType,
-        market: rawMarket,
+        market: marketSpecifics.getMarketNameURLRepresentation() as MarketType,
       })
     } else {
       html = getHtml({
@@ -102,7 +103,7 @@ export default async function Handler(
         weeklyChange: '0',
         price: '0',
         fileType,
-        market: rawMarket,
+        market: marketSpecifics.getMarketNameURLRepresentation() as MarketType,
       })
     }
     if (isHtmlDebug) {
