@@ -1,9 +1,19 @@
 import { request } from 'graphql-request'
-import { HTTP_GRAPHQL_ENDPOINT } from 'store/ideaMarketsStore'
 import { getMarketSpecificsByMarketNameInURLRepresentation } from 'store/markets'
 import getQueryTokenForOGImage from './getQueryTokenForOGImage'
 import { getHtml } from './template'
 import { FileType } from './types'
+
+const NETWORK = process.env.NEXT_PUBLIC_NETWORK
+  ? process.env.NEXT_PUBLIC_NETWORK
+  : 'rinkeby'
+
+const HTTP_GRAPHQL_ENDPOINT =
+  NETWORK === 'rinkeby'
+    ? 'https://subgraph-rinkeby.backend.ideamarket.io/subgraphs/name/Ideamarket/IdeamarketRINKEBY'
+    : NETWORK === 'test'
+    ? 'https://subgraph-test.backend.ideamarket.io/subgraphs/name/Ideamarket/IdeamarketTEST'
+    : 'https://subgraph.backend.ideamarket.io/subgraphs/name/Ideamarket/Ideamarket'
 
 export async function getOGImageHTML({
   rawMarketName,
