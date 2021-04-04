@@ -29,7 +29,7 @@ export default function MyTokens() {
   const [table, setTable] = useState('holdings')
   return (
     <>
-      <NextSeo title="My Account" />
+      <NextSeo title="My Wallet" />
       <div className="min-h-screen bg-brand-gray">
         <div className="h-64 px-4 pt-8 pb-5 text-white md:px-6 md:pt-6 bg-top-mobile md:bg-top-desktop md:h-96">
           <div className="mx-auto md:px-4 max-w-88 md:max-w-304">

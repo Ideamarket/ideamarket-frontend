@@ -1,3 +1,4 @@
+import { WEEK_SECONDS } from './../../../utils/index'
 import { gql } from 'graphql-request'
 
 export default function getQueryTokenForOGImage(
@@ -5,7 +6,7 @@ export default function getQueryTokenForOGImage(
   tokenName: string
 ): string {
   const currentTs = Math.floor(Date.now() / 1000)
-  const weekBack = currentTs - 604800
+  const weekBack = currentTs - WEEK_SECONDS
   return gql`
     {
       ideaMarkets(where: { name: "${marketName}" }) {

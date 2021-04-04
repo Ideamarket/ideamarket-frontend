@@ -62,7 +62,6 @@ export default async function Handler(
       `public, immutable, no-transform, s-maxage=31536000, max-age=31536000`
     )
     res.end(file)
-    return
   } catch (error) {
     res.statusCode = 500
     res.setHeader('Content-Type', 'text/html')
