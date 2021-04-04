@@ -46,6 +46,7 @@ import { withdrawTokenInterest, useBalance, useOutputAmount } from 'actions'
 import { DateTime } from 'luxon'
 import { NextSeo } from 'next-seo'
 import { getURL } from 'utils/seo-constants'
+import { GetServerSideProps } from 'next'
 
 const tenPow18 = new BigNumber('10').pow(new BigNumber('18'))
 
@@ -88,7 +89,13 @@ function ChartDurationEntry({
   )
 }
 
-export default function TokenDetails() {
+export default function TokenDetails({
+  rawMarketName,
+  rawTokenName,
+}: {
+  rawMarketName: string
+  rawTokenName: string
+}) {
   const CHART = {
     PRICE: 0,
     LOCKED: 1,
@@ -101,8 +108,6 @@ export default function TokenDetails() {
   const web3 = useWalletStore((state) => state.web3)
   const connectedAddress = useWalletStore((state) => state.address)
 
-  const rawMarketName = router.query.marketName as string
-  const rawTokenName = router.query.tokenName as string
   const marketSpecifics = getMarketSpecificsByMarketNameInURLRepresentation(
     rawMarketName
   )
@@ -256,7 +261,7 @@ export default function TokenDetails() {
       openGraph={{
         images: [
           {
-            url: `${getURL()}/api/${marketName}/${tokenName}.png`,
+            url: `${getURL()}/api/${rawMarketName}/${rawTokenName}.png`,
           },
         ],
       }}
@@ -651,4 +656,13 @@ export default function TokenDetails() {
       </div>
     </>
   )
+}
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  return {
+    props: {
+      rawMarketName: context.query.marketName,
+      rawTokenName: context.query.tokenName,
+    },
+  }
 }
