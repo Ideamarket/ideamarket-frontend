@@ -21,7 +21,7 @@ import {
 const tenPow2 = new BigNumber('10').pow(new BigNumber('2'))
 const tenPow18 = new BigNumber('10').pow(new BigNumber('18'))
 
-export const HTTP_GRAPHQL_ENDPOINT =
+const HTTP_GRAPHQL_ENDPOINT =
   NETWORK === 'rinkeby'
     ? 'https://subgraph-rinkeby.backend.ideamarket.io/subgraphs/name/Ideamarket/IdeamarketRINKEBY'
     : NETWORK === 'test'
