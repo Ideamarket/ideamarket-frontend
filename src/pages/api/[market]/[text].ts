@@ -1,10 +1,8 @@
-import { MarketType } from './../_lib/types'
 import { getMarketSpecificsByMarketNameInURLRepresentation } from 'store/markets'
 import { FileType } from '../_lib/types'
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { request, gql } from 'graphql-request'
-import { getHtml } from '../_lib/template'
 import { getScreenshot } from '../_lib/chromium'
+import { getOGImageHTML } from 'store/ideaMarketsStore'
 
 const isDev = !process.env.AWS_REGION
 const isHtmlDebug = process.env.OG_HTML_DEBUG === '1'
@@ -20,9 +18,6 @@ export type TokenAmount = {
     holders: number
   }
 }
-
-const ENDPOINT =
-  'https://subgraph.backend.ideamarket.io/subgraphs/name/Ideamarket/Ideamarket'
 
 export default async function Handler(
   req: NextApiRequest,
@@ -42,70 +37,18 @@ export default async function Handler(
     res.statusCode = 400
     res.setHeader('Content-Type', 'text/html')
     res.end(
-      '<h1>Bad Request</h1><p>Make sure your url looks like `/api/image/twitter/elonmusk.png` or `/api/image/twitter/elonmusk.jpeg` or `/api/image/substack/bankless.png` or `/api/image/substack/bankless.jpeg` </p>'
+      '<h1>Bad Request</h1><p>Make sure your url looks like `/api/twitter/elonmusk.png` or `/api/image/twitter/elonmusk.jpeg` </p>'
     )
     return
   }
   const rawToken = textArray.slice(0, -1).join('.')
   const fileType = textArray[textArray.length - 1] as FileType
-  const tokenInQuery = marketSpecifics.getTokenNameFromURLRepresentation(
-    rawToken
-  )
   try {
-    const currentTs = Math.floor(Date.now() / 1000)
-    const weekBack = currentTs - 604800
-    const query = gql`
-      {
-        ideaMarkets(where: { name: "${marketSpecifics.getMarketName()}" }) {
-          tokens(where: { name: "${tokenInQuery}" }) {
-            name
-            rank
-            latestPricePoint {
-              price
-            }
-            pricePoints(where:{timestamp_gt:${weekBack}} orderBy:timestamp) {
-              oldPrice
-              price
-            }
-            dayVolume
-            dayChange
-          }
-        }
-      }`
-    const response = await request(ENDPOINT, query)
-    const token = response.ideaMarkets[0].tokens[0]
-    // console.log(JSON.stringify(response, null, 2))
-    let html
-    if (token) {
-      const weeklyPricePoints = token.pricePoints
-      let weeklyChange = '0'
-      if (weeklyPricePoints.length > 0) {
-        const weeklyCurrentPrice = Number(
-          weeklyPricePoints[weeklyPricePoints.length - 1].price
-        )
-        const weeklyOldPrice = Number(weeklyPricePoints[0].oldPrice)
-        weeklyChange = Number(
-          ((weeklyCurrentPrice - weeklyOldPrice) * 100) / weeklyOldPrice
-        ).toFixed(2)
-      }
-      html = getHtml({
-        rank: token.rank,
-        username: rawToken,
-        weeklyChange,
-        price: Number(token.latestPricePoint.price).toFixed(2),
-        fileType,
-        market: marketSpecifics.getMarketNameURLRepresentation() as MarketType,
-      })
-    } else {
-      html = getHtml({
-        rank: '0',
-        username: rawToken,
-        weeklyChange: '0',
-        price: '0',
-        fileType,
-        market: marketSpecifics.getMarketNameURLRepresentation() as MarketType,
-      })
-    }
+    const html = await getOGImageHTML({
+      rawMarketName: marketSpecifics.getMarketNameURLRepresentation(),
+      rawTokenName: rawToken,
+      fileType,
+    })
     if (isHtmlDebug) {
       res.setHeader('Content-Type', 'text/html')
       res.end(html)
