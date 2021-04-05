@@ -1,9 +1,7 @@
 import classNames from 'classnames'
-import array from 'lodash/array'
 import { useRouter } from 'next/router'
 import { useContext, useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
-import BigNumber from 'bignumber.js'
 import { GlobalContext } from 'pages/_app'
 import {
   TimeXFloatYChartInLine,
@@ -43,13 +41,11 @@ import {
   calculateIdeaTokenDaiValue,
   useTransactionManager,
 } from 'utils'
-import { withdrawTokenInterest, useBalance, useOutputAmount } from 'actions'
+import { withdrawTokenInterest, useBalance } from 'actions'
 import { DateTime } from 'luxon'
 import { NextSeo } from 'next-seo'
 import { getURL } from 'utils/seo-constants'
 import { GetServerSideProps } from 'next'
-
-const tenPow18 = new BigNumber('10').pow(new BigNumber('18'))
 
 function DetailsSkeleton() {
   return (
@@ -197,7 +193,7 @@ export default function TokenDetails({
       endPrice = token.latestPricePoint.price
     } else {
       beginPrice = rawPriceChartData[0].oldPrice
-      endPrice = array.last(rawPriceChartData).price
+      endPrice = rawPriceChartData.slice(-1)[0].price
     }
 
     const finalChartData = [[chartFromTs, beginPrice]].concat(

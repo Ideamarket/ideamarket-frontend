@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import { useEffect, useState } from 'react'
 import classNames from 'classnames'
 import { IdeaToken, IdeaMarket } from 'store/ideaMarketsStore'

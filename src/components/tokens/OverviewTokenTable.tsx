@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useInfiniteQuery, useQuery } from 'react-query'
-import { flatten } from 'lodash'
 
 import { WEEK_SECONDS } from 'utils'
 import {
@@ -124,7 +123,7 @@ export default function Table({
 
   canFetchMoreRef.current = canFetchMore
 
-  const tokenData = flatten(infiniteData || [])
+  const tokenData = infiniteData?.reduce((a, b) => a.concat(b), []) ?? []
 
   useEffect(() => {
     const fetch = async () => {
@@ -219,7 +218,7 @@ export default function Table({
                     />
                   </tr>
                 </thead>
-                <tbody className="bg-white w-full divide-y divide-gray-200">
+                <tbody className="w-full bg-white divide-y divide-gray-200">
                   {(tokenData as IdeaToken[]).map((token) => (
                     <TokenRow
                       key={token.marketID + '-' + token.tokenID}
