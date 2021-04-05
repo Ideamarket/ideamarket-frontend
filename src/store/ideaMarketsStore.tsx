@@ -16,7 +16,9 @@ import {
   getQueryTokenNameTextSearch,
   getQueryTokens,
   getQuerySinglePricePoint,
+  getQueryAllMarketsAndTokens,
 } from './queries'
+import { getMarketSpecificsByMarketName } from './markets'
 
 const tenPow2 = new BigNumber('10').pow(new BigNumber('2'))
 const tenPow18 = new BigNumber('10').pow(new BigNumber('18'))
@@ -131,6 +133,22 @@ export async function queryMarkets(
     getQueryMarkets(marketNames)
   )
   return result.ideaMarkets.map((market) => apiResponseToIdeaMarket(market))
+}
+
+export async function getAllMarketsAndTokens() {
+  const result = await request(
+    HTTP_GRAPHQL_ENDPOINT,
+    getQueryAllMarketsAndTokens()
+  )
+  return result.ideaMarkets.map((market) => {
+    const specifics = getMarketSpecificsByMarketName(market.name)
+    return {
+      name: specifics.getMarketNameURLRepresentation(),
+      tokens: market.tokens.map((token) =>
+        specifics.getTokenNameURLRepresentation(token.name)
+      ),
+    }
+  })
 }
 
 export async function queryMarket(

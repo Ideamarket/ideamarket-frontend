@@ -25,6 +25,7 @@ import {
   queryTokenChartData,
   queryTokenLockedChartData,
   queryMarket,
+  getAllMarketsAndTokens,
 } from 'store/ideaMarketsStore'
 import { getMarketSpecificsByMarketNameInURLRepresentation } from 'store/markets'
 import {
@@ -45,7 +46,7 @@ import { withdrawTokenInterest, useBalance } from 'actions'
 import { DateTime } from 'luxon'
 import { NextSeo } from 'next-seo'
 import { getURL } from 'utils/seo-constants'
-import { GetServerSideProps } from 'next'
+import { GetStaticPaths, GetStaticProps } from 'next'
 
 function DetailsSkeleton() {
   return (
@@ -655,11 +656,30 @@ export default function TokenDetails({
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getStaticProps: GetStaticProps = async ({ params }) => {
   return {
     props: {
-      rawMarketName: context.query.marketName,
-      rawTokenName: context.query.tokenName,
+      rawMarketName: params.marketName,
+      rawTokenName: params.tokenName,
     },
+  }
+}
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const markets = await getAllMarketsAndTokens()
+  const paths = []
+  markets.forEach((market) => {
+    market.tokens.forEach((token) => {
+      paths.push({
+        params: {
+          marketName: market.name,
+          tokenName: token,
+        },
+      })
+    })
+  })
+  return {
+    paths,
+    fallback: false,
   }
 }
