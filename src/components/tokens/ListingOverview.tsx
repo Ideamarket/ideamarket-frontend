@@ -162,7 +162,7 @@ export default function TokenCard({
               <>{formatNumberInt(token.holders)}</>
             )}
           </DetailsOverChartEntry>
-          <DetailsOverChartEntry
+          {/* <DetailsOverChartEntry
             header="24H Volume"
             contentTitle={'$' + token.dayVolume}
           >
@@ -171,8 +171,8 @@ export default function TokenCard({
             ) : (
               <>{`$${formatNumber(token.dayVolume)}`}</>
             )}
-          </DetailsOverChartEntry>
-          <DetailsOverChartEntry
+          </DetailsOverChartEntry> */}
+          {/* <DetailsOverChartEntry
             header="24H Change"
             customClasses="pr-0"
             contentTitle={token.dayChange + '%'}
@@ -190,7 +190,7 @@ export default function TokenCard({
                 {formatNumber(token.dayChange)}%
               </div>
             )}
-          </DetailsOverChartEntry>
+          </DetailsOverChartEntry> */}
         </div>
       </div>
     </>
