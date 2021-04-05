@@ -1,5 +1,3 @@
-import _ from 'lodash'
-
 import TwitterMarketSpecifics from './twitter'
 import SubstackMarketSpecifics from './substack'
 import ShowtimeMarketSpecifics from './showtime'
@@ -43,7 +41,7 @@ const specifics: IMarketSpecifics[] = [
 export function getMarketSpecificsByMarketName(
   marketName: string
 ): IMarketSpecifics {
-  return _.find(specifics, (s) => s.getMarketName() === marketName)
+  return specifics.find((s) => s.getMarketName() === marketName)
 }
 
 export function getMarketNames(): string[] {
@@ -55,8 +53,7 @@ export function getMarketNames(): string[] {
 export function getMarketSpecificsByMarketNameInURLRepresentation(
   marketNameInURLRepresentation: string
 ): IMarketSpecifics {
-  return _.find(
-    specifics,
+  return specifics.find(
     (s) => s.getMarketNameURLRepresentation() === marketNameInURLRepresentation
   )
 }
