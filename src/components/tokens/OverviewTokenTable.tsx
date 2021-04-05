@@ -6,8 +6,8 @@ import { WEEK_SECONDS } from 'utils'
 import {
   IdeaToken,
   IdeaMarket,
-  queryMarket,
   queryTokens,
+  queryMarkets,
 } from 'store/ideaMarketsStore'
 import { querySupplyRate, queryExchangeRate } from 'store/compoundStore'
 import { useIdeaMarketsStore } from 'store/ideaMarketsStore'
@@ -17,7 +17,7 @@ import { Categories } from 'store/models/category'
 import { Header } from './table/Header'
 
 type Props = {
-  selectedMarketName: string
+  selectedMarkets: Set<string>
   selectedCategoryId: number
   nameSearch: string
   onOrderByChanged: (o: string, d: string) => void
@@ -25,7 +25,7 @@ type Props = {
 }
 
 export default function Table({
-  selectedMarketName,
+  selectedMarkets,
   selectedCategoryId,
   nameSearch,
   onOrderByChanged,
@@ -35,10 +35,14 @@ export default function Table({
   const LOADING_MARGIN = 200
 
   const [currentHeader, setCurrentHeader] = useState('rank')
-  const [orderBy, setOrderBy] = useState('rank')
-  const [orderDirection, setOrderDirection] = useState('asc')
-  const [market, setMarket] = useState<IdeaMarket>()
+  const [orderBy, setOrderBy] = useState('supply')
+  const [orderDirection, setOrderDirection] = useState('desc')
+  const [markets, setMarkets] = useState<IdeaMarket[]>([])
   const canFetchMoreRef = useRef<boolean>()
+  const marketsMap = markets.reduce(
+    (acc, curr) => ({ ...acc, [curr.marketID]: curr }),
+    {}
+  )
 
   const watchingTokens = Object.keys(
     useIdeaMarketsStore((store) => store.watching)
@@ -49,7 +53,7 @@ export default function Table({
 
   const {
     data: compoundExchangeRate,
-    isLoading: isCompoundExchangeRateLoading,
+    isFetching: isCompoundExchangeRateLoading,
   } = useQuery(
     'compound-exchange-rate',
     queryExchangeRate,
@@ -61,14 +65,14 @@ export default function Table({
 
   const {
     data: compoundSupplyRate,
-    isLoading: isCompoundSupplyRateLoading,
+    isFetching: isCompoundSupplyRateLoading,
   } = useQuery('compound-supply-rate', querySupplyRate, {
     refetchOnWindowFocus: false,
   })
 
-  const { isLoading: isMarketLoading, refetch: refetchMarket } = useQuery(
-    [`market-${selectedMarketName}`, selectedMarketName],
-    queryMarket,
+  const { isFetching: isMarketLoading, refetch: refetchMarkets } = useQuery(
+    [`market-${Array.from(selectedMarkets)}`, Array.from(selectedMarkets)],
+    queryMarkets,
     {
       refetchOnWindowFocus: false,
       enabled: false,
@@ -83,9 +87,9 @@ export default function Table({
     canFetchMore,
   } = useInfiniteQuery(
     [
-      `tokens-${selectedMarketName}`,
+      `tokens-${Array.from(selectedMarkets)}`,
       [
-        market,
+        markets,
         TOKENS_PER_PAGE,
         WEEK_SECONDS,
         selectedCategoryId === Categories.HOT.id
@@ -124,17 +128,17 @@ export default function Table({
 
   useEffect(() => {
     const fetch = async () => {
-      const market = await refetchMarket()
-      setMarket(market)
+      const markets = await refetchMarkets()
+      setMarkets(markets)
     }
     fetch()
-  }, [selectedMarketName])
+  }, [selectedMarkets])
 
   useEffect(() => {
-    if (!!market) {
+    if (markets.length !== 0) {
       refetch()
     }
-  }, [market, selectedCategoryId, orderBy, orderDirection, nameSearch])
+  }, [markets, selectedCategoryId, orderBy, orderDirection, nameSearch])
 
   useEffect(() => {
     const handleScroll = () => {
@@ -212,18 +216,15 @@ export default function Table({
                       currentHeader={currentHeader}
                       orderDirection={orderDirection}
                       headerClicked={headerClicked}
-                      isLoading={isLoading}
-                      market={market}
-                      compoundExchangeRate={compoundExchangeRate}
                     />
                   </tr>
                 </thead>
                 <tbody className="bg-white w-full divide-y divide-gray-200">
                   {(tokenData as IdeaToken[]).map((token) => (
                     <TokenRow
-                      key={market.marketID + '-' + token.tokenID}
+                      key={token.marketID + '-' + token.tokenID}
                       token={token}
-                      market={market}
+                      market={marketsMap[token.marketID]}
                       showMarketSVG={false}
                       compoundSupplyRate={compoundSupplyRate}
                       onTradeClicked={onTradeClicked}

@@ -15,9 +15,9 @@ type Header = {
 }
 const headers: Header[] = [
   {
-    content: '#',
-    value: 'rank',
-    sortable: true,
+    content: '',
+    value: 'market',
+    sortable: false,
   },
   {
     content: 'Name',
@@ -27,11 +27,6 @@ const headers: Header[] = [
   {
     content: 'Price',
     value: 'price',
-    sortable: true,
-  },
-  {
-    content: '24H Change',
-    value: 'change',
     sortable: true,
   },
   {
@@ -66,24 +61,28 @@ const headers: Header[] = [
     value: 'income',
     sortable: true,
   },
+  {
+    content: 'Trade',
+    value: 'trade',
+    sortable: false,
+  },
+  {
+    content: 'Watch',
+    value: 'watch',
+    sortable: false,
+  },
 ]
 
 type Props = {
   currentHeader: string
   orderDirection: string
   headerClicked: (headerValue: string) => void
-  isLoading: boolean
-  market: IdeaMarket
-  compoundExchangeRate: BN
 }
 
 export const Header = ({
   currentHeader,
   orderDirection,
   headerClicked,
-  isLoading,
-  market,
-  compoundExchangeRate,
 }: Props) => (
   <>
     {headers.map((header) => (
@@ -114,45 +113,5 @@ export const Header = ({
         {header.content}
       </th>
     ))}
-    <th
-      colSpan={2}
-      className="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase bg-gray-50"
-    >
-      <div className="text-right">
-        {!isLoading && market ? (
-          <span>
-            {'$' +
-              formatNumber(
-                parseFloat(
-                  web3BNToFloatString(
-                    investmentTokenToUnderlying(
-                      market.rawPlatformFeeInvested,
-                      compoundExchangeRate
-                    ).add(market.rawPlatformFeeRedeemed),
-                    bigNumberTenPow18,
-                    4
-                  )
-                )
-              )}
-          </span>
-        ) : (
-          <span>~</span>
-        )}
-        <br />
-        <div className="flex flex-row items-center justify-end">
-          earned for {market?.name}
-          <Tooltip className="ml-1">
-            <div className="w-32 md:w-64">
-              Platforms get a new income stream too. Half of the trading fees
-              for each market are paid to the platform it curates. To claim
-              funds on behalf of Twitter, email{' '}
-              <A className="underline" href="mailto:team@ideamarkets.org">
-                team@ideamarkets.org
-              </A>
-            </div>
-          </Tooltip>
-        </div>
-      </div>
-    </th>
   </>
 )

@@ -122,8 +122,14 @@ export async function initIdeaMarketsStore() {
   })
 }
 
-export async function queryMarkets(queryKey: string): Promise<IdeaMarket[]> {
-  const result = await request(HTTP_GRAPHQL_ENDPOINT, getQueryMarkets())
+export async function queryMarkets(
+  queryKey: string,
+  marketNames: string[] = []
+): Promise<IdeaMarket[]> {
+  const result = await request(
+    HTTP_GRAPHQL_ENDPOINT,
+    getQueryMarkets(marketNames)
+  )
   return result.ideaMarkets.map((market) => apiResponseToIdeaMarket(market))
 }
 
@@ -131,17 +137,13 @@ export async function queryMarket(
   queryKey: string,
   marketName: string
 ): Promise<IdeaMarket> {
-  if (!marketName) {
-    return undefined
-  }
-
   const result = await request(
     HTTP_GRAPHQL_ENDPOINT,
     getQueryMarket(marketName)
   )
-
-  const market = result.ideaMarkets[0]
-  return apiResponseToIdeaMarket(market)
+  return result.ideaMarkets
+    .map((market) => apiResponseToIdeaMarket(market))
+    .pop()
 }
 
 export async function queryOwnedTokensMaybeMarket(
@@ -195,7 +197,7 @@ export async function queryMyTokensMaybeMarket(
 }
 
 type Params = [
-  market: IdeaMarket,
+  markets: IdeaMarket[],
   num: number,
   duration: number,
   orderBy: string,
@@ -214,7 +216,7 @@ export async function queryTokens(
   }
 
   const [
-    market,
+    markets,
     num,
     duration,
     orderBy,
@@ -224,6 +226,7 @@ export async function queryTokens(
   ] = params
 
   const fromTs = Math.floor(Date.now() / 1000) - duration
+  const marketIds = markets.map((market) => market.marketID)
 
   let result
   if (search.length >= 2) {
@@ -231,7 +234,7 @@ export async function queryTokens(
       await request(
         HTTP_GRAPHQL_ENDPOINT,
         getQueryTokenNameTextSearch(
-          market.marketID,
+          marketIds,
           skip,
           num,
           fromTs,
@@ -247,7 +250,7 @@ export async function queryTokens(
       await request(
         HTTP_GRAPHQL_ENDPOINT,
         getQueryTokens(
-          market.marketID,
+          marketIds,
           skip,
           num,
           fromTs,
@@ -256,10 +259,10 @@ export async function queryTokens(
           filterTokens
         )
       )
-    ).ideaMarkets[0].tokens
+    ).ideaTokens
   }
 
-  return result.map((token) => apiResponseToIdeaToken(token, market))
+  return result.map((token) => apiResponseToIdeaToken(token))
 }
 
 export async function querySingleToken(

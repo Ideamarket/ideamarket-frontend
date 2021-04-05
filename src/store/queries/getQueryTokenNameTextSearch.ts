@@ -1,7 +1,7 @@
 import { gql } from 'graphql-request'
 
 export default function getQueryTokenNameTextSearch(
-  marketID: number,
+  marketIds: number[],
   skip: number,
   num: number,
   fromTs: number,
@@ -10,7 +10,8 @@ export default function getQueryTokenNameTextSearch(
   search: string,
   filterTokens: string[]
 ): string {
-  const hexMarketID = '0x' + marketID.toString(16)
+  const hexMarketIds = marketIds.map((id) => '0x' + id.toString(16))
+  const inMarkets = hexMarketIds.map((id) => `"${id}"`).join(',')
 
   let filterTokensQuery = ''
   if (filterTokens) {
@@ -26,15 +27,18 @@ export default function getQueryTokenNameTextSearch(
 
   return gql`
     {
-      tokenNameSearch(skip:${skip}, first:${num}, orderBy:${orderBy}, orderDirection:${orderDirection}, where:{market:${
-    '"' + hexMarketID + '"'
-  }${filterTokensQuery}}, text:${'"' + search + ':*"'}) {
+      tokenNameSearch(skip:${skip}, first:${num}, orderBy:${orderBy}, orderDirection:${orderDirection}, where:{market_in:[${inMarkets}]${filterTokensQuery}}, text:${
+    '"' + search + ':*"'
+  }) {
           id
           tokenID
           name
           supply
           holders
           marketCap
+          market {
+            id: marketID
+          }
           tokenOwner
           daiInToken
           invested

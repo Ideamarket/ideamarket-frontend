@@ -7,9 +7,11 @@ import ShowtimeMarketSpecifics from './showtime'
 export type IMarketSpecifics = {
   // Market
   getMarketName(): string
+  isEnabled(): boolean
   getMarketNameURLRepresentation(): string
   getMarketSVGBlack(): JSX.Element
   getMarketSVGWhite(): JSX.Element
+  getMarketOutlineSVG(): JSX.Element
 
   // Tokens
   getTokenURL(tokenName: string): string
@@ -38,6 +40,10 @@ const specifics: IMarketSpecifics[] = [
   new SubstackMarketSpecifics(),
   new ShowtimeMarketSpecifics(),
 ]
+
+export function getMarketSpecifics() {
+  return specifics
+}
 
 export function getMarketSpecificsByMarketName(
   marketName: string

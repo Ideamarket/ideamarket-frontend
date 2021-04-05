@@ -9,7 +9,7 @@ export default function EmailForm() {
   return (
     <>
       <form
-        className="flex flex-col items-center px-2 pb-2 space-x-2 space-y-2 bg-white md:rounded-tr-lg md:flex-row md:space-y-0 md:ml-auto"
+        className="flex flex-col items-center px-2 pb-2 space-x-2 space-y-2 bg-white md:pb-0 md:rounded-tr-lg md:flex-row md:space-y-0 md:ml-auto"
         onSubmit={async (e) => {
           e.preventDefault()
           if (email.trim() === '') {

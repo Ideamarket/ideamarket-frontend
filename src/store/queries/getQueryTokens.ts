@@ -1,7 +1,7 @@
 import { gql } from 'graphql-request'
 
 export default function getQueryTokens(
-  marketID: number,
+  marketIds: number[],
   skip: number,
   num: number,
   fromTs: number,
@@ -9,6 +9,8 @@ export default function getQueryTokens(
   orderDirection: string,
   filterTokens: string[]
 ): string {
+  const hexMarketIds = marketIds.map((id) => '0x' + id.toString(16))
+  const inMarkets = hexMarketIds.map((id) => `"${id}"`).join(',')
   let filterTokensQuery = ''
   if (filterTokens) {
     filterTokensQuery = ',where:{id_in:['
@@ -23,14 +25,16 @@ export default function getQueryTokens(
 
   return gql`
     {
-      ideaMarkets(where:{marketID:${marketID.toString()}}) {
-        tokens(skip:${skip}, first:${num}, orderBy:${orderBy}, orderDirection:${orderDirection}${filterTokensQuery}) {
+      ideaTokens(where:{market_in:[${inMarkets}]}, skip:${skip}, first:${num}, orderBy:${orderBy}, orderDirection:${orderDirection}${filterTokensQuery}) {
           id
           tokenID
           name
           supply
           holders
           marketCap
+          market {
+            id: marketID
+          }
           rank
           tokenOwner
           daiInToken
@@ -53,6 +57,5 @@ export default function getQueryTokens(
           dayVolume
           dayChange
         }
-      }
     }`
 }

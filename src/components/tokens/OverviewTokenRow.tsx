@@ -58,14 +58,18 @@ export default function TokenRow({
           )
         }}
       >
-        {/* Rank */}
-        <td className="hidden py-4 pl-3 pr-1 text-sm leading-5 text-center text-gray-500 md:table-cell whitespace-nowrap">
-          {token.rank}
+        {/* Market */}
+        <td className="flex justify-center items-center py-4 text-sm leading-5 text-center text-gray-500 md:table-cell whitespace-nowrap">
+          <div className="flex justify-end items-center w-full h-full">
+            <div className="w-5 h-5 mr-2 md:mr-0">
+              {marketSpecifics.getMarketOutlineSVG()}
+            </div>
+          </div>
         </td>
         {/* Icon and Name */}
         <td className="flex md:table-cell md:col-span-3 py-4 pl-2 md:pl-6 whitespace-nowrap">
           <div className="w-full flex items-center">
-            {showMarketSVG && marketSpecifics.getMarketSVGBlack()}
+            {showMarketSVG && marketSpecifics.getMarketOutlineSVG()}
             <div
               className={classNames(
                 'flex-shrink-0 w-7.5 h-7.5',
@@ -93,27 +97,6 @@ export default function TokenRow({
             title={'$' + tokenPrice}
           >
             ${formatNumber(tokenPrice)}
-          </p>
-        </td>
-        {/* Day Change */}
-        <td className="flex md:table-cell items-center py-4 pl-4 md:pl-6 whitespace-nowrap">
-          <p
-            className={classNames(
-              'text-base font-medium leading-4 tracking-tightest-2 text-very-dark-blue uppercase',
-              parseFloat(token.dayChange) >= 0.0
-                ? 'text-brand-green'
-                : 'text-brand-red'
-            )}
-            title={`${
-              parseFloat(token.dayChange) >= 0.0
-                ? `+ ${parseInt(token.dayChange)}`
-                : `- ${parseInt(token.dayChange.slice(1))}`
-            }%`}
-          >
-            {parseFloat(token.dayChange) >= 0.0
-              ? `+ ${parseInt(token.dayChange)}`
-              : `- ${parseInt(token.dayChange.slice(1))}`}
-            %
           </p>
         </td>
         {/* Deposits */}
@@ -179,7 +162,7 @@ export default function TokenRow({
               e.stopPropagation()
               onTradeClicked(token, market)
             }}
-            className="px-2 py-1 text-base font-medium bg-white border-2 rounded-lg border-brand-blue text-brand-blue hover:text-white tracking-tightest-2 font-sf-compact-medium hover:bg-brand-blue"
+            className="px-2 py-1 w-16 text-base font-medium bg-white border-2 rounded-lg border-brand-blue text-brand-blue hover:text-white tracking-tightest-2 font-sf-compact-medium hover:bg-brand-blue"
           >
             ${formatNumber(tokenPrice)}
           </button>

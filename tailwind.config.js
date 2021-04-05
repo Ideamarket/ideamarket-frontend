@@ -8,7 +8,7 @@ module.exports = {
   theme: {
     extend: {
       gridTemplateColumns: {
-        'mobile-row': 'minmax(160px, 1fr) 1fr',
+        'mobile-row': '1fr minmax(160px, 1fr) 1fr',
       },
       colors: {
         'brand-blue': '#0857e0',

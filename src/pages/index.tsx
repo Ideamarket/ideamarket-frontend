@@ -8,12 +8,10 @@ import {
   queryExchangeRate,
   investmentTokenToUnderlying,
 } from 'store/compoundStore'
-import { getMarketSpecificsByMarketName } from 'store/markets'
 import {
   web3BNToFloatString,
   bigNumberTenPow18,
   formatNumberWithCommasAsThousandsSerperator,
-  isShowtimeMarketVisible,
 } from 'utils'
 import {
   Table,
@@ -30,13 +28,15 @@ import { useWalletStore } from 'store/walletStore'
 import { Categories } from 'store/models/category'
 import { ScrollToTop } from 'components/tokens/ScrollToTop'
 import { EmailForm } from 'components'
+import { MarketList } from 'components/markets/MarketList'
+import { getMarketSpecifics } from 'store/markets'
 import { NextSeo } from 'next-seo'
 
 export default function Home() {
   const [selectedCategoryId, setSelectedCategoryId] = useState(
-    Categories.HOT.id
+    Categories.TOP.id
   )
-  const [selectedMarketName, setSelectedMarketName] = useState('Twitter')
+  const [selectedMarkets, setSelectedMarkets] = useState(new Set(['Twitter']))
   const [nameSearch, setNameSearch] = useState('')
 
   const [isPromoVideoModalOpen, setIsPromoVideoModalOpen] = useState(false)
@@ -84,7 +84,7 @@ export default function Home() {
   })
 
   function onMarketChanged(market) {
-    setSelectedMarketName(market)
+    setSelectedMarkets(market)
   }
 
   function onNameSearchChanged(nameSearch) {
@@ -167,54 +167,11 @@ export default function Home() {
 
         <div className="px-2 mx-auto transform md:px-4 max-w-88 md:max-w-304 -translate-y-28 font-sf-compact-medium">
           <div className="flex flex-col md:flex-row">
-            <div className="grid justify-center flex-1 grid-flow-col p-4 bg-white rounded-t-lg auto-cols-min gap-x-2 md:rounded-tr-none md:justify-start">
-              <button
-                className={classNames(
-                  'p-1 border rounded-md px-3 text-sm',
-                  {
-                    'bg-very-dark-blue text-white':
-                      selectedMarketName === 'Twitter',
-                  },
-                  { 'text-brand-gray-4': selectedMarketName !== 'Twitter' }
-                )}
-                onClick={() => {
-                  onMarketChanged('Twitter')
-                }}
-              >
-                Twitter
-              </button>
-              <button
-                className={classNames(
-                  'p-1 border rounded-md px-3 text-sm',
-                  {
-                    'bg-very-dark-blue text-white':
-                      selectedMarketName === 'Substack',
-                  },
-                  { 'text-brand-gray-4': selectedMarketName !== 'Substack' }
-                )}
-                onClick={() => {
-                  onMarketChanged('Substack')
-                }}
-              >
-                Substack
-              </button>
-              <button
-                className={classNames(
-                  'p-1 border rounded-md px-3 text-sm',
-                  {
-                    'bg-very-dark-blue text-white':
-                      selectedMarketName === 'Showtime',
-                  },
-                  { 'text-brand-gray-4': selectedMarketName !== 'Showtime' },
-                  { hidden: !isShowtimeMarketVisible }
-                )}
-                onClick={() => {
-                  onMarketChanged('Showtime')
-                }}
-              >
-                Showtime
-              </button>
-            </div>
+            <MarketList
+              selectedMarkets={selectedMarkets}
+              markets={getMarketSpecifics()}
+              onMarketChanged={onMarketChanged}
+            />
             <EmailForm />
           </div>
 
@@ -264,7 +221,7 @@ export default function Home() {
             </div>
             <Table
               nameSearch={nameSearch}
-              selectedMarketName={selectedMarketName}
+              selectedMarkets={selectedMarkets}
               selectedCategoryId={selectedCategoryId}
               onOrderByChanged={onOrderByChanged}
               onTradeClicked={onTradeClicked}
