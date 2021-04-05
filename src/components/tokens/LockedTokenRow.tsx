@@ -1,5 +1,4 @@
-import moment from 'moment'
-
+import { DateTime } from 'luxon'
 import { LockedAmount } from 'store/ideaMarketsStore'
 
 export default function LockedTokenRow({
@@ -12,7 +11,9 @@ export default function LockedTokenRow({
       <div className="px-6 py-3 whitespace-nowrap">
         <div className="flex items-center">
           <div className="w-auto h-auto">
-            {moment(lockedAmount.lockedUntil * 1000).format('LLL')}
+            {DateTime.fromSeconds(
+              Number(lockedAmount.lockedUntil)
+            ).toLocaleString(DateTime.DATETIME_MED)}
           </div>
         </div>
       </div>

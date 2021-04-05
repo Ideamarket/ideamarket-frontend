@@ -1,12 +1,12 @@
 import classNames from 'classnames'
 import { useState } from 'react'
-import moment from 'moment'
 import { useQuery } from 'react-query'
 import { IdeaToken, queryLockedAmounts } from 'store/ideaMarketsStore'
 import LockedTokenRowSkeleton from './LockedTokenRowSkeleton'
 import Lock from '../../assets/lock.svg'
 import ChevronLeft from '../../assets/chevron-left.svg'
 import ChevronRight from '../../assets/chevron-right.svg'
+import { DateTime } from 'luxon'
 
 export default function LockedTokenTable({
   token,
@@ -54,7 +54,9 @@ export default function LockedTokenTable({
                   >
                     <Lock />
                   </span>
-                  {moment(lockedAmount.lockedUntil * 1000).format('LLL')}
+                  {DateTime.fromSeconds(
+                    Number(lockedAmount.lockedUntil)
+                  ).toLocaleString(DateTime.DATETIME_MED)}
                 </div>
                 <div className="mt-2 md:mt-0">
                   <div>{lockedAmount.amount}</div>
