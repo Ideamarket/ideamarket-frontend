@@ -29,6 +29,8 @@ import {
   SITE_NAME,
   TWITTER_HANDLE,
 } from 'utils/seo-constants'
+import TimeAgo from 'javascript-time-ago'
+import en from 'javascript-time-ago/locale/en'
 
 export const GlobalContext = createContext({
   isWalletModalOpen: false,
@@ -46,6 +48,10 @@ function MyApp({ Component, pageProps }: AppProps) {
     initWalletStore()
     initIdeaMarketsStore()
     initTokenList()
+  }, [])
+
+  useEffect(() => {
+    TimeAgo.addDefaultLocale(en)
   }, [])
 
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false)

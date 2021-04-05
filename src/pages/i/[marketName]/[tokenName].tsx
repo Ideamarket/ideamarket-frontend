@@ -48,6 +48,7 @@ import { DateTime } from 'luxon'
 import { NextSeo } from 'next-seo'
 import { getURL } from 'utils/seo-constants'
 import { GetServerSideProps } from 'next'
+import RelatedTokens from 'components/RelatedTokens'
 
 const tenPow18 = new BigNumber('10').pow(new BigNumber('18'))
 
@@ -656,6 +657,9 @@ export default function TokenDetails({
             setIsOpen={setIsVerifyModalOpen}
           />
         )}
+        <div className="px-16 -mt-30">
+          <RelatedTokens token={rawTokenName} market={rawMarketName} />
+        </div>
       </div>
     </>
   )
