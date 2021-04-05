@@ -1,6 +1,6 @@
 import classNames from 'classnames'
-import useBreakpoint from 'use-breakpoint'
-import { BREAKPOINTS } from 'utils/constants'
+// import useBreakpoint from 'use-breakpoint'
+// import { BREAKPOINTS } from 'utils/constants'
 
 type MarketButtonProps = {
   marketName: string
@@ -8,14 +8,14 @@ type MarketButtonProps = {
   onClick: (market: string) => void
 }
 
-const DisabledMarketButton = ({ marketName }: { marketName: string }) => (
-  <button
-    className="p-1 px-3 text-sm border rounded-md opacity-50 cursor-not-allowed text-brand-gray-4"
-    disabled={true}
-  >
-    {marketName}
-  </button>
-)
+// const DisabledMarketButton = ({ marketName }: { marketName: string }) => (
+//   <button
+//     className="p-1 px-3 text-sm border rounded-md opacity-50 cursor-not-allowed text-brand-gray-4"
+//     disabled={true}
+//   >
+//     {marketName}
+//   </button>
+// )
 
 const MarketButton = ({
   marketName,
@@ -51,28 +51,28 @@ export const MarketList = ({
   markets,
   onMarketChanged,
 }: MarketListProps) => {
-  const { breakpoint, maxWidth, minWidth } = useBreakpoint(
-    BREAKPOINTS,
-    'mobile'
-  )
+  // const { breakpoint, maxWidth, minWidth } = useBreakpoint(
+  //   BREAKPOINTS,
+  //   'mobile'
+  // )
 
-  const maxUpcomingMarkets = () => {
-    switch (breakpoint) {
-      case 'mobile':
-      case 'sm':
-        return 0
-      case 'md':
-        return 1
-      case 'lg':
-        return 3
-      case 'xl':
-        return 5
-      case '2xl':
-        return 6
-      default:
-        return 1
-    }
-  }
+  // const maxUpcomingMarkets = () => {
+  //   switch (breakpoint) {
+  //     case 'mobile':
+  //     case 'sm':
+  //       return 0
+  //     case 'md':
+  //       return 1
+  //     case 'lg':
+  //       return 3
+  //     case 'xl':
+  //       return 5
+  //     case '2xl':
+  //       return 6
+  //     default:
+  //       return 1
+  //   }
+  // }
 
   const toggleMarket = (marketName: string) => {
     const newSet = new Set(selectedMarkets)
@@ -104,10 +104,10 @@ export const MarketList = ({
           isSelected={selectedMarkets.has(market)}
         />
       ))}
-      {upcomingMarkets.slice(0, maxUpcomingMarkets()).map((market, index) => (
+      {/* {upcomingMarkets.slice(0, maxUpcomingMarkets()).map((market, index) => (
         <DisabledMarketButton key={market} marketName={market} />
       ))}
-      <DisabledMarketButton marketName="More(279)" />
+      <DisabledMarketButton marketName="More(279)" /> */}
     </div>
   )
 }
