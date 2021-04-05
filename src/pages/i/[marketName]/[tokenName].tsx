@@ -282,7 +282,7 @@ export default function TokenDetails({
     <>
       <SEO />
       <div className="min-h-screen bg-brand-gray">
-        <div className="px-4 pt-12 pb-5 text-white h-140 md:px-6 md:pt-10 bg-top-mobile md:bg-top-desktop md:h-80 md:max-h-96">
+        <div className="px-4 pt-12 pb-5 text-white h-120 md:px-6 md:pt-10 bg-top-mobile md:bg-top-desktop md:h-72 md:max-h-96">
           <div className="mx-auto max-w-88 md:max-w-304">
             <span className="text-brand-alto font-sf-compact-medium">
               <span
