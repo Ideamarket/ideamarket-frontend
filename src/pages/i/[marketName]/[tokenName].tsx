@@ -326,7 +326,7 @@ export default function TokenDetails({
               ) : (
                 <TimeXFloatYChartInLine chartData={lockedChartData} />
               )}
-            </div> */}
+            </div>
             <div className="mt-6"></div>
             <nav className="flex flex-row justify-between">
               <div>
@@ -396,6 +396,7 @@ export default function TokenDetails({
                 />
               </div>
             </nav>
+          */}
           </div>
         </div>
 
