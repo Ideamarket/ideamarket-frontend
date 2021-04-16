@@ -19,6 +19,7 @@ import {
   ListTokenModal,
   PromoVideoModal,
   A,
+  Markdown,
 } from 'components'
 
 import Search from '../assets/search.svg'
@@ -31,8 +32,12 @@ import { EmailForm } from 'components'
 import { MarketList } from 'components/markets/MarketList'
 import { getMarketSpecifics } from 'store/markets'
 import { NextSeo } from 'next-seo'
+import { InferGetServerSidePropsType } from 'next'
+import { gql, GraphQLClient } from 'graphql-request'
 
-export default function Home() {
+export default function Home({
+  heroTitle,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [selectedCategoryId, setSelectedCategoryId] = useState(
     Categories.TOP.id
   )
@@ -139,8 +144,7 @@ export default function Home() {
         <div className="w-screen px-6 pt-10 pb-40 text-center text-white bg-cover bg-top-mobile md:bg-top-desktop">
           <div>
             <h2 className="text-3xl md:text-6xl font-gilroy-bold">
-              Maximize return on{' '}
-              <span className="text-brand-blue">attention</span>
+              <Markdown>{heroTitle}</Markdown>
             </h2>
             <p className="mt-8 text-lg md:text-2xl font-sf-compact-medium">
               Profit by discovering and popularizing the world’s best knowledge.
@@ -249,4 +253,36 @@ export default function Home() {
       </div>
     </>
   )
+}
+
+type Data = {
+  heroTitle: string
+}
+
+export const getServerSideProps = async () => {
+  const endpoint = process.env.GRAPHCMS_ENDPOINT
+  const authToken = process.env.GRAPHCMS_API_KEY
+  const query = gql`
+    {
+      contents(where: { key: "hero-title" }) {
+        key
+        value {
+          html
+        }
+      }
+    }
+  `
+  const client = new GraphQLClient(endpoint, {
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+  })
+
+  const result = await client.request(query)
+  const props: Data = {
+    heroTitle: result.contents.length > 0 ? result.contents[0].value.html : '',
+  }
+  return {
+    props,
+  }
 }
