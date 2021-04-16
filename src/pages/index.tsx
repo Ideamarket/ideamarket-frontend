@@ -33,9 +33,9 @@ import { MarketList } from 'components/markets/MarketList'
 import { getMarketSpecifics } from 'store/markets'
 import { NextSeo } from 'next-seo'
 import { InferGetServerSidePropsType } from 'next'
-import { gql, GraphQLClient } from 'graphql-request'
 import { getQueryHeroTitle } from 'store/queries/graphcms'
 import { createGraphCMSClient } from 'utils/graphcms-client'
+import { defaultHeroTitle } from 'content'
 
 export default function Home({
   heroTitle,
@@ -262,11 +262,23 @@ type Data = {
 }
 
 export const getServerSideProps = async () => {
-  const client = createGraphCMSClient()
-  const result = await client.request(getQueryHeroTitle())
-  const props: Data = {
-    heroTitle: result.contents.length > 0 ? result.contents[0].value.html : '',
+  let props: Data
+  try {
+    const client = createGraphCMSClient()
+    const result = await client.request(getQueryHeroTitle())
+    props = {
+      heroTitle:
+        result.contents.length > 0
+          ? result.contents[0].value.html
+          : defaultHeroTitle,
+    }
+  } catch (e) {
+    console.error(e)
+    props = {
+      heroTitle: defaultHeroTitle,
+    }
   }
+
   return {
     props,
   }
