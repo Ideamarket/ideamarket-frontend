@@ -34,6 +34,8 @@ import { getMarketSpecifics } from 'store/markets'
 import { NextSeo } from 'next-seo'
 import { InferGetServerSidePropsType } from 'next'
 import { gql, GraphQLClient } from 'graphql-request'
+import { getQueryHeroTitle } from 'store/queries/graphcms'
+import { createGraphCMSClient } from 'utils/graphcms-client'
 
 export default function Home({
   heroTitle,
@@ -260,25 +262,8 @@ type Data = {
 }
 
 export const getServerSideProps = async () => {
-  const endpoint = process.env.GRAPHCMS_ENDPOINT
-  const authToken = process.env.GRAPHCMS_API_KEY
-  const query = gql`
-    {
-      contents(where: { key: "hero-title" }) {
-        key
-        value {
-          html
-        }
-      }
-    }
-  `
-  const client = new GraphQLClient(endpoint, {
-    headers: {
-      Authorization: `Bearer ${authToken}`,
-    },
-  })
-
-  const result = await client.request(query)
+  const client = createGraphCMSClient()
+  const result = await client.request(getQueryHeroTitle())
   const props: Data = {
     heroTitle: result.contents.length > 0 ? result.contents[0].value.html : '',
   }
