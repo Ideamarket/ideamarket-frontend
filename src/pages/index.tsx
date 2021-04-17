@@ -147,9 +147,9 @@ export default function Home({
             <h2 className="text-3xl md:text-6xl font-gilroy-bold">
               <Markdown>{heroTitle}</Markdown>
             </h2>
-            <p className="mt-8 text-lg md:text-2xl font-sf-compact-medium">
+            <div className="mt-8 text-lg md:text-2xl font-sf-compact-medium">
               <Markdown>{heroSubtitle}</Markdown>
-            </p>
+            </div>
           </div>
           <button
             onClick={() => {
