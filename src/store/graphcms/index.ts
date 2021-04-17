@@ -35,7 +35,6 @@ export async function getCMSContent(pageTitle: 'home' | 'listing') {
     const client = createGraphCMSClient()
     const result = await client.request(getQueryPageContent(page.title))
     contents = result.contents
-    throw new Error()
   } catch (e) {
     contents = page.contents
   }
