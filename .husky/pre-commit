@@ -1,0 +1,4 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+CI=1 yarn npm-run-all --parallel check-types && yarn lint-staged
