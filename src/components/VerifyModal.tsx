@@ -14,12 +14,8 @@ import {
 import { IdeaMarket, IdeaToken } from 'store/ideaMarketsStore'
 import { getMarketSpecificsByMarketName } from 'store/markets'
 import { useWalletStore } from 'store/walletStore'
-import {
-  isAddress,
-  NETWORK,
-  useTransactionManager,
-  web3BNToFloatString,
-} from '../utils'
+import { isAddress, useTransactionManager, web3BNToFloatString } from '../utils'
+import { NETWORK } from 'store/networks'
 import { Modal, CircleSpinner } from './'
 import A from './A'
 
@@ -436,11 +432,7 @@ export default function VerifyModal({
                 Please wait for transaction{' '}
                 <A
                   className={classNames('underline')}
-                  href={`https://${
-                    NETWORK === 'rinkeby' || NETWORK === 'test'
-                      ? 'rinkeby.'
-                      : ''
-                  }etherscan.io/tx/${txManager.hash}`}
+                  href={NETWORK.getEtherscanTxUrl(txManager.hash)}
                 >
                   {txManager.hash && txManager.hash.slice(0, 8)}...
                   {txManager.hash && txManager.hash.slice(-6)}
@@ -465,11 +457,7 @@ export default function VerifyModal({
               <div className="p-5 mt-5 text-black bg-gray-200 border rounded border-brand-gray-2">
                 <A
                   className="underline"
-                  href={`https://${
-                    NETWORK === 'test' || NETWORK === 'rinkeby'
-                      ? 'rinkeby.'
-                      : ''
-                  }etherscan.io/tx/${tx}`}
+                  href={NETWORK.getEtherscanTxUrl(txManager.hash)}
                 >
                   Transaction: {tx.slice(0, 8)}...{tx.slice(-6)}
                 </A>

@@ -255,7 +255,7 @@ export default function OwnedTokenTable({
                     <>
                       {pairs.map((pair) => (
                         <OwnedTokenRow
-                          key={pair.token.tokenID}
+                          key={pair.token.address}
                           token={pair.token}
                           market={pair.market}
                           balance={pair.balance}

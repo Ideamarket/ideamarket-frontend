@@ -3,7 +3,7 @@ import produce from 'immer'
 import BN from 'bn.js'
 import BigNumber from 'bignumber.js'
 import { request } from 'graphql-request'
-import { web3BNToFloatString, NETWORK } from 'utils'
+import { web3BNToFloatString } from 'utils'
 import {
   getQueryLockedAmounts,
   getQueryMarket,
@@ -19,16 +19,12 @@ import {
   getQueryTokenBalances,
   getQueryBalancesOfHolders,
 } from './queries'
+import { NETWORK } from 'store/networks'
 
 const tenPow2 = new BigNumber('10').pow(new BigNumber('2'))
 const tenPow18 = new BigNumber('10').pow(new BigNumber('18'))
 
-const HTTP_GRAPHQL_ENDPOINT =
-  NETWORK === 'rinkeby'
-    ? 'https://subgraph-rinkeby.backend.ideamarket.io/subgraphs/name/Ideamarket/IdeamarketRINKEBY'
-    : NETWORK === 'test'
-    ? 'https://subgraph-test.backend.ideamarket.io/subgraphs/name/Ideamarket/IdeamarketTEST'
-    : 'https://subgraph.backend.ideamarket.io/subgraphs/name/Ideamarket/Ideamarket'
+const HTTP_GRAPHQL_ENDPOINT = NETWORK.getSubgraphURL()
 
 export type IdeaMarket = {
   name: string

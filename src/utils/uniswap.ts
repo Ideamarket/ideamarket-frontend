@@ -14,7 +14,8 @@ import {
   getUniswapPairContract,
   useContractStore,
 } from 'store/contractStore'
-import { addresses, NETWORK } from './index'
+import { ZERO_ADDRESS } from './index'
+import { NETWORK } from 'store/networks'
 
 export type UniswapPairDetails = {
   exists: boolean
@@ -35,7 +36,7 @@ export async function getUniswapPath(
     .getPair(inputTokenAddress, outputTokenAddress)
     .call()
 
-  const chainID = NETWORK === 'mainnet' ? ChainId.MAINNET : ChainId.RINKEBY
+  const chainID = NETWORK.getChainID()
 
   const inputTokenContract = getERC20Contract(inputTokenAddress)
   const outputTokenContract = getERC20Contract(outputTokenAddress)
@@ -63,10 +64,10 @@ export async function getUniswapPath(
   )
   const wethToken = new Token(
     chainID,
-    addresses.weth,
+    NETWORK.getExternalAddresses().weth,
     18,
-    addresses.weth,
-    addresses.weth
+    NETWORK.getExternalAddresses().weth,
+    NETWORK.getExternalAddresses().weth
   )
   const outputToken = new Token(
     chainID,
@@ -76,7 +77,7 @@ export async function getUniswapPath(
     outputTokenAddress
   )
 
-  if (directPairAddress !== addresses.ZERO) {
+  if (directPairAddress !== ZERO_ADDRESS) {
     // The direct pair exists
 
     const directPairContract = getUniswapPairContract(directPairAddress)
@@ -101,19 +102,19 @@ export async function getUniswapPath(
     await Promise.all([
       (async () => {
         inputWETHPairAddress = await uniswapFactoryContract.methods
-          .getPair(inputTokenAddress, addresses.weth)
+          .getPair(inputTokenAddress, NETWORK.getExternalAddresses().weth)
           .call()
       })(),
       (async () => {
         outputWETHPairAddress = await uniswapFactoryContract.methods
-          .getPair(outputTokenAddress, addresses.weth)
+          .getPair(outputTokenAddress, NETWORK.getExternalAddresses().weth)
           .call()
       })(),
     ])
 
     if (
-      inputTokenAddress === addresses.ZERO ||
-      outputTokenAddress === addresses.ZERO
+      inputTokenAddress === ZERO_ADDRESS ||
+      outputTokenAddress === ZERO_ADDRESS
     ) {
       // That path also does not exist
       return {
@@ -149,8 +150,10 @@ export async function getUniswapDaiOutputSwap(
   inputAmount: BN
 ) {
   const inputTokenAddress =
-    inputAddress === addresses.ZERO ? addresses.weth : inputAddress
-  const outputTokenAddress = addresses.dai
+    inputAddress === ZERO_ADDRESS
+      ? NETWORK.getExternalAddresses().weth
+      : inputAddress
+  const outputTokenAddress = NETWORK.getExternalAddresses().dai
   const path = await getUniswapPath(inputTokenAddress, outputTokenAddress)
 
   if (!path) {

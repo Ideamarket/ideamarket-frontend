@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { addresses, web3BNToFloatString } from '../utils'
+import { ZERO_ADDRESS, web3BNToFloatString } from '../utils'
 import { useWalletStore } from 'store/walletStore'
 import { getERC20Contract } from 'store/contractStore'
 import BigNumber from 'bignumber.js'
@@ -22,7 +22,7 @@ export default function useBalance(address: string, decimals: number) {
           return
         }
 
-        if (address === addresses.ZERO) {
+        if (address === ZERO_ADDRESS) {
           web3.eth
             .getBalance(useWalletStore.getState().address)
             .then((value) => {

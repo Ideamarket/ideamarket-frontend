@@ -1,17 +1,10 @@
 import create from 'zustand'
 import Web3 from 'web3'
-
-import { addresses, NETWORK } from 'utils'
-import DeployedAddressesMainnet from '../assets/deployed-mainnet.json'
-import DeployedAddressesRinkeby from '../assets/deployed-rinkeby.json'
-import DeployedAddressesTest from '../assets/deployed-test.json'
-import DeployedABIsMainnet from '../assets/abis-mainnet.json'
-import DeployedABIsRinkeby from '../assets/abis-rinkeby.json'
-import DeployedABIsTest from '../assets/abis-test.json'
 import UniswapFactoryABI from '../assets/abi-uniswap-factory.json'
 import UniswapPairABI from '../assets/abi-uniswap-pair.json'
 import ERC20ABI from '../assets/abi-erc20.json'
 import { useWalletStore } from './walletStore'
+import { NETWORK } from 'store/networks'
 
 type State = {
   daiContract: any
@@ -39,37 +32,17 @@ export function clearContracts() {
   })
 }
 
-function getDeployedAddresses() {
-  if (NETWORK === 'rinkeby') {
-    return DeployedAddressesRinkeby
-  } else if (NETWORK === 'test') {
-    return DeployedAddressesTest
-  } else if (NETWORK === 'mainnet') {
-    return DeployedAddressesMainnet
-  } else {
-    throw 'getDeployedAddresses: unknown network'
-  }
-}
-
-function getDeployedABIs() {
-  if (NETWORK === 'rinkeby') {
-    return DeployedABIsRinkeby
-  } else if (NETWORK === 'test') {
-    return DeployedABIsTest
-  } else if (NETWORK === 'mainnet') {
-    return DeployedABIsMainnet
-  } else {
-    throw 'getDeployedABIs: unknown network'
-  }
-}
-
 export function initContractsFromWeb3(web3: Web3) {
-  const deployedAddresses = getDeployedAddresses()
-  const abis = getDeployedABIs()
+  const deployedAddresses = NETWORK.getDeployedAddresses()
+  const abis = NETWORK.getDeployedABIs()
 
-  const daiContract = new web3.eth.Contract(ERC20ABI as any, addresses.dai, {
-    from: web3.eth.defaultAccount,
-  })
+  const daiContract = new web3.eth.Contract(
+    ERC20ABI as any,
+    NETWORK.getExternalAddresses().dai,
+    {
+      from: web3.eth.defaultAccount,
+    }
+  )
 
   const factoryContract = new web3.eth.Contract(
     abis.ideaTokenFactory as any,
@@ -109,10 +82,6 @@ export function getERC20Contract(address: string) {
   return new web3.eth.Contract(ERC20ABI as any, address, {
     from: web3.eth.defaultAccount,
   })
-}
-
-export function getContractAddress(name: string) {
-  return getDeployedAddresses()[name]
 }
 
 export function getUniswapPairContract(pairAddress: string) {

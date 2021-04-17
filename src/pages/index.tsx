@@ -1,7 +1,6 @@
 import classNames from 'classnames'
 import React, { useContext, useState } from 'react'
 import { useQuery } from 'react-query'
-import { getContractAddress } from 'store/contractStore'
 import { IdeaMarket, IdeaToken } from 'store/ideaMarketsStore'
 import {
   queryCDaiBalance,
@@ -21,6 +20,7 @@ import {
   A,
   Markdown,
 } from 'components'
+import { NETWORK } from 'store/networks'
 
 import Search from '../assets/search.svg'
 import Plus from '../assets/plus-white.svg'
@@ -47,7 +47,7 @@ export default function Home({
 
   const [isPromoVideoModalOpen, setIsPromoVideoModalOpen] = useState(false)
 
-  const interestManagerAddress = getContractAddress('interestManager')
+  const interestManagerAddress = NETWORK.getDeployedAddresses().interestManager
 
   const {
     data: compoundExchangeRate,

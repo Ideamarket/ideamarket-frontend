@@ -1,8 +1,6 @@
-import { NETWORK } from 'utils'
-import TokenListMainnet from '../assets/token-list-mainnet.json'
-import TokenListRinkeby from '../assets/token-list-rinkeby.json'
 import create from 'zustand'
 import produce from 'immer'
+import { NETWORK } from 'store/networks'
 
 export type TokenListEntry = {
   name: string
@@ -25,10 +23,7 @@ function setNestedState(fn) {
 }
 
 export async function initTokenList() {
-  const jsonTokens =
-    NETWORK === 'rinkeby' || NETWORK === 'test'
-      ? TokenListRinkeby
-      : TokenListMainnet
+  const jsonTokens = NETWORK.getTokenList()
   let tokens: TokenListEntry[] = jsonTokens.map(
     (token) =>
       <TokenListEntry>{

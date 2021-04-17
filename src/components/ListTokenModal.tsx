@@ -7,7 +7,8 @@ import {
   useTokenIconURL,
 } from 'actions'
 import { getMarketSpecificsByMarketName } from 'store/markets'
-import { NETWORK, useTransactionManager } from 'utils'
+import { useTransactionManager } from 'utils'
+import { NETWORK } from 'store/networks'
 import { Modal, MarketSelect, TradeInterface } from './'
 import ApproveButton from './trade/ApproveButton'
 import { useContractStore } from 'store/contractStore'
@@ -402,9 +403,7 @@ export default function ListTokenModal({
                   'underline',
                   txManager.hash === '' ? 'hidden' : ''
                 )}
-                href={`https://${
-                  NETWORK === 'rinkeby' || NETWORK === 'test' ? 'rinkeby.' : ''
-                }etherscan.io/tx/${txManager.hash}`}
+                href={NETWORK.getEtherscanTxUrl(txManager.hash)}
               >
                 {txManager.hash.slice(0, 8)}...{txManager.hash.slice(-6)}
               </A>

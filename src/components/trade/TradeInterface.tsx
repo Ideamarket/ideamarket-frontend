@@ -6,15 +6,13 @@ import { useTokenListStore } from 'store/tokenListStore'
 import { useBalance, useOutputAmount, buyToken, sellToken } from 'actions'
 import {
   floatToWeb3BN,
-  addresses,
-  NETWORK,
   calculateMaxIdeaTokensBuyable,
   formatBigNumber,
   getUniswapDaiOutputSwap,
   useTransactionManager,
 } from 'utils'
 import { useContractStore } from 'store/contractStore'
-
+import { NETWORK } from 'store/networks'
 import Select from 'react-select'
 import BigNumber from 'bignumber.js'
 import BN from 'bn.js'
@@ -103,10 +101,11 @@ export default function TradeInterface({
 
   const spender =
     tradeType === 'buy'
-      ? selectedToken?.address === addresses.dai && !isLockChecked
+      ? selectedToken?.address === NETWORK.getExternalAddresses().dai &&
+        !isLockChecked
         ? exchangeContractAddress
         : multiActionContractAddress
-      : selectedToken.address !== addresses.dai
+      : selectedToken.address !== NETWORK.getExternalAddresses().dai
       ? multiActionContractAddress
       : undefined
 
@@ -509,7 +508,7 @@ export default function TradeInterface({
         {showTradeButton && (
           <div className="max-w-sm mx-auto">
             <div className={classNames('flex mt-8 mx-5 text-xs')}>
-              <div className="justify-center flex flex-grow">
+              <div className="flex justify-center flex-grow">
                 <ApproveButton
                   tokenAddress={spendTokenAddress}
                   tokenSymbol={spendTokenSymbol}
@@ -527,7 +526,7 @@ export default function TradeInterface({
                   key={approveButtonKey}
                 />
               </div>
-              <div className="justify-center flex flex-grow">
+              <div className="flex justify-center flex-grow">
                 <button
                   className={classNames(
                     'ml-6 w-28 md:w-40 h-12 text-base border-2 rounded-lg tracking-tightest-2 ',
@@ -538,7 +537,7 @@ export default function TradeInterface({
                       !parseFloat(ideaTokenAmount) ||
                       parseFloat(ideaTokenAmount) <= 0.0
                       ? 'text-brand-gray-2 bg-brand-gray cursor-default border-brand-gray'
-                      : 'border-brand-blue text-white bg-brand-blue text-white font-medium'
+                      : 'border-brand-blue text-white bg-brand-blue font-medium'
                   )}
                   disabled={
                     txManager.isPending ||
@@ -603,11 +602,7 @@ export default function TradeInterface({
                     'underline',
                     txManager.hash === '' ? 'hidden' : ''
                   )}
-                  href={`https://${
-                    NETWORK === 'rinkeby' || NETWORK === 'test'
-                      ? 'rinkeby.'
-                      : ''
-                  }etherscan.io/tx/${txManager.hash}`}
+                  href={NETWORK.getEtherscanTxUrl(txManager.hash)}
                   target="_blank"
                 >
                   {txManager.hash.slice(0, 8)}...{txManager.hash.slice(-6)}

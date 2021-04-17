@@ -2,18 +2,18 @@ import create from 'zustand'
 import Web3 from 'web3'
 
 import { initContractsFromWeb3, clearContracts } from './contractStore'
-import { NETWORK } from 'utils'
+import { NETWORK } from 'store/networks'
 
 type State = {
   web3: Web3
   address: string
-  network: string
+  chainID: number
 }
 
 export const useWalletStore = create<State>((set) => ({
   web3: undefined,
   address: '',
-  network: '',
+  chainID: -1,
 }))
 
 export const initWalletStore = async () => {
@@ -35,7 +35,7 @@ export const initWalletStore = async () => {
     'bbff3259-d19c-4791-9695-5a61f3146e51'
   )
 
-  if (NETWORK === 'mainnet') {
+  if (NETWORK.getNetworkName() === 'mainnet') {
     await wallets.setOption(
       wallets.WALLETS.FORTMATIC,
       wallets.OPTIONS.API_KEY,
@@ -102,11 +102,11 @@ export async function setWeb3(web3, wallet) {
 
   initContractsFromWeb3(web3)
 
-  const web3Network = await web3.eth.net.getNetworkType()
+  const chainID = await web3.eth.getChainId()
   useWalletStore.setState({
     web3: web3,
     address: address,
-    network: web3Network,
+    chainID: chainID,
   })
 
   localStorage.setItem('WALLET_TYPE', wallet.toString())
@@ -116,6 +116,7 @@ export async function unsetWeb3() {
   useWalletStore.setState({
     web3: undefined,
     address: '',
+    chainID: -1,
   })
 
   localStorage.removeItem('WALLET_TYPE')

@@ -10,29 +10,7 @@ export { default as useTransactionManager } from './useTransactionManager'
 export { getUniswapPath, getUniswapDaiOutputSwap } from './uniswap'
 export type { UniswapPairDetails } from './uniswap'
 
-export const NETWORK = process.env.NEXT_PUBLIC_NETWORK
-  ? process.env.NEXT_PUBLIC_NETWORK
-  : 'rinkeby'
-
-if (!process.env.NEXT_PUBLIC_NETWORK) {
-  console.log('WARNING: NEXT_PUBLIC_NETWORK not found. Defaulting to rinkeby')
-}
-
-export const addresses = {
-  ZERO: '0x0000000000000000000000000000000000000000',
-  dai:
-    NETWORK === 'rinkeby' || NETWORK === 'test'
-      ? '0x5592EC0cfb4dbc12D3aB100b257153436a1f0FEa'
-      : '0x6B175474E89094C44Da98b954EedeAC495271d0F',
-  cDai:
-    NETWORK === 'rinkeby' || NETWORK === 'test'
-      ? '0x6D7F0754FFeb405d23C51CE938289d4835bE3b14'
-      : '0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643',
-  weth:
-    NETWORK === 'rinkeby' || NETWORK === 'test'
-      ? '0xc778417E063141139Fce010982780140Aa0cD5Ab'
-      : '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
-}
+export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
 export const web3TenPow18 = new BN('10').pow(new BN('18'))
 export const web3UintMax = new BN('2').pow(new BN('256')).sub(new BN('1'))

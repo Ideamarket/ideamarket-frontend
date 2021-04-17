@@ -1,6 +1,6 @@
 import { useWalletStore } from 'store/walletStore'
 import { useContractStore } from 'store/contractStore'
-import { addresses } from '../utils'
+import { NETWORK } from 'store/networks'
 import BigNumber from 'bignumber.js'
 import BN from 'bn.js'
 
@@ -23,7 +23,7 @@ export default function sellToken(
   const minPrice = price.sub(slippageAmount)
 
   let contractCall
-  if (outputTokenAddress === addresses.dai) {
+  if (outputTokenAddress === NETWORK.getExternalAddresses().dai) {
     contractCall = exchange.methods.sellTokens(
       ideaTokenAddress,
       amount,

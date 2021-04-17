@@ -1,6 +1,7 @@
 import { useWalletStore } from 'store/walletStore'
 import { useContractStore } from 'store/contractStore'
-import { addresses } from '../utils'
+import { ZERO_ADDRESS } from 'utils'
+import { NETWORK } from 'store/networks'
 import BigNumber from 'bignumber.js'
 import BN from 'bn.js'
 
@@ -26,7 +27,7 @@ export default function buyToken(
   let contractCall
   let contractCallOptions = {}
 
-  if (inputTokenAddress === addresses.dai) {
+  if (inputTokenAddress === NETWORK.getExternalAddresses().dai) {
     if (lockDuration > 0) {
       contractCall = multiAction.methods.buyAndLock(
         ideaTokenAddress,
@@ -45,11 +46,6 @@ export default function buyToken(
         userAddress
       )
 
-      // In this case, direct buy with Dai and no lock, we set the gas amount to 450k
-      /*contractCallOptions = {
-        gasLimit: 450000,
-      }*/
-
       contractCall.estimateGas(contractCallOptions)
     }
   } else {
@@ -63,7 +59,7 @@ export default function buyToken(
       userAddress
     )
 
-    if (inputTokenAddress === addresses.ZERO) {
+    if (inputTokenAddress === ZERO_ADDRESS) {
       contractCallOptions = {
         value: cost,
       }

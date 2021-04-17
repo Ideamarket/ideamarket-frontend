@@ -3,7 +3,8 @@ import { TokenAmount, Trade, TradeType } from '@uniswap/sdk'
 import { web3BNToFloatString } from '../utils'
 import { useWalletStore } from 'store/walletStore'
 import { useContractStore } from 'store/contractStore'
-import { addresses, getUniswapPath } from '../utils'
+import { ZERO_ADDRESS, getUniswapPath } from '../utils'
+import { NETWORK } from 'store/networks'
 import { IdeaToken, IdeaMarket } from '../store/ideaMarketsStore'
 
 import BigNumber from 'bignumber.js'
@@ -67,13 +68,15 @@ export default function useOutputAmount(
         )
       }
 
-      if (tokenAddress === addresses.dai) {
+      if (tokenAddress === NETWORK.getExternalAddresses().dai) {
         return requiredDaiAmount
       }
 
       const inputTokenAddress =
-        tokenAddress === addresses.ZERO ? addresses.weth : tokenAddress
-      const outputTokenAddress = addresses.dai
+        tokenAddress === ZERO_ADDRESS
+          ? NETWORK.getExternalAddresses().weth
+          : tokenAddress
+      const outputTokenAddress = NETWORK.getExternalAddresses().dai
       const path = await getUniswapPath(inputTokenAddress, outputTokenAddress)
 
       if (!path) {
@@ -115,13 +118,15 @@ export default function useOutputAmount(
         return new BN('0')
       }
 
-      if (tokenAddress === addresses.dai) {
+      if (tokenAddress === NETWORK.getExternalAddresses().dai) {
         return daiOutputAmount
       }
 
-      const inputTokenAddress = addresses.dai
+      const inputTokenAddress = NETWORK.getExternalAddresses().dai
       const outputTokenAddress =
-        tokenAddress === addresses.ZERO ? addresses.weth : tokenAddress
+        tokenAddress === ZERO_ADDRESS
+          ? NETWORK.getExternalAddresses().weth
+          : tokenAddress
       const path = await getUniswapPath(inputTokenAddress, outputTokenAddress)
 
       if (!path) {

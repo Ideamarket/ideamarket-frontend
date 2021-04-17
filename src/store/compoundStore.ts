@@ -1,10 +1,11 @@
 import { request, gql } from 'graphql-request'
-import { web3TenPow18, addresses } from '../utils'
+import { web3TenPow18 } from '../utils'
+import { NETWORK } from 'store/networks'
 import BN from 'bn.js'
 import BigNumber from 'bignumber.js'
 
 const DAI_ADDRESS = '0x6b175474e89094c44da98b954eedeac495271d0f'
-const CDAI_ADDRESS = addresses.cDai
+const CDAI_ADDRESS = NETWORK.getExternalAddresses().cDai
 
 const HTTP_GRAPHQL_ENDPOINT =
   'https://subgraph-compound.backend.ideamarket.io/subgraphs/name/graphprotocol/compound-v2'

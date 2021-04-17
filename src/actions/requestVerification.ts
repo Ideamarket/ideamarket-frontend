@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 import { IdeaToken } from 'store/ideaMarketsStore'
-import { NETWORK } from 'utils'
+import { NETWORK } from 'store/networks'
 
 export default async function requestVerification(
   token: IdeaToken,
@@ -10,7 +10,7 @@ export default async function requestVerification(
   const payload = {
     tokenAddress: token.address,
     ownerAddress: ownerAddress,
-    chain: NETWORK,
+    chain: NETWORK.getNetworkName(),
   }
 
   try {

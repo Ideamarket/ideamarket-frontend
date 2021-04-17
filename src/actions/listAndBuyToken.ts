@@ -1,6 +1,7 @@
 import { useWalletStore } from 'store/walletStore'
 import { useContractStore } from 'store/contractStore'
-import { addresses } from '../utils'
+import { ZERO_ADDRESS } from '../utils'
+import { NETWORK } from 'store/networks'
 import BigNumber from 'bignumber.js'
 import BN from 'bn.js'
 import { IdeaMarket } from 'store/ideaMarketsStore'
@@ -27,7 +28,7 @@ export default function listAndBuyToken(
   let contractCall
   let contractCallOptions = {}
 
-  if (inputTokenAddress === addresses.dai) {
+  if (inputTokenAddress === NETWORK.getExternalAddresses().dai) {
     contractCall = multiAction.methods.addAndBuy(
       tokenName,
       market.marketID,
@@ -47,7 +48,7 @@ export default function listAndBuyToken(
       userAddress
     )
 
-    if (inputTokenAddress === addresses.ZERO) {
+    if (inputTokenAddress === ZERO_ADDRESS) {
       contractCallOptions = {
         value: cost,
       }
