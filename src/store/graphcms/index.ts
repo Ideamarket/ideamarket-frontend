@@ -28,7 +28,7 @@ export function createGraphCMSClient() {
   return client
 }
 
-export async function getCMSContent(pageTitle: string) {
+export async function getCMSContent(pageTitle: 'home' | 'listing') {
   const page = PAGES.find((_page) => _page.title === pageTitle)
   let contents: Content[]
   try {
