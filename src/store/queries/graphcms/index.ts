@@ -1,1 +1,1 @@
-export { default as getQueryHeroTitle } from './getQueryHeroTitle'
+export { default as getQueryPageContent } from './getQueryPageContent'

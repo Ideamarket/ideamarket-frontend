@@ -33,12 +33,11 @@ import { MarketList } from 'components/markets/MarketList'
 import { getMarketSpecifics } from 'store/markets'
 import { NextSeo } from 'next-seo'
 import { InferGetServerSidePropsType } from 'next'
-import { getQueryHeroTitle } from 'store/queries/graphcms'
-import { createGraphCMSClient } from 'utils/graphcms-client'
-import { defaultHeroTitle } from 'content'
+import { getCMSContent } from 'store/graphcms'
 
 export default function Home({
   heroTitle,
+  heroSubtitle,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [selectedCategoryId, setSelectedCategoryId] = useState(
     Categories.TOP.id
@@ -149,7 +148,7 @@ export default function Home({
               <Markdown>{heroTitle}</Markdown>
             </h2>
             <p className="mt-8 text-lg md:text-2xl font-sf-compact-medium">
-              Profit by discovering and popularizing the world’s best knowledge.
+              <Markdown>{heroSubtitle}</Markdown>
             </p>
           </div>
           <button
@@ -259,27 +258,12 @@ export default function Home({
 
 type Data = {
   heroTitle: string
+  heroSubtitle: string
 }
 
 export const getServerSideProps = async () => {
-  let props: Data
-  try {
-    const client = createGraphCMSClient()
-    const result = await client.request(getQueryHeroTitle())
-    props = {
-      heroTitle:
-        result.contents.length > 0
-          ? result.contents[0].value.html
-          : defaultHeroTitle,
-    }
-  } catch (e) {
-    console.error(e)
-    props = {
-      heroTitle: defaultHeroTitle,
-    }
-  }
-
+  const response = (await getCMSContent('home')) as Data
   return {
-    props,
+    props: response,
   }
 }

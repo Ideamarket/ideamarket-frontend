@@ -1,9 +1,9 @@
 import { gql } from 'graphql-request'
 
-export default function getQueryHeroTitle(): string {
+export default function getQueryPageContent(pageTitle: string): string {
   return gql`
     {
-      contents(where: { key: "hero-title" }) {
+      contents(where: { page: ${pageTitle} }) {
         key
         value {
           html
