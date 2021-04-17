@@ -36,8 +36,7 @@ import { InferGetServerSidePropsType } from 'next'
 import { getCMSContent } from 'store/graphcms'
 
 export default function Home({
-  heroTitle,
-  heroSubtitle,
+  cms,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [selectedCategoryId, setSelectedCategoryId] = useState(
     Categories.TOP.id
@@ -145,10 +144,10 @@ export default function Home({
         <div className="w-screen px-6 pt-10 pb-40 text-center text-white bg-cover bg-top-mobile md:bg-top-desktop">
           <div>
             <h2 className="text-3xl md:text-6xl font-gilroy-bold">
-              <Markdown>{heroTitle}</Markdown>
+              <Markdown>{cms.heroTitle}</Markdown>
             </h2>
             <div className="mt-8 text-lg md:text-2xl font-sf-compact-medium">
-              <Markdown>{heroSubtitle}</Markdown>
+              <Markdown>{cms.heroSubtitle}</Markdown>
             </div>
           </div>
           <button
@@ -264,6 +263,8 @@ type Data = {
 export const getServerSideProps = async () => {
   const response = (await getCMSContent('home')) as Data
   return {
-    props: response,
+    props: {
+      cms: response,
+    },
   }
 }
