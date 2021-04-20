@@ -23,7 +23,9 @@ export default function WrongNetworkOverlay() {
       window.scrollTo(0, 0)
       document.body.style.overflow = 'hidden'
     }
-    return () => (document.body.style.overflow = 'auto')
+    return () => {
+      document.body.style.overflow = 'auto'
+    }
   }, [show])
 
   if (!show) {
