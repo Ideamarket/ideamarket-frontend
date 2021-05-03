@@ -1,12 +1,21 @@
 const defaultTheme = require('tailwindcss/defaultTheme')
 
 module.exports = {
-  darkMode: false,
+  darkMode: 'class',
   purge: {
     content: ['./src/**/*.{js,ts,jsx,tsx}'],
   },
   theme: {
+    typography: (theme) => ({}),
+
     extend: {
+      typography: (theme) => ({
+        dark: {
+          css: {
+            color: 'white',
+          },
+        },
+      }),
       gridTemplateColumns: {
         'mobile-row': '1fr minmax(160px, 1fr) 1fr',
       },
@@ -85,7 +94,9 @@ module.exports = {
       },
     },
   },
-  variants: {},
+  variants: {
+    typography: ['dark'],
+  },
   plugins: [
     require('@tailwindcss/forms'),
     require('@tailwindcss/typography'),

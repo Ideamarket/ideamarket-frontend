@@ -3,6 +3,7 @@ import '../styles/globals.css'
 import '../styles/fonts/gilroy/style.css'
 import '../styles/fonts/sf-compact-display/style.css'
 import '../styles/nprogress.css'
+import { ThemeProvider } from 'next-themes'
 
 import CookieConsent from 'react-cookie-consent'
 import { createContext, Fragment, ReactNode, useEffect, useState } from 'react'
@@ -122,9 +123,11 @@ function MyApp({ Component, pageProps }: AppProps) {
           setIsEmailNewsletterModalOpen,
         }}
       >
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
+        <ThemeProvider attribute="class">
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </ThemeProvider>
         <WalletModal />
         <WrongNetworkOverlay />
         <EmailNewsletterModal />

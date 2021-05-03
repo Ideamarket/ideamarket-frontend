@@ -137,7 +137,7 @@ export default function Home() {
     <>
       <NextSeo title="Home" />
       <div className="overflow-x-hidden bg-brand-gray">
-        <div className="w-screen px-6 pt-10 pb-40 text-center text-white bg-cover bg-top-mobile md:bg-top-desktop">
+        <div className="w-screen px-6 pt-10 pb-40 text-center text-white dark:text-blue-500 bg-cover bg-top-mobile md:bg-top-desktop ">
           <div>
             <h2 className="text-3xl md:text-6xl font-gilroy-bold">
               Maximize return on{' '}
