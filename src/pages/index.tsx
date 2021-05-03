@@ -136,8 +136,8 @@ export default function Home() {
   return (
     <>
       <NextSeo title="Home" />
-      <div className="overflow-x-hidden bg-brand-gray">
-        <div className="w-screen px-6 pt-10 pb-40 text-center text-white dark:text-blue-500 bg-cover bg-top-mobile md:bg-top-desktop ">
+      <div className="overflow-x-hidden bg-brand-gray dark:bg-gray-900 h-screen">
+        <div className="w-screen px-6 pt-10 pb-40 text-center text-white  dark:text-gray-200 bg-cover bg-top-mobile md:bg-top-desktop ">
           <div>
             <h2 className="text-3xl md:text-6xl font-gilroy-bold">
               Maximize return on{' '}
@@ -166,7 +166,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="px-2 mx-auto transform md:px-4 max-w-88 md:max-w-304 -translate-y-28 font-sf-compact-medium">
+        <div className="px-2 mx-auto transform md:px-4 max-w-88 md:max-w-304 -translate-y-28 font-sf-compact-medium ">
           <div className="flex flex-col md:flex-row">
             <MarketList
               selectedMarkets={selectedMarkets}
@@ -176,7 +176,7 @@ export default function Home() {
             <EmailForm />
           </div>
 
-          <div className="bg-white border border-brand-gray-3 rounded-b-xlg shadow-home">
+          <div className="bg-white dark:bg-gray-700  border border-brand-gray-3 rounded-b-xlg shadow-home">
             <div className="flex flex-col border-b md:flex-row border-brand-gray-3">
               <div className="px-4 md:px-10">
                 <div className="font-sf-pro-text">
@@ -188,8 +188,8 @@ export default function Home() {
                         className={classNames(
                           'px-1 py-4 text-base leading-none tracking-tightest whitespace-nowrap border-b-2 focus:outline-none cursor-pointer',
                           cat.id === selectedCategoryId
-                            ? 'font-semibold text-very-dark-blue border-very-dark-blue focus:text-very-dark-blue-3 focus:border-very-dark-blue-2'
-                            : 'font-medium text-brand-gray-2 border-transparent hover:text-gray-700 hover:border-gray-300 focus:text-gray-700 focus:border-gray-300'
+                            ? 'font-semibold text-very-dark-blue border-very-dark-blue focus:text-very-dark-blue-3 focus:border-very-dark-blue-2 dark:text-gray-300 dark:border-gray-300 dark:focus:border-gray-400'
+                            : 'font-medium text-brand-gray-2 dark:text-brand-gray-1 border-transparent hover:text-gray-700 hover:border-gray-300 focus:text-gray-700 focus:border-gray-300 dark:hover:text-gray-300 dark:hover:border-gray-700 dark:focus:text-gray-300 dark:focus:border-gray-700'
                         )}
                       >
                         <span>{cat.value}</span>
@@ -198,7 +198,7 @@ export default function Home() {
                   </nav>
                 </div>
               </div>
-              <div className="w-full mt-2 ml-auto md:mt-0 md:w-2/5 md:block">
+              <div className="w-full mt-2 ml-auto md:mt-0 md:w-2/5 md:block ">
                 <label htmlFor="search-input" className="sr-only">
                   Search
                 </label>
@@ -209,7 +209,7 @@ export default function Home() {
                   <input
                     type="text"
                     id="search-input"
-                    className="block w-full h-full pl-12 border-0 border-gray-300 rounded-none md:border-l focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    className="block w-full h-full pl-12 border-0 border-gray-300 dark:border-gray-700 rounded-none md:border-l focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                     placeholder="Search"
                     onChange={(event) => {
                       onNameSearchChanged(

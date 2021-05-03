@@ -21,7 +21,7 @@ export default function EmailNewsletterModal() {
             Notifications
           </p>
         </div>
-        <div className="flex justify-center">
+        <div className="flex justify-center bg-gray-700">
           <iframe
             src="https://ideamarkets.substack.com/embed"
             width="350"

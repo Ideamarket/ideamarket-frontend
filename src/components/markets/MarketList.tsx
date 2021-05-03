@@ -11,7 +11,7 @@ type MarketButtonProps = {
 
 const DisabledMarketButton = ({ marketName }: { marketName: string }) => (
   <button
-    className="p-1 px-3 text-sm border rounded-md opacity-50 cursor-not-allowed text-brand-gray-4"
+    className="p-1 px-3 text-sm border dark:border-gray-500 rounded-md opacity-50 cursor-not-allowed text-brand-gray-4 dark:text-gray-400"
     disabled={true}
   >
     {marketName}
@@ -25,11 +25,11 @@ const MarketButton = ({
 }: MarketButtonProps) => (
   <button
     className={classNames(
-      'p-1 border rounded-md px-3 text-sm',
+      'p-1 border rounded-md px-3 text-sm dark:border-gray-500',
       {
         'bg-very-dark-blue text-white': isSelected,
       },
-      { 'text-brand-gray-4': !isSelected }
+      { 'text-brand-gray-4 dark:text-gray-300 font-semibold': !isSelected }
     )}
     onClick={() => {
       onClick(marketName)
@@ -90,7 +90,7 @@ export const MarketList = ({
   }
 
   return (
-    <div className="grid justify-center flex-1 grid-cols-2 md:grid-cols-none md:auto-cols-min md:grid-flow-col p-4 bg-white rounded-t-lg gap-x-2 gap-y-2 md:rounded-tr-none md:justify-start">
+    <div className="grid justify-center flex-1 grid-cols-2 md:grid-cols-none md:auto-cols-min md:grid-flow-col p-4 bg-white  dark:bg-gray-700 rounded-t-lg gap-x-2 gap-y-2 md:rounded-tr-none md:justify-start">
       <MarketButton
         key="all"
         marketName="All"
