@@ -70,7 +70,7 @@ export default function EmailForm() {
         </div>
         <button
           type="submit"
-          className="flex-shrink-0 p-2 px-3 text-xs border dark:border-gray-500 rounded-md text-brand-gray-4 dark:text-gray-200 hover:border-brand-blue hover:text-brand-blue focus:border-brand-blue"
+          className="flex-shrink-0 p-2 px-3 text-xs border dark:border-gray-500 rounded-md text-brand-gray-4 dark:text-gray-200 hover:border-brand-blue hover:text-brand-blue focus:border-brand-blue dark:hover:border-brand-blue "
         >
           Sign up
         </button>
