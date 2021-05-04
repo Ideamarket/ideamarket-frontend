@@ -61,7 +61,7 @@ export default function MarketSelect({
       options={selectMarketValues}
       formatOptionLabel={selectMarketFormat}
       defaultValue={isMarketsLoading ? undefined : selectMarketValues[0]}
-      className="border-2 border-gray-200  dark:border-gray-500 rounded-md text-brand-gray-4 dark:text-gray-200 market-select"
+      className="border-2 border-gray-200  dark:border-gray-500   rounded-md text-brand-gray-4 dark:text-gray-200 market-select"
       theme={(theme) => ({
         ...theme,
         borderRadius: 2,

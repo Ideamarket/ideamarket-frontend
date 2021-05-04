@@ -288,8 +288,8 @@ export default function TradeInterface({
               'text-base cursor-pointer pb-2 m-1 font-semibold',
               centerTypeSelection ? 'flex-grow text-center' : 'px-3',
               tradeType === 'buy'
-                ? 'text-brand-new-dark border-brand-new-dark border-b-2'
-                : 'text-brand-new-dark font-semibold border-transparent'
+                ? 'text-brand-new-dark dark:text-gray-200  border-brand-new-dark dark:border-gray-300 border-b-2'
+                : 'text-brand-new-dark dark:text-gray-200 font-semibold border-transparent'
             )}
           >
             Buy
@@ -302,8 +302,8 @@ export default function TradeInterface({
               'text-base cursor-pointer pb-2 m-1 font-semibold',
               centerTypeSelection ? 'flex-grow text-center' : 'px-3',
               tradeType === 'sell'
-                ? 'text-brand-new-dark border-brand-new-dark border-b-2'
-                : 'text-brand-new-dark font-semibold border-transparent'
+                ? 'text-brand-new-dark dark:text-gray-200 dark:border-gray-300   border-brand-new-dark border-b-2'
+                : 'text-brand-new-dark dark:text-gray-200 font-semibold border-transparent'
             )}
           >
             Sell
@@ -312,12 +312,12 @@ export default function TradeInterface({
       )}
       <div className="mx-auto" style={{ maxWidth: 550 }}>
         <div style={bgcolor ? { backgroundColor: bgcolor } : {}}>
-          <p className="mx-5 mt-5 mb-2 text-sm font-semibold text-brand-new-dark">
+          <p className="mx-5 mt-5 mb-2 text-sm font-semibold text-brand-new-dark dark:text-gray-300">
             {tradeType === 'buy' ? 'Pay with' : 'Receive'}
           </p>
           <div className="mx-5">
             <Select
-              className="border-2 border-gray-200 rounded-md text-brand-gray-4 trade-select"
+              className="border-2 border-gray-200 dark:bg-gray-700 rounded-md text-brand-gray-4 trade-select"
               isClearable={false}
               isSearchable={false}
               isDisabled={txManager.isPending || disabled}
@@ -345,7 +345,7 @@ export default function TradeInterface({
             />
           </div>
           <div className="flex flex-row justify-between mx-5 mt-5">
-            <p className="mb-2 text-sm font-semibold text-brand-new-dark">
+            <p className="mb-2 text-sm font-semibold text-brand-new-dark dark:text-gray-300 ">
               {tradeType === 'buy'
                 ? 'Amount of tokens to buy'
                 : 'Amount of tokens to sell'}
@@ -354,8 +354,8 @@ export default function TradeInterface({
               className={classNames(
                 'text-sm  mb-2',
                 exceedsBalance
-                  ? 'text-brand-red font-bold'
-                  : 'text-brand-new-dark font-semibold'
+                  ? 'text-brand-red font-bold dark:text-red-500'
+                  : 'text-brand-new-dark font-semibold dark:text-gray-300'
               )}
             >
               {tradeType === 'buy'
@@ -390,7 +390,7 @@ export default function TradeInterface({
           </div>
 
           <div className="flex flex-row justify-between mx-5 mt-5">
-            <p className="mb-2 text-sm font-semibold text-brand-new-dark">
+            <p className="mb-2 text-sm font-semibold text-brand-new-dark dark:text-gray-300">
               {tradeType === 'buy' ? 'You will pay' : 'You will receive'}
             </p>
             <p
@@ -398,7 +398,7 @@ export default function TradeInterface({
                 'text-sm mb-2',
                 exceedsBalance
                   ? 'text-brand-red font-bold'
-                  : 'text-brand-new-dark font-semibold'
+                  : 'text-brand-new-dark font-semibold dark:text-gray-200'
               )}
             >
               {tradeType === 'buy'
@@ -416,7 +416,7 @@ export default function TradeInterface({
             />
           </div>
 
-          <div className="flex flex-col justify-between mx-5 mt-5 text-sm font-semibold md:flex-row text-brand-gray-2">
+          <div className="flex flex-col justify-between mx-5 mt-5 text-sm font-semibold md:flex-row text-brand-gray-2 dark:text-gray-400">
             <div className="flex items-center">
               Trading fee:{' '}
               {market && market.platformFeeRate && market.tradingFeeRate
@@ -473,7 +473,7 @@ export default function TradeInterface({
               'ml-2 cursor-pointer',
               isLockChecked
                 ? 'text-brand-blue font-medium'
-                : 'text-brand-new-dark font-semibold'
+                : 'text-brand-new-dark font-semibold dark:text-gray-200'
             )}
           >
             Lock purchased tokens for 1YR

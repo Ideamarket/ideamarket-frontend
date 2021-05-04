@@ -21,7 +21,7 @@ export default function AdvancedOptions({
   return (
     <>
       <div
-        className="mx-5 mt-5 text-sm  underline cursor-pointer text-brand-gray-2 font-semibold"
+        className="mx-5 mt-5 text-sm  underline cursor-pointer text-brand-gray-2 dark:text-gray-400 font-semibold"
         onClick={() => {
           setShow(!show)
         }}
