@@ -34,7 +34,7 @@ export default function LockedTokenTable({
 
   return (
     <div className="relative">
-      <div className="bg-white divide-y divide-gray-200">
+      <div className="bg-white dark:bg-gray-700  divide-y divide-gray-200">
         {isLockedTokensLoading ? (
           Array.from(Array(TOKENS_PER_PAGE).keys()).map((token) => (
             <LockedTokenRowSkeleton key={token} />
@@ -44,7 +44,7 @@ export default function LockedTokenTable({
             {lockedTokens.map((lockedAmount, i) => (
               <div
                 key={lockedAmount.lockedUntil}
-                className="flex flex-col justify-between p-5 text-base font-semibold rounded-md md:flex-row text-brand-new-dark"
+                className="flex flex-col justify-between p-5 text-base font-semibold rounded-md md:flex-row text-brand-new-dark dark:text-brand-new-blue"
                 style={{ backgroundColor: '#f9fbfd' }}
               >
                 <div>
@@ -101,7 +101,7 @@ export default function LockedTokenTable({
             </button>
           </div>
           <div className="flex justify-end mt-4">
-            <button className="px-1 py-1 ml-5 mr-2 text-sm font-medium bg-white border-2 rounded-lg cursor-default tracking-tightest-2 font-sf-compact-medium text-brand-gray-2">
+            <button className="px-1 py-1 ml-5 mr-2 text-sm font-medium bg-white dark:bg-gray-700 dark:border-gray-500 border-2 rounded-lg cursor-default tracking-tightest-2 font-sf-compact-medium text-brand-gray-2">
               Withdraw unlocked
             </button>
           </div>

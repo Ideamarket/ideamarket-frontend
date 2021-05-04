@@ -78,14 +78,14 @@ export default function TokenCard({
       <div className="flex flex-none mt-7">
         <div className="w-20 h-20 mr-5">
           {loading || isTokenIconLoading ? (
-            <div className="bg-gray-400 rounded-full w-18 h-18 animate animate-pulse"></div>
+            <div className="bg-gray-400  rounded-full w-18 h-18 animate animate-pulse"></div>
           ) : (
             <img className="rounded-full" src={tokenIconURL} alt="" />
           )}
         </div>
         <div className="mt-1 text-2xl font-semibold text-brand-alto">
           {loading ? (
-            <div className="w-64 mx-auto bg-gray-400 rounded animate animate-pulse">
+            <div className="w-64 mx-auto bg-gray-400  rounded animate animate-pulse">
               <span className="invisible">A</span>
             </div>
           ) : (

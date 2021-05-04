@@ -52,7 +52,7 @@ export default function TokenRow({
   return (
     <>
       <tr
-        className="grid grid-cols-3 border-b cursor-pointer md:table-row hover:bg-brand-gray border-brand-border-gray"
+        className="grid grid-cols-3 border-b cursor-pointer md:table-row hover:bg-brand-gray border-brand-border-gray  dark:border-gray-500 "
         onClick={() => {
           router.push(
             `/i/${marketSpecifics.getMarketNameURLRepresentation()}/${marketSpecifics.getTokenNameURLRepresentation(

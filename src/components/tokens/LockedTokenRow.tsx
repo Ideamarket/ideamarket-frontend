@@ -8,7 +8,7 @@ export default function LockedTokenRow({
   lockedAmount: LockedAmount
 }) {
   return (
-    <div className="table-row cursor-pointer bg-brand-gray hover:bg-white">
+    <div className="table-row cursor-pointer bg-brand-gray dark:bg-gray-700  hover:bg-white">
       <div className="px-6 py-3 whitespace-nowrap">
         <div className="flex items-center">
           <div className="w-auto h-auto">

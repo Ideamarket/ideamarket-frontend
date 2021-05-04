@@ -21,7 +21,7 @@ import {
   DefaultLayout,
 } from 'components'
 import { NETWORK } from 'store/networks'
-
+import { SearchIcon } from '@heroicons/react/outline'
 import Search from '../assets/search.svg'
 import Plus from '../assets/plus-white.svg'
 import { GlobalContext } from './_app'
@@ -176,8 +176,8 @@ export default function Home() {
             <EmailForm />
           </div>
 
-          <div className="bg-white dark:bg-gray-700  border border-brand-gray-3 rounded-b-xlg shadow-home">
-            <div className="flex flex-col border-b md:flex-row border-brand-gray-3">
+          <div className="bg-white dark:bg-gray-700  border border-brand-gray-3 dark:border-gray-500 rounded-b-xlg shadow-home">
+            <div className="flex flex-col border-b dark:border-gray-500 md:flex-row border-brand-gray-3">
               <div className="px-4 md:px-10">
                 <div className="font-sf-pro-text">
                   <nav className="flex -mb-px space-x-5">
@@ -199,17 +199,20 @@ export default function Home() {
                 </div>
               </div>
               <div className="w-full mt-2 ml-auto md:mt-0 md:w-2/5 md:block ">
-                <label htmlFor="search-input" className="sr-only">
+                <label
+                  htmlFor="search-input"
+                  className="sr-only dark:text-gray-300"
+                >
                   Search
                 </label>
-                <div className="relative h-full rounded-md shadow-sm">
+                <div className="relative h-full rounded-md shadow-sm ">
                   <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                    <Search className="w-8 h-8 text-gray-400" />
+                    <SearchIcon className="w-8 h-8 text-gray-400 dark:text-gray-200" />
                   </div>
                   <input
                     type="text"
                     id="search-input"
-                    className="block w-full h-full pl-12 border-0 border-gray-300 dark:border-gray-700 rounded-none md:border-l focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    className="block w-full h-full pl-12 border-0 border-gray-300  dark:placeholder-gray-400 dark:border-gray-500 rounded-none md:border-l focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-500"
                     placeholder="Search"
                     onChange={(event) => {
                       onNameSearchChanged(
