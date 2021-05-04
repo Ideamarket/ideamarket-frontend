@@ -198,7 +198,7 @@ export default function TradeInterface({
   const selectTokensFormat = (entry) => (
     <div className="flex flex-row">
       <div className="flex items-center">
-        <img className="w-7.5" src={'' + entry.token.logoURL} />
+        <img className="w-7.5" src={'' + entry.token.logoURL} alt="logo" />
       </div>
       <div className="ml-2.5">
         <div>{entry.token.symbol}</div>

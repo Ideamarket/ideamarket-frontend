@@ -22,7 +22,6 @@ import {
 } from 'components'
 import { NETWORK } from 'store/networks'
 import { SearchIcon } from '@heroicons/react/outline'
-import Search from '../assets/search.svg'
 import Plus from '../assets/plus-white.svg'
 import { GlobalContext } from './_app'
 import { useWalletStore } from 'store/walletStore'
@@ -212,7 +211,7 @@ export default function Home() {
                   <input
                     type="text"
                     id="search-input"
-                    className="block w-full h-full pl-12 border-0 border-gray-300  dark:placeholder-gray-400 dark:border-gray-500 rounded-none md:border-l focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-500"
+                    className="block w-full h-full pl-12 border-0 border-gray-300  dark:placeholder-gray-400 dark:border-gray-500 rounded-none md:border-l focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 "
                     placeholder="Search"
                     onChange={(event) => {
                       onNameSearchChanged(
