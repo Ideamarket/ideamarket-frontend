@@ -210,8 +210,8 @@ export default function OwnedTokenTable({
       <div className="flex flex-col">
         <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
           <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-            <div className="overflow-hidden">
-              <table className="min-w-full divide-y divide-gray-200">
+            <div className="overflow-hidden dark:border-gray-500">
+              <table className="min-w-full divide-y dark:divide-gray-500 divide-gray-200">
                 <thead className="hidden md:table-header-group">
                   <tr>
                     {headers.map((header) => (
@@ -246,7 +246,7 @@ export default function OwnedTokenTable({
                     ))}
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-white dark:bg-gray-700 dark:divide-gray-500 divide-y divide-gray-200">
                   {isLoading ? (
                     Array.from(Array(TOKENS_PER_PAGE).keys()).map((token) => (
                       <OwnedTokenRowSkeleton key={token} />

@@ -28,7 +28,7 @@ export default function MyTokenRow({
   return (
     <>
       <tr
-        className="grid grid-cols-3 border-b cursor-pointer md:table-row hover:bg-brand-gray border-brand-border-gray"
+        className="grid grid-cols-3 border-b cursor-pointer md:table-row hover:bg-brand-gray border-brand-border-gray dark:hover:bg-gray-600 dark:border-gray-500"
         onClick={() => {
           router.push(
             `/i/${marketSpecifics.getMarketNameURLRepresentation()}/${marketSpecifics.getTokenNameURLRepresentation(
@@ -41,7 +41,7 @@ export default function MyTokenRow({
           <div className="flex items-center">
             <div className="flex-shrink-0 w-7.5 h-7.5">
               {isTokenIconLoading ? (
-                <div className="w-full h-full bg-gray-400 rounded-full animate-pulse"></div>
+                <div className="w-full h-full bg-gray-400 dark:bg-gray-600 rounded-full animate-pulse"></div>
               ) : (
                 <img
                   className="w-full h-full rounded-full"
@@ -78,20 +78,20 @@ export default function MyTokenRow({
           </div>
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
-          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4">
+          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4 dark:bg-gray-300">
             Market
           </p>
           <div className="flex items-center">
             <div className="w-full h-full md:w-auto md:h-auto">
               {marketSpecifics.getMarketSVGBlack()}
             </div>
-            <div className="ml-1 text-base font-semibold leading-4 md:ml-3 text-brand-gray-4">
+            <div className="ml-1 text-base font-semibold leading-4 md:ml-3 text-brand-gray-4 dark:bg-gray-300">
               {marketSpecifics.getMarketName()}
             </div>
           </div>
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
-          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4">
+          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4 dark:bg-gray-300">
             Price
           </p>
           <p className="text-base font-semibold leading-4 tracking-tightest-2 text-very-dark-blue">
@@ -109,15 +109,15 @@ export default function MyTokenRow({
           </p>
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
-          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4">
+          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4 dark:bg-gray-300">
             24H Change
           </p>
           <p
             className={classNames(
               'text-base font-semibold leading-4 tracking-tightest-2 text-very-dark-blue',
               parseFloat(token.dayChange) >= 0.0
-                ? 'text-brand-green'
-                : 'text-brand-red'
+                ? 'text-brand-green dark:text-green-500'
+                : 'text-brand-red dark:text-red-500'
             )}
           >
             {parseFloat(token.dayChange) >= 0.0

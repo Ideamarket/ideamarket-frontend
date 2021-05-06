@@ -65,7 +65,7 @@ export default function TokenRow({
           <div className="flex items-center">
             <div className="flex-shrink-0 w-7.5 h-7.5">
               {isTokenIconLoading ? (
-                <div className="w-full h-full bg-gray-400 rounded-full animate-pulse"></div>
+                <div className="w-full h-full bg-gray-400 dark:bg-gray-600  rounded-full animate-pulse"></div>
               ) : (
                 <img
                   className="w-full h-full rounded-full"
@@ -102,20 +102,20 @@ export default function TokenRow({
           </div>
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
-          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4">
+          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-300">
             Market
           </p>
           <div className="flex items-center">
             <div className="w-full h-full md:w-auto md:h-auto">
               {marketSpecifics.getMarketSVGBlack()}
             </div>
-            <div className="ml-1 text-base font-semibold leading-4 md:ml-3 text-brand-gray-4">
+            <div className="ml-1 text-base font-semibold leading-4 md:ml-3 text-brand-gray-4 dark:text-gray-300">
               {marketSpecifics.getMarketName()}
             </div>
           </div>
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
-          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4">
+          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-300">
             Price
           </p>
           <p
@@ -126,7 +126,7 @@ export default function TokenRow({
           </p>
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
-          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4">
+          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-300">
             24H Change
           </p>
           <p
@@ -149,7 +149,7 @@ export default function TokenRow({
           </p>
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
-          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4">
+          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-300">
             Balance
           </p>
           <p
@@ -160,7 +160,7 @@ export default function TokenRow({
           </p>
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
-          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4">
+          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-300">
             Value
           </p>
           <p

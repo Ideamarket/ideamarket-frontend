@@ -3,7 +3,7 @@ import Select from 'react-select'
 import { getMarketSpecificsByMarketName } from 'store/markets'
 import { useQuery } from 'react-query'
 import { queryMarkets } from 'store/ideaMarketsStore'
-
+import { useTheme } from 'next-themes'
 export default function MarketSelect({
   onChange,
   disabled,
@@ -14,7 +14,7 @@ export default function MarketSelect({
   isClearable?: boolean
 }) {
   const [selectMarketValues, setSelectMarketValues] = useState([])
-
+  const { theme, setTheme } = useTheme()
   const { data: markets, isLoading: isMarketsLoading } = useQuery(
     'all-markets',
     queryMarkets
@@ -61,13 +61,13 @@ export default function MarketSelect({
       options={selectMarketValues}
       formatOptionLabel={selectMarketFormat}
       defaultValue={isMarketsLoading ? undefined : selectMarketValues[0]}
-      className="border-2 border-gray-200  dark:border-gray-500   rounded-md text-brand-gray-4 dark:text-gray-200 market-select"
-      theme={(theme) => ({
-        ...theme,
+      className="border-2 border-gray-200  dark:border-gray-500  dark:placeholder-gray-300 rounded-md text-brand-gray-4 dark:text-gray-200 market-select"
+      theme={(mytheme) => ({
+        ...mytheme,
         borderRadius: 2,
         colors: {
-          ...theme.colors,
-          primary25: '#f6f6f6', // brand-gray
+          ...mytheme.colors,
+          primary25: theme === 'dark' ? 'black' : '#f6f6f6', // brand-gray
           primary: '#0857e0', // brand-blue
         },
       })}
@@ -75,6 +75,25 @@ export default function MarketSelect({
         valueContainer: (provided) => ({
           ...provided,
           minHeight: '50px',
+        }),
+        control: (base, state) => ({
+          ...base,
+          textDecorationColor: theme === 'dark' ? 'white' : 'gray',
+          background: theme === 'dark' ? 'gray' : 'white',
+          // match with the menu
+          borderRadius: state.isFocused ? '3px 3px 0 0' : 3,
+          // Overwrittes the different states of border
+          borderColor: state.isFocused ? 'yellow' : 'green',
+          // Removes weird border around container
+          boxShadow: state.isFocused ? null : null,
+          '&:hover': {
+            // Overwrittes the different states of border
+            borderColor: state.isFocused ? 'red' : 'blue',
+          },
+        }),
+        menuList: (base) => ({
+          ...base,
+          background: theme === 'dark' ? 'gray' : 'white',
         }),
       }}
     />

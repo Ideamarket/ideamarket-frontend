@@ -31,7 +31,7 @@ export default function MyTokens() {
   return (
     <>
       <NextSeo title="My Wallet" />
-      <div className="min-h-screen bg-brand-gray">
+      <div className="min-h-screen bg-brand-gray dark:bg-gray-900">
         <div className="h-64 px-4 pt-8 pb-5 text-white md:px-6 md:pt-6 bg-top-mobile md:bg-top-desktop md:h-96">
           <div className="mx-auto md:px-4 max-w-88 md:max-w-304">
             <div className="flex justify-between">
@@ -50,14 +50,14 @@ export default function MyTokens() {
                 </div>
               </div>
             </div>
-            <div className="pt-2 bg-white border rounded-md border-brand-border-gray">
-              <div className="flex flex-col mx-5 md:flex-row md:items-center md:justify-between">
+            <div className="pt-2 bg-white dark:bg-gray-700 border rounded-md dark:border-gray-500  border-brand-border-gray">
+              <div className="flex flex-col mx-5 dark:border-gray-500 md:flex-row md:items-center md:justify-between">
                 <div>
                   <div
                     className={classNames(
-                      'text-base text-brand-new-dark font-semibold px-2 mr-5 py-3 pt-2 inline-block cursor-pointer',
+                      'text-base text-brand-new-dark dark:text-gray-300 font-semibold px-2 mr-5 py-3 pt-2 inline-block cursor-pointer',
                       table === 'holdings'
-                        ? 'border-b-2 border-brand-new-dark'
+                        ? 'border-b-2 border-brand-new-dark dark:border-gray-300'
                         : ''
                     )}
                     onClick={() => {
@@ -69,9 +69,9 @@ export default function MyTokens() {
                   </div>
                   <div
                     className={classNames(
-                      'text-base text-brand-new-dark font-semibold px-2 py-3 pt-2 inline-block cursor-pointer',
+                      'text-base text-brand-new-dark dark:text-gray-300 font-semibold px-2 py-3 pt-2 inline-block cursor-pointer',
                       table === 'listings'
-                        ? 'border-b-2 border-brand-new-dark'
+                        ? 'border-b-2 border-brand-new-dark dark:border-gray-300'
                         : ''
                     )}
                     onClick={() => {
