@@ -67,7 +67,9 @@ export default function MarketSelect({
         borderRadius: 2,
         colors: {
           ...mytheme.colors,
-          primary25: theme === 'dark' ? 'black' : '#f6f6f6', // brand-gray
+          primary50: theme === 'dark' ? '#4B5563' : '', // brand-gray ,
+
+          primary25: theme === 'dark' ? '#4B5563' : '#f6f6f6', // brand-gray
           primary: '#0857e0', // brand-blue
         },
       })}
@@ -93,7 +95,7 @@ export default function MarketSelect({
         }),
         menuList: (base) => ({
           ...base,
-          background: theme === 'dark' ? 'gray' : 'white',
+          background: theme === 'dark' ? '#9CA3AF' : 'white',
         }),
       }}
     />

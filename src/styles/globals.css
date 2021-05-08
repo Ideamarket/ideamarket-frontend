@@ -22,9 +22,14 @@ span svg {
 }
 
 .trade-select > div:first-child > div:first-child > div,
-.market-select > div:first-child > div:first-child > div {
+.light.market-select > div:first-child > div:first-child > div {
   color: #708090;
 }
+.light.market-select > div:first-child > div:first-child > div {
+  color: #efefef;
+}
+
+
 
 .market-select > div,
 .market-select > div > div:first-child {
