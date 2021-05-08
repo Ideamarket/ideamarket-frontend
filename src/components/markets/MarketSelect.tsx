@@ -40,7 +40,7 @@ export default function MarketSelect({
   }, [markets])
 
   const selectMarketFormat = (entry) => (
-    <div className="flex items-center">
+    <div className="flex items-center dark:text-gray-300 text-gray-500">
       <div>
         {entry?.market?.name
           ? getMarketSpecificsByMarketName(
@@ -81,7 +81,7 @@ export default function MarketSelect({
         control: (base, state) => ({
           ...base,
           textDecorationColor: theme === 'dark' ? 'white' : 'gray',
-          background: theme === 'dark' ? 'gray' : 'white',
+          background: theme === 'dark' ? '#4B5563' : 'white',
           // match with the menu
           borderRadius: state.isFocused ? '3px 3px 0 0' : 3,
           // Overwrittes the different states of border
