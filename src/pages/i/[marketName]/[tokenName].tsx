@@ -52,7 +52,7 @@ import { GetServerSideProps } from 'next'
 
 function DetailsSkeleton() {
   return (
-    <div className="w-12 mx-auto bg-gray-400 rounded animate animate-pulse">
+    <div className="w-12 mx-auto bg-gray-400 dark:bg-gray-900 rounded animate animate-pulse">
       <span className="invisible">A</span>
     </div>
   )
@@ -282,7 +282,7 @@ export default function TokenDetails({
   return (
     <>
       <SEO />
-      <div className="min-h-screen bg-brand-gray">
+      <div className="min-h-screen bg-brand-gray dark:bg-gray-900">
         <div className="px-4 md:px-6 pt-12 md:pt-10 pb-5 text-white bg-top-mobile md:bg-top-desktop h-156.5 md:max-h-96">
           <div className="mx-auto max-w-88 md:max-w-304">
             <span className="text-brand-alto font-sf-compact-medium">

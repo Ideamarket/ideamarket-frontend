@@ -9,6 +9,7 @@ import {
 import ReactTimeAgo from 'react-time-ago'
 import { MutualTokenDetails, MutualTokensListSortBy, A } from 'components'
 import { useTokenIconURL } from 'actions'
+import { useTheme } from 'next-themes'
 
 export default function MutualToken({
   stats,
@@ -25,14 +26,16 @@ export default function MutualToken({
     tokenName: token.name,
   })
   const [isOpen, setIsOpen] = useState(false)
+  const { theme } = useTheme()
+
   return (
     <>
       <MutualTokenDetails isOpen={isOpen} setIsOpen={setIsOpen} token={token} />
-      <div className="overflow-hidden bg-white rounded-lg shadow ">
+      <div className="overflow-hidden bg-white dark:bg-gray-700 rounded-lg shadow ">
         <h2 className="sr-only" id="profile-overview-title">
           Profile Overview
         </h2>
-        <div className="p-6 bg-white">
+        <div className="p-6 bg-white dark:bg-gray-700">
           <div className="lg:flex lg:items-center lg:justify-between">
             <div className="lg:flex lg:space-x-5">
               <div className="flex-shrink-0">
@@ -47,7 +50,7 @@ export default function MutualToken({
                 )}
               </div>
               <div className="mt-4 text-center lg:mt-0 lg:pt-1 lg:text-left">
-                <p className="text-sm font-medium text-gray-600">
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
                   Rank {token.rank}
                 </p>
                 <A
@@ -55,12 +58,16 @@ export default function MutualToken({
                     token.name
                   )}`}
                 >
-                  <p className="text-xl font-bold text-gray-900 lg:text-xl hover:underline">
+                  <p className="text-xl font-bold text-gray-900 dark:text-gray-200 lg:text-xl hover:underline">
                     {token.name}{' '}
-                    <span>{marketSpecifics.getMarketSVGBlack()}</span>
+                    <span>
+                      {theme === 'dark'
+                        ? marketSpecifics.getMarketSVGWhite()
+                        : marketSpecifics.getMarketSVGBlack()}
+                    </span>
                   </p>
                 </A>
-                <p className="text-sm font-medium text-gray-600">
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-300">
                   ${formatNumber(token.latestPricePoint.price)}
                 </p>
               </div>
@@ -79,16 +86,21 @@ export default function MutualToken({
           <div
             className={classNames(
               'px-6 py-5 text-sm font-medium text-center lg:flex lg:flex-col',
-              sortBy === 'totalHolders' && 'bg-brand-light-blue'
+              sortBy === 'totalHolders' &&
+                'bg-brand-light-blue dark:bg-blue-600'
             )}
           >
-            <span className="text-gray-900">{stats.totalHolders}</span>{' '}
-            <span className="text-gray-600">mutual holders</span>
+            <span className="text-gray-900 dark:text-gray-200">
+              {stats.totalHolders}
+            </span>{' '}
+            <span className="text-gray-600 dark:text-gray-400">
+              mutual holders
+            </span>
           </div>
           <div
             className={classNames(
               'px-6 py-5 text-sm font-medium text-center lg:flex lg:flex-col',
-              sortBy === 'totalAmount' && 'bg-brand-light-blue'
+              sortBy === 'totalAmount' && 'bg-brand-light-blue dark:bg-blue-600'
             )}
           >
             <span className="text-gray-900">
@@ -99,7 +111,8 @@ export default function MutualToken({
           <div
             className={classNames(
               'px-6 py-5 text-sm font-medium text-center lg:flex lg:flex-col',
-              sortBy === 'latestTimestamp' && 'bg-brand-light-blue'
+              sortBy === 'latestTimestamp' &&
+                'bg-brand-light-blue dark:bg-blue-600'
             )}
           >
             <span className="text-gray-600">Last bought </span>

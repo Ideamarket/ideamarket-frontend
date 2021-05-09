@@ -28,7 +28,7 @@ export default function MyTokenRow({
   return (
     <>
       <tr
-        className="grid grid-cols-3 border-b cursor-pointer md:table-row hover:bg-brand-gray border-brand-border-gray dark:hover:bg-gray-600 dark:border-gray-500"
+        className="grid grid-cols-3 border-b cursor-pointer md:table-row hover:bg-brand-gray border-brand-border-gray dark:hover:bg-gray-500 dark:border-gray-500"
         onClick={() => {
           router.push(
             `/i/${marketSpecifics.getMarketNameURLRepresentation()}/${marketSpecifics.getTokenNameURLRepresentation(
@@ -50,7 +50,7 @@ export default function MyTokenRow({
                 />
               )}
             </div>
-            <div className="ml-4 text-base font-semibold leading-5 text-gray-900">
+            <div className="ml-4 text-base font-semibold leading-5 text-gray-900 ">
               <A
                 href={`${marketSpecifics.getTokenURL(token.name)}`}
                 className="hover:underline"
