@@ -69,7 +69,7 @@ export default function ApproveButton({
   return (
     <button
       className={classNames(
-        'w-28 md:w-40 h-12 text-base bg-white border-2 rounded-lg tracking-tightest-2',
+        'w-28 md:w-40 h-12 text-base bg-white border-2 dark:border-gray-500 dark:bg-gray-500 rounded-lg tracking-tightest-2',
         disable
           ? 'bg-brand-gray border-brand-gray text-brand-gray-2 cursor-default'
           : 'border-brand-blue text-white bg-brand-blue text-white font-medium'

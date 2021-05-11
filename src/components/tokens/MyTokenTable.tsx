@@ -170,10 +170,9 @@ export default function MyTokenTable({
                     {headers.map((header) => (
                       <th
                         className={classNames(
-                          'px-5 py-4 text-sm font-semibold leading-4 tracking-wider text-left text-brand-gray-4 bg-gray-50',
+                          'px-5 py-4 text-sm font-semibold leading-4 tracking-wider text-left text-brand-gray-4 bg-gray-100 dark:bg-gray-600 dark:text-gray-300',
                           header.sortable && 'cursor-pointer'
                         )}
-                        style={{ backgroundColor: '#f9fbfd' }}
                         key={header.value}
                         onClick={() => {
                           if (header.sortable) {
@@ -235,13 +234,13 @@ export default function MyTokenTable({
           </div>
         </div>
       </div>
-      <div className="flex flex-row items-stretch justify-between px-10 py-5 md:justify-center md:flex md:border-b md:space-x-10">
+      <div className="flex flex-row items-stretch justify-between px-10 py-5 md:justify-center md:flex md:border-b dark:border-gray-500 md:space-x-10">
         <button
           onClick={() => {
             if (currentPage > 0) setCurrentPage(currentPage - 1)
           }}
           className={classNames(
-            'px-4 py-2 text-sm font-medium leading-none cursor-pointer focus:outline-none font-sf-pro-text text-brand-gray-4 tracking-tightest',
+            'px-4 py-2 text-sm font-medium leading-none cursor-pointer focus:outline-none font-sf-pro-text text-brand-gray-4  dark:text-gray-300 tracking-tightest',
             currentPage <= 0
               ? 'cursor-not-allowed opacity-50'
               : 'hover:bg-brand-gray'
@@ -256,7 +255,7 @@ export default function MyTokenTable({
               setCurrentPage(currentPage + 1)
           }}
           className={classNames(
-            'px-4 py-2 text-sm font-medium leading-none cursor-pointer focus:outline-none font-sf-pro-text text-brand-gray-4 tracking-tightest',
+            'px-4 py-2 text-sm font-medium leading-none cursor-pointer focus:outline-none font-sf-pro-text dark:text-gray-300 text-brand-gray-4 tracking-tightest',
             pairs?.length !== TOKENS_PER_PAGE
               ? 'cursor-not-allowed opacity-50'
               : 'hover:bg-brand-gray'

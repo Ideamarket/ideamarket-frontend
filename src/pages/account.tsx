@@ -108,7 +108,7 @@ export default function MyTokens() {
                   )}
                 </div>
               </div>
-              <div className="border-t border-brand-border-gray shadow-home ">
+              <div className="border-t border-brand-border-gray dark:border-gray-500 shadow-home ">
                 {!web3 && (
                   <div className="flex items-center justify-center">
                     <button
