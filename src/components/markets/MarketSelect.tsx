@@ -40,12 +40,16 @@ export default function MarketSelect({
   }, [markets])
 
   const selectMarketFormat = (entry) => (
-    <div className="flex items-center dark:text-gray-300 text-gray-500">
+    <div className="flex items-center dark:text-gray-300 text-gray-500 ">
       <div>
         {entry?.market?.name
-          ? getMarketSpecificsByMarketName(
-              entry.market.name
-            ).getMarketSVGBlack()
+          ? theme === 'dark'
+            ? getMarketSpecificsByMarketName(
+                entry.market.name
+              ).getMarketSVGWhite()
+            : getMarketSpecificsByMarketName(
+                entry.market.name
+              ).getMarketSVGBlack()
           : ''}
       </div>
       <div className="ml-2.5">{entry.market.name}</div>
@@ -95,7 +99,7 @@ export default function MarketSelect({
         }),
         menuList: (base) => ({
           ...base,
-          background: theme === 'dark' ? '#9CA3AF' : 'white',
+          background: theme === 'dark' ? '#6B7280' : 'white',
         }),
       }}
     />
