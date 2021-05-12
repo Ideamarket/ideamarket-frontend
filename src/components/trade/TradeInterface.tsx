@@ -21,6 +21,7 @@ import AdvancedOptions from './AdvancedOptions'
 import Tooltip from '../tooltip/Tooltip'
 import CircleSpinner from '../animations/CircleSpinner'
 import A from 'components/A'
+import { useTheme } from 'next-themes'
 
 export default function TradeInterface({
   ideaToken,
@@ -143,6 +144,7 @@ export default function TradeInterface({
     { value: 0.04, label: '4% max. slippage' },
     { value: 0.05, label: '5% max. slippage' },
   ]
+  const { theme, setTheme } = useTheme()
 
   useEffect(() => {
     setSelectedToken(useTokenListStore.getState().tokens[0])
@@ -317,7 +319,7 @@ export default function TradeInterface({
           </p>
           <div className="mx-5">
             <Select
-              className="border-2 border-gray-200 dark:bg-gray-700 rounded-md text-brand-gray-4 trade-select"
+              className="border-2 border-gray-200 dark:bg-gray-600 dark:border-gray-500 dark:text-gray-300 rounded-md text-brand-gray-4 trade-select"
               isClearable={false}
               isSearchable={false}
               isDisabled={txManager.isPending || disabled}
@@ -327,12 +329,13 @@ export default function TradeInterface({
               options={selectTokensValues}
               formatOptionLabel={selectTokensFormat}
               defaultValue={selectTokensValues[0]}
-              theme={(theme) => ({
-                ...theme,
+              theme={(mytheme) => ({
+                ...mytheme,
                 borderRadius: 2,
                 colors: {
-                  ...theme.colors,
-                  primary25: '#d8d8d8', // brand-gray
+                  ...mytheme.colors,
+                  primary50: theme === 'dark' ? '#4B5563' : '',
+                  primary25: theme === 'dark' ? '#4B5563' : '#d8d8d8', // brand-gray
                   primary: '#0857e0', // brand-blue
                 },
               })}
@@ -340,6 +343,25 @@ export default function TradeInterface({
                 valueContainer: (provided) => ({
                   ...provided,
                   minHeight: '50px',
+                }),
+                control: (base, state) => ({
+                  ...base,
+                  textDecorationColor: theme === 'dark' ? 'white' : 'gray',
+                  background: theme === 'dark' ? '#4B5563' : 'white',
+                  // match with the menu
+                  borderRadius: state.isFocused ? '3px 3px 0 0' : 3,
+                  // Overwrittes the different states of border
+                  borderColor: state.isFocused ? 'yellow' : 'green',
+                  // Removes weird border around container
+                  boxShadow: state.isFocused ? null : null,
+                  '&:hover': {
+                    // Overwrittes the different states of border
+                    borderColor: state.isFocused ? 'red' : 'blue',
+                  },
+                }),
+                menuList: (base) => ({
+                  ...base,
+                  background: theme === 'dark' ? '#6B7280' : 'white',
                 }),
               }}
             />
@@ -366,7 +388,7 @@ export default function TradeInterface({
           </div>
           <div className="flex items-center mx-5">
             <input
-              className="flex-grow w-full px-4 py-2 border-2 border-gray-200 rounded-md text-brand-gray-2 focus:outline-none focus:bg-white focus:border-brand-blue"
+              className="flex-grow w-full px-4 py-2 border-2 dark:bg-gray-600 dark:border-gray-500  dark:text-gray-200  dark:placeholder-gray-300 border-gray-200 rounded-md text-brand-gray-2 focus:outline-none focus:bg-white focus:border-brand-blue"
               type="number"
               min="0"
               value={ideaTokenAmount}
@@ -377,10 +399,10 @@ export default function TradeInterface({
             />
             <button
               className={classNames(
-                'w-20 py-1 ml-2 text-sm font-medium bg-white border-2 rounded-lg tracking-tightest-2',
+                'w-20 py-1 ml-2 text-sm font-medium bg-white dark:bg-gray-400 border-2 rounded-lg tracking-tightest-2',
                 txManager.isPending || disabled
                   ? 'border-brand-gray-2 text-brand-new-dark font-semibold cursor-default'
-                  : 'border-brand-blue text-brand-blue hover:text-white hover:bg-brand-blue'
+                  : 'border-brand-blue text-brand-blue hover:text-white hover:bg-brand-blue dark:hover:bg-brand-blue'
               )}
               disabled={txManager.isPending || disabled}
               onClick={maxButtonClicked}
@@ -409,7 +431,7 @@ export default function TradeInterface({
 
           <div className="mx-5">
             <input
-              className="w-full px-4 py-2 border-2 border-gray-200 rounded text-brand-gray-2 focus:outline-none focus:bg-white focus:border-brand-blue"
+              className="w-full px-4 py-2 border-2 dark:bg-gray-600  dark:border-gray-500 dark:text-gray-300 border-gray-200 rounded text-brand-gray-2 focus:outline-none focus:bg-white focus:border-brand-blue"
               type="text"
               disabled={true}
               value={isTokenAmountLoading ? '...' : tokenAmount}
@@ -429,7 +451,7 @@ export default function TradeInterface({
             </div>
             <div className="flex-1 mb-3 text-base md:ml-8 md:mb-0 text-brand-gray-2">
               <Select
-                className="border-2 border-gray-200 rounded-md text-brand-gray-2 trade-select"
+                className=" select-text dark:border-gray-500  dark:text-gray-200  dark:placeholder-gray-300 border-2 border-gray-200 rounded-md text-brand-gray-2 trade-select"
                 isClearable={false}
                 isSearchable={false}
                 isDisabled={txManager.isPending || disabled}
@@ -438,15 +460,41 @@ export default function TradeInterface({
                 }}
                 options={slippageValues}
                 defaultValue={slippageValues[0]}
-                theme={(theme) => ({
-                  ...theme,
+                theme={(mytheme) => ({
+                  ...mytheme,
                   borderRadius: 2,
                   colors: {
-                    ...theme.colors,
-                    primary25: '#d8d8d8', // brand-gray
+                    ...mytheme.colors,
+                    primary50: theme === 'dark' ? '#4B5563' : '',
+                    primary25: theme === 'dark' ? '#4B5563' : '#d8d8d8', // brand-gray
                     primary: '#0857e0', // brand-blue
                   },
                 })}
+                styles={{
+                  valueContainer: (provided) => ({
+                    ...provided,
+                    minHeight: '50px',
+                  }),
+                  control: (base, state) => ({
+                    ...base,
+                    textDecorationColor: theme === 'dark' ? 'white' : 'gray',
+                    background: theme === 'dark' ? '#4B5563' : 'white',
+                    // match with the menu
+                    borderRadius: state.isFocused ? '3px 3px 0 0' : 3,
+                    // Overwrittes the different states of border
+                    borderColor: state.isFocused ? 'yellow' : 'green',
+                    // Removes weird border around container
+                    boxShadow: state.isFocused ? null : null,
+                    '&:hover': {
+                      // Overwrittes the different states of border
+                      borderColor: state.isFocused ? 'red' : 'blue',
+                    },
+                  }),
+                  menuList: (base) => ({
+                    ...base,
+                    background: theme === 'dark' ? '#6B7280' : 'white',
+                  }),
+                }}
               />
             </div>
           </div>
@@ -537,7 +585,7 @@ export default function TradeInterface({
                       !parseFloat(ideaTokenAmount) ||
                       parseFloat(ideaTokenAmount) <= 0.0
                       ? 'text-brand-gray-2 bg-brand-gray cursor-default border-brand-gray'
-                      : 'border-brand-blue text-white bg-brand-blue font-medium'
+                      : 'border-brand-blue text-white bg-brand-blue dark:text-blue-500 font-medium'
                   )}
                   disabled={
                     txManager.isPending ||

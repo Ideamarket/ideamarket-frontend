@@ -25,8 +25,10 @@ span svg {
 .light.market-select > div:first-child > div:first-child > div {
   color: #708090;
 }
-.light.market-select > div:first-child > div:first-child > div {
-  color: #efefef;
+
+.trade-select > div:first-child > div:first-child > div,
+.dark.market-select > div:first-child > div:first-child > div {
+  color: #D1D5DB;
 }
 
 

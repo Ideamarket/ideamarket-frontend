@@ -1,13 +1,13 @@
 import { useContext } from 'react'
 import { GlobalContext } from '../../pages/_app'
 import { Modal } from '..'
-
+import { useTheme } from 'next-themes'
 export default function EmailNewsletterModal() {
   const {
     isEmailNewsletterModalOpen,
     setIsEmailNewsletterModalOpen,
   } = useContext(GlobalContext)
-
+  const { theme } = useTheme()
   return (
     <Modal
       isOpen={isEmailNewsletterModalOpen}
@@ -26,9 +26,13 @@ export default function EmailNewsletterModal() {
             src="https://ideamarkets.substack.com/embed"
             width="350"
             height="320"
-            style={{ border: '1px solid #EEE', backgroundColor: 'white' }}
+            style={{
+              border: '1px solid #EEE',
+              backgroundColor: theme === 'dark' ? '#374151' : 'white',
+            }}
             frameBorder="0"
             scrolling="no"
+            title="substack"
           />
         </div>
       </div>

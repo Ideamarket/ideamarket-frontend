@@ -184,7 +184,7 @@ export default function TokenCard({
               <div
                 className={
                   parseFloat(token.dayChange) >= 0.0
-                    ? 'text-brand-neon-green'
+                    ? 'text-brand-neon-green dark:text-green-400'
                     : 'text-brand-red dark:text-red-500'
                 }
               >
