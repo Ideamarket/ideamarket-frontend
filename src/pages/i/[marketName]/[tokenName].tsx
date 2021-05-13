@@ -402,7 +402,7 @@ export default function TokenDetails({
 
         <div className="px-2 pb-5 mx-auto mt-12 text-white transform md:mt-10 -translate-y-30 md:-translate-y-28 max-w-88 md:max-w-304">
           <div className="flex flex-col md:flex-row">
-            <div className="flex-1 p-5 mb-5 bg-white border rounded-md md:mr-5 border-brand-border-gray">
+            <div className="flex-1 p-5 mb-5 bg-white  dark:bg-gray-700 dark:border-gray-500 border rounded-md md:mr-5 border-brand-border-gray">
               <div className="flex flex-col justify-between lg:flex-row">
                 <div>
                   {isLoading ? (
@@ -410,20 +410,20 @@ export default function TokenDetails({
                   ) : (
                     <>
                       <div className="inline-block pr-6">
-                        <div className="text-sm font-semibold text-brand-new-dark">
+                        <div className="text-sm font-semibold text-brand-new-dark dark:text-gray-400">
                           Listed on
                         </div>
-                        <div className="mt-2 text-base font-semibold text-brand-new-dark">
+                        <div className="mt-2 text-base font-semibold text-brand-new-dark dark:text-gray-300">
                           {DateTime.fromSeconds(
                             Number(token.listedAt)
                           ).toFormat('MMM dd yyyy')}
                         </div>
                       </div>
                       <div className="inline-block">
-                        <div className="text-sm font-semibold text-brand-new-dark">
+                        <div className="text-sm font-semibold text-brand-new-dark dark:text-gray-400">
                           Listing Owner
                         </div>
-                        <div className="mt-2 text-base font-semibold text-brand-new-dark">
+                        <div className="mt-2 text-base font-semibold text-brand-new-dark dark:text-gray-300">
                           {ZERO_ADDRESS === token.tokenOwner ? (
                             'None'
                           ) : (
@@ -458,7 +458,7 @@ export default function TokenDetails({
                   )}
                 </div>
               </div>
-              <div className="mt-5 mb-3 text-sm font-semibold md:mt-8 text-brand-gray-2">
+              <div className="mt-5 mb-3 text-sm font-semibold md:mt-8 text-brand-gray-2 dark:text-gray-400">
                 Listing Owner Options
               </div>
               {isLoading ? (
@@ -476,13 +476,13 @@ export default function TokenDetails({
                 </>
               ) : token.tokenOwner === ZERO_ADDRESS ? (
                 <>
-                  <div className="font-medium text-brand-gray-2">
+                  <div className="font-medium text-brand-gray-2 dark:text-gray-400">
                     <div className="text-xs">
                       Verify ownership of this {market ? market.name : ''}{' '}
                       account to withdraw accumulated interest.
                     </div>
                   </div>
-                  <div className="mt-3 mb-2 text-sm md:mb-5 text-brand-blue">
+                  <div className="mt-3 mb-2 text-sm md:mb-5 text-brand-blue dark:text-blue-500">
                     {marketSpecifics.isVerificationEnabled() ? (
                       <div
                         className="font-semibold cursor-pointer hover:underline"
@@ -580,27 +580,27 @@ export default function TokenDetails({
                 </>
               )}
             </div>
-            <div className="flex-1 p-5 mb-5 bg-white border rounded-md border-brand-border-gray">
+            <div className="flex-1 p-5 mb-5 bg-white dark:bg-gray-700 dark:border-gray-500 border rounded-md border-brand-border-gray">
               {isLoading ? (
                 <div className="h-full p-18 md:p-0">loading</div>
               ) : web3 ? (
                 <div>
-                  <div className="text-base font-semibold text-brand-new-dark">
+                  <div className="text-base font-semibold text-brand-new-dark dark:text-gray-400">
                     My Wallet
                   </div>
-                  <div className="mt-3 text-sm font-semibold text-brand-new-dark">
+                  <div className="mt-3 text-sm font-semibold text-brand-new-dark dark:text-gray-400">
                     Balance
                   </div>
 
-                  <div className="flex mt-2 text-2xl font-semibold text-center text-brand-new-dark">
+                  <div className="flex mt-2 text-2xl font-semibold text-center text-brand-new-dark dark:text-gray-300">
                     <span className="flex-1 mr-5 text-left md:text-right">
                       {!isBalanceLoading && formatNumber(balance)} tokens
                     </span>
-                    <span className="flex-1 font-normal text-left text-brand-gray-2">
+                    <span className="flex-1 font-normal text-left text-brand-gray-2 dark:text-gray-300">
                       {!isValueLoading && formatNumber(value)} USD
                     </span>
                   </div>
-                  <div className="mt-3 mb-2 text-sm font-semibold text-brand-new-dark">
+                  <div className="mt-3 mb-2 text-sm font-semibold text-brand-new-dark dark:text-gray-400">
                     Locked
                   </div>
                   <LockedTokenRowsTable

@@ -101,7 +101,7 @@ export default function LockedTokenTable({
             </button>
           </div>
           <div className="flex justify-end mt-4">
-            <button className="px-1 py-1 ml-5 mr-2 text-sm font-medium bg-white dark:bg-gray-700 dark:border-gray-500 border-2 rounded-lg cursor-default tracking-tightest-2 font-sf-compact-medium text-brand-gray-2">
+            <button className="px-1 py-1 ml-5 mr-2 text-sm font-medium bg-white dark:bg-gray-700 dark:border-gray-500 border-2 rounded-lg cursor-default tracking-tightest-2 font-sf-compact-medium  dark:text-gray-300 text-brand-gray-2">
               Withdraw unlocked
             </button>
           </div>

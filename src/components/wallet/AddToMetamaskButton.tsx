@@ -37,7 +37,7 @@ export default function AddToMetamaskButton({ token }: { token: IdeaToken }) {
         'flex items-center justify-center h-12 text-base font-medium text-center border-2 rounded-lg w-30 tracking-tightest-2 font-sf-compact-medium',
         disabled
           ? 'text-brand-gray-2 border-brand-gray-2 cursor-default'
-          : 'text-brand-blue hover:text-white border-brand-blue hover:bg-brand-blue'
+          : 'text-brand-blue dark:text-gray-300 hover:text-white border-brand-blue hover:bg-brand-blue'
       )}
       onClick={onClick}
       disabled={disabled}
