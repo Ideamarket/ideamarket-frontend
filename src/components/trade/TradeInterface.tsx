@@ -399,10 +399,10 @@ export default function TradeInterface({
             />
             <button
               className={classNames(
-                'w-20 py-1 ml-2 text-sm font-medium bg-white dark:bg-gray-400 border-2 rounded-lg tracking-tightest-2',
+                'w-20 py-1 ml-2 text-sm font-medium bg-white dark:bg-gray-600 border-2 rounded-lg tracking-tightest-2',
                 txManager.isPending || disabled
                   ? 'border-brand-gray-2 text-brand-new-dark font-semibold cursor-default'
-                  : 'border-brand-blue text-brand-blue hover:text-white hover:bg-brand-blue dark:hover:bg-brand-blue'
+                  : 'border-brand-blue text-brand-blue dark:text-gray-300 hover:text-white hover:bg-brand-blue dark:hover:bg-brand-blue'
               )}
               disabled={txManager.isPending || disabled}
               onClick={maxButtonClicked}
@@ -584,8 +584,8 @@ export default function TradeInterface({
                       isMissingAllowance ||
                       !parseFloat(ideaTokenAmount) ||
                       parseFloat(ideaTokenAmount) <= 0.0
-                      ? 'text-brand-gray-2 bg-brand-gray cursor-default border-brand-gray'
-                      : 'border-brand-blue text-white bg-brand-blue dark:text-blue-500 font-medium'
+                      ? 'text-brand-gray-2 dark:text-gray-300 bg-brand-gray dark:bg-gray-500 dark:border-gray-500 cursor-default border-brand-gray'
+                      : 'border-brand-blue text-white  bg-brand-blue dark:text-blue-500 font-medium'
                   )}
                   disabled={
                     txManager.isPending ||
