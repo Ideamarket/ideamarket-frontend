@@ -74,7 +74,7 @@ export default function MutualToken({
             </div>
             <div className="flex justify-center mt-5 lg:mt-0">
               <button
-                className="flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50"
+                className="flex items-center justify-center dark:bg-gray-500 dark:border-gray-500 dark:text-gray-300 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50"
                 onClick={() => setIsOpen(true)}
               >
                 View details
@@ -82,45 +82,49 @@ export default function MutualToken({
             </div>
           </div>
         </div>
-        <div className="grid grid-cols-1 border-t border-gray-200 divide-y divide-gray-200 bg-gray-50 lg:grid-cols-3 lg:divide-y-0 lg:divide-x">
+        <div className="grid grid-cols-1 border-t border-gray-200 divide-y divide-gray-200 bg-gray-50 dark:bg-gray-600 lg:grid-cols-3 lg:divide-y-0 lg:divide-x">
           <div
             className={classNames(
               'px-6 py-5 text-sm font-medium text-center lg:flex lg:flex-col',
               sortBy === 'totalHolders' &&
-                'bg-brand-light-blue dark:bg-blue-600'
+                'bg-brand-light-blue dark:bg-gray-500'
             )}
           >
             <span className="text-gray-900 dark:text-gray-200">
               {stats.totalHolders}
             </span>{' '}
-            <span className="text-gray-600 dark:text-gray-400">
+            <span className="text-gray-600 dark:text-gray-300">
               mutual holders
             </span>
           </div>
           <div
             className={classNames(
               'px-6 py-5 text-sm font-medium text-center lg:flex lg:flex-col',
-              sortBy === 'totalAmount' && 'bg-brand-light-blue dark:bg-blue-600'
+              sortBy === 'totalAmount' && 'bg-brand-light-blue dark:bg-gray-500'
             )}
           >
-            <span className="text-gray-900">
+            <span className="text-gray-900 dark:text-gray-200">
               {formatNumberWithCommasAsThousandsSerperator(stats.totalAmount)}
             </span>{' '}
-            <span className="text-gray-600">tokens held</span>
+            <span className="text-gray-600 dark:text-gray-300">
+              tokens held
+            </span>
           </div>
           <div
             className={classNames(
               'px-6 py-5 text-sm font-medium text-center lg:flex lg:flex-col',
               sortBy === 'latestTimestamp' &&
-                'bg-brand-light-blue dark:bg-blue-600'
+                'bg-brand-light-blue dark:bg-gray-500'
             )}
           >
-            <span className="text-gray-600">Last bought </span>
-            <span className="text-gray-900">
+            <span className="text-gray-900 dark:text-gray-200">
               <ReactTimeAgo
                 date={new Date(stats.latestTimestamp * 1000)}
                 locale="en-US"
               />
+            </span>{' '}
+            <span className="text-gray-600 dark:text-gray-300">
+              Last bought{' '}
             </span>
           </div>
         </div>

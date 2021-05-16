@@ -6,6 +6,7 @@ import {
 } from 'store/ideaMarketsStore'
 import { MutualToken, MutualTokenSkeleton } from 'components'
 import Select from 'react-select'
+import { useTheme } from 'next-themes'
 
 export type MutualTokensListSortBy =
   | 'latestTimestamp'
@@ -37,6 +38,7 @@ export default function MutualTokensList({
   const PAGE_SIZE = 8
   const [pageNumber, setPageNumber] = useState(1)
   const [sortBy, setSortBy] = useState<MutualTokensListSortBy>('totalHolders')
+  const { theme, setTheme } = useTheme()
 
   const { data: mutualHoldersList, isLoading, isError } = useQuery<
     MutualHoldersData[]
@@ -71,16 +73,18 @@ export default function MutualTokensList({
             isClearable={false}
             defaultValue={options[0]}
             isSearchable={false}
-            className="w-48 border-2 border-gray-200 rounded-md text-brand-gray-4 market-select"
+            className="w-48 border-2 border-gray-200  dark:border-gray-500  dark:placeholder-gray-300 rounded-md text-brand-gray-4 dark:text-gray-200 market-select trade-select"
             onChange={(entry) => {
               setSortBy((entry as any).value)
             }}
-            theme={(theme) => ({
-              ...theme,
+            theme={(mytheme) => ({
+              ...mytheme,
               borderRadius: 2,
               colors: {
-                ...theme.colors,
-                primary25: '#f6f6f6', // brand-gray
+                ...mytheme.colors,
+                primary50: theme === 'dark' ? '#4B5563' : '', // brand-gray ,
+
+                primary25: theme === 'dark' ? '#4B5563' : '#f6f6f6', // brand-gray
                 primary: '#0857e0', // brand-blue
               },
             })}
@@ -88,6 +92,25 @@ export default function MutualTokensList({
               valueContainer: (provided) => ({
                 ...provided,
                 minHeight: '50px',
+              }),
+              control: (base, state) => ({
+                ...base,
+                textDecorationColor: theme === 'dark' ? 'white' : 'gray',
+                background: theme === 'dark' ? '#4B5563' : 'white',
+                // match with the menu
+                borderRadius: state.isFocused ? '3px 3px 0 0' : 3,
+                // Overwrittes the different states of border
+                borderColor: state.isFocused ? 'yellow' : 'green',
+                // Removes weird border around container
+                boxShadow: state.isFocused ? null : null,
+                '&:hover': {
+                  // Overwrittes the different states of border
+                  borderColor: state.isFocused ? 'red' : 'blue',
+                },
+              }),
+              menuList: (base) => ({
+                ...base,
+                background: theme === 'dark' ? '#6B7280' : 'white',
               }),
             }}
           />

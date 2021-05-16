@@ -282,8 +282,8 @@ export default function TokenDetails({
   return (
     <>
       <SEO />
-      <div className="min-h-screen bg-brand-gray dark:bg-gray-900">
-        <div className="px-4 md:px-6 pt-12 md:pt-10 pb-5 text-white bg-top-mobile md:bg-top-desktop h-156.5 md:max-h-96">
+      <div className="min-h-screen bg-brand-gray dark:bg-gray-900 pb-20">
+        <div className="px-4 md:px-6 pt-12 md:pt-10 pb-5 text-white bg-top-mobile md:bg-top-desktop h-156.5 md:max-h-96 md:mb-10">
           <div className="mx-auto max-w-88 md:max-w-304">
             <span className="text-brand-alto font-sf-compact-medium">
               <span
@@ -623,7 +623,7 @@ export default function TokenDetails({
             </div>
           </div>
           {web3 && (
-            <div className="flex-1 p-5 mb-5 bg-white border rounded-md border-brand-border-gray">
+            <div className="flex-1 p-5 mb-5 bg-white dark:bg-gray-700 dark:border-gray-500 border rounded-md border-brand-border-gray">
               {isLoading ? (
                 <div className="h-full p-18 md:p-0">loading</div>
               ) : (
@@ -637,7 +637,6 @@ export default function TokenDetails({
                   showTypeSelection={true}
                   showTradeButton={true}
                   disabled={false}
-                  bgcolor="#ffffff"
                 />
               )}
             </div>
@@ -651,7 +650,7 @@ export default function TokenDetails({
             setIsOpen={setIsVerifyModalOpen}
           />
         )}
-        <div className="px-2 mx-auto max-w-88 md:max-w-304 -mt-30 md:-mt-28">
+        <div className="px-2 mx-auto max-w-88 md:max-w-304 -mt-30 md:-mt-28 ">
           <MutualTokensList tokenName={tokenName} marketName={marketName} />
         </div>
       </div>

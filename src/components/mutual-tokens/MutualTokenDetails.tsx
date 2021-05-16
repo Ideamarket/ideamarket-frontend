@@ -85,7 +85,7 @@ export default function MutualTokenDetails({
                 </button>
               </Transition.Child>
               {isOpen && (
-                <div className="h-full p-8 overflow-y-auto bg-white">
+                <div className="h-full p-8 overflow-y-auto bg-white dark:bg-gray-700">
                   <div className="pb-16 space-y-6">
                     <div>
                       <div className="block w-full overflow-hidden rounded-lg aspect-w-10 aspect-h-7">
@@ -106,35 +106,41 @@ export default function MutualTokenDetails({
                               token.name
                             )}`}
                           >
-                            <h2 className="text-lg font-medium text-gray-900 hover:underline">
+                            <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100 hover:underline">
                               <span className="sr-only">Details for </span>
                               {token.name}
                             </h2>
                           </A>
-                          <p className="text-sm font-medium text-gray-500">
+                          <p className="text-sm font-medium text-gray-500 dark:text-gray-300">
                             Rank {token.rank}
                           </p>
                         </div>
                         <button
                           type="button"
-                          className="flex items-center justify-center w-8 h-8 ml-4 text-gray-400 bg-white rounded-full hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                          className="flex items-center justify-center w-8 h-8 ml-4 text-gray-400 bg-white dark:bg-gray-500 rounded-full hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                         >
                           <WatchingStar token={token} />
                         </button>
                       </div>
                     </div>
                     <div>
-                      <h3 className="font-medium text-gray-900">Information</h3>
+                      <h3 className="font-medium text-gray-900 dark:text-gray-100">
+                        Information
+                      </h3>
                       <dl className="mt-2 border-t border-b border-gray-200 divide-y divide-gray-200">
                         <div className="flex justify-between py-3 text-sm font-medium">
-                          <dt className="text-gray-500">Price</dt>
-                          <dd className="text-gray-900">
+                          <dt className="text-gray-500 dark:text-gray-300">
+                            Price
+                          </dt>
+                          <dd className="text-gray-900 dark:text-gray-100">
                             ${formatNumber(token.latestPricePoint.price)}
                           </dd>
                         </div>
                         <div className="flex justify-between py-3 text-sm font-medium">
-                          <dt className="text-gray-500">Deposits</dt>
-                          <dd className="text-gray-900">
+                          <dt className="text-gray-500 dark:text-gray-300 ">
+                            Deposits
+                          </dt>
+                          <dd className="text-gray-900 dark:text-gray-100">
                             $
                             {formatNumberWithCommasAsThousandsSerperator(
                               token.marketCap
@@ -142,8 +148,10 @@ export default function MutualTokenDetails({
                           </dd>
                         </div>
                         <div className="flex justify-between py-3 text-sm font-medium">
-                          <dt className="text-gray-500">Percentage locked</dt>
-                          <dd className="text-gray-900">
+                          <dt className="text-gray-500 dark:text-gray-300">
+                            Percentage locked
+                          </dt>
+                          <dd className="text-gray-900 dark:text-gray-100">
                             {token.lockedPercentage}%
                           </dd>
                         </div>

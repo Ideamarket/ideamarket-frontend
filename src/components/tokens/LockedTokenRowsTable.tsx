@@ -5,8 +5,8 @@ import { useQuery } from 'react-query'
 import { IdeaToken, queryLockedAmounts } from 'store/ideaMarketsStore'
 import LockedTokenRowSkeleton from './LockedTokenRowSkeleton'
 import Lock from '../../assets/lock.svg'
-import ChevronLeft from '../../assets/chevron-left.svg'
-import ChevronRight from '../../assets/chevron-right.svg'
+
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/outline'
 
 export default function LockedTokenTable({
   token,
@@ -82,7 +82,7 @@ export default function LockedTokenTable({
               )}
               disabled={page <= 0}
             >
-              <ChevronLeft style={{ width: 20 }} />
+              <ChevronLeftIcon className="h-5 w-5 text-gray-700 dark:text-gray-300" />
             </button>
             <button
               onClick={() => {
@@ -97,7 +97,7 @@ export default function LockedTokenTable({
               )}
               disabled={lockedTokens?.length !== TOKENS_PER_PAGE}
             >
-              <ChevronRight style={{ width: 20 }} />
+              <ChevronRightIcon className="h-5 w-5 text-gray-700 dark:text-gray-300" />
             </button>
           </div>
           <div className="flex justify-end mt-4">

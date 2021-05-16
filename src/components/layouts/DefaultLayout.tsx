@@ -9,7 +9,7 @@ export default function DefaultLayout({ children }: { children: ReactNode }) {
       <Toaster />
       <div className="min-h-screen bg-brand-gray">
         <NavBar />
-        <div className="py-16">{children}</div>
+        <div className="pt-16">{children}</div>
       </div>
       <CookieConsent
         style={{ background: '#708090' }}
