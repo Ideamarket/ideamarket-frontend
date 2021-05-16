@@ -38,7 +38,7 @@ export default function MutualTokensList({
   const PAGE_SIZE = 8
   const [pageNumber, setPageNumber] = useState(1)
   const [sortBy, setSortBy] = useState<MutualTokensListSortBy>('totalHolders')
-  const { theme, setTheme } = useTheme()
+  const { theme } = useTheme()
 
   const { data: mutualHoldersList, isLoading, isError } = useQuery<
     MutualHoldersData[]

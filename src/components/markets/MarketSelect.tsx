@@ -14,7 +14,7 @@ export default function MarketSelect({
   isClearable?: boolean
 }) {
   const [selectMarketValues, setSelectMarketValues] = useState([])
-  const { theme, setTheme } = useTheme()
+  const { theme } = useTheme()
   const { data: markets, isLoading: isMarketsLoading } = useQuery(
     'all-markets',
     queryMarkets
