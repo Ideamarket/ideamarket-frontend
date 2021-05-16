@@ -1,12 +1,11 @@
 import React from 'react'
-import { useWalletStore } from 'store/walletStore'
 
 import DotRed from '../../assets/dotred.svg'
 import DotGreen from '../../assets/dotgreen.svg'
+import { useWeb3React } from '@web3-react/core'
 
 export default function WalletStatus({ openModal }: { openModal: () => void }) {
-  const web3 = useWalletStore((state) => state.web3)
-  const address = useWalletStore((state) => state.address)
+  const { active, account } = useWeb3React()
 
   return (
     <React.Fragment>
@@ -14,17 +13,17 @@ export default function WalletStatus({ openModal }: { openModal: () => void }) {
         className="flex flex-row items-center px-2 cursor-pointer justify-self-end"
         onClick={() => openModal()}
       >
-        {web3 === undefined && <DotRed className="w-4 h-4" />}
-        {web3 === undefined && (
+        {!active && <DotRed className="w-4 h-4" />}
+        {!active && (
           <div className="ml-3 text-gray-400 align-middle whitespace-nowrap">
             No wallet
           </div>
         )}
 
-        {web3 !== undefined && <DotGreen className="w-4 h-4" />}
-        {web3 !== undefined && (
+        {active && <DotGreen className="w-4 h-4" />}
+        {active && (
           <div className="ml-3 text-gray-400 align-middle whitespace-nowrap">
-            {address.slice(0, 6)}...{address.slice(-4)}
+            {account.slice(0, 6)}...{account.slice(-4)}
           </div>
         )}
       </div>

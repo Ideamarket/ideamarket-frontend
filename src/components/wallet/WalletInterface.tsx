@@ -1,5 +1,5 @@
-import { useState, useContext } from 'react'
-import { useWalletStore, setWeb3, unsetWeb3 } from 'store/walletStore'
+import { useState, useContext, useEffect } from 'react'
+import { setWeb3, unsetWeb3 } from 'store/walletStore'
 import { GlobalContext } from 'pages/_app'
 
 import CircleSpinner from '../animations/CircleSpinner'
@@ -11,9 +11,15 @@ import Portis from '../../assets/portis.svg'
 import DotRed from '../../assets/dotred.svg'
 import DotGreen from '../../assets/dotgreen.svg'
 
-import * as wallets from 'wallets'
 import classNames from 'classnames'
 import A from 'components/A'
+import { useWeb3React } from '@web3-react/core'
+import {
+  resetWalletConnector,
+  disconnectWalletConnector,
+  connectorsById,
+  ConnectorIds,
+} from 'wallets/connectors/index'
 
 export default function WalletInterface({
   onWalletConnected,
@@ -25,38 +31,72 @@ export default function WalletInterface({
     onWalletConnectedCallback,
     setOnWalletConnectedCallback,
   } = useContext(GlobalContext)
-  const web3 = useWalletStore((state) => state.web3)
-  const address = useWalletStore((state) => state.address)
+
+  const {
+    active,
+    account,
+    library,
+    connector,
+    activate,
+    deactivate,
+  } = useWeb3React()
+
+  // handle logic to recognize the connector currently being activated
+  const [activatingConnector, setActivatingConnector] = useState<any>()
+
+  useEffect(() => {
+    const setWeb3WithWait = async () => {
+      await setWeb3(library, connectingWallet)
+
+      if (onWalletConnectedCallback) {
+        onWalletConnectedCallback()
+        setOnWalletConnectedCallback(undefined)
+      }
+
+      if (onWalletConnected) {
+        onWalletConnected()
+      }
+    }
+
+    if (activatingConnector && activatingConnector === connector) {
+      // Wait until connector is set, THEN you can set web3
+      if (library) {
+        setWeb3WithWait()
+      } else {
+        // Connecting to wallet cancelled or failed
+        if (connectingWallet === ConnectorIds.WalletConnect) {
+          // You need to reset WalletConnector before you can reconnect to it and show QRcode again: https://github.com/NoahZinsmeister/web3-react/issues/124
+          resetWalletConnector(activatingConnector)
+        }
+        // After connecting to a wallet fails, it disconnects any previous wallet, so we try to reconnect
+        const walletStr = localStorage.getItem('WALLET_TYPE')
+        const previousConnector = connectorsById[parseInt(walletStr)]
+        activate(previousConnector)
+      }
+
+      setConnectingWallet(0)
+      setActivatingConnector(undefined)
+    }
+  }, [activatingConnector, connector])
 
   async function onWalletClicked(wallet) {
     setConnectingWallet(wallet)
+    const currentConnector = connectorsById[wallet]
+    setActivatingConnector(currentConnector)
 
-    let web3
     try {
-      web3 = await wallets.connect(wallet)
+      await activate(currentConnector)
     } catch (ex) {
       console.log(ex)
       return
-    } finally {
-      setConnectingWallet(0)
-    }
-
-    await setWeb3(web3, wallet)
-
-    if (onWalletConnectedCallback) {
-      onWalletConnectedCallback()
-      setOnWalletConnectedCallback(undefined)
-    }
-
-    if (onWalletConnected) {
-      onWalletConnected()
     }
   }
 
   async function onDisconnectClicked() {
+    await disconnectWalletConnector(connector)
+
     try {
-      const wallet = parseInt(localStorage.getItem('WALLET_TYPE'))
-      await wallets.disconnect(wallet)
+      await deactivate()
     } catch (ex) {
       console.log(ex)
     }
@@ -117,52 +157,52 @@ export default function WalletInterface({
         <WalletButton
           svg={<Metamask className="w-8 h-8" />}
           name="Metamask"
-          wallet={wallets.WALLETS.METAMASK}
+          wallet={ConnectorIds.Metamask}
         />
         <WalletButton
           svg={<WalletConnect className="w-8 h-8" />}
           name="WalletConnect"
-          wallet={wallets.WALLETS.WALLETCONNECT}
+          wallet={ConnectorIds.WalletConnect}
         />
         <WalletButton
           svg={<Coinbase className="w-7 h-7" />}
           name="Coinbase"
-          wallet={wallets.WALLETS.COINBASE}
+          wallet={ConnectorIds.Coinbase}
         />
         <WalletButton
           svg={<Fortmatic className="w-7 h-7" />}
           name="Fortmatic"
-          wallet={wallets.WALLETS.FORTMATIC}
+          wallet={ConnectorIds.Fortmatic}
         />
         <WalletButton
           svg={<Portis className="w-7 h-7" />}
           name="Portis"
-          wallet={wallets.WALLETS.PORTIS}
+          wallet={ConnectorIds.Portis}
         />
       </div>
       <hr className="m-4" />
       <div className="flex flex-row items-center mx-4 mb-4 ">
-        {web3 === undefined && <DotRed className="w-3 h-3" />}
-        {web3 !== undefined && <DotGreen className="w-3 h-3" />}
+        {!active && <DotRed className="w-3 h-3" />}
+        {active && <DotGreen className="w-3 h-3" />}
         <p className="ml-2 text-brand-gray-2">
-          {address !== '' ? 'Connected with: ' : 'Not connected'}
-          {address !== '' && (
+          {active ? 'Connected with: ' : 'Not connected'}
+          {active && (
             <A
               className="underline"
-              href={`https://etherscan.io/address/${address}`}
+              href={`https://etherscan.io/address/${account}`}
               target="_blank"
               rel="noreferrer"
             >
-              {address.slice(0, 6)}...{address.slice(-4)}
+              {account.slice(0, 6)}...{account.slice(-4)}
             </A>
           )}
         </p>
         <div className="flex justify-end flex-grow">
           <button
-            disabled={web3 === undefined}
+            disabled={!active}
             onClick={onDisconnectClicked}
             className={classNames(
-              web3 !== undefined
+              active
                 ? 'hover:border-transparent hover:bg-brand-blue hover:text-brand-gray cursor-pointer'
                 : 'cursor-not-allowed',
               'p-2 text-xs text-center border-2 rounded-lg text-brand-gray-2 dark:border-gray-500 border-brand-gray-1 font-sf-compact-medium'

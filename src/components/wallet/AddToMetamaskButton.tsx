@@ -11,7 +11,8 @@ export default function AddToMetamaskButton({ token }: { token: IdeaToken }) {
     e.stopPropagation()
 
     try {
-      await (window.ethereum as any).request({
+      const { ethereum } = window as any
+      await ethereum.request({
         method: 'wallet_watchAsset',
         params: {
           type: 'ERC20',
