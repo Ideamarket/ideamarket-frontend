@@ -637,7 +637,7 @@ export default function TradeInterface({
 
             <div
               className={classNames(
-                'grid grid-cols-3 my-5 text-sm text-brand-new-dark font-semibold',
+                'grid grid-cols-3 my-5 text-sm text-brand-new-dark dark:text-gray-200 font-semibold',
                 txManager.isPending ? '' : 'invisible'
               )}
             >

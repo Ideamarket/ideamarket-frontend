@@ -515,7 +515,7 @@ export default function TokenDetails({
                         : 'Your connected wallet owns this listing.'}
                     </div>
                   </div>
-                  <div className="mt-2.5 text-sm text-brand-blue">
+                  <div className="mt-2.5 text-sm text-brand-blue dark:text-gray-200">
                     Available interest:{' '}
                     {web3BNToFloatString(
                       investmentTokenToUnderlying(

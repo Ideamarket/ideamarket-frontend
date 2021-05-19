@@ -429,7 +429,7 @@ export default function ListTokenModal({
               className="twitter-share-button"
               href={`https://twitter.com/intent/tweet?text=${tweetTemplate}&url=https://ideamarket.io`}
             >
-              <button className="w-32 h-10 text-base font-medium bg-white border-2 dark:bg-gray-500 rounded-lg border-brand-blue text-brand-blue hover:text-white tracking-tightest-2 font-sf-compact-medium hover:bg-brand-blue">
+              <button className="w-32 h-10 text-base font-medium bg-white dark:text-gray-50 inborder-2 dark:bg-gray-500 rounded-lg border-brand-blue text-brand-blue hover:text-white tracking-tightest-2 font-sf-compact-medium hover:bg-brand-blue">
                 Tweet about it
               </button>
             </A>
