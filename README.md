@@ -14,6 +14,10 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
 
+## Network Modes
+
+You can control in which mode the app runs (testnet or mainnet) by creating a `.env.local` file with the content `NEXT_PUBLIC_NETWORK=mainnet` or `NEXT_PUBLIC_NETWORK=test`
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

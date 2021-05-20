@@ -1,20 +1,8 @@
 import classNames from 'classnames'
 import BigNumber from 'bignumber.js'
-import BN from 'bn.js'
 import { useEffect, useState } from 'react'
-import { useQuery } from 'react-query'
-import {
-  queryOwnedTokensMaybeMarket,
-  IdeaTokenMarketPair,
-  IdeaMarket,
-} from 'store/ideaMarketsStore'
-import { useWalletStore } from 'store/walletStore'
-import {
-  calculateCurrentPriceBN,
-  web3BNToFloatString,
-  calculateIdeaTokenDaiValue,
-  bigNumberTenPow18,
-} from 'utils'
+import { IdeaTokenMarketPair } from 'store/ideaMarketsStore'
+import { calculateCurrentPriceBN, web3BNToFloatString } from 'utils'
 import OwnedTokenRow from './OwnedTokenRow'
 import OwnedTokenRowSkeleton from './OwnedTokenRowSkeleton'
 
@@ -60,36 +48,26 @@ const headers: Header[] = [
 const tenPow18 = new BigNumber('10').pow(new BigNumber('18'))
 
 export default function OwnedTokenTable({
-  market,
+  rawPairs,
+  isPairsDataLoading,
   currentPage,
   setCurrentPage,
-  setTotalValue,
 }: {
-  market: IdeaMarket
+  rawPairs: IdeaTokenMarketPair[]
+  isPairsDataLoading: boolean
   currentPage: number
   setCurrentPage: (p: number) => void
-  setTotalValue: (v: string) => void
 }) {
   const TOKENS_PER_PAGE = 6
-
-  const address = useWalletStore((state) => state.address)
 
   const [currentHeader, setCurrentHeader] = useState('price')
   const [orderBy, setOrderBy] = useState('price')
   const [orderDirection, setOrderDirection] = useState('desc')
 
-  const { data: rawPairs, isLoading: isPairsDataLoading } = useQuery(
-    ['owned-tokens', market, address],
-    queryOwnedTokensMaybeMarket
-  )
-
   const [pairs, setPairs]: [IdeaTokenMarketPair[], any] = useState([])
-
-  const isLoading = isPairsDataLoading
 
   useEffect(() => {
     if (!rawPairs) {
-      setTotalValue('0.00')
       setPairs([])
       return
     }
@@ -179,15 +157,6 @@ export default function OwnedTokenTable({
       currentPage * TOKENS_PER_PAGE + TOKENS_PER_PAGE
     )
     setPairs(sliced)
-
-    // Calculate the total value
-    let total = new BN('0')
-    for (const pair of rawPairs) {
-      total = total.add(
-        calculateIdeaTokenDaiValue(pair.token, pair.market, pair.rawBalance)
-      )
-    }
-    setTotalValue(web3BNToFloatString(total, bigNumberTenPow18, 18))
   }, [rawPairs, orderBy, orderDirection, currentPage, TOKENS_PER_PAGE])
 
   function headerClicked(headerValue: string) {
@@ -245,8 +214,8 @@ export default function OwnedTokenTable({
                     ))}
                   </tr>
                 </thead>
-                <tbody className="bg-white dark:bg-gray-700 dark:divide-gray-500 divide-y divide-gray-200">
-                  {isLoading ? (
+                <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-700 dark:divide-gray-500">
+                  {isPairsDataLoading ? (
                     Array.from(Array(TOKENS_PER_PAGE).keys()).map((token) => (
                       <OwnedTokenRowSkeleton key={token} />
                     ))

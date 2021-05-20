@@ -37,7 +37,7 @@ export default function LockedTokenTable({
       <div className="bg-white dark:bg-gray-700  divide-y divide-gray-200">
         {isLockedTokensLoading ? (
           Array.from(Array(TOKENS_PER_PAGE).keys()).map((token) => (
-            <LockedTokenRowSkeleton key={token} />
+            <LockedTokenRowSkeleton key={token} page="listing" />
           ))
         ) : (
           <>

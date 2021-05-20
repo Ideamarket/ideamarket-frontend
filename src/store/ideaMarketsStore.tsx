@@ -6,6 +6,7 @@ import { request } from 'graphql-request'
 import { web3BNToFloatString } from 'utils'
 import {
   getQueryLockedAmounts,
+  getQueryLockedTokens,
   getQueryMarket,
   getQueryMarkets,
   getQueryMyTokensMaybeMarket,
@@ -91,6 +92,14 @@ export type IdeaTokenMarketPair = {
   market: IdeaMarket
   rawBalance: BN
   balance: string
+}
+
+export type LockedIdeaTokenMarketPair = {
+  token: IdeaToken
+  market: IdeaMarket
+  rawBalance: BN
+  balance: string
+  lockedUntil: number
 }
 
 export type LockedAmount = {
@@ -565,6 +574,57 @@ export async function queryLockedAmounts(
   )
 }
 
+export async function queryLockedTokens(
+  queryKey,
+  market: IdeaMarket,
+  ownerAddress: string
+): Promise<LockedIdeaTokenMarketPair[]> {
+  if (!ownerAddress) {
+    return []
+  }
+
+  const marketID = market ? market.marketID : undefined
+  let page = 0
+
+  type LockedIdeaTokenAmount = {
+    amount: string
+    lockedUntil: number
+    token
+  }
+  const tokenAmounts: LockedIdeaTokenAmount[] = []
+
+  // API can return max of 100 entries. That means we need to query the API multiple times to retrieve all entries
+  while (true) {
+    const result = await request(
+      HTTP_GRAPHQL_ENDPOINT,
+      getQueryLockedTokens({
+        ownerAddress,
+        first: 100,
+        skip: page * 100,
+      })
+    )
+
+    const tokensInThisPage = result?.lockedIdeaTokenAmounts ?? []
+
+    tokenAmounts.push(...tokensInThisPage)
+    if (tokensInThisPage.length < 100) {
+      break
+    }
+    page += 1
+  }
+
+  // Filter by market if user chooses market option in the select box
+  if (marketID) {
+    return tokenAmounts
+      .filter((locked) => locked?.token?.market?.marketID === marketID)
+      .map((locked) => apiResponseToLockedIdeaTokenMarketPair(locked))
+  }
+
+  return tokenAmounts.map((locked) =>
+    apiResponseToLockedIdeaTokenMarketPair(locked)
+  )
+}
+
 export function setIsWatching(token: IdeaToken, watching: boolean): void {
   const address = token.address
 
@@ -743,6 +803,22 @@ function apiResponseToLockedAmount(apiResponse): LockedAmount {
     rawAmount: apiResponse.amount ? new BN(apiResponse.amount) : undefined,
     lockedUntil: parseInt(apiResponse.lockedUntil),
   } as LockedAmount
+
+  return ret
+}
+
+function apiResponseToLockedIdeaTokenMarketPair(
+  apiResponse
+): LockedIdeaTokenMarketPair {
+  const ret = {
+    token: apiResponseToIdeaToken(apiResponse.token, apiResponse.token.market),
+    market: apiResponseToIdeaMarket(apiResponse.token.market),
+    rawBalance: apiResponse.amount ? new BN(apiResponse.amount) : undefined,
+    balance: apiResponse.amount
+      ? web3BNToFloatString(new BN(apiResponse.amount), tenPow18, 2)
+      : undefined,
+    lockedUntil: apiResponse.lockedUntil,
+  } as LockedIdeaTokenMarketPair
 
   return ret
 }

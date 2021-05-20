@@ -1,16 +1,28 @@
 import classNames from 'classnames'
+import BN from 'bn.js'
 import { useState, useContext, useEffect } from 'react'
+import { useQuery } from 'react-query'
 import {
   MarketSelect,
   Footer,
   OwnedTokenTable,
   MyTokenTable,
+  LockedTokenTable,
   DefaultLayout,
 } from '../components'
 import { useWalletStore } from '../store/walletStore'
 import { GlobalContext } from 'pages/_app'
-import { formatNumber } from 'utils'
+import {
+  formatNumber,
+  web3BNToFloatString,
+  calculateIdeaTokenDaiValue,
+  bigNumberTenPow18,
+} from 'utils'
 import { NextSeo } from 'next-seo'
+import {
+  queryOwnedTokensMaybeMarket,
+  queryLockedTokens,
+} from 'store/ideaMarketsStore'
 
 export default function MyTokens() {
   const web3 = useWalletStore((state) => state.web3)
@@ -21,13 +33,64 @@ export default function MyTokens() {
     undefined
   )
   const [ownedTokenTotalValue, setOwnedTokensTotalValue] = useState('0.00')
+  const [lockedTokenTotalValue, setLockedTokensTotalValue] = useState('0.00')
 
   const [myTokensTablePage, setMyTokensTablePage] = useState(0)
   const [selectedMarketMyTokens, setSelectedMarketMyTokens] = useState(
     undefined
   )
 
+  const [lockedTokensTablePage, setLockedTokensTablePage] = useState(0)
+  const [selectedMarketLockedTokens, setSelectedMarketLockedTokens] = useState(
+    undefined
+  )
+
+  const address = useWalletStore((state) => state.address)
+
+  const { data: rawOwnedPairs, isLoading: isOwnedPairsDataLoading } = useQuery(
+    ['owned-tokens', selectedMarketOwnedTokens, address],
+    queryOwnedTokensMaybeMarket
+  )
+
+  const {
+    data: rawLockedPairs,
+    isLoading: isLockedPairsDataLoading,
+  } = useQuery(
+    ['locked-tokens', selectedMarketLockedTokens, address],
+    queryLockedTokens
+  )
+
   const [table, setTable] = useState('holdings')
+
+  useEffect(() => {
+    // Calculate the total value of non-locked tokens
+    let ownedTotal = new BN('0')
+    for (const pair of rawOwnedPairs ?? []) {
+      ownedTotal = ownedTotal.add(
+        calculateIdeaTokenDaiValue(pair.token, pair.market, pair.rawBalance)
+      )
+    }
+
+    // Calculate the total value of locked tokens
+    let lockedTotal = new BN('0')
+    for (const pair of rawLockedPairs ?? []) {
+      lockedTotal = lockedTotal.add(
+        calculateIdeaTokenDaiValue(pair.token, pair.market, pair.rawBalance)
+      )
+    }
+
+    setOwnedTokensTotalValue(
+      rawOwnedPairs
+        ? web3BNToFloatString(ownedTotal, bigNumberTenPow18, 18)
+        : '0.00'
+    )
+    setLockedTokensTotalValue(
+      rawLockedPairs
+        ? web3BNToFloatString(lockedTotal, bigNumberTenPow18, 18)
+        : '0.00'
+    )
+  }, [rawOwnedPairs, rawLockedPairs])
+
   return (
     <>
       <NextSeo title="My Wallet" />
@@ -44,9 +107,10 @@ export default function MyTokens() {
                 </div>
                 <div
                   className="text-2xl mb-2.5 font-semibold uppercase"
-                  title={'$' + ownedTokenTotalValue}
+                  title={'$' + +ownedTokenTotalValue + +lockedTokenTotalValue}
                 >
-                  ${formatNumber(ownedTokenTotalValue)}
+                  $
+                  {formatNumber(+ownedTokenTotalValue + +lockedTokenTotalValue)}
                 </div>
               </div>
             </div>
@@ -61,7 +125,6 @@ export default function MyTokens() {
                         : ''
                     )}
                     onClick={() => {
-                      setSelectedMarketOwnedTokens(undefined)
                       setTable('holdings')
                     }}
                   >
@@ -75,37 +138,41 @@ export default function MyTokens() {
                         : ''
                     )}
                     onClick={() => {
-                      setSelectedMarketMyTokens(undefined)
                       setTable('listings')
                     }}
                   >
                     My Listings
+                  </div>
+                  <div
+                    className={classNames(
+                      'text-base text-brand-new-dark font-semibold px-2 py-3 pt-2 inline-block cursor-pointer',
+                      table === 'locked'
+                        ? 'border-b-2 border-brand-new-dark'
+                        : ''
+                    )}
+                    onClick={() => {
+                      setTable('locked')
+                    }}
+                  >
+                    Locked
                   </div>
                 </div>
                 <div
                   className="w-48 pt-6 pr-0 mb-4 md:w-80 md:pt-0 md:mb-0"
                   style={{ marginTop: -8 }}
                 >
-                  {table === 'holdings' && (
-                    <MarketSelect
-                      isClearable={true}
-                      onChange={(value) => {
-                        setMyTokensTablePage(0)
-                        setSelectedMarketOwnedTokens(value?.market)
-                      }}
-                      disabled={false}
-                    />
-                  )}
-                  {table === 'listings' && (
-                    <MarketSelect
-                      isClearable={true}
-                      onChange={(value) => {
-                        setMyTokensTablePage(0)
-                        setSelectedMarketMyTokens(value?.market)
-                      }}
-                      disabled={false}
-                    />
-                  )}
+                  <MarketSelect
+                    isClearable={true}
+                    onChange={(value) => {
+                      setMyTokensTablePage(0)
+                      setLockedTokensTablePage(0)
+                      setOwnedTokensTablePage(0)
+                      setSelectedMarketOwnedTokens(value?.market)
+                      setSelectedMarketMyTokens(value?.market)
+                      setSelectedMarketLockedTokens(value?.market)
+                    }}
+                    disabled={false}
+                  />
                 </div>
               </div>
               <div className="border-t border-brand-border-gray dark:border-gray-500 shadow-home ">
@@ -123,10 +190,10 @@ export default function MyTokens() {
                 )}
                 {table === 'holdings' && web3 !== undefined && (
                   <OwnedTokenTable
-                    market={selectedMarketOwnedTokens}
+                    rawPairs={rawOwnedPairs}
+                    isPairsDataLoading={isOwnedPairsDataLoading}
                     currentPage={ownedTokensTablePage}
                     setCurrentPage={setOwnedTokensTablePage}
-                    setTotalValue={setOwnedTokensTotalValue}
                   />
                 )}
                 {table === 'listings' && web3 !== undefined && (
@@ -134,6 +201,14 @@ export default function MyTokens() {
                     currentPage={myTokensTablePage}
                     setCurrentPage={setMyTokensTablePage}
                     market={selectedMarketMyTokens}
+                  />
+                )}
+                {table === 'locked' && web3 !== undefined && (
+                  <LockedTokenTable
+                    rawPairs={rawLockedPairs}
+                    isPairsDataLoading={isLockedPairsDataLoading}
+                    currentPage={lockedTokensTablePage}
+                    setCurrentPage={setLockedTokensTablePage}
                   />
                 )}
               </div>
