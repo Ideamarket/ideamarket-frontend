@@ -3,6 +3,7 @@ import TwitterWhite from '../../assets/twitter-white.svg'
 import TwitterBlack from '../../assets/twitter-black.svg'
 import TwitterOutline from '../../assets/twitter-outline.svg'
 import { queryLambdavatar } from 'actions'
+import { useTheme } from 'next-themes'
 
 export default class TwitterMarketSpecifics implements IMarketSpecifics {
   // Market
@@ -31,6 +32,9 @@ export default class TwitterMarketSpecifics implements IMarketSpecifics {
     return <TwitterOutline />
   }
 
+  getMarketSVGtheme(): JSX.Element {
+    return
+  }
   // Tokens
 
   getTokenURL(tokenName: string): string {
