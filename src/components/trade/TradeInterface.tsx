@@ -419,7 +419,7 @@ export default function TradeInterface({
               className={classNames(
                 'text-sm mb-2',
                 exceedsBalance
-                  ? 'text-brand-red font-bold'
+                  ? 'text-brand-red font-bold dark:text-red-500'
                   : 'text-brand-new-dark font-semibold dark:text-gray-200'
               )}
             >
@@ -520,7 +520,7 @@ export default function TradeInterface({
             className={classNames(
               'ml-2 cursor-pointer',
               isLockChecked
-                ? 'text-brand-blue font-medium'
+                ? 'text-brand-blue font-medium dark:text-blue-400'
                 : 'text-brand-new-dark font-semibold dark:text-gray-200'
             )}
           >

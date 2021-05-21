@@ -56,7 +56,7 @@ export default function LockedTokenRow({
   return (
     <>
       <tr
-        className="grid grid-cols-3 border-b cursor-pointer md:table-row hover:bg-brand-gray border-brand-border-gray"
+        className="grid grid-cols-3 border-b  dark:border-gray-500 dark:hover:bg-gray-500 cursor-pointer md:table-row hover:bg-brand-gray border-brand-border-gray"
         onClick={() => {
           router.push(
             `/i/${marketSpecifics.getMarketNameURLRepresentation()}/${marketSpecifics.getTokenNameURLRepresentation(
@@ -78,7 +78,7 @@ export default function LockedTokenRow({
                 />
               )}
             </div>
-            <div className="ml-4 text-base font-semibold leading-5 text-gray-900">
+            <div className="ml-4 text-base font-semibold leading-5 text-gray-900 dark:text-gray-300">
               <A
                 href={`${marketSpecifics.getTokenURL(token.name)}`}
                 className="hover:underline"
@@ -106,57 +106,57 @@ export default function LockedTokenRow({
           </div>
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
-          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4">
+          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-400 ">
             Market
           </p>
           <div className="flex items-center">
             <div className="w-full h-full md:w-auto md:h-auto">
               {marketSpecifics.getMarketSVGBlack()}
             </div>
-            <div className="ml-1 text-base font-semibold leading-4 md:ml-3 text-brand-gray-4">
+            <div className="ml-1 text-base font-semibold leading-4 md:ml-3 text-brand-gray-4 dark:text-gray-300">
               {marketSpecifics.getMarketName()}
             </div>
           </div>
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
-          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4">
+          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-400">
             Price
           </p>
           <p
-            className="text-base font-semibold leading-4 uppercase tracking-tightest-2 text-very-dark-blue"
+            className="text-base font-semibold leading-4 uppercase tracking-tightest-2 text-very-dark-blue dark:text-gray-300"
             title={'$' + tokenPrice}
           >
             ${formatNumber(tokenPrice)}
           </p>
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
-          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4">
+          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-400">
             Balance
           </p>
           <p
-            className="text-base font-semibold leading-4 uppercase tracking-tightest-2 text-very-dark-blue"
+            className="text-base font-semibold leading-4 uppercase tracking-tightest-2 text-very-dark-blue dark:text-gray-300"
             title={balance}
           >
             {formatNumber(balance)}
           </p>
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
-          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4">
+          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-400">
             Value
           </p>
           <p
-            className="text-base font-semibold leading-4 uppercase tracking-tightest-2 text-very-dark-blue"
+            className="text-base font-semibold leading-4 uppercase tracking-tightest-2 text-very-dark-blue dark:text-gray-300"
             title={'$' + balanceValue}
           >
             ${balanceValue}
           </p>
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
-          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4">
+          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-400">
             Locked Until
           </p>
           <p
-            className="text-base font-semibold leading-4 tracking-tightest-2 text-very-dark-blue"
+            className="text-base font-semibold leading-4 tracking-tightest-2 text-very-dark-blue dark:text-gray-300"
             title={moment(lockedUntil * 1000).format('LLL')}
           >
             {moment(lockedUntil * 1000).format('LLL')}

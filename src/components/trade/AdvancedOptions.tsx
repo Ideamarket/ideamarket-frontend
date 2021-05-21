@@ -46,8 +46,8 @@ export default function AdvancedOptions({
             className={classNames(
               'ml-2 cursor-pointer',
               isUnlockOnceChecked
-                ? 'text-brand-blue font-medium'
-                : 'text-brand-gray-2'
+                ? 'text-brand-blue font-medium dark:text-blue-400'
+                : 'text-brand-gray-2 dark:text-gray-400'
             )}
           >
             Unlock once {unlockText}
@@ -71,8 +71,8 @@ export default function AdvancedOptions({
             className={classNames(
               'ml-2 cursor-pointer',
               isUnlockPermanentChecked
-                ? 'text-brand-blue font-medium'
-                : 'text-brand-gray-2'
+                ? 'text-brand-blue font-medium dark:text-blue-400'
+                : 'text-brand-gray-2 dark:text-gray-400'
             )}
           >
             Unlock permanent {unlockText}

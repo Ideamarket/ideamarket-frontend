@@ -278,7 +278,7 @@ export default function ListTokenModal({
               className={classNames(
                 'ml-2',
                 isWantBuyChecked
-                  ? 'text-brand-blue font-medium'
+                  ? 'text-brand-blue font-medium dark:text-blue-400'
                   : 'text-brand-gray-2 dark:text-gray-300'
               )}
             >
@@ -335,7 +335,7 @@ export default function ListTokenModal({
                       !isValidTokenName ||
                       txManager.isPending ||
                       (isWantBuyChecked && (isMissingAllowance || !isBuyValid))
-                      ? 'text-brand-gray-2 bg-brand-gray cursor-default border-brand-gray'
+                      ? 'text-brand-gray-2 bg-brand-gray  dark:bg-gray-500 dark:border-gray-500  dark:text-gray-300 cursor-default border-brand-gray'
                       : 'border-brand-blue text-white bg-brand-blue font-medium'
                   )}
                   disabled={

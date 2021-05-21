@@ -4,8 +4,7 @@ import moment from 'moment'
 import { useQuery } from 'react-query'
 import { IdeaToken, queryLockedAmounts } from 'store/ideaMarketsStore'
 import LockedTokenRowSkeleton from './LockedTokenRowSkeleton'
-import Lock from '../../assets/lock.svg'
-
+import { LockClosedIcon } from '@heroicons/react/solid'
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/outline'
 
 export default function LockedTokenTable({
@@ -44,16 +43,10 @@ export default function LockedTokenTable({
             {lockedTokens.map((lockedAmount, i) => (
               <div
                 key={lockedAmount.lockedUntil}
-                className="flex flex-col justify-between p-5 text-base font-semibold rounded-md md:flex-row text-brand-new-dark dark:text-brand-new-blue"
-                style={{ backgroundColor: '#f9fbfd' }}
+                className="flex flex-col justify-between p-5 dark:bg-gray-700  text-base font-semibold rounded-md md:flex-row text-brand-new-dark dark:text-gray-300"
               >
                 <div>
-                  <span
-                    className="mr-3"
-                    style={{ position: 'relative', top: -3 }}
-                  >
-                    <Lock />
-                  </span>
+                  <LockClosedIcon className="text-blue-500" />
                   {moment(lockedAmount.lockedUntil * 1000).format('LLL')}
                 </div>
                 <div className="mt-2 md:mt-0">
