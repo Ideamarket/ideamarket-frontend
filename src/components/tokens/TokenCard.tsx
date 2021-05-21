@@ -9,7 +9,6 @@ import {
   web3BNToFloatString,
 } from '../../utils'
 import { useTokenIconURL } from 'actions'
-import { useTheme } from 'next-themes'
 const tenPow18 = new BigNumber('10').pow(new BigNumber('18'))
 
 export default function TokenCard({
@@ -45,7 +44,6 @@ export default function TokenCard({
         tenPow18,
         2
       )
-  const { theme, setTheme } = useTheme()
   return (
     <div
       className={classNames(
@@ -84,9 +82,7 @@ export default function TokenCard({
           <>
             <div>on</div>
             <div className="ml-2.5 mr-1">
-              {theme === 'dark'
-                ? marketSpecifics.getMarketSVGWhite()
-                : marketSpecifics.getMarketSVGBlack()}
+              {marketSpecifics.getMarketSVGTheme()}
             </div>
             <div>{market.name}</div>
           </>

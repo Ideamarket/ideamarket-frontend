@@ -3,6 +3,12 @@ import SubstackWhite from '../../assets/substack-white.svg'
 import SubstackBlack from '../../assets/substack-black.svg'
 import SubstackOutline from '../../assets/substack-outline.svg'
 import { queryLambdavatar } from 'actions'
+import { useTheme } from 'next-themes'
+
+function IsDarkTheme() {
+  const { theme } = useTheme()
+  return theme === 'dark' ? true : false
+}
 
 export default class SubstackMarketSpecifics implements IMarketSpecifics {
   // Market
@@ -31,6 +37,13 @@ export default class SubstackMarketSpecifics implements IMarketSpecifics {
     return <SubstackOutline />
   }
 
+  getMarketSVGTheme(): JSX.Element {
+    if (IsDarkTheme) {
+      return <SubstackWhite />
+    } else {
+      return <SubstackBlack />
+    }
+  }
   // Tokens
 
   getTokenURL(tokenName: string): string {

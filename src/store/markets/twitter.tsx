@@ -5,7 +5,14 @@ import TwitterOutline from '../../assets/twitter-outline.svg'
 import { queryLambdavatar } from 'actions'
 import { useTheme } from 'next-themes'
 
+function IsDarkTheme() {
+  const { theme } = useTheme()
+  return theme === 'dark' ? true : false
+}
+
 export default class TwitterMarketSpecifics implements IMarketSpecifics {
+  //theme
+
   // Market
 
   getMarketName(): string {
@@ -32,8 +39,12 @@ export default class TwitterMarketSpecifics implements IMarketSpecifics {
     return <TwitterOutline />
   }
 
-  getMarketSVGtheme(): JSX.Element {
-    return
+  getMarketSVGTheme(): JSX.Element {
+    if (IsDarkTheme) {
+      return <TwitterWhite />
+    } else {
+      return <TwitterBlack />
+    }
   }
   // Tokens
 

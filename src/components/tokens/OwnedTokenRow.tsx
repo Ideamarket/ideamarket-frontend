@@ -13,7 +13,6 @@ import {
 } from 'utils'
 import A from 'components/A'
 import { useTokenIconURL } from 'actions'
-import { useTheme } from 'next-themes'
 const tenPow18 = new BigNumber('10').pow(new BigNumber('18'))
 
 export default function TokenRow({
@@ -48,7 +47,6 @@ export default function TokenRow({
   const balanceValue = formatNumber(
     web3BNToFloatString(balanceValueBN, bigNumberTenPow18, 18)
   )
-  const { theme, setTheme } = useTheme()
   return (
     <>
       <tr
@@ -107,9 +105,7 @@ export default function TokenRow({
           </p>
           <div className="flex items-center">
             <div className="w-full h-full md:w-auto md:h-auto">
-              {theme === 'dark'
-                ? marketSpecifics.getMarketSVGWhite()
-                : marketSpecifics.getMarketSVGBlack()}
+              {marketSpecifics.getMarketSVGTheme()}
             </div>
             <div className="ml-1 text-base font-semibold leading-4 md:ml-3 text-brand-gray-4 dark:text-gray-300">
               {marketSpecifics.getMarketName()}

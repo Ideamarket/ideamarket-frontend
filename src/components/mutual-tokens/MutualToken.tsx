@@ -9,7 +9,6 @@ import {
 import ReactTimeAgo from 'react-time-ago'
 import { MutualTokenDetails, MutualTokensListSortBy, A } from 'components'
 import { useTokenIconURL } from 'actions'
-import { useTheme } from 'next-themes'
 
 export default function MutualToken({
   stats,
@@ -26,7 +25,6 @@ export default function MutualToken({
     tokenName: token.name,
   })
   const [isOpen, setIsOpen] = useState(false)
-  const { theme } = useTheme()
 
   return (
     <>
@@ -60,11 +58,7 @@ export default function MutualToken({
                 >
                   <p className="text-xl font-bold text-gray-900 dark:text-gray-200 lg:text-xl hover:underline">
                     {token.name}{' '}
-                    <span>
-                      {theme === 'dark'
-                        ? marketSpecifics.getMarketSVGWhite()
-                        : marketSpecifics.getMarketSVGBlack()}
-                    </span>
+                    <span>{marketSpecifics.getMarketSVGTheme()}</span>
                   </p>
                 </A>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-300">
