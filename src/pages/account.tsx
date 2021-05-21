@@ -145,9 +145,9 @@ export default function MyTokens() {
                   </div>
                   <div
                     className={classNames(
-                      'text-base text-brand-new-dark font-semibold px-2 py-3 pt-2 inline-block cursor-pointer',
+                      'text-base text-brand-new-dark dark:text-gray-300 font-semibold px-2 py-3 pt-2 inline-block cursor-pointer',
                       table === 'locked'
-                        ? 'border-b-2 border-brand-new-dark'
+                        ? 'border-b-2 border-brand-new-dark dark:border-gray-300'
                         : ''
                     )}
                     onClick={() => {
