@@ -102,7 +102,7 @@ export default function TokenCard({
                 </A>
               </span>
               <span className="ml-2.5 mr-1">
-                {marketSpecifics.getMarketSVGWhite()}
+                {marketSpecifics.getMarketSVGTheme()}
               </span>
             </div>
           )}

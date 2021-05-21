@@ -183,10 +183,9 @@ export default function LockedTokenTable({
                     {headers.map((header) => (
                       <th
                         className={classNames(
-                          'px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500  dark:text-gray-300 uppercase bg-gray-50 dark:bg-gray-700',
+                          'px-5 py-4 text-sm font-semibold leading-4 tracking-wider text-left text-brand-gray-4 bg-gray-100 dark:bg-gray-500 dark:text-gray-300  bg-gray-50 dark:bg-gray-700',
                           header.sortable && 'cursor-pointer'
                         )}
-                        style={{ backgroundColor: '#f9fbfd' }}
                         key={header.value}
                         onClick={() => {
                           if (header.sortable) {

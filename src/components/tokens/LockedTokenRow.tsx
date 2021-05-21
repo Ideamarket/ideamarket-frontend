@@ -111,7 +111,7 @@ export default function LockedTokenRow({
           </p>
           <div className="flex items-center">
             <div className="w-full h-full md:w-auto md:h-auto">
-              {marketSpecifics.getMarketSVGBlack()}
+              {marketSpecifics.getMarketSVGTheme()}
             </div>
             <div className="ml-1 text-base font-semibold leading-4 md:ml-3 text-brand-gray-4 dark:text-gray-300">
               {marketSpecifics.getMarketName()}
