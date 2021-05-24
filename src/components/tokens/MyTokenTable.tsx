@@ -170,7 +170,7 @@ export default function MyTokenTable({
                     {headers.map((header) => (
                       <th
                         className={classNames(
-                          'px-5 py-4 text-sm font-semibold leading-4 tracking-wider text-left text-brand-gray-4 bg-gray-100 dark:bg-gray-600 dark:text-gray-300',
+                          ' px-5 py-4 text-sm font-semibold leading-4 tracking-wider text-left text-brand-gray-4 bg-gray-100 dark:bg-gray-600 dark:text-gray-300',
                           header.sortable && 'cursor-pointer'
                         )}
                         key={header.value}
