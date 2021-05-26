@@ -10,6 +10,7 @@ import { NETWORK } from 'store/networks'
 const POLLING_INTERVAL = 12000
 const RPC_URLS: { [chainId: number]: string } = {
   1: 'https://mainnet.infura.io/v3/3399077c10a24059be2a6c5b4fa77c03',
+  4: 'https://rinkeby.infura.io/v3/3399077c10a24059be2a6c5b4fa77c03',
 }
 
 export const injected = new InjectedConnector({
@@ -17,7 +18,7 @@ export const injected = new InjectedConnector({
 })
 
 export const walletconnect = new WalletConnectConnector({
-  rpc: { 1: RPC_URLS[1] },
+  rpc: { 1: RPC_URLS[1], 4: RPC_URLS[4] },
   bridge: 'https://bridge.walletconnect.org',
   qrcode: true,
   pollingInterval: POLLING_INTERVAL,
