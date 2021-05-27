@@ -85,6 +85,7 @@ export type IdeaToken = {
   lockedAmount: string
   rawLockedAmount: BN
   lockedPercentage: string
+  isL1: boolean
 }
 
 export type IdeaTokenMarketPair = {
@@ -164,15 +165,20 @@ export async function queryOwnedTokensMaybeMarket(
     return []
   }
 
-  const result = await request(
+  const L1Result = await request(
     HTTP_GRAPHQL_ENDPOINT,
     getQueryOwnedTokensMaybeMarket(market ? market.marketID : undefined, owner)
   )
 
-  return result.ideaTokenBalances.map(
+  // const L2Result = await request(
+  //   HTTP_GRAPHQL_ENDPOINT,
+  //   getQueryOwnedTokensMaybeMarket(market ? market.marketID : undefined, owner)
+  // )
+
+  const L1IdeaTokenMarketPairs = L1Result.ideaTokenBalances.map(
     (balance) =>
       ({
-        token: apiResponseToIdeaToken(balance.token, balance.market),
+        token: apiResponseToIdeaToken(balance.token, balance.market, true),
         market: apiResponseToIdeaMarket(balance.market),
         rawBalance: balance.amount ? new BN(balance.amount) : undefined,
         balance: balance.amount
@@ -180,6 +186,21 @@ export async function queryOwnedTokensMaybeMarket(
           : undefined,
       } as IdeaTokenMarketPair)
   )
+
+  // const L2IdeaTokenMarketPairs = L2Result.ideaTokenBalances.map(
+  //   (balance) =>
+  //     ({
+  //       token: apiResponseToIdeaToken(balance.token, balance.market, false),
+  //       market: apiResponseToIdeaMarket(balance.market),
+  //       rawBalance: balance.amount ? new BN(balance.amount) : undefined,
+  //       balance: balance.amount
+  //         ? web3BNToFloatString(new BN(balance.amount), tenPow18, 2)
+  //         : undefined,
+  //     } as IdeaTokenMarketPair)
+  // )
+  const L2IdeaTokenMarketPairs = []
+
+  return L1IdeaTokenMarketPairs.concat(L2IdeaTokenMarketPairs)
 }
 
 export async function queryMyTokensMaybeMarket(
@@ -660,7 +681,8 @@ export async function queryLockedTokens(
     lockedUntil: number
     token
   }
-  const tokenAmounts: LockedIdeaTokenAmount[] = []
+  const L1TokenAmounts: LockedIdeaTokenAmount[] = []
+  const L2TokenAmounts: LockedIdeaTokenAmount[] = []
 
   // API can return max of 100 entries. That means we need to query the API multiple times to retrieve all entries
   while (true) {
@@ -675,23 +697,53 @@ export async function queryLockedTokens(
 
     const tokensInThisPage = result?.lockedIdeaTokenAmounts ?? []
 
-    tokenAmounts.push(...tokensInThisPage)
+    L1TokenAmounts.push(...tokensInThisPage)
     if (tokensInThisPage.length < 100) {
       break
     }
     page += 1
   }
+  // page = 0
+  // while (true) {
+  //   const result = await request(
+  //     HTTP_GRAPHQL_ENDPOINT,
+  //     getQueryLockedTokens({
+  //       ownerAddress,
+  //       first: 100,
+  //       skip: page * 100,
+  //     })
+  //   )
+
+  //   const tokensInThisPage = result?.lockedIdeaTokenAmounts ?? []
+
+  //   L2TokenAmounts.push(...tokensInThisPage)
+  //   if (tokensInThisPage.length < 100) {
+  //     break
+  //   }
+  //   page += 1
+  // }
 
   // Filter by market if user chooses market option in the select box
   if (marketID) {
-    return tokenAmounts
-      .filter((locked) => locked?.token?.market?.marketID === marketID)
-      .map((locked) => apiResponseToLockedIdeaTokenMarketPair(locked))
+    const L1Pairs = L1TokenAmounts.filter(
+      (locked) => locked?.token?.market?.marketID === marketID
+    ).map((locked) => apiResponseToLockedIdeaTokenMarketPair(locked, true))
+    // const L2Pairs = L2TokenAmounts
+    //   .filter((locked) => locked?.token?.market?.marketID === marketID)
+    //   .map((locked) => apiResponseToLockedIdeaTokenMarketPair(locked, false))
+    const L2Pairs = []
+
+    return L1Pairs.concat(L2Pairs)
   }
 
-  return tokenAmounts.map((locked) =>
-    apiResponseToLockedIdeaTokenMarketPair(locked)
+  const L1Pairs = L1TokenAmounts.map((locked) =>
+    apiResponseToLockedIdeaTokenMarketPair(locked, true)
   )
+  // const L2Pairs = L2TokenAmounts
+  //   .map((locked) => apiResponseToLockedIdeaTokenMarketPair(locked, false))
+  const L2Pairs = []
+
+  return L1Pairs.concat(L2Pairs)
 }
 
 export function setIsWatching(token: IdeaToken, watching: boolean): void {
@@ -711,7 +763,11 @@ export function setIsWatching(token: IdeaToken, watching: boolean): void {
   )
 }
 
-function apiResponseToIdeaToken(apiResponse, marketApiResponse?): IdeaToken {
+function apiResponseToIdeaToken(
+  apiResponse,
+  marketApiResponse?,
+  isL1?
+): IdeaToken {
   let market
   if (apiResponse.market) {
     market = apiResponse.market
@@ -783,6 +839,7 @@ function apiResponseToIdeaToken(apiResponse, marketApiResponse?): IdeaToken {
     lockedPercentage: apiResponse.lockedPercentage
       ? parseFloat(apiResponse.lockedPercentage).toFixed(2)
       : '',
+    isL1,
   } as IdeaToken
 
   return ret
@@ -877,10 +934,15 @@ function apiResponseToLockedAmount(apiResponse): LockedAmount {
 }
 
 function apiResponseToLockedIdeaTokenMarketPair(
-  apiResponse
+  apiResponse,
+  isL1
 ): LockedIdeaTokenMarketPair {
   const ret = {
-    token: apiResponseToIdeaToken(apiResponse.token, apiResponse.token.market),
+    token: apiResponseToIdeaToken(
+      apiResponse.token,
+      apiResponse.token.market,
+      isL1
+    ),
     market: apiResponseToIdeaMarket(apiResponse.token.market),
     rawBalance: apiResponse.amount ? new BN(apiResponse.amount) : undefined,
     balance: apiResponse.amount

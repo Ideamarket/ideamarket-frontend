@@ -229,6 +229,7 @@ export default function OwnedTokenTable({
                           market={pair.market}
                           balance={pair.balance}
                           balanceBN={pair.rawBalance}
+                          isL1={pair.token.isL1}
                         />
                       ))}
 

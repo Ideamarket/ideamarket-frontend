@@ -21,11 +21,13 @@ export default function TokenRow({
   market,
   balance,
   balanceBN,
+  isL1,
 }: {
   token: IdeaToken
   market: IdeaMarket
   balance: string
   balanceBN: BN
+  isL1: boolean
 }) {
   const router = useRouter()
   const marketSpecifics = getMarketSpecificsByMarketName(market.name)
@@ -74,7 +76,7 @@ export default function TokenRow({
                 />
               )}
             </div>
-            <div className="ml-4 text-base font-semibold leading-5 text-gray-900">
+            <div className="w-full flex justify-between ml-4 text-base font-semibold leading-5 text-gray-900">
               <A
                 href={`${marketSpecifics.getTokenURL(token.name)}`}
                 className="hover:underline"
@@ -84,6 +86,11 @@ export default function TokenRow({
               >
                 {token.name}
               </A>
+              {isL1 && (
+                <div className="inline-block ml-2 px-1 py-0.5 bg-white border-2 border-gray-400 rounded text-gray-400">
+                  L1
+                </div>
+              )}
             </div>
             <div className="flex items-center justify-center ml-auto md:hidden">
               <svg

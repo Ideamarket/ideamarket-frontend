@@ -225,6 +225,7 @@ export default function LockedTokenTable({
                           balance={pair.balance}
                           balanceBN={pair.rawBalance}
                           lockedUntil={pair.lockedUntil}
+                          isL1={pair.token.isL1}
                         />
                       ))}
 
