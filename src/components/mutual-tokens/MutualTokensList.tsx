@@ -5,9 +5,7 @@ import {
   queryMutualHoldersOfToken,
 } from 'store/ideaMarketsStore'
 import { MutualToken, MutualTokenSkeleton } from 'components'
-import Select from 'react-select'
-import { useTheme } from 'next-themes'
-
+import DropDown from 'components/DropDown'
 export type MutualTokensListSortBy =
   | 'latestTimestamp'
   | 'totalAmount'
@@ -38,7 +36,6 @@ export default function MutualTokensList({
   const PAGE_SIZE = 8
   const [pageNumber, setPageNumber] = useState(1)
   const [sortBy, setSortBy] = useState<MutualTokensListSortBy>('totalHolders')
-  const { theme } = useTheme()
 
   const { data: mutualHoldersList, isLoading, isError } = useQuery<
     MutualHoldersData[]
@@ -66,7 +63,7 @@ export default function MutualTokensList({
         <h3 className="text-2xl font-medium leading-6">Mutual Holders</h3>
         <div className="mt-3 sm:mt-0 sm:ml-4">
           <p>Sort By</p>
-          <Select
+          <DropDown
             name="Sort By"
             options={options}
             isDisabled={isLoading}
@@ -77,42 +74,7 @@ export default function MutualTokensList({
             onChange={(entry) => {
               setSortBy((entry as any).value)
             }}
-            theme={(mytheme) => ({
-              ...mytheme,
-              borderRadius: 2,
-              colors: {
-                ...mytheme.colors,
-                primary50: theme === 'dark' ? '#4B5563' : '', // brand-gray ,
-
-                primary25: theme === 'dark' ? '#4B5563' : '#f6f6f6', // brand-gray
-                primary: '#0857e0', // brand-blue
-              },
-            })}
-            styles={{
-              valueContainer: (provided) => ({
-                ...provided,
-                minHeight: '50px',
-              }),
-              control: (base, state) => ({
-                ...base,
-                textDecorationColor: theme === 'dark' ? 'white' : 'gray',
-                background: theme === 'dark' ? '#4B5563' : 'white',
-                // match with the menu
-                borderRadius: state.isFocused ? '3px 3px 0 0' : 3,
-                // Overwrittes the different states of border
-                borderColor: state.isFocused ? 'yellow' : 'green',
-                // Removes weird border around container
-                boxShadow: state.isFocused ? null : null,
-                '&:hover': {
-                  // Overwrittes the different states of border
-                  borderColor: state.isFocused ? 'red' : 'blue',
-                },
-              }),
-              menuList: (base) => ({
-                ...base,
-                background: theme === 'dark' ? '#6B7280' : 'white',
-              }),
-            }}
+            formatOptionLabel={null}
           />
         </div>
       </div>

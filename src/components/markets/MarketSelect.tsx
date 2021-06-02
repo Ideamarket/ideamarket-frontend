@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
-import Select from 'react-select'
-import { getMarketSpecificsByMarketName } from 'store/markets'
 import { useQuery } from 'react-query'
+import { getMarketSpecificsByMarketName } from 'store/markets'
 import { queryMarkets } from 'store/ideaMarketsStore'
+import Select from 'react-select'
 import { useTheme } from 'next-themes'
+
 export default function MarketSelect({
   onChange,
   disabled,
