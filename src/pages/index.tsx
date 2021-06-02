@@ -139,11 +139,11 @@ export default function Home() {
         <div className="w-screen px-6 pt-10 pb-40 text-center text-white  dark:text-gray-200 bg-cover bg-top-mobile md:bg-top-desktop ">
           <div>
             <h2 className="text-3xl md:text-6xl font-gilroy-bold">
-              Maximize return on{' '}
-              <span className="text-brand-blue">attention</span>
+              The credibility layer{' '}
+              <span className="text-brand-blue">of the internet</span>
             </h2>
             <p className="mt-8 text-lg md:text-2xl font-sf-compact-medium">
-              Profit by discovering and popularizing the world’s best knowledge.
+              Profit by discovering the world’s best information.
             </p>
           </div>
           <button
@@ -161,7 +161,7 @@ export default function Home() {
             <div className="text-2xl text-brand-blue md:text-5xl">
               ${cDaiBalanceInDai}
             </div>
-            <div className="md:ml-2">in attention under management</div>
+            <div className="md:ml-2">in credibility crowdsourced</div>
           </div>
         </div>
 

@@ -33,15 +33,25 @@ export default function Nav() {
       isSelected: router.pathname === '/account',
     },
     {
-      name: 'Newsletter',
-      value: 'newsletter',
-      onClick: () => setIsEmailNewsletterModalOpen(true),
+      name: 'Extension',
+      value: 'extension',
+      onClick: () =>
+        window.open(
+          'https://chrome.google.com/webstore/detail/ideamarket/hgpemhabnkecancnpcdilfojngkoahei',
+          '_blank'
+        ),
       isSelected: false,
     },
     {
       name: 'Community',
       value: 'community',
       onClick: () => window.open('https://discord.gg/zaXZXGE4Ke', '_blank'),
+      isSelected: false,
+    },
+    {
+      name: 'Grants',
+      value: 'grants',
+      onClick: () => window.open('http://grants.ideamarket.io/', '_blank'),
       isSelected: false,
     },
   ]
