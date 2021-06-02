@@ -11,9 +11,10 @@ import {
   getUniswapDaiOutputSwap,
   useTransactionManager,
 } from 'utils'
+import DropDown from 'components/DropDown'
+
 import { useContractStore } from 'store/contractStore'
 import { NETWORK } from 'store/networks'
-import Select from 'react-select'
 import BigNumber from 'bignumber.js'
 import BN from 'bn.js'
 import ApproveButton from './ApproveButton'
@@ -318,7 +319,7 @@ export default function TradeInterface({
             {tradeType === 'buy' ? 'Pay with' : 'Receive'}
           </p>
           <div className="mx-5">
-            <Select
+            <DropDown
               className="border-2 border-gray-200 dark:bg-gray-600 dark:border-gray-500 dark:text-gray-300 rounded-md text-brand-gray-4 trade-select"
               isClearable={false}
               isSearchable={false}
@@ -329,41 +330,7 @@ export default function TradeInterface({
               options={selectTokensValues}
               formatOptionLabel={selectTokensFormat}
               defaultValue={selectTokensValues[0]}
-              theme={(mytheme) => ({
-                ...mytheme,
-                borderRadius: 2,
-                colors: {
-                  ...mytheme.colors,
-                  primary50: theme === 'dark' ? '#4B5563' : '',
-                  primary25: theme === 'dark' ? '#4B5563' : '#d8d8d8', // brand-gray
-                  primary: '#0857e0', // brand-blue
-                },
-              })}
-              styles={{
-                valueContainer: (provided) => ({
-                  ...provided,
-                  minHeight: '50px',
-                }),
-                control: (base, state) => ({
-                  ...base,
-                  textDecorationColor: theme === 'dark' ? 'white' : 'gray',
-                  background: theme === 'dark' ? '#4B5563' : 'white',
-                  // match with the menu
-                  borderRadius: state.isFocused ? '3px 3px 0 0' : 3,
-                  // Overwrittes the different states of border
-                  borderColor: state.isFocused ? 'yellow' : 'green',
-                  // Removes weird border around container
-                  boxShadow: state.isFocused ? null : null,
-                  '&:hover': {
-                    // Overwrittes the different states of border
-                    borderColor: state.isFocused ? 'red' : 'blue',
-                  },
-                }),
-                menuList: (base) => ({
-                  ...base,
-                  background: theme === 'dark' ? '#6B7280' : 'white',
-                }),
-              }}
+              name=""
             />
           </div>
           <div className="flex flex-row justify-between mx-5 mt-5">
@@ -450,7 +417,7 @@ export default function TradeInterface({
               %
             </div>
             <div className="flex-1 mb-3 text-base md:ml-8 md:mb-0 text-brand-gray-2">
-              <Select
+              <DropDown
                 className=" select-text dark:border-gray-500  dark:text-gray-200  dark:placeholder-gray-300 border-2 border-gray-200 rounded-md text-brand-gray-2 trade-select"
                 isClearable={false}
                 isSearchable={false}
@@ -458,43 +425,10 @@ export default function TradeInterface({
                 onChange={(option: SlippageValue) => {
                   slippage = option.value
                 }}
+                name=""
                 options={slippageValues}
                 defaultValue={slippageValues[0]}
-                theme={(mytheme) => ({
-                  ...mytheme,
-                  borderRadius: 2,
-                  colors: {
-                    ...mytheme.colors,
-                    primary50: theme === 'dark' ? '#4B5563' : '',
-                    primary25: theme === 'dark' ? '#4B5563' : '#d8d8d8', // brand-gray
-                    primary: '#0857e0', // brand-blue
-                  },
-                })}
-                styles={{
-                  valueContainer: (provided) => ({
-                    ...provided,
-                    minHeight: '50px',
-                  }),
-                  control: (base, state) => ({
-                    ...base,
-                    textDecorationColor: theme === 'dark' ? 'white' : 'gray',
-                    background: theme === 'dark' ? '#4B5563' : 'white',
-                    // match with the menu
-                    borderRadius: state.isFocused ? '3px 3px 0 0' : 3,
-                    // Overwrittes the different states of border
-                    borderColor: state.isFocused ? 'yellow' : 'green',
-                    // Removes weird border around container
-                    boxShadow: state.isFocused ? null : null,
-                    '&:hover': {
-                      // Overwrittes the different states of border
-                      borderColor: state.isFocused ? 'red' : 'blue',
-                    },
-                  }),
-                  menuList: (base) => ({
-                    ...base,
-                    background: theme === 'dark' ? '#6B7280' : 'white',
-                  }),
-                }}
+                formatOptionLabel={null}
               />
             </div>
           </div>

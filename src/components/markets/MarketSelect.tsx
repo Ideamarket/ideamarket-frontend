@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useQuery } from 'react-query'
 import { getMarketSpecificsByMarketName } from 'store/markets'
 import { queryMarkets } from 'store/ideaMarketsStore'
-import Select from 'react-select'
+import DropDown from 'components/DropDown'
 import { useTheme } from 'next-themes'
 
 export default function MarketSelect({
@@ -58,7 +58,7 @@ export default function MarketSelect({
   )
 
   return (
-    <Select
+    <DropDown
       isDisabled={disabled}
       isClearable={isClearable}
       isSearchable={false}
@@ -67,42 +67,7 @@ export default function MarketSelect({
       formatOptionLabel={selectMarketFormat}
       defaultValue={isMarketsLoading ? undefined : selectMarketValues[0]}
       className="border-2 border-gray-200  dark:border-gray-500  dark:placeholder-gray-300 rounded-md text-brand-gray-4 dark:text-gray-200 market-select"
-      theme={(mytheme) => ({
-        ...mytheme,
-        borderRadius: 2,
-        colors: {
-          ...mytheme.colors,
-          primary50: theme === 'dark' ? '#4B5563' : '', // brand-gray ,
-
-          primary25: theme === 'dark' ? '#4B5563' : '#f6f6f6', // brand-gray
-          primary: '#0857e0', // brand-blue
-        },
-      })}
-      styles={{
-        valueContainer: (provided) => ({
-          ...provided,
-          minHeight: '50px',
-        }),
-        control: (base, state) => ({
-          ...base,
-          textDecorationColor: theme === 'dark' ? 'white' : 'gray',
-          background: theme === 'dark' ? '#4B5563' : 'white',
-          // match with the menu
-          borderRadius: state.isFocused ? '3px 3px 0 0' : 3,
-          // Overwrittes the different states of border
-          borderColor: state.isFocused ? 'yellow' : 'green',
-          // Removes weird border around container
-          boxShadow: state.isFocused ? null : null,
-          '&:hover': {
-            // Overwrittes the different states of border
-            borderColor: state.isFocused ? 'red' : 'blue',
-          },
-        }),
-        menuList: (base) => ({
-          ...base,
-          background: theme === 'dark' ? '#6B7280' : 'white',
-        }),
-      }}
+      name=""
     />
   )
 }
