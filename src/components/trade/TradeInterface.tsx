@@ -22,7 +22,6 @@ import AdvancedOptions from './AdvancedOptions'
 import Tooltip from '../tooltip/Tooltip'
 import CircleSpinner from '../animations/CircleSpinner'
 import A from 'components/A'
-import { useTheme } from 'next-themes'
 
 export default function TradeInterface({
   ideaToken,
@@ -145,7 +144,6 @@ export default function TradeInterface({
     { value: 0.04, label: '4% max. slippage' },
     { value: 0.05, label: '5% max. slippage' },
   ]
-  const { theme, setTheme } = useTheme()
 
   useEffect(() => {
     setSelectedToken(useTokenListStore.getState().tokens[0])
