@@ -253,7 +253,7 @@ export default function Table({
                           market={marketsMap[token.marketID]}
                           showMarketSVG={false}
                           compoundSupplyRate={compoundSupplyRate}
-                          iconURL={tokenIconURLs[token.name]}
+                          iconURL={tokenIconURLs[token.name] || ''}
                           isIconsLoading={isIconsLoading as boolean}
                           getColumn={getColumn}
                           onTradeClicked={onTradeClicked}

@@ -86,7 +86,7 @@ export default function TokenRow({
                 showMarketSVG && 'ml-2'
               )}
             >
-              {isIconsLoading ? (
+              {isIconsLoading || iconURL === '' ? (
                 <div className="w-full h-full bg-gray-400 rounded-full animate-pulse"></div>
               ) : (
                 <img
