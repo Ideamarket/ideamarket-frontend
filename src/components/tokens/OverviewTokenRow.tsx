@@ -10,7 +10,6 @@ import {
   formatNumber,
   web3BNToFloatString,
 } from 'utils'
-import { useTokenIconURL } from 'actions'
 
 const tenPow18 = new BigNumber('10').pow(new BigNumber('18'))
 
@@ -19,6 +18,8 @@ type Props = {
   market: IdeaMarket
   showMarketSVG: boolean
   compoundSupplyRate: number
+  iconURL: string
+  isIconsLoading: boolean
   getColumn: (column: string) => any
   onTradeClicked: (token: IdeaToken, market: IdeaMarket) => void
 }
@@ -28,15 +29,13 @@ export default function TokenRow({
   market,
   showMarketSVG,
   compoundSupplyRate,
+  iconURL,
+  isIconsLoading,
   getColumn,
   onTradeClicked,
 }: Props) {
   const router = useRouter()
   const marketSpecifics = getMarketSpecificsByMarketName(market.name)
-  const { tokenIconURL, isLoading: isTokenIconLoading } = useTokenIconURL({
-    marketSpecifics,
-    tokenName: token.name,
-  })
 
   const yearIncome = (
     parseFloat(token.daiInToken) * compoundSupplyRate
@@ -87,12 +86,12 @@ export default function TokenRow({
                 showMarketSVG && 'ml-2'
               )}
             >
-              {isTokenIconLoading ? (
+              {isIconsLoading && !iconURL ? (
                 <div className="w-full h-full bg-gray-400 rounded-full animate-pulse"></div>
               ) : (
                 <img
                   className="w-full h-full rounded-full"
-                  src={tokenIconURL}
+                  src={iconURL}
                   alt=""
                 />
               )}

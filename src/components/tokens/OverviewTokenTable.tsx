@@ -15,6 +15,8 @@ import TokenRow from './OverviewTokenRow'
 import TokenRowSkeleton from './OverviewTokenRowSkeleton'
 import { Categories } from 'store/models/category'
 import { OverviewColumns } from './table/OverviewColumns'
+import { getMarketSpecificsByMarketName } from 'store/markets'
+import useTokenIconURLs from 'actions/useTokenIconURLs'
 
 type Props = {
   selectedMarkets: Set<string>
@@ -128,6 +130,21 @@ export default function Table({
 
   const tokenData = flatten(infiniteData || [])
 
+  let tokenIconData = []
+  tokenData.forEach((token) => {
+    tokenIconData.push({
+      marketSpecifics: getMarketSpecificsByMarketName(
+        marketsMap[token.marketID].name
+      ),
+      tokenName: token.name,
+    })
+  })
+
+  const [tokenIconURLs, isIconsLoading] = useTokenIconURLs({
+    tokenIconData,
+    isTokenDataLoading,
+  })
+
   useEffect(() => {
     const fetch = async () => {
       const markets = await refetchMarkets()
@@ -236,6 +253,8 @@ export default function Table({
                           market={marketsMap[token.marketID]}
                           showMarketSVG={false}
                           compoundSupplyRate={compoundSupplyRate}
+                          iconURL={tokenIconURLs[token.name]}
+                          isIconsLoading={isIconsLoading as boolean}
                           getColumn={getColumn}
                           onTradeClicked={onTradeClicked}
                         />
