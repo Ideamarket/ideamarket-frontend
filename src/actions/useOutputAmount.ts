@@ -173,7 +173,7 @@ export default function useOutputAmount(
       if (!isCancelled) {
         const pow = new BigNumber('10').pow(new BigNumber(decimals))
         setOutputBN(bn)
-        setOutput(web3BNToFloatString(bn, pow, 4))
+        setOutput(web3BNToFloatString(bn, pow, 8))
         setIsLoading(false)
       }
     }
