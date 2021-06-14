@@ -10,7 +10,13 @@ import {
   sellToken,
   useTokenIconURL,
 } from 'actions'
-import { floatToWeb3BN, formatBigNumber, useTransactionManager } from 'utils'
+import {
+  calculateIdeaTokenDaiValue,
+  floatToWeb3BN,
+  formatBigNumber,
+  useTransactionManager,
+  web3BNToFloatString,
+} from 'utils'
 import { useContractStore } from 'store/contractStore'
 import { NETWORK } from 'store/networks'
 import BigNumber from 'bignumber.js'
@@ -24,6 +30,7 @@ import { TradeInterfaceBox } from './components'
 import CircleSpinner from 'components/animations/CircleSpinner'
 import Settings from '../../assets/settings.svg'
 import useReversePrice from 'actions/useReversePrice'
+import useTokenToDAI from 'actions/useTokenToDAI'
 
 type NewIdeaToken = {
   symbol: string
@@ -39,7 +46,7 @@ type TradeInterfaceProps = {
     tokenAddress: string,
     tokenSymbol: string,
     calculatedTokenAmount: BN,
-    slippage: number,
+    maxSlippage: number,
     lock: boolean,
     isUnlockOnceChecked: boolean,
     isUnlockPermanentChecked: boolean,
@@ -54,6 +61,8 @@ type TradeInterfaceProps = {
   unlockText?: string
   newIdeaToken?: NewIdeaToken | null
 }
+
+const tenPow18 = new BigNumber('10').pow(new BigNumber('18'))
 
 export default function TradeInterface({
   ideaToken,
@@ -110,6 +119,7 @@ export default function TradeInterface({
     selectedToken?.decimals,
     tradeType
   )
+
   // selectedTokenAmount = Number typed in by user on selectedToken input
   const [selectedTokenAmount, setSelectedTokenAmount] = useState('0')
   const selectedTokenAmountBN = floatToWeb3BN(
@@ -149,6 +159,53 @@ export default function TradeInterface({
   const masterSelectedTokenAmountBN = isSelectedTokenActive
     ? selectedTokenAmountBN
     : calculatedTokenAmountBN
+
+  // Calculates the ideaToken price relative to selectedToken
+  const [isIdeaTokenPriceLoading, ideaTokenPriceBN, ideaTokenPrice] =
+    useOutputAmount(
+      ideaToken,
+      market,
+      selectedToken?.address,
+      '1',
+      selectedToken?.decimals,
+      tradeType
+    )
+
+  const ideaTokenValue = web3BNToFloatString(
+    calculateIdeaTokenDaiValue(
+      ideaToken?.rawSupply,
+      market,
+      masterIdeaTokenAmountBN
+    ),
+    tenPow18,
+    2
+  )
+
+  // Calculates the DAI/USD value for the selectedToken
+  const [
+    isSelectedTokenDAIValueLoading,
+    selectedTokenDAIValueBN,
+    selectedTokenDAIValue,
+  ] = useTokenToDAI(
+    selectedToken,
+    masterSelectedTokenAmount,
+    selectedToken?.decimals
+  )
+
+  function percentDifference(a, b) {
+    return 100 * Math.abs((a - b) / ((a + b) / 2))
+  }
+
+  const slippage =
+    tradeType === 'buy'
+      ? percentDifference(
+          parseFloat(selectedTokenDAIValue),
+          parseFloat(ideaTokenValue)
+        )
+      : percentDifference(
+          parseFloat(ideaTokenValue),
+          parseFloat(selectedTokenDAIValue)
+        )
 
   const exchangeContractAddress = useContractStore(
     (state) => state.exchangeContract
@@ -192,7 +249,7 @@ export default function TradeInterface({
   const [isValid, setIsValid] = useState(false)
   const txManager = useTransactionManager()
 
-  let slippage = 0.01
+  let maxSlippage = 0.01
   type SlippageValue = {
     value: number
     label: string
@@ -257,7 +314,7 @@ export default function TradeInterface({
       selectedToken?.address,
       selectedToken?.symbol,
       selectedTokenAmountBNLocal,
-      slippage,
+      maxSlippage,
       isLockChecked,
       isUnlockOnceChecked,
       isUnlockPermanentChecked,
@@ -271,7 +328,7 @@ export default function TradeInterface({
     calculatedIdeaTokenAmountBN,
     calculatedTokenAmountBN,
     isLockChecked,
-    slippage,
+    maxSlippage,
     isUnlockOnceChecked,
     isUnlockPermanentChecked,
     isCalculatedIdeaTokenAmountLoading,
@@ -316,7 +373,7 @@ export default function TradeInterface({
             selectedToken.address,
             ideaTokenAmountBNLocal,
             selectedTokenAmountBNLocal,
-            slippage,
+            maxSlippage,
             isLockChecked ? 31556952 : 0,
           ]
         : [
@@ -324,7 +381,7 @@ export default function TradeInterface({
             selectedToken.address,
             ideaTokenAmountBNLocal,
             selectedTokenAmountBNLocal,
-            slippage,
+            maxSlippage,
           ]
 
     try {
@@ -361,6 +418,7 @@ export default function TradeInterface({
     selectTokensValues,
     setTradeType,
     txManager,
+    slippage,
   }
 
   const selectedTokenProps = {
@@ -371,6 +429,11 @@ export default function TradeInterface({
     tokenBalance,
     isTokenBalanceLoading,
     selectedIdeaToken: null,
+    tokenValue: web3BNToFloatString(
+      selectedTokenDAIValueBN || new BN('0'),
+      tenPow18,
+      2
+    ),
   }
 
   const selectedIdeaToken = {
@@ -386,7 +449,18 @@ export default function TradeInterface({
     tokenBalance: ideaTokenBalance,
     isTokenBalanceLoading: isIdeaTokenBalanceLoading,
     selectedIdeaToken: newIdeaToken || selectedIdeaToken,
+    tokenValue: ideaTokenValue,
   }
+
+  const labelSymbol =
+    tradeType === 'buy'
+      ? spendTokenSymbol.toUpperCase()
+      : selectedToken?.symbol.toUpperCase()
+  const tokenPriceLabel = `1 ${ideaToken.name} = ${web3BNToFloatString(
+    ideaTokenPriceBN || new BN('0'),
+    tenPow18,
+    4
+  )} ${labelSymbol}`
 
   return (
     <div>
@@ -419,7 +493,7 @@ export default function TradeInterface({
                 isSearchable={false}
                 isDisabled={txManager.isPending || disabled}
                 onChange={(option: SlippageValue) => {
-                  slippage = option.value
+                  maxSlippage = option.value
                 }}
                 options={slippageValues}
                 defaultValue={slippageValues[0]}
@@ -454,53 +528,58 @@ export default function TradeInterface({
             : { ...selectedTokenProps })}
         />
 
-        <div className="flex justify-between my-2 text-xs">
-          <div className="ml-5">
-            <div
+        <div
+          className={classNames(
+            'flex items-center justify-between my-2 text-sm',
+            tradeType === 'sell' && 'justify-end'
+          )}
+        >
+          <div
+            className={classNames(
+              tradeType === 'sell' && 'invisible',
+              'flex items-center cursor-pointer'
+            )}
+          >
+            <input
+              type="checkbox"
+              className="border-2 border-gray-200 rounded-sm cursor-pointer"
+              id="lockCheckbox"
+              disabled={txManager.isPending || disabled}
+              checked={isLockChecked}
+              onChange={(e) => {
+                setIsLockChecked(e.target.checked)
+              }}
+            />
+            <label
+              htmlFor="lockCheckbox"
               className={classNames(
-                'cursor-pointer flex items-center text-sm',
-                tradeType === 'sell' && 'invisible'
+                'ml-2 cursor-pointer',
+                isLockChecked ? 'text-brand-blue' : 'text-gray-500'
               )}
             >
-              <input
-                type="checkbox"
-                className="border-2 border-gray-200 rounded-sm cursor-pointer"
-                id="lockCheckbox"
-                disabled={txManager.isPending || disabled}
-                checked={isLockChecked}
-                onChange={(e) => {
-                  setIsLockChecked(e.target.checked)
-                }}
-              />
-              <label
-                htmlFor="lockCheckbox"
-                className={classNames(
-                  'ml-2 cursor-pointer',
-                  isLockChecked ? 'text-brand-blue' : 'text-gray-500'
-                )}
-              >
-                Lock for 1 year
-              </label>
-              <Tooltip className="ml-2">
-                <div className="w-32 md:w-64">
-                  Lock tokens to show your long-term confidence in a listing.
-                  You will be unable to sell or withdraw locked tokens for the
-                  time period specified.
-                  <br />
-                  <br />
-                  For more information, see{' '}
-                  <A
-                    href="https://docs.ideamarket.io/user-guide/hiw-buy-and-sell#locking-tokens"
-                    target="_blank"
-                    className="underline"
-                  >
-                    locking tokens
-                  </A>
-                  .
-                </div>
-              </Tooltip>
-            </div>
+              Lock for 1 year
+            </label>
+            <Tooltip className="ml-2">
+              <div className="w-32 md:w-64">
+                Lock tokens to show your long-term confidence in a listing. You
+                will be unable to sell or withdraw locked tokens for the time
+                period specified.
+                <br />
+                <br />
+                For more information, see{' '}
+                <A
+                  href="https://docs.ideamarket.io/user-guide/hiw-buy-and-sell#locking-tokens"
+                  target="_blank"
+                  className="underline"
+                >
+                  locking tokens
+                </A>
+                .
+              </div>
+            </Tooltip>
           </div>
+
+          <b>{tokenPriceLabel}</b>
         </div>
 
         {showTradeButton && (
@@ -539,9 +618,16 @@ export default function TradeInterface({
                 {tradeType === 'buy' ? 'Buy' : 'Sell'}
               </button>
             </div>
-            <div className="mt-2 text-xs text-center text-gray-500">
-              Confirm transaction in wallet to complete.
-            </div>
+
+            {exceedsBalance ? (
+              <div className="mt-2 text-xs text-center text-brand-red">
+                Insufficient {spendTokenSymbol.toUpperCase()} balance.
+              </div>
+            ) : (
+              <div className="mt-2 text-xs text-center text-gray-500">
+                Confirm transaction in wallet to complete.
+              </div>
+            )}
 
             <div
               className={classNames(
