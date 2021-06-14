@@ -153,7 +153,7 @@ export default function useReversePrice(
 
     async function run(fn) {
       if (!amount || amount === '') {
-        setOutputBN(new BigNumber('0'))
+        setOutputBN(new BN('0'))
         setOutput('0.0000')
         setIsLoading(false)
         return
