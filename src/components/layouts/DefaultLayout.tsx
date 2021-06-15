@@ -1,6 +1,3 @@
-import { useContext } from 'react'
-import { useRouter } from 'next/dist/client/router'
-import { GlobalContext } from 'pages/_app'
 import { NavBar } from 'components'
 import { ReactNode, useEffect } from 'react'
 import CookieConsent from 'react-cookie-consent'
@@ -10,8 +7,6 @@ import { initIdeaMarketsStore } from 'store/ideaMarketsStore'
 import { initTokenList } from 'store/tokenListStore'
 
 export default function DefaultLayout({ children }: { children: ReactNode }) {
-  const { isEmailHeaderActive } = useContext(GlobalContext)
-  const router = useRouter()
   useEffect(() => {
     initIdeaMarketsStore()
     initTokenList()
@@ -22,15 +17,7 @@ export default function DefaultLayout({ children }: { children: ReactNode }) {
       <Toaster />
       <div className="min-h-screen bg-brand-gray">
         <NavBar />
-        <div
-          className={
-            isEmailHeaderActive && router.pathname === '/'
-              ? 'py-32 md:py-28'
-              : 'py-16'
-          }
-        >
-          {children}
-        </div>
+        <div>{children}</div>
       </div>
       <CookieConsent
         style={{ background: '#708090' }}

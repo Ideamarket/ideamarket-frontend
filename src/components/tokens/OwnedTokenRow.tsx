@@ -57,7 +57,7 @@ export default function TokenRow({
   return (
     <>
       <tr
-        className="grid grid-cols-3 border-b cursor-pointer md:table-row hover:bg-brand-gray border-brand-border-gray"
+        className="grid grid-cols-3 border-b cursor-pointer md:table-row hover:bg-brand-gray border-brand-border-gray dark:hover:bg-gray-600 dark:border-gray-500"
         onClick={() => {
           router.push(
             `/i/${marketSpecifics.getMarketNameURLRepresentation()}/${marketSpecifics.getTokenNameURLRepresentation(
@@ -70,7 +70,7 @@ export default function TokenRow({
           <div className="flex items-center">
             <div className="flex-shrink-0 w-7.5 h-7.5">
               {isTokenIconLoading ? (
-                <div className="w-full h-full bg-gray-400 rounded-full animate-pulse"></div>
+                <div className="w-full h-full bg-gray-400 dark:bg-gray-600 rounded-full animate-pulse"></div>
               ) : (
                 <img
                   className="w-full h-full rounded-full"
@@ -79,7 +79,7 @@ export default function TokenRow({
                 />
               )}
             </div>
-            <div className="ml-4 text-base font-semibold leading-5 text-gray-900">
+            <div className="ml-4 text-base font-semibold leading-5 text-gray-900 dark:text-gray-300">
               <A
                 href={`${marketSpecifics.getTokenURL(token.name)}`}
                 className="hover:underline"
@@ -92,7 +92,7 @@ export default function TokenRow({
             </div>
             <div className="flex items-center justify-center ml-auto md:hidden">
               <svg
-                className="w-7.5 text-brand-blue"
+                className="w-7.5 text-brand-blue dark:text-blue-500"
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 20 20"
                 fill="currentColor"
@@ -107,24 +107,24 @@ export default function TokenRow({
           </div>
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
-          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4">
+          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-400">
             Market
           </p>
           <div className="flex items-center">
             <div className="w-full h-full md:w-auto md:h-auto">
-              {marketSpecifics.getMarketSVGBlack()}
+              {marketSpecifics.getMarketSVGTheme()}
             </div>
-            <div className="ml-1 text-base font-semibold leading-4 md:ml-3 text-brand-gray-4">
+            <div className="ml-1 text-base font-semibold leading-4 md:ml-3 text-brand-gray-4 dark:text-gray-300">
               {marketSpecifics.getMarketName()}
             </div>
           </div>
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
-          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4">
+          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-400">
             Price
           </p>
           <p
-            className="text-base font-semibold leading-4 uppercase tracking-tightest-2 text-very-dark-blue"
+            className="text-base font-semibold leading-4 uppercase tracking-tightest-2 text-very-dark-blue dark:text-gray-300"
             title={'$' + tokenPrice}
           >
             $
@@ -134,15 +134,15 @@ export default function TokenRow({
           </p>
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
-          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4">
+          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-400">
             24H Change
           </p>
           <p
             className={classNames(
-              'text-base font-semibold leading-4 tracking-tightest-2 text-very-dark-blue uppercase',
+              'text-base font-semibold leading-4 tracking-tightest-2 text-very-dark-blue dark:text-gray-300 uppercase',
               parseFloat(token.dayChange) >= 0.0
-                ? 'text-brand-green'
-                : 'text-brand-red'
+                ? 'text-brand-green dark:text-green-400'
+                : 'text-brand-red dark:text-red-400'
             )}
             title={
               parseFloat(token.dayChange) >= 0.0
@@ -157,11 +157,11 @@ export default function TokenRow({
           </p>
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
-          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4">
+          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-400">
             Balance
           </p>
           <p
-            className="text-base font-semibold leading-4 uppercase tracking-tightest-2 text-very-dark-blue"
+            className="text-base font-semibold leading-4 uppercase tracking-tightest-2 text-very-dark-blue dark:text-gray-300"
             title={balance}
           >
             {formatNumberWithCommasAsThousandsSerperator(
@@ -170,11 +170,11 @@ export default function TokenRow({
           </p>
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
-          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4">
+          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-400">
             Value
           </p>
           <p
-            className="text-base font-semibold leading-4 uppercase tracking-tightest-2 text-very-dark-blue"
+            className="text-base font-semibold leading-4 uppercase tracking-tightest-2 text-very-dark-blue dark:text-gray-300"
             title={'$' + balanceValue}
           >
             ${balanceValue}

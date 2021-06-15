@@ -169,7 +169,9 @@ export default function ListTokenModal({ close }: { close: () => void }) {
       </div>
       {page === PAGES.LIST && (
         <>
-          <p className="mx-5 mt-5 text-sm text-brand-gray-2">Market</p>
+          <p className="mx-5 mt-5 text-sm text-brand-gray-2 dark:text-gray-300">
+            Market
+          </p>
           <div className="mx-5">
             <MarketSelect
               disabled={txManager.isPending}
@@ -178,7 +180,9 @@ export default function ListTokenModal({ close }: { close: () => void }) {
               }}
             />
           </div>
-          <p className="mx-5 mt-5 text-sm text-brand-gray-2">Token Name</p>
+          <p className="mx-5 mt-5 text-sm text-brand-gray-2 dark:text-gray-300">
+            Token Name
+          </p>
           <div className="flex items-center mx-5">
             <div className="text-base text-brand-gray-2 text-semibold">
               {tokenNamePrefix || ''}
@@ -193,7 +197,7 @@ export default function ListTokenModal({ close }: { close: () => void }) {
                 type="text"
                 disabled={txManager.isPending || !selectedMarket}
                 className={classNames(
-                  'w-12 md:w-full flex-grow py-2 pl-1 pr-4 leading-tight bg-gray-200 border-2 rounded appearance-none focus:bg-white focus:outline-none',
+                  'w-12 md:w-full flex-grow py-2 pl-1 pr-4 leading-tight bg-gray-200 dark:bg-gray-600 border-2 dark:border-gray-500 rounded appearance-none focus:bg-white focus:outline-none',
                   !isValidTokenName && tokenName.length > 0
                     ? 'border-brand-red focus:border-brand-red'
                     : 'border-gray-200 focus:border-brand-blue'
@@ -206,7 +210,7 @@ export default function ListTokenModal({ close }: { close: () => void }) {
             </div>
             <div
               className={classNames(
-                'text-base text-brand-gray-2 text-semibold',
+                'text-base text-brand-gray-2 dark:text-gray-300 text-semibold',
                 tokenNameSuffix && 'ml-0.5'
               )}
             >
@@ -263,8 +267,8 @@ export default function ListTokenModal({ close }: { close: () => void }) {
               className={classNames(
                 'ml-2',
                 isWantBuyChecked
-                  ? 'text-brand-blue font-medium'
-                  : 'text-brand-gray-2'
+                  ? 'text-brand-blue font-medium dark:text-blue-400'
+                  : 'text-brand-gray-2 dark:text-gray-300'
               )}
             >
               I want to immediately buy this token
@@ -331,7 +335,7 @@ export default function ListTokenModal({ close }: { close: () => void }) {
                       !isValidTokenName ||
                       txManager.isPending ||
                       (isWantBuyChecked && (isMissingAllowance || !isBuyValid))
-                      ? 'text-brand-gray-2 bg-brand-gray cursor-default border-brand-gray'
+                      ? 'text-brand-gray-2 bg-brand-gray dark:bg-gray-500 dark:border-gray-500 dark:text-gray-300 cursor-default border-brand-gray'
                       : 'border-brand-blue text-white bg-brand-blue font-medium  hover:bg-blue-800'
                   )}
                   disabled={
@@ -384,7 +388,7 @@ export default function ListTokenModal({ close }: { close: () => void }) {
               className="twitter-share-button"
               href={`https://twitter.com/intent/tweet?text=${tweetTemplate}&url=https://ideamarket.io`}
             >
-              <button className="w-32 h-10 text-base font-medium bg-white border-2 rounded-lg border-brand-blue text-brand-blue hover:text-white tracking-tightest-2 font-sf-compact-medium hover:bg-brand-blue">
+              <button className="w-32 h-10 text-base font-medium bg-white dark:text-gray-50 inborder-2 dark:bg-gray-500 rounded-lg border-brand-blue text-brand-blue hover:text-white tracking-tightest-2 font-sf-compact-medium hover:bg-brand-blue">
                 Tweet about it
               </button>
             </A>
@@ -394,10 +398,10 @@ export default function ListTokenModal({ close }: { close: () => void }) {
       )}
       {page === PAGES.ERROR && (
         <div className="px-2.5 py-5">
-          <div className="flex justify-center mt-2 text-3xl text-brand-red">
+          <div className="flex justify-center mt-2 text-3xl text-brand-red dark:text-red-500">
             Something went wrong
           </div>
-          <div className="mt-5 text-base break-all text-brand-gray-2">
+          <div className="mt-5 text-base break-all text-brand-gray-2 dark:text-gray-300">
             The transaction failed to execute.
           </div>
         </div>

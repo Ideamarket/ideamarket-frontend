@@ -171,7 +171,7 @@ export default function VerifyModal({
             Verify: {token.name}
           </p>
         </div>
-        <div className="p-5 text-brand-gray-2">
+        <div className="p-5 text-brand-gray-2 dark:text-gray-300">
           {page === PAGES.TOS && (
             <>
               <p className="mt-5 text-xl font-bold text-center">
@@ -254,7 +254,7 @@ export default function VerifyModal({
                     'mt-5 w-32 h-10 text-base border-2 rounded-lg tracking-tightest-2 font-sf-compact-medium',
                     tosCheckboxChecked
                       ? 'bg-brand-blue text-white border-brand-blue'
-                      : 'bg-white border-brand-gray-2 text-brand-gray-2 cursor-not-allowed'
+                      : 'bg-white dark:bg-gray-500 dark:text-gray-300  border-brand-gray-2 text-brand-gray-2 cursor-not-allowed'
                   )}
                   onClick={() => {
                     setPage(PAGES.OWNER_ADDRESS)

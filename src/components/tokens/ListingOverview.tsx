@@ -102,7 +102,7 @@ export default function TokenCard({
                 </A>
               </span>
               <span className="ml-2.5 mr-1">
-                {marketSpecifics.getMarketSVGWhite()}
+                {marketSpecifics.getMarketSVGTheme()}
               </span>
             </div>
           )}
@@ -184,8 +184,8 @@ export default function TokenCard({
               <div
                 className={
                   parseFloat(token.dayChange) >= 0.0
-                    ? 'text-brand-neon-green'
-                    : 'text-brand-red'
+                    ? 'text-brand-neon-green dark:text-green-400'
+                    : 'text-brand-red dark:text-red-500'
                 }
               >
                 {formatNumber(token.dayChange)}%

@@ -83,7 +83,7 @@ export default function TokenCard({
           <>
             <div>on</div>
             <div className="ml-2.5 mr-1">
-              {marketSpecifics.getMarketSVGBlack()}
+              {marketSpecifics.getMarketSVGTheme()}
             </div>
             <div>{market.name}</div>
           </>

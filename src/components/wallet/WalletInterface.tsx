@@ -118,7 +118,7 @@ export default function WalletInterface({
               : 'cursor-not-allowed',
             connectingWallet === wallet &&
               'border-transparent bg-brand-blue text-brand-gray',
-            'flex-grow p-2 text-lg text-black border-2 rounded-lg border-brand-gray-1 font-sf-compact-medium'
+            'flex-grow p-2 text-lg text-black dark:text-gray-300 dark:border-gray-500 border-2 rounded-lg border-brand-gray-1 font-sf-compact-medium'
           )}
         >
           <div className="flex flex-row items-center">
@@ -197,7 +197,7 @@ export default function WalletInterface({
               active
                 ? 'hover:border-transparent hover:bg-brand-blue hover:text-brand-gray cursor-pointer'
                 : 'cursor-not-allowed',
-              'p-2 text-xs text-center border-2 rounded-lg text-brand-gray-2 border-brand-gray-1 font-sf-compact-medium'
+              'p-2 text-xs text-center border-2 rounded-lg text-brand-gray-2 dark:border-gray-500 border-brand-gray-1 font-sf-compact-medium'
             )}
           >
             Disconnect

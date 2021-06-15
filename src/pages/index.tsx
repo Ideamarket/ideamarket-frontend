@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
+import { useRouter } from 'next/dist/client/router'
 import { useQuery } from 'react-query'
 import { IdeaMarket, IdeaToken } from 'store/ideaMarketsStore'
 import {
@@ -34,6 +35,7 @@ import {
   Filters,
   DropdownFilters,
 } from 'components/tokens/OverviewFilters'
+import classNames from 'classnames'
 
 export default function Home() {
   const defaultColumns = [
@@ -165,7 +167,9 @@ export default function Home() {
     )
   )
 
-  const { setOnWalletConnectedCallback } = useContext(GlobalContext)
+  const router = useRouter()
+  const { setOnWalletConnectedCallback, isEmailHeaderActive } =
+    useContext(GlobalContext)
 
   function onNameSearchChanged(nameSearch) {
     setSelectedFilterId(Categories.TOP.id)
@@ -225,8 +229,15 @@ export default function Home() {
   return (
     <>
       <NextSeo title="Home" />
-      <div className="overflow-x-hidden bg-brand-gray">
-        <div className="w-screen px-6 pt-10 pb-40 text-center text-white bg-cover bg-top-mobile md:bg-top-desktop">
+      <div
+        className={classNames(
+          'overflow-x-hidden bg-brand-gray dark:bg-gray-900',
+          isEmailHeaderActive && router.pathname === '/'
+            ? 'py-32 md:py-28'
+            : 'py-16'
+        )}
+      >
+        <div className="w-screen px-6 pt-10 pb-40 text-center text-white dark:text-gray-200 bg-cover bg-top-mobile md:bg-top-desktop">
           <div>
             <h2 className="text-3xl md:text-6xl font-gilroy-bold">
               The credibility layer{' '}
@@ -280,7 +291,7 @@ export default function Home() {
             onNameSearchChanged={onNameSearchChanged}
           />
 
-          <div className="bg-white border border-brand-gray-3 rounded-b-xlg shadow-home">
+          <div className="bg-white border border-brand-gray-3 dark:border-gray-500 rounded-b-xlg shadow-home">
             {/* selectedMarkets is empty on load. If none selected, it will have 1 element called 'None' */}
             {visibleColumns && selectedMarkets.size > 0 && (
               <Table

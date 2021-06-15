@@ -4,9 +4,8 @@ import moment from 'moment'
 import { useQuery } from 'react-query'
 import { IdeaToken, queryLockedAmounts } from 'store/ideaMarketsStore'
 import LockedTokenRowSkeleton from './LockedTokenRowSkeleton'
-import Lock from '../../assets/lock.svg'
-import ChevronLeft from '../../assets/chevron-left.svg'
-import ChevronRight from '../../assets/chevron-right.svg'
+import { LockClosedIcon } from '@heroicons/react/solid'
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/outline'
 
 export default function LockedTokenTable({
   token,
@@ -34,7 +33,7 @@ export default function LockedTokenTable({
 
   return (
     <div className="relative">
-      <div className="bg-white divide-y divide-gray-200">
+      <div className="bg-white dark:bg-gray-700 divide-y divide-gray-200">
         {isLockedTokensLoading ? (
           Array.from(Array(TOKENS_PER_PAGE).keys()).map((token) => (
             <LockedTokenRowSkeleton key={token} page="listing" />
@@ -44,16 +43,10 @@ export default function LockedTokenTable({
             {lockedTokens.map((lockedAmount, i) => (
               <div
                 key={lockedAmount.lockedUntil}
-                className="flex flex-col justify-between p-5 text-base font-semibold rounded-md md:flex-row text-brand-new-dark"
-                style={{ backgroundColor: '#f9fbfd' }}
+                className="flex flex-col justify-between p-5 dark:bg-gray-700 text-base font-semibold rounded-md md:flex-row text-brand-new-dark dark:text-gray-300"
               >
                 <div>
-                  <span
-                    className="mr-3"
-                    style={{ position: 'relative', top: -3 }}
-                  >
-                    <Lock />
-                  </span>
+                  <LockClosedIcon className="text-blue-500" />
                   {moment(lockedAmount.lockedUntil * 1000).format('LLL')}
                 </div>
                 <div className="mt-2 md:mt-0">
@@ -82,7 +75,7 @@ export default function LockedTokenTable({
               )}
               disabled={page <= 0}
             >
-              <ChevronLeft style={{ width: 20 }} />
+              <ChevronLeftIcon className="h-5 w-5 text-gray-700 dark:text-gray-300" />
             </button>
             <button
               onClick={() => {
@@ -97,11 +90,11 @@ export default function LockedTokenTable({
               )}
               disabled={lockedTokens?.length !== TOKENS_PER_PAGE}
             >
-              <ChevronRight style={{ width: 20 }} />
+              <ChevronRightIcon className="h-5 w-5 text-gray-700 dark:text-gray-300" />
             </button>
           </div>
           <div className="flex justify-end mt-4">
-            <button className="px-1 py-1 ml-5 mr-2 text-sm font-medium bg-white border-2 rounded-lg cursor-default tracking-tightest-2 font-sf-compact-medium text-brand-gray-2">
+            <button className="px-1 py-1 ml-5 mr-2 text-sm font-medium bg-white dark:bg-gray-700 dark:border-gray-500 border-2 rounded-lg cursor-default tracking-tightest-2 font-sf-compact-medium text-brand-gray-2">
               Withdraw unlocked
             </button>
           </div>

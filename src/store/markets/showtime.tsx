@@ -3,6 +3,12 @@ import ShowtimeWhite from '../../assets/showtime-white.svg'
 import ShowtimeBlack from '../../assets/showtime-black.svg'
 import ShowtimeOutline from '../../assets/showtime-outline.svg'
 import { queryLambdavatar } from 'actions'
+import { useTheme } from 'next-themes'
+
+function IsDarkTheme() {
+  const { theme } = useTheme()
+  return theme === 'dark' ? true : false
+}
 
 export default class ShowtimeMarketSpecifics implements IMarketSpecifics {
   // Market
@@ -29,6 +35,14 @@ export default class ShowtimeMarketSpecifics implements IMarketSpecifics {
 
   getMarketOutlineSVG(): JSX.Element {
     return <ShowtimeOutline />
+  }
+
+  getMarketSVGTheme(): JSX.Element {
+    if (IsDarkTheme) {
+      return <ShowtimeWhite />
+    } else {
+      return <ShowtimeBlack />
+    }
   }
 
   // Tokens

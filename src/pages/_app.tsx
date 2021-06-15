@@ -3,6 +3,7 @@ import '../styles/globals.css'
 import '../styles/fonts/gilroy/style.css'
 import '../styles/fonts/sf-compact-display/style.css'
 import '../styles/nprogress.css'
+import { ThemeProvider } from 'next-themes'
 
 import { createContext, Fragment, ReactNode, useEffect, useState } from 'react'
 import type { AppProps } from 'next/app'
@@ -104,9 +105,11 @@ function MyApp({ Component, pageProps }: AppProps) {
       >
         <Web3ReactProvider getLibrary={getLibrary}>
           <Web3ReactManager>
-            <Layout>
-              <Component {...pageProps} />
-            </Layout>
+            <ThemeProvider attribute="class">
+              <Layout>
+                <Component {...pageProps} />
+              </Layout>
+            </ThemeProvider>
           </Web3ReactManager>
           <WrongNetworkOverlay />
           <ModalRoot />

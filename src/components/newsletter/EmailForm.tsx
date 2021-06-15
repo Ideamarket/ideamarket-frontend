@@ -9,7 +9,7 @@ export default function EmailForm() {
   return (
     <>
       <form
-        className="flex flex-col items-center px-2 pb-2 space-x-2 space-y-2 bg-white md:pb-0 md:rounded-tr-lg md:flex-row md:space-y-0 md:ml-auto"
+        className="flex flex-col items-center px-2 pb-2 space-x-2 space-y-2 bg-white dark:bg-gray-700 md:pb-0 md:rounded-tr-lg md:flex-row md:space-y-0 md:ml-auto"
         onSubmit={async (e) => {
           e.preventDefault()
           if (email.trim() === '') {
@@ -47,7 +47,7 @@ export default function EmailForm() {
       >
         <label
           htmlFor="email"
-          className="flex-shrink-0 block text-sm font-medium text-gray-700"
+          className="flex-shrink-0 block text-sm font-medium text-gray-700 dark:text-gray-300"
         >
           Notify me of new markets:
         </label>
@@ -57,10 +57,10 @@ export default function EmailForm() {
             name="email"
             id="email"
             className={classNames(
-              'h-8 shadow-sm block w-full sm:text-sm rounded-md focus:outline-none',
+              'h-8 shadow-sm block w-full sm:text-sm rounded-md focus:outline-none dark:text-gray-300 dark:bg-gray-600 dark:placeholder-gray-200',
               isError
                 ? 'border-red-300 text-brand-red placeholder-red-300 focus:ring-red-500 focus:border-brand-red'
-                : 'border-gray-300 focus:ring-brand-blue focus:border-brand-blue'
+                : 'border-gray-300 dark:border-gray-500 focus:ring-brand-blue focus:border-brand-blue'
             )}
             placeholder="you@example.com"
             value={email}
@@ -70,7 +70,7 @@ export default function EmailForm() {
         </div>
         <button
           type="submit"
-          className="flex-shrink-0 p-2 px-3 text-xs border rounded-md text-brand-gray-4 hover:border-brand-blue hover:text-brand-blue focus:border-brand-blue"
+          className="flex-shrink-0 p-2 px-3 text-xs border dark:border-gray-500 rounded-md text-brand-gray-4 dark:text-gray-200 hover:border-brand-blue hover:text-brand-blue focus:border-brand-blue dark:hover:border-brand-blue"
         >
           Sign up
         </button>

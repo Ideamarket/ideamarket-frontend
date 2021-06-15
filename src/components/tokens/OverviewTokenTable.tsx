@@ -213,8 +213,8 @@ export default function Table({
       <div className="flex flex-col">
         <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
           <div className="inline-block w-full py-2 align-middle sm:px-6 lg:px-8">
-            <div className="border-b border-gray-200 sm:rounded-t-lg">
-              <table className="min-w-full divide-y divide-gray-200">
+            <div className="border-b border-gray-200 dark:border-gray-500 sm:rounded-t-lg">
+              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-500">
                 <thead className="hidden md:table-header-group">
                   <tr>
                     <OverviewColumns
@@ -225,7 +225,7 @@ export default function Table({
                     />
                   </tr>
                 </thead>
-                <tbody className="w-full bg-white divide-y divide-gray-200">
+                <tbody className="w-full bg-white dark:bg-gray-700 divide-y divide-gray-200 dark:divide-gray-500">
                   {(tokenData as IdeaToken[]).map((token) => {
                     // Only load the rows if a market is found
                     if (marketsMap[token.marketID]) {

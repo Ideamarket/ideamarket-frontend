@@ -103,7 +103,7 @@ const TradeInterfaceBox: React.FC<TradeInterfaceBoxProps> = ({
   }
 
   return (
-    <div className="relative px-5 py-4 mb-1 border border-gray-100 rounded-md bg-gray-50 text-brand-new-dark">
+    <div className="relative px-5 py-4 mb-1 border border-gray-100 rounded-md bg-gray-50 dark:bg-gray-600 text-brand-new-dark">
       <div
         style={{
           top: '-16px',
@@ -173,7 +173,7 @@ const TradeInterfaceBox: React.FC<TradeInterfaceBoxProps> = ({
           />
         )}
         <input
-          className="w-full max-w-sm text-3xl text-right placeholder-gray-500 placeholder-opacity-50 border-none outline-none text-brand-gray-2 bg-gray-50"
+          className="w-full max-w-sm text-3xl text-right placeholder-gray-500 dark:placeholder-white placeholder-opacity-50 border-none outline-none text-brand-gray-2 dark:text-white bg-gray-50 dark:bg-gray-600"
           min="0"
           placeholder="0.0"
           disabled={txManager.isPending}
@@ -182,11 +182,11 @@ const TradeInterfaceBox: React.FC<TradeInterfaceBoxProps> = ({
         />
       </div>
       <div className="flex justify-between text-sm">
-        <div className="text-gray-500">
+        <div className="text-gray-500 dark:text-white">
           Balance: {isTokenBalanceLoading ? '...' : tokenBalance}
           {!txManager.isPending && label === 'Spend' && (
             <span
-              className="cursor-pointer text-brand-blue"
+              className="cursor-pointer text-brand-blue dark:text-blue-400"
               onClick={maxButtonClicked}
             >
               {' '}

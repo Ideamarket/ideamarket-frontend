@@ -7,11 +7,14 @@ import Close from '../assets/close.svg'
 import Hamburger from '../assets/hamburger.svg'
 import NProgress from 'nprogress'
 import A from './A'
+import { useTheme } from 'next-themes'
+import { SunIcon, MoonIcon } from '@heroicons/react/solid'
 import ModalService from 'components/modals/ModalService'
 import { EmailNewsletterModal } from 'components'
 import WalletModal from './wallet/WalletModal'
 
 export default function Nav() {
+  const { theme, setTheme } = useTheme()
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false)
   const router = useRouter()
   const closeMenu = () => setIsMobileNavOpen(false)
@@ -105,6 +108,17 @@ export default function Nav() {
               ))}
             </div>
             <div className="z-20 hidden md:ml-6 md:flex md:items-center">
+              <button
+                id="switchTheme"
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                className="h-10 w-10 flex justify-center items-center focus:outline-none text-blue-50"
+              >
+                {theme === 'dark' ? (
+                  <SunIcon className="h-5 w-5 text-blue-50" />
+                ) : (
+                  <MoonIcon className="h-5 w-5 text-blue-50" />
+                )}
+              </button>
               <WalletStatus openModal={() => ModalService.open(WalletModal)} />
             </div>
             <div className="flex items-center -mr-2 md:hidden">
@@ -158,6 +172,19 @@ export default function Nav() {
 
             <div className="flex justify-center mt-5">
               <WalletStatus openModal={() => ModalService.open(WalletModal)} />
+            </div>
+            <div className="flex justify-center mt-5">
+              <button
+                id="switchTheme"
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                className="h-10 w-10 flex justify-center items-center focus:outline-none  text-blue-50"
+              >
+                {theme === 'dark' ? (
+                  <SunIcon className="h-5 w-5 text-blue-50" />
+                ) : (
+                  <MoonIcon className="h-5 w-5 text-blue-50" />
+                )}
+              </button>
             </div>
           </div>
         </div>

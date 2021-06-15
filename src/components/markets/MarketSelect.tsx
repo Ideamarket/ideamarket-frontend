@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
-import Select from 'react-select'
-import { getMarketSpecificsByMarketName } from 'store/markets'
 import { useQuery } from 'react-query'
+import { getMarketSpecificsByMarketName } from 'store/markets'
 import { queryMarkets } from 'store/ideaMarketsStore'
+import DropDown from 'components/DropDown'
+import { useTheme } from 'next-themes'
 
 export default function MarketSelect({
   onChange,
@@ -14,7 +15,7 @@ export default function MarketSelect({
   isClearable?: boolean
 }) {
   const [selectMarketValues, setSelectMarketValues] = useState([])
-
+  const { theme } = useTheme()
   const { data: markets, isLoading: isMarketsLoading } = useQuery(
     'all-markets',
     queryMarkets
@@ -40,12 +41,16 @@ export default function MarketSelect({
   }, [markets])
 
   const selectMarketFormat = (entry) => (
-    <div className="flex items-center">
+    <div className="flex items-center dark:text-gray-300 text-gray-500 ">
       <div>
         {entry?.market?.name
-          ? getMarketSpecificsByMarketName(
-              entry.market.name
-            ).getMarketSVGBlack()
+          ? theme === 'dark'
+            ? getMarketSpecificsByMarketName(
+                entry.market.name
+              ).getMarketSVGWhite()
+            : getMarketSpecificsByMarketName(
+                entry.market.name
+              ).getMarketSVGBlack()
           : ''}
       </div>
       <div className="ml-2.5">{entry.market.name}</div>
@@ -53,7 +58,7 @@ export default function MarketSelect({
   )
 
   return (
-    <Select
+    <DropDown
       isDisabled={disabled}
       isClearable={isClearable}
       isSearchable={false}
@@ -61,23 +66,8 @@ export default function MarketSelect({
       options={selectMarketValues}
       formatOptionLabel={selectMarketFormat}
       defaultValue={isMarketsLoading ? undefined : selectMarketValues[0]}
-      className="border-2 border-gray-200 rounded-md text-brand-gray-4 market-select"
-      theme={(theme) => ({
-        ...theme,
-        borderRadius: 2,
-        colors: {
-          ...theme.colors,
-          primary25: '#f6f6f6', // brand-gray
-          primary: '#0857e0', // brand-blue
-        },
-      })}
-      styles={{
-        valueContainer: (provided) => ({
-          ...provided,
-          minHeight: '50px',
-        }),
-      }}
-      instanceId="wallet-market-select"
+      className="border-2 border-gray-200  dark:border-gray-500  dark:placeholder-gray-300 rounded-md text-brand-gray-4 dark:text-gray-200 market-select"
+      name=""
     />
   )
 }

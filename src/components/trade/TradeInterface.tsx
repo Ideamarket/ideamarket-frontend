@@ -11,6 +11,7 @@ import {
   useTokenIconURL,
 } from 'actions'
 import { floatToWeb3BN, formatBigNumber, useTransactionManager } from 'utils'
+import DropDown from 'components/DropDown'
 import { useContractStore } from 'store/contractStore'
 import { NETWORK } from 'store/networks'
 import BigNumber from 'bignumber.js'
@@ -391,7 +392,7 @@ export default function TradeInterface({
   return (
     <div>
       <div
-        className="p-4 mx-auto bg-white rounded-xl"
+        className="p-4 mx-auto bg-white dark:bg-gray-700 rounded-xl"
         style={{ maxWidth: 550 }}
       >
         <div className="flex justify-between">
@@ -476,7 +477,9 @@ export default function TradeInterface({
                 htmlFor="lockCheckbox"
                 className={classNames(
                   'ml-2 cursor-pointer',
-                  isLockChecked ? 'text-brand-blue' : 'text-gray-500'
+                  isLockChecked
+                    ? 'text-brand-blue dark:text-blue-400'
+                    : 'text-gray-500 dark:text-white'
                 )}
               >
                 Lock for 1 year

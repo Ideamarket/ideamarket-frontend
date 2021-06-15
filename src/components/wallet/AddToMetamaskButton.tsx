@@ -35,7 +35,7 @@ export default function AddToMetamaskButton({ token }: { token: IdeaToken }) {
   return (
     <>
       <button
-        className="text-brand-gray-2 underline"
+        className="text-brand-gray-2 dark:text-gray-300 underline"
         onClick={onClick}
         disabled={disabled}
       >

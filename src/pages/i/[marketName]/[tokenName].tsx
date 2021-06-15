@@ -64,13 +64,13 @@ function DetailsSkeleton() {
         <div className="text-sm font-semibold text-brand-new-dark">
           Listed on
         </div>
-        <div className="w-24 h-6 mt-2 bg-gray-400 rounded"></div>
+        <div className="w-24 h-6 mt-2 bg-gray-400 dark:bg-gray-900 rounded"></div>
       </div>
       <div className="inline-block">
         <div className="text-sm font-semibold text-brand-new-dark">
           Listing Owner
         </div>
-        <div className="w-24 h-6 mt-2 bg-gray-400 rounded"></div>
+        <div className="w-24 h-6 mt-2 bg-gray-400 dark:bg-gray-900 rounded"></div>
       </div>
     </>
   )
@@ -294,8 +294,8 @@ export default function TokenDetails({
   return (
     <>
       <SEO />
-      <div className="min-h-screen bg-brand-gray">
-        <div className="px-4 md:px-6 pt-12 md:pt-10 pb-5 text-white bg-top-mobile md:bg-top-desktop h-156.5 md:max-h-96">
+      <div className="min-h-screen bg-brand-gray dark:bg-gray-900 pb-20">
+        <div className="px-4 md:px-6 pt-12 md:pt-10 pb-5 text-white bg-top-mobile md:bg-top-desktop h-156.5 md:max-h-96 md:mb-10">
           <div className="mx-auto max-w-88 md:max-w-304">
             <span className="text-brand-alto font-sf-compact-medium">
               <span
@@ -415,7 +415,7 @@ export default function TokenDetails({
         <div className="px-2 pb-5 mx-auto mt-12 text-white transform md:mt-10 -translate-y-30 md:-translate-y-28 max-w-88 md:max-w-304">
           <div className="flex flex-col md:grid md:grid-cols-2">
             <div className="flex flex-col">
-              <div className="h-full p-5 mb-5 bg-white border rounded-md md:mr-5 border-brand-border-gray">
+              <div className="h-full p-5 mb-5 bg-white dark:bg-gray-700 dark:border-gray-500 border rounded-md md:mr-5 border-brand-border-gray">
                 <div className="flex flex-col justify-between lg:flex-row">
                   <div>
                     {isLoading ? (
@@ -423,20 +423,20 @@ export default function TokenDetails({
                     ) : (
                       <>
                         <div className="inline-block pr-6">
-                          <div className="text-sm font-semibold text-brand-new-dark">
+                          <div className="text-sm font-semibold text-brand-new-dark dark:text-gray-400">
                             Listed on
                           </div>
-                          <div className="mt-2 text-base font-semibold text-brand-new-dark">
+                          <div className="mt-2 text-base font-semibold text-brand-new-dark dark:text-gray-300">
                             {DateTime.fromSeconds(
                               Number(token.listedAt)
                             ).toFormat('MMM dd yyyy')}
                           </div>
                         </div>
                         <div className="inline-block">
-                          <div className="text-sm font-semibold text-brand-new-dark">
+                          <div className="text-sm font-semibold text-brand-new-dark dark:text-gray-400">
                             Listing Owner
                           </div>
-                          <div className="mt-2 text-base font-semibold text-brand-new-dark">
+                          <div className="mt-2 text-base font-semibold text-brand-new-dark dark:text-gray-300">
                             {ZERO_ADDRESS === token.tokenOwner ? (
                               'None'
                             ) : (
@@ -473,7 +473,7 @@ export default function TokenDetails({
                     )}
                   </div>
                 </div>
-                <div className="mt-5 mb-3 text-sm font-semibold md:mt-8 text-brand-gray-2">
+                <div className="mt-5 mb-3 text-sm font-semibold md:mt-8 text-brand-gray-2 dark:text-gray-400">
                   Listing Owner Options
                 </div>
                 {isLoading ? (
@@ -491,13 +491,13 @@ export default function TokenDetails({
                   </>
                 ) : token.tokenOwner === ZERO_ADDRESS ? (
                   <>
-                    <div className="font-medium text-brand-gray-2">
+                    <div className="font-medium text-brand-gray-2 dark:text-gray-400">
                       <div className="text-xs">
                         Verify ownership of this {market ? market.name : ''}{' '}
                         account to withdraw accumulated interest.
                       </div>
                     </div>
-                    <div className="mt-3 mb-2 text-sm md:mb-5 text-brand-blue">
+                    <div className="mt-3 mb-2 text-sm md:mb-5 text-brand-blue dark:text-blue-500">
                       {marketSpecifics.isVerificationEnabled() ? (
                         <div
                           className="font-semibold cursor-pointer hover:underline"
@@ -530,7 +530,7 @@ export default function TokenDetails({
                           : 'Your connected wallet owns this listing.'}
                       </div>
                     </div>
-                    <div className="mt-2.5 text-sm text-brand-blue">
+                    <div className="mt-2.5 text-sm text-brand-blue dark:text-gray-200">
                       Available interest:{' '}
                       {web3BNToFloatString(
                         investmentTokenToUnderlying(
@@ -645,7 +645,7 @@ export default function TokenDetails({
                   <div className="relative h-24 mt-4">
                     {/* <div className="flex items-center justify-between"> */}
                     <div className="flex items-center space-x-1">
-                      <p className="block text-sm font-medium text-gray-700">
+                      <p className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                         Embed
                       </p>
                       <button
@@ -659,9 +659,9 @@ export default function TokenDetails({
                         }}
                       >
                         {isEmbedCopyDone ? (
-                          <CopyCheck className="w-4 h-4 text-gray-400" />
+                          <CopyCheck className="w-4 h-4 text-gray-400 dark:text-gray-300" />
                         ) : (
-                          <CopyIcon className="w-4 h-4 text-gray-400" />
+                          <CopyIcon className="w-4 h-4 text-gray-400 dark:text-gray-300" />
                         )}
                       </button>
                     </div>
@@ -707,7 +707,7 @@ export default function TokenDetails({
                 </div>
               </div>
             </div>
-            <div className="p-5 mb-5 bg-white border rounded-md border-brand-border-gray">
+            <div className="p-5 mb-5 bg-white dark:bg-gray-700 dark:border-gray-500 border rounded-md border-brand-border-gray">
               {isLoading ? (
                 <div className="h-full p-18 md:p-0">loading</div>
               ) : web3 ? (
@@ -721,7 +721,6 @@ export default function TokenDetails({
                   showTypeSelection={true}
                   showTradeButton={true}
                   disabled={false}
-                  bgcolor="#ffffff"
                 />
               ) : (
                 <div className="flex items-center justify-center h-full p-18 md:p-0">

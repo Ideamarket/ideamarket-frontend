@@ -161,7 +161,8 @@ const FiltersButton = ({ filter, isSelected, onClick }: FiltersButtonProps) => {
       className={classNames(
         'flex items-center p-1 border rounded-md px-3 text-sm',
         {
-          'text-brand-blue bg-gray-100': isSelected,
+          'text-brand-blue dark:text-white bg-gray-100 dark:bg-very-dark-blue':
+            isSelected,
         },
         { 'text-brand-black': !isSelected }
       )}
@@ -275,7 +276,7 @@ export const OverviewFilters = ({
   }
 
   return (
-    <div className="grid md:flex justify-center grid-cols-2 md:grid-cols-none p-4 bg-white rounded-t-lg gap-x-2 gap-y-2 md:justify-start">
+    <div className="grid md:flex justify-center grid-cols-2 md:grid-cols-none p-4 bg-white dark:bg-gray-700 rounded-t-lg gap-x-2 gap-y-2 md:justify-start">
       {Object.values(Filters).map((filter) => (
         <FiltersButton
           key={filter.id}

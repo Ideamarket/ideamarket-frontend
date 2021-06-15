@@ -31,7 +31,7 @@ export default function WrongNetworkOverlay() {
   }
 
   return (
-    <div className="absolute top-0 left-0 z-50 w-screen h-screen bg-gray-200">
+    <div className="absolute top-0 left-0 z-50 w-screen h-screen bg-gray-200 dark:bg-gray-800">
       <div className="flex items-center justify-center w-full h-full overflow-auto">
         <div className="flex flex-col items-center">
           <img
@@ -49,7 +49,7 @@ export default function WrongNetworkOverlay() {
             Please connect to <strong>{NETWORK.getNetworkName()}</strong> and
             try again.
           </div>
-          <div className="mt-5 bg-white border rounded border-brand-gray-2">
+          <div className="mt-5 bg-white dark:bg-gray-700 border dark:border-gray-500 rounded border-brand-gray-2">
             <NoSSRWalletInterface />
           </div>
         </div>
