@@ -11,7 +11,6 @@ import {
   useTokenIconURL,
 } from 'actions'
 import { floatToWeb3BN, formatBigNumber, useTransactionManager } from 'utils'
-import DropDown from 'components/DropDown'
 import { useContractStore } from 'store/contractStore'
 import { NETWORK } from 'store/networks'
 import BigNumber from 'bignumber.js'
@@ -533,7 +532,7 @@ export default function TradeInterface({
                 className={classNames(
                   'py-4 text-lg font-bold rounded-2xl w-full font-sf-compact-medium',
                   isTradeButtonDisabled
-                    ? 'text-brand-gray-2 bg-brand-gray cursor-default border-brand-gray'
+                    ? 'text-brand-gray-2 dark:text-gray-300 bg-brand-gray dark:bg-gray-500 cursor-default border-brand-gray'
                     : 'border-brand-blue text-white bg-brand-blue font-medium  hover:bg-blue-800'
                 )}
                 disabled={isTradeButtonDisabled}

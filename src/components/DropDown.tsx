@@ -70,6 +70,7 @@ export default function MarketSelect({
           background: theme === 'dark' ? '#6B7280' : 'white',
         }),
       }}
+      instanceId="market-select"
     />
   )
 }

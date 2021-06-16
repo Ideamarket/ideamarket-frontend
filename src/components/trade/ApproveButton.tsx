@@ -70,10 +70,10 @@ export default function ApproveButton({
   return (
     <div
       className={classNames(
-        'py-4 px-4 text-lg font-bold rounded-2xl w-full font-sf-compact-medium text-center dark:border-gray-500 dark:bg-gray-500',
+        'py-4 px-4 text-lg font-bold rounded-2xl w-full font-sf-compact-medium text-center dark:border-gray-500',
         disable
-          ? 'text-brand-gray-2 dark:text-white bg-brand-gray cursor-default border-brand-gray'
-          : 'border-brand-blue text-white bg-brand-blue font-medium  hover:bg-blue-800 cursor-pointer'
+          ? 'text-brand-gray-2 dark:text-gray-300 bg-brand-gray dark:bg-gray-500 cursor-default border-brand-gray'
+          : 'border-brand-blue text-white bg-brand-blue font-medium hover:bg-blue-800 cursor-pointer'
       )}
       onClick={() => {
         !disable && approve()

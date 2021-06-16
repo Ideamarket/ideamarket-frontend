@@ -35,7 +35,6 @@ import {
   Filters,
   DropdownFilters,
 } from 'components/tokens/OverviewFilters'
-import classNames from 'classnames'
 
 export default function Home() {
   const defaultColumns = [
@@ -167,9 +166,7 @@ export default function Home() {
     )
   )
 
-  const router = useRouter()
-  const { setOnWalletConnectedCallback, isEmailHeaderActive } =
-    useContext(GlobalContext)
+  const { setOnWalletConnectedCallback } = useContext(GlobalContext)
 
   function onNameSearchChanged(nameSearch) {
     setSelectedFilterId(Categories.TOP.id)
@@ -229,14 +226,7 @@ export default function Home() {
   return (
     <>
       <NextSeo title="Home" />
-      <div
-        className={classNames(
-          'overflow-x-hidden bg-brand-gray dark:bg-gray-900',
-          isEmailHeaderActive && router.pathname === '/'
-            ? 'py-32 md:py-28'
-            : 'py-16'
-        )}
-      >
+      <div className="overflow-x-hidden bg-brand-gray dark:bg-gray-900">
         <div className="w-screen px-6 pt-10 pb-40 text-center text-white dark:text-gray-200 bg-cover bg-top-mobile md:bg-top-desktop">
           <div>
             <h2 className="text-3xl md:text-6xl font-gilroy-bold">

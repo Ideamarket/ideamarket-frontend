@@ -103,17 +103,17 @@ function MyApp({ Component, pageProps }: AppProps) {
           setIsEmailHeaderActive,
         }}
       >
-        <Web3ReactProvider getLibrary={getLibrary}>
-          <Web3ReactManager>
-            <ThemeProvider attribute="class">
+        <ThemeProvider attribute="class">
+          <Web3ReactProvider getLibrary={getLibrary}>
+            <Web3ReactManager>
               <Layout>
                 <Component {...pageProps} />
               </Layout>
-            </ThemeProvider>
-          </Web3ReactManager>
-          <WrongNetworkOverlay />
-          <ModalRoot />
-        </Web3ReactProvider>
+            </Web3ReactManager>
+            <WrongNetworkOverlay />
+            <ModalRoot />
+          </Web3ReactProvider>
+        </ThemeProvider>
       </GlobalContext.Provider>
     </>
   )

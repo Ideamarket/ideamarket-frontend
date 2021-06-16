@@ -10,7 +10,6 @@ import A from './A'
 import { useTheme } from 'next-themes'
 import { SunIcon, MoonIcon } from '@heroicons/react/solid'
 import ModalService from 'components/modals/ModalService'
-import { EmailNewsletterModal } from 'components'
 import WalletModal from './wallet/WalletModal'
 
 export default function Nav() {

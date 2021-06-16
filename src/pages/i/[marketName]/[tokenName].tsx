@@ -615,13 +615,13 @@ export default function TokenDetails({
                           type="text"
                           name="text"
                           id="perm_link"
-                          className="block w-full pl-10 border-gray-300 rounded-none focus:ring-indigo-500 focus:border-indigo-500 rounded-l-md sm:text-sm text-brand-new-dark"
+                          className="block w-full pl-10 border-gray-300 rounded-none focus:ring-indigo-500 focus:border-indigo-500 rounded-l-md sm:text-sm text-brand-new-dark dark:bg-gray-500 dark:text-gray-300"
                           defaultValue={permanentLink}
                           disabled={true}
                         />
                       </div>
                       <button
-                        className="relative inline-flex items-center px-4 py-2 -ml-px space-x-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-r-md bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+                        className="relative inline-flex items-center px-4 py-2 -ml-px space-x-2 text-sm font-medium text-gray-700 dark:bg-gray-500 border border-gray-300 rounded-r-md bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
                         onClick={() => {
                           copy(permanentLink)
                           toast.success('Copied the listing permanent link.')
@@ -632,9 +632,9 @@ export default function TokenDetails({
                         }}
                       >
                         {isLinkCopyDone ? (
-                          <CopyCheck className="text-[#0857E0] w-[22px] h-[22px]" />
+                          <CopyCheck className="text-[#0857E0] dark:text-blue-400 w-[22px] h-[22px]" />
                         ) : (
-                          <ClipIcon className="w-5 h-5" />
+                          <ClipIcon className="w-5 h-5 dark:text-blue-400" />
                         )}
 
                         <span className="sr-only">Copy</span>
