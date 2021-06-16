@@ -173,7 +173,7 @@ export default function TradeInterface({
 
   const ideaTokenValue = web3BNToFloatString(
     calculateIdeaTokenDaiValue(
-      ideaToken?.rawSupply,
+      ideaToken?.rawSupply.add(new BN(masterIdeaTokenAmount)),
       market,
       masterIdeaTokenAmountBN
     ),
@@ -527,10 +527,7 @@ export default function TradeInterface({
         />
 
         <div
-          className={classNames(
-            'flex items-center justify-between my-2 text-sm',
-            tradeType === 'sell' && 'justify-end'
-          )}
+          className={classNames('flex items-center justify-start my-2 text-sm')}
         >
           <div
             className={classNames(
@@ -576,8 +573,6 @@ export default function TradeInterface({
               </div>
             </Tooltip>
           </div>
-
-          <b>{tokenPriceLabel}</b>
         </div>
 
         {showTradeButton && (
