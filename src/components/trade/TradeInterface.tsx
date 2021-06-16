@@ -173,7 +173,7 @@ export default function TradeInterface({
 
   const ideaTokenValue = web3BNToFloatString(
     calculateIdeaTokenDaiValue(
-      ideaToken?.rawSupply.add(new BN(masterIdeaTokenAmount)),
+      ideaToken?.rawSupply.add(masterIdeaTokenAmountBN),
       market,
       masterIdeaTokenAmountBN
     ),
@@ -456,9 +456,6 @@ export default function TradeInterface({
     tradeType === 'buy'
       ? spendTokenSymbol.toUpperCase()
       : selectedToken?.symbol.toUpperCase()
-  const tokenPriceLabel = `1 ${ideaToken.name} = ${parseFloat(
-    web3BNToFloatString(ideaTokenPriceBN || new BN('0'), tenPow18, 8)
-  ).toFixed(8)} ${labelSymbol}`
 
   return (
     <div>
