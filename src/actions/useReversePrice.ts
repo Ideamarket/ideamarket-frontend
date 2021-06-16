@@ -163,7 +163,7 @@ export default function useReversePrice(
       if (!isCancelled) {
         const pow = new BigNumber('10').pow(new BigNumber('18'))
         setOutputBN(bn)
-        setOutput(web3BNToFloatString(bn, pow, 4))
+        setOutput(web3BNToFloatString(bn, pow, 8))
         setIsLoading(false)
       }
     }

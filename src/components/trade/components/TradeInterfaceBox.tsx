@@ -82,10 +82,21 @@ const TradeInterfaceBox: React.FC<TradeInterfaceBoxProps> = ({
 
   useEffect(() => {
     if (inputValue !== ideaTokenAmount) {
-      if (parseFloat(ideaTokenAmount) <= 0) {
+      if (isNaN(ideaTokenAmount) || parseFloat(ideaTokenAmount) <= 0) {
         setInputValue('') // If one input is 0, make other one 0 too
       } else {
-        setInputValue(ideaTokenAmount.toString())
+        // Determines how many decimals to show
+        const output8Decimals = parseFloat(
+          parseFloat(ideaTokenAmount).toFixed(8)
+        )
+        const output4Decimals = parseFloat(
+          parseFloat(ideaTokenAmount).toFixed(4)
+        )
+        setInputValue(
+          output8Decimals >= 1
+            ? output4Decimals.toString()
+            : output8Decimals.toString()
+        )
       }
     }
   }, [ideaTokenAmount])
@@ -110,7 +121,7 @@ const TradeInterfaceBox: React.FC<TradeInterfaceBoxProps> = ({
     slippage &&
     ((tradeType === 'buy' && isIdeaToken) ||
       (tradeType === 'sell' && !isIdeaToken))
-      ? ` (-${parseFloat(slippage.toFixed(6))}%)`
+      ? ` (-${parseFloat(slippage.toFixed(3))}%)`
       : ''
 
   return (
@@ -194,7 +205,7 @@ const TradeInterfaceBox: React.FC<TradeInterfaceBoxProps> = ({
       </div>
       <div className="flex justify-between text-sm">
         <div className="text-gray-500">
-          Balance: {isTokenBalanceLoading ? '...' : tokenBalance}
+          Balance: {isTokenBalanceLoading ? '...' : parseFloat(tokenBalance)}
           {!txManager.isPending && label === 'Spend' && (
             <span
               className="cursor-pointer text-brand-blue"
