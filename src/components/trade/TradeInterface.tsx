@@ -173,7 +173,7 @@ export default function TradeInterface({
 
   const ideaTokenValue = web3BNToFloatString(
     calculateIdeaTokenDaiValue(
-      ideaToken?.rawSupply,
+      ideaToken?.rawSupply.add(new BN(masterIdeaTokenAmount)),
       market,
       masterIdeaTokenAmountBN
     ),
@@ -452,17 +452,6 @@ export default function TradeInterface({
     tokenValue: ideaTokenValue,
   }
 
-<<<<<<< HEAD
-=======
-  const labelSymbol =
-    tradeType === 'buy'
-      ? spendTokenSymbol.toUpperCase()
-      : selectedToken?.symbol.toUpperCase()
-  const tokenPriceLabel = `1 ${ideaToken.name} = ${parseFloat(
-    web3BNToFloatString(ideaTokenPriceBN || new BN('0'), tenPow18, 8)
-  ).toFixed(8)} ${labelSymbol}`
-
->>>>>>> 7c7a7c5... fix: maybe get rid of commit, trying to fix stuff with how many decimals shown
   return (
     <div>
       <div
