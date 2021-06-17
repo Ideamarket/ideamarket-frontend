@@ -56,7 +56,7 @@ export default function useTokenToDAI(
 
       const bn = await fn
       if (!isCancelled) {
-        const pow = new BigNumber('10').pow(new BigNumber(decimals))
+        const pow = new BigNumber('10').pow(new BigNumber('18'))
         setOutputBN(bn)
         setOutput(web3BNToFloatString(bn, pow, 4))
         setIsLoading(false)
