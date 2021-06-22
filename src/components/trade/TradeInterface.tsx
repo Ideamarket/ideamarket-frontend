@@ -160,20 +160,10 @@ export default function TradeInterface({
     ? selectedTokenAmountBN
     : calculatedTokenAmountBN
 
-  // Calculates the ideaToken price relative to selectedToken
-  const [isIdeaTokenPriceLoading, ideaTokenPriceBN, ideaTokenPrice] =
-    useOutputAmount(
-      ideaToken,
-      market,
-      selectedToken?.address,
-      '1',
-      selectedToken?.decimals,
-      tradeType
-    )
-
   const ideaTokenValue = web3BNToFloatString(
     calculateIdeaTokenDaiValue(
-      ideaToken?.rawSupply.add(masterIdeaTokenAmountBN),
+      ideaToken?.rawSupply.add(masterIdeaTokenAmountBN) ||
+        masterIdeaTokenAmountBN,
       market,
       masterIdeaTokenAmountBN
     ),
@@ -451,11 +441,6 @@ export default function TradeInterface({
     selectedIdeaToken: newIdeaToken || selectedIdeaToken,
     tokenValue: ideaTokenValue,
   }
-
-  const labelSymbol =
-    tradeType === 'buy'
-      ? spendTokenSymbol.toUpperCase()
-      : selectedToken?.symbol.toUpperCase()
 
   return (
     <div>
