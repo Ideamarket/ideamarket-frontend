@@ -442,6 +442,11 @@ export default function TradeInterface({
     tokenValue: ideaTokenValue,
   }
 
+  const labelSymbol =
+    tradeType === 'buy'
+      ? spendTokenSymbol.toUpperCase()
+      : selectedToken?.symbol.toUpperCase()
+
   return (
     <div>
       <div
@@ -538,9 +543,9 @@ export default function TradeInterface({
             </label>
             <Tooltip className="ml-2">
               <div className="w-32 md:w-64">
-                Lock tokens to show your long-term confidence in a listing.
-                You will be unable to sell or withdraw locked tokens for the
-                time period specified.
+                Lock tokens to show your long-term confidence in a listing. You
+                will be unable to sell or withdraw locked tokens for the time
+                period specified.
                 <br />
                 <br />
                 For more information, see{' '}
