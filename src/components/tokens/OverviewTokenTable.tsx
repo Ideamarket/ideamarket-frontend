@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useInfiniteQuery, useQuery } from 'react-query'
 import { flatten } from 'lodash'
 
-import { WEEK_SECONDS } from 'utils'
+import { WEEK_SECONDS, ZERO_ADDRESS } from 'utils'
 import {
   IdeaToken,
   IdeaMarket,
@@ -13,7 +13,7 @@ import { querySupplyRate, queryExchangeRate } from 'store/compoundStore'
 import { useIdeaMarketsStore } from 'store/ideaMarketsStore'
 import TokenRow from './OverviewTokenRow'
 import TokenRowSkeleton from './OverviewTokenRowSkeleton'
-import { Categories } from 'store/models/category'
+import { Filters } from 'components/tokens/OverviewFilters'
 import { OverviewColumns } from './table/OverviewColumns'
 
 type Props = {
@@ -53,7 +53,7 @@ export default function Table({
   )
 
   const filterTokens =
-    selectedFilterId === Categories.STARRED.id ? watchingTokens : undefined
+    selectedFilterId === Filters.STARRED.id ? watchingTokens : undefined
 
   const {
     data: compoundExchangeRate,
@@ -94,13 +94,13 @@ export default function Table({
         markets,
         TOKENS_PER_PAGE,
         WEEK_SECONDS,
-        selectedFilterId === Categories.HOT.id
+        selectedFilterId === Filters.HOT.id
           ? 'dayChange'
-          : selectedFilterId === Categories.NEW.id
+          : selectedFilterId === Filters.NEW.id
           ? 'listedAt'
           : orderBy,
-        selectedFilterId === Categories.HOT.id ||
-        selectedFilterId === Categories.NEW.id
+        selectedFilterId === Filters.HOT.id ||
+        selectedFilterId === Filters.NEW.id
           ? 'desc'
           : orderDirection,
         nameSearch,
@@ -127,6 +127,12 @@ export default function Table({
   canFetchMoreRef.current = canFetchMore
 
   const tokenData = flatten(infiniteData || [])
+
+  const filteredData = tokenData.filter((token) =>
+    selectedFilterId === Filters.VERIFIED.id
+      ? token.tokenOwner !== ZERO_ADDRESS
+      : true
+  )
 
   useEffect(() => {
     const fetch = async () => {
@@ -226,7 +232,7 @@ export default function Table({
                   </tr>
                 </thead>
                 <tbody className="w-full bg-white dark:bg-gray-700 divide-y divide-gray-200 dark:divide-gray-500">
-                  {(tokenData as IdeaToken[]).map((token) => {
+                  {(filteredData as IdeaToken[]).map((token) => {
                     // Only load the rows if a market is found
                     if (marketsMap[token.marketID]) {
                       return (

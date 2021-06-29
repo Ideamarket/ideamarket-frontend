@@ -17,7 +17,6 @@ import { NETWORK } from 'store/networks'
 import Plus from '../assets/plus-white.svg'
 import { GlobalContext } from '../pages/_app'
 import { useWalletStore } from 'store/walletStore'
-import { Categories } from 'store/models/category'
 import { ScrollToTop } from 'components/tokens/ScrollToTop'
 import { NextSeo } from 'next-seo'
 import {
@@ -158,19 +157,19 @@ export default function Home({ urlMarkets }: { urlMarkets?: string[] }) {
   )
   const { setOnWalletConnectedCallback } = useContext(GlobalContext)
   function onNameSearchChanged(nameSearch) {
-    setSelectedFilterId(Categories.TOP.id)
+    setSelectedFilterId(Filters.TOP.id)
     setNameSearch(nameSearch)
   }
   function onOrderByChanged(orderBy: string, direction: string) {
-    if (selectedFilterId === Categories.STARRED.id) {
+    if (selectedFilterId === Filters.STARRED.id) {
       return
     }
     if (orderBy === 'dayChange' && direction === 'desc') {
-      setSelectedFilterId(Categories.HOT.id)
+      setSelectedFilterId(Filters.HOT.id)
     } else if (orderBy === 'listedAt' && direction === 'desc') {
-      setSelectedFilterId(Categories.NEW.id)
+      setSelectedFilterId(Filters.NEW.id)
     } else {
-      setSelectedFilterId(Categories.TOP.id)
+      setSelectedFilterId(Filters.TOP.id)
     }
   }
   function onTradeClicked(token: IdeaToken, market: IdeaMarket) {

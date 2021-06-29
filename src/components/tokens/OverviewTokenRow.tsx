@@ -111,7 +111,7 @@ export default function TokenRow({
           </div>
         </td>
         {/* Mobile Verified Badge */}
-        <td className="md:hidden flex items-center justify-center py-4 text-sm leading-5 text-center text-gray-500 dark:text-gray-300 md:table-cell whitespace-nowrap">
+        <td className="md:hidden flex items-center justify-center py-4 text-sm leading-5 text-center text-gray-900 dark:text-gray-300 md:table-cell whitespace-nowrap">
           <div className="flex items-center justify-end h-full">
             <div className="w-5 h-5">
               {token.tokenOwner !== ZERO_ADDRESS && <BadgeCheckIcon />}
