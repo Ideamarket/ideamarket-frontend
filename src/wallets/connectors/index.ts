@@ -67,6 +67,14 @@ export const portis = new PortisConnector({
 
 export const torus = new TorusConnector({
   chainId: isMainnet ? MAINNET : RINKEBY,
+  initOptions: {
+    buildEnv: isMainnet ? 'production' : 'testing',
+    network: {
+      host: isMainnet ? 'mainnet' : 'rinkeby',
+      chainId: isMainnet ? MAINNET : RINKEBY,
+    },
+    showTorusButton: false,
+  },
 })
 
 export enum ConnectorIds {
