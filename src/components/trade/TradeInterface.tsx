@@ -86,6 +86,7 @@ export default function TradeInterface({
     active ? account : ''
   )
   const [isLockChecked, setIsLockChecked] = useState(false)
+  const [lockDuration, setLockDuration] = useState('0')
   const [isGiftChecked, setIsGiftChecked] = useState(false)
   const [isUnlockOnceChecked, setIsUnlockOnceChecked] = useState(true)
   const [isUnlockPermanentChecked, setIsUnlockPermanentChecked] =
@@ -367,6 +368,7 @@ export default function TradeInterface({
       selectedToken.decimals,
       BigNumber.ROUND_DOWN
     )
+    const secondsLocked = parseInt(lockDuration) * 86400
     const args =
       tradeType === 'buy'
         ? [
@@ -375,7 +377,7 @@ export default function TradeInterface({
             ideaTokenAmountBNLocal,
             selectedTokenAmountBNLocal,
             maxSlippage,
-            isLockChecked ? 31556952 : 0,
+            isLockChecked ? secondsLocked : 0,
             recipientAddress,
           ]
         : [
@@ -542,17 +544,21 @@ export default function TradeInterface({
             )}
           >
             <input
-              type="checkbox"
-              className="border-2 border-gray-200 rounded-sm cursor-pointer"
-              id="lockCheckbox"
+              type="text"
+              className="border-2 border-gray-200 rounded-sm"
+              id="lock-input"
               disabled={txManager.isPending || disabled}
-              checked={isLockChecked}
+              placeholder="Lock duration"
+              value={lockDuration || ''}
               onChange={(e) => {
-                setIsLockChecked(e.target.checked)
+                const setValue = /^\d*$/.test(e.target.value)
+                  ? e.target.value
+                  : lockDuration
+                setLockDuration(setValue)
               }}
             />
             <label
-              htmlFor="lockCheckbox"
+              htmlFor="lock-input"
               className={classNames(
                 'ml-2 cursor-pointer',
                 isLockChecked
