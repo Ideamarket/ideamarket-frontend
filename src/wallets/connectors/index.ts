@@ -74,6 +74,7 @@ export const torus = new TorusConnector({
       chainId: isMainnet ? MAINNET : RINKEBY,
     },
     showTorusButton: false,
+    useLocalStorage: true,
   },
 })
 
