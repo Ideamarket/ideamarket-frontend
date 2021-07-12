@@ -72,6 +72,7 @@ export enum ConnectorIds {
   WalletLink = 4,
   Coinbase = 4,
   Portis = 5,
+  Brave = 6,
 }
 
 export const connectorsById: { [connectorName in ConnectorIds]: any } = {
@@ -82,4 +83,5 @@ export const connectorsById: { [connectorName in ConnectorIds]: any } = {
   [ConnectorIds.Coinbase]: walletlink,
   [ConnectorIds.Fortmatic]: fortmatic,
   [ConnectorIds.Portis]: portis,
+  [ConnectorIds.Brave]: injected,
 }

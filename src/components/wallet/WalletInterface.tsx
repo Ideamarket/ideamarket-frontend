@@ -8,6 +8,7 @@ import WalletConnect from '../../assets/walletconnect.svg'
 import Coinbase from '../../assets/coinbase.svg'
 import Fortmatic from '../../assets/fortmatic.svg'
 import Portis from '../../assets/portis.svg'
+import Brave from '../../assets/brave.svg'
 import DotRed from '../../assets/dotred.svg'
 import DotGreen from '../../assets/dotgreen.svg'
 
@@ -170,6 +171,11 @@ export default function WalletInterface({
           svg={<Portis className="w-7 h-7" />}
           name="Portis"
           wallet={ConnectorIds.Portis}
+        />
+        <WalletButton
+          svg={<Brave className="w-6 h-6 mr-1" />}
+          name="Brave"
+          wallet={ConnectorIds.Brave}
         />
       </div>
       <hr className="m-4" />
