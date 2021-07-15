@@ -2,6 +2,7 @@ import { ArrowCircleUpIcon } from '@heroicons/react/solid'
 import { useTokenIconURL } from 'actions'
 import { A } from 'components'
 import { useRouter } from 'next/router'
+import { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
 import { querySingleToken } from 'store/ideaMarketsStore'
 import { getMarketSpecificsByMarketNameInURLRepresentation } from 'store/markets'
@@ -57,6 +58,12 @@ export default function IframeEmbed() {
     [`token-${marketName}-${tokenName}`, marketName, tokenName],
     querySingleToken
   )
+
+  useEffect(() => {
+    const sheet = document.createElement('style')
+    sheet.innerHTML = `body #torusIframe { display: none !important; }`
+    document.body.appendChild(sheet)
+  }, [])
 
   if (!router.isReady || isTokenLoading || !token) {
     return null
