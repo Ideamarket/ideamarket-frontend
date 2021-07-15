@@ -44,7 +44,7 @@ import { NETWORK } from 'store/networks'
 import { withdrawTokenInterest } from 'actions'
 import { DateTime } from 'luxon'
 import { NextSeo } from 'next-seo'
-import { getURL } from 'utils/seo-constants'
+import { DEFAULT_CANONICAL, DEFAULT_TITLE, getURL } from 'utils/seo-constants'
 import { GetServerSideProps } from 'next'
 import CopyCheck from '../../../assets/copy-check.svg'
 import copy from 'copy-to-clipboard'
@@ -273,6 +273,9 @@ export default function TokenDetails({
     <NextSeo
       title={tokenName}
       openGraph={{
+        type: 'website',
+        url: `${DEFAULT_CANONICAL}/i/${rawMarketName}/${rawTokenName}`,
+        title: DEFAULT_TITLE,
         images: [
           {
             url: `${
