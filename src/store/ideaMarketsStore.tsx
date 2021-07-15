@@ -212,7 +212,8 @@ type Params = [
   orderBy: string,
   orderDirection: string,
   search: string,
-  filterTokens: string[]
+  filterTokens: string[],
+  isVerifiedFilter: boolean
 ]
 
 export async function queryTokens(
@@ -232,6 +233,7 @@ export async function queryTokens(
     orderDirection,
     search,
     filterTokens,
+    isVerifiedFilter,
   ] = params
 
   const fromTs = Math.floor(Date.now() / 1000) - duration
@@ -250,7 +252,8 @@ export async function queryTokens(
           orderBy,
           orderDirection,
           search,
-          filterTokens
+          filterTokens,
+          isVerifiedFilter
         )
       )
     ).tokenNameSearch
@@ -265,7 +268,8 @@ export async function queryTokens(
           fromTs,
           orderBy,
           orderDirection,
-          filterTokens
+          filterTokens,
+          isVerifiedFilter
         )
       )
     ).ideaTokens

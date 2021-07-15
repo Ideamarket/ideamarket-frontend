@@ -36,36 +36,53 @@ export const OverviewColumns = ({
   orderDirection,
   columnData,
   columnClicked,
-}: Props) => (
-  <>
-    {columnData.map((column) => (
-      <th
-        className={classNames(
-          'py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase bg-gray-50 dark:bg-gray-600 dark:text-gray-50',
-          column.sortable && 'cursor-pointer',
-          column.value !== 'rank' && column.value !== 'income' && 'pr-6',
-          column.value === 'income' ? '' : 'pl-6'
-        )}
-        key={column.value}
-        onClick={() => {
-          if (column.sortable) {
-            columnClicked(column.value)
-          }
-        }}
-      >
-        {column.sortable && (
+}: Props) => {
+  function getColumnContent(column) {
+    switch (column.value) {
+      case 'income':
+        return <IncomeColumn />
+      case 'change':
+        return (
           <>
-            {currentColumn === column.value && orderDirection === 'asc' && (
-              <span>&#x25B2;</span>
-            )}
-            {currentColumn === column.value && orderDirection === 'desc' && (
-              <span>&#x25bc;</span>
-            )}
-            &nbsp;
+            24H
+            <br />
+            Change
           </>
-        )}
-        {column.value === 'income' ? <IncomeColumn /> : column.content}
-      </th>
-    ))}
-  </>
-)
+        )
+      default:
+        return column.content
+    }
+  }
+
+  return (
+    <>
+      {columnData.map((column) => (
+        <th
+          className={classNames(
+            'pl-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase bg-gray-50 dark:bg-gray-600 dark:text-gray-50',
+            column.sortable && 'cursor-pointer',
+            column.value !== 'rank' && 'pr-6'
+          )}
+          key={column.value}
+          onClick={() => {
+            if (column.sortable) {
+              columnClicked(column.value)
+            }
+          }}
+        >
+          {column.sortable && (
+            <>
+              {currentColumn === column.value && orderDirection === 'asc' && (
+                <span>&#x25B2;&nbsp;</span>
+              )}
+              {currentColumn === column.value && orderDirection === 'desc' && (
+                <span>&#x25bc;&nbsp;</span>
+              )}
+            </>
+          )}
+          {getColumnContent(column)}
+        </th>
+      ))}
+    </>
+  )
+}

@@ -20,13 +20,13 @@ type Header = {
 
 const headers: Header[] = [
   {
-    title: 'Name',
-    value: 'name',
+    title: '',
+    value: 'market',
     sortable: true,
   },
   {
-    title: 'Market',
-    value: 'market',
+    title: 'Name',
+    value: 'name',
     sortable: true,
   },
   {

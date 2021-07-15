@@ -6,6 +6,7 @@ import {
   calculateCurrentPriceBN,
   formatNumber,
   formatNumberInt,
+  formatNumberWithCommasAsThousandsSerperator,
   web3BNToFloatString,
   ZERO_ADDRESS,
 } from '../../utils'
@@ -151,7 +152,9 @@ export default function TokenCard({
             ) : parseFloat(token.daiInToken) <= 0.0 ? (
               <>&mdash;</>
             ) : (
-              <>{`$${formatNumber(token.daiInToken)}`}</>
+              <>{`$${formatNumberWithCommasAsThousandsSerperator(
+                parseInt(token.daiInToken)
+              )}`}</>
             )}
           </DetailsOverChartEntry>
 
@@ -164,7 +167,9 @@ export default function TokenCard({
             ) : parseFloat(token.supply) <= 0.0 ? (
               <>&mdash;</>
             ) : (
-              <>{`${formatNumber(token.supply)}`}</>
+              <>{`${formatNumberWithCommasAsThousandsSerperator(
+                parseInt(token.supply)
+              )}`}</>
             )}
           </DetailsOverChartEntry>
 

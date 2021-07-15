@@ -13,7 +13,7 @@ import { querySupplyRate, queryExchangeRate } from 'store/compoundStore'
 import { useIdeaMarketsStore } from 'store/ideaMarketsStore'
 import TokenRow from './OverviewTokenRow'
 import TokenRowSkeleton from './OverviewTokenRowSkeleton'
-import { Categories } from 'store/models/category'
+import { Filters } from 'components/tokens/OverviewFilters'
 import { OverviewColumns } from './table/OverviewColumns'
 
 type Props = {
@@ -55,7 +55,7 @@ export default function Table({
   )
 
   const filterTokens =
-    selectedFilterId === Categories.STARRED.id ? watchingTokens : undefined
+    selectedFilterId === Filters.STARRED.id ? watchingTokens : undefined
 
   const {
     data: compoundExchangeRate,
@@ -96,17 +96,18 @@ export default function Table({
         markets,
         TOKENS_PER_PAGE,
         WEEK_SECONDS,
-        selectedFilterId === Categories.HOT.id
+        selectedFilterId === Filters.HOT.id
           ? 'dayChange'
-          : selectedFilterId === Categories.NEW.id
+          : selectedFilterId === Filters.NEW.id
           ? 'listedAt'
           : orderBy,
-        selectedFilterId === Categories.HOT.id ||
-        selectedFilterId === Categories.NEW.id
+        selectedFilterId === Filters.HOT.id ||
+        selectedFilterId === Filters.NEW.id
           ? 'desc'
           : orderDirection,
         nameSearch,
         filterTokens,
+        selectedFilterId === Filters.VERIFIED.id,
       ],
     ],
     queryTokens,

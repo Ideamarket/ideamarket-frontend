@@ -21,7 +21,7 @@ export default function MarketSelect({
   name: string
   className: string
 }) {
-  const { theme } = useTheme()
+  const { resolvedTheme } = useTheme()
 
   return (
     <Select
@@ -39,9 +39,9 @@ export default function MarketSelect({
         borderRadius: 2,
         colors: {
           ...mytheme.colors,
-          primary50: theme === 'dark' ? '#4B5563' : '', // brand-gray ,
+          primary50: resolvedTheme === 'dark' ? '#4B5563' : '', // brand-gray ,
 
-          primary25: theme === 'dark' ? '#4B5563' : '#f6f6f6', // brand-gray
+          primary25: resolvedTheme === 'dark' ? '#4B5563' : '#f6f6f6', // brand-gray
           primary: '#0857e0', // brand-blue
         },
       })}
@@ -52,8 +52,8 @@ export default function MarketSelect({
         }),
         control: (base, state) => ({
           ...base,
-          textDecorationColor: theme === 'dark' ? 'white' : 'gray',
-          background: theme === 'dark' ? '#4B5563' : 'white',
+          textDecorationColor: resolvedTheme === 'dark' ? 'white' : 'gray',
+          background: resolvedTheme === 'dark' ? '#4B5563' : 'white',
           // match with the menu
           borderRadius: state.isFocused ? '3px 3px 0 0' : 3,
           // Overwrittes the different states of border
@@ -67,11 +67,11 @@ export default function MarketSelect({
         }),
         menuList: (base) => ({
           ...base,
-          background: theme === 'dark' ? '#6B7280' : 'white',
+          background: resolvedTheme === 'dark' ? '#6B7280' : 'white',
         }),
         singleValue: () => ({
           // Changes color of select box text before dropdown appears
-          color: theme === 'dark' ? '#D1D5DB' : 'black',
+          color: resolvedTheme === 'dark' ? '#D1D5DB' : 'black',
         }),
       }}
       instanceId="market-select"

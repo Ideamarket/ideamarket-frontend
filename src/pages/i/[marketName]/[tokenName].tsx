@@ -263,6 +263,7 @@ export default function TokenDetails({
         withdrawTokenInterest,
         token.address
       )
+      refetch()
     } catch (ex) {
       console.log(ex)
     }

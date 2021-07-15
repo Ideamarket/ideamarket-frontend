@@ -11,17 +11,20 @@ import { NETWORK } from 'store/networks'
 const POLLING_INTERVAL = 12000
 const RPC_URLS: { [chainId: number]: string } = {
   1: 'https://mainnet.infura.io/v3/3399077c10a24059be2a6c5b4fa77c03',
+  4: 'https://rinkeby.infura.io/v3/3399077c10a24059be2a6c5b4fa77c03',
 }
+const isMainnet = NETWORK.getNetworkName() === 'mainnet'
 
 export const injected = new InjectedConnector({
   supportedChainIds: [1, 3, 4, 5, 42],
 })
 
 export const walletconnect = new WalletConnectConnector({
-  rpc: { 1: RPC_URLS[1] },
+  rpc: { 1: RPC_URLS[1], 4: RPC_URLS[4] },
   bridge: 'https://bridge.walletconnect.org',
   qrcode: true,
   pollingInterval: POLLING_INTERVAL,
+  chainId: isMainnet ? MAINNET : RINKEBY,
 })
 
 export const walletlink = new WalletLinkConnector({
@@ -52,8 +55,6 @@ export async function disconnectWalletConnector(connector: AbstractConnector) {
     }
   }
 }
-
-const isMainnet = NETWORK.getNetworkName() === 'mainnet'
 
 export const fortmatic = new FortmaticConnector({
   apiKey: isMainnet ? 'pk_live_B3A1A25FBF96DCB5' : 'pk_test_4F838B34CAE38BC8',

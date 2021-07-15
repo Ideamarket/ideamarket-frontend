@@ -1,4 +1,5 @@
 import { gql } from 'graphql-request'
+import { ZERO_ADDRESS } from 'utils'
 
 export default function getQueryTokens(
   marketIds: number[],
@@ -7,30 +8,39 @@ export default function getQueryTokens(
   fromTs: number,
   orderBy: string,
   orderDirection: string,
-  filterTokens: string[]
+  filterTokens: string[],
+  isVerifiedFilter: boolean
 ): string {
   const hexMarketIds = marketIds.map((id) => '0x' + id.toString(16))
   let inMarkets = hexMarketIds.map((id) => `"${id}"`).join(',')
+
   let filterTokensQuery = ''
   if (filterTokens) {
-    filterTokensQuery = ',where:{id_in:['
+    filterTokensQuery = 'id_in:['
     filterTokens.forEach((value, index) => {
       if (index > 0) {
         filterTokensQuery += ','
       }
       filterTokensQuery += `"${value}"`
     })
-    filterTokensQuery += ']}'
-
-    // Filtering by markets while also filtering by starred causes the starred filter to not work
-    inMarkets = null
+    filterTokensQuery += ']'
   }
 
-  const marketsQuery = inMarkets ? `where:{market_in:[${inMarkets}]},` : ''
+  const marketsQuery = inMarkets ? `market_in:[${inMarkets}],` : ''
+  const verifiedQuery = isVerifiedFilter
+    ? `tokenOwner_not: "${ZERO_ADDRESS}",`
+    : ''
+
+  const queries =
+    marketsQuery.length > 0 ||
+    verifiedQuery.length > 0 ||
+    filterTokensQuery.length > 0
+      ? `where:{${marketsQuery}${verifiedQuery}${filterTokensQuery}},`
+      : ''
 
   return gql`
     {
-      ideaTokens(${marketsQuery} skip:${skip}, first:${num}, orderBy:${orderBy}, orderDirection:${orderDirection}${filterTokensQuery}) {
+      ideaTokens(${queries} skip:${skip}, first:${num}, orderBy:${orderBy}, orderDirection:${orderDirection}) {
           id
           tokenID
           name

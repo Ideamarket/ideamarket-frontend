@@ -30,8 +30,8 @@ import { initUseMarketStore } from 'store/markets'
 export const GlobalContext = createContext({
   onWalletConnectedCallback: () => {},
   setOnWalletConnectedCallback: (f: () => void) => {},
-  isEmailHeaderActive: false,
-  setIsEmailHeaderActive: (val: boolean) => {},
+  isEmailFooterActive: false,
+  setIsEmailFooterActive: (val: boolean) => {},
 })
 
 function getLibrary(provider: any): Web3 {
@@ -48,12 +48,12 @@ function MyApp({ Component, pageProps }: AppProps) {
       }
     ).layoutProps?.Layout || Fragment
 
-  const [isEmailHeaderActive, setIsEmailHeaderActive] = useState(false)
+  const [isEmailFooterActive, setIsEmailFooterActive] = useState(false)
   useEffect(() => {
     const isEmailBarClosed = localStorage.getItem('IS_EMAIL_BAR_CLOSED')
       ? localStorage.getItem('IS_EMAIL_BAR_CLOSED') === 'true'
       : false
-    setIsEmailHeaderActive(!isEmailBarClosed)
+    setIsEmailFooterActive(!isEmailBarClosed)
   }, [])
 
   useEffect(() => {
@@ -102,11 +102,11 @@ function MyApp({ Component, pageProps }: AppProps) {
         value={{
           onWalletConnectedCallback,
           setOnWalletConnectedCallback,
-          isEmailHeaderActive,
-          setIsEmailHeaderActive,
+          isEmailFooterActive,
+          setIsEmailFooterActive,
         }}
       >
-        <ThemeProvider attribute="class">
+        <ThemeProvider attribute="class" defaultTheme="light">
           <Web3ReactProvider getLibrary={getLibrary}>
             <Web3ReactManager>
               <Layout>

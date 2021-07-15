@@ -7,7 +7,7 @@ export default function EmailForm() {
   const [email, setEmail] = useState('')
   const [isError, setIsError] = useState(false)
   const toastId = useRef('')
-  const { setIsEmailHeaderActive } = useContext(GlobalContext)
+  const { setIsEmailFooterActive } = useContext(GlobalContext)
 
   return (
     <>
@@ -43,7 +43,7 @@ export default function EmailForm() {
             }
 
             setEmail('')
-            setIsEmailHeaderActive(false)
+            setIsEmailFooterActive(false)
             localStorage.setItem('IS_EMAIL_BAR_CLOSED', 'true')
             toast.success('Successfully added you to our list!', {
               id: toastId.current,
@@ -102,7 +102,7 @@ export default function EmailForm() {
             <input
               type="email"
               name="email"
-              id="header-email"
+              id="footer-email"
               className={classNames(
                 'h-8 shadow-sm block w-full sm:text-sm rounded-md focus:outline-none',
                 isError

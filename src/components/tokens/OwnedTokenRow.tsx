@@ -68,6 +68,14 @@ export default function TokenRow({
           )
         }}
       >
+        {/* Market desktop */}
+        <td className="flex items-center justify-center py-4 text-sm leading-5 text-center text-gray-500 dark:text-gray-300 hidden md:table-cell whitespace-nowrap">
+          <div className="flex items-center justify-end w-full h-full">
+            <div className="w-5 h-auto">
+              {marketSpecifics.getMarketSVGTheme()}
+            </div>
+          </div>
+        </td>
         <td className="col-span-3 px-6 py-4 whitespace-nowrap">
           <div className="flex items-center text-gray-900 dark:text-gray-200">
             <div className="flex-shrink-0 w-7.5 h-7.5">
@@ -114,15 +122,13 @@ export default function TokenRow({
             </div>
           </div>
         </td>
-        <td className="px-6 py-4 whitespace-nowrap">
-          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-400">
+        {/* Market mobile */}
+        <td className="px-6 py-4 whitespace-nowrap md:hidden">
+          <p className="text-sm font-semibold tracking-tightest text-brand-gray-4 dark:text-gray-400">
             Market
           </p>
           <div className="inline-block w-4 h-4">
             {marketSpecifics.getMarketSVGTheme()}
-          </div>
-          <div className="inline-block align-top ml-2 text-base font-semibold leading-4 md:ml-3 text-brand-gray-4 dark:text-gray-300">
-            {marketSpecifics.getMarketName()}
           </div>
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
@@ -137,29 +143,6 @@ export default function TokenRow({
             {formatNumberWithCommasAsThousandsSerperator(
               parseFloat(tokenPrice).toFixed(2)
             )}
-          </p>
-        </td>
-        <td className="px-6 py-4 whitespace-nowrap">
-          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-400">
-            24H Change
-          </p>
-          <p
-            className={classNames(
-              'text-base font-semibold leading-4 tracking-tightest-2 text-very-dark-blue dark:text-gray-300 uppercase',
-              parseFloat(token.dayChange) >= 0.0
-                ? 'text-brand-green dark:text-green-400'
-                : 'text-brand-red dark:text-red-400'
-            )}
-            title={
-              parseFloat(token.dayChange) >= 0.0
-                ? `+ ${token.dayChange}%`
-                : `- ${token.dayChange.slice(1)}%`
-            }
-          >
-            {parseFloat(token.dayChange) >= 0.0
-              ? `+ ${formatNumber(token.dayChange)}`
-              : `- ${formatNumber(token.dayChange.slice(1))}`}
-            %
           </p>
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
@@ -184,6 +167,29 @@ export default function TokenRow({
             title={'$' + balanceValue}
           >
             ${balanceValue}
+          </p>
+        </td>
+        <td className="px-6 py-4 whitespace-nowrap">
+          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-400">
+            24H Change
+          </p>
+          <p
+            className={classNames(
+              'text-base font-semibold leading-4 tracking-tightest-2 text-very-dark-blue dark:text-gray-300 uppercase',
+              parseFloat(token.dayChange) >= 0.0
+                ? 'text-brand-green dark:text-green-400'
+                : 'text-brand-red dark:text-red-400'
+            )}
+            title={
+              parseFloat(token.dayChange) >= 0.0
+                ? `+ ${token.dayChange}%`
+                : `- ${token.dayChange.slice(1)}%`
+            }
+          >
+            {parseFloat(token.dayChange) >= 0.0
+              ? `+ ${formatNumber(token.dayChange)}`
+              : `- ${formatNumber(token.dayChange.slice(1))}`}
+            %
           </p>
         </td>
         {/* Add to Metamask button */}

@@ -8,6 +8,7 @@ import QuestionMark from '../../assets/question-mark.svg'
 import { ChevronDownIcon } from '@heroicons/react/solid'
 import React, { useEffect, useRef, useState } from 'react'
 import { OverviewSearchbar } from './OverviewSearchbar'
+import { BadgeCheckIcon } from '@heroicons/react/solid'
 
 export const Filters = {
   TOP: {
@@ -22,8 +23,12 @@ export const Filters = {
     id: 3,
     value: 'New',
   },
-  STARRED: {
+  VERIFIED: {
     id: 4,
+    value: 'Verified',
+  },
+  STARRED: {
+    id: 5,
     value: 'Starred',
   },
 }
@@ -37,7 +42,7 @@ export const DropdownFilters = {
   COLUMNS: {
     id: 2,
     name: 'Columns',
-    values: ['All', 'Deposits', '% Locked', '1YR Income'],
+    values: ['All', 'Deposits', '% Locked', '1YR Income', '24H Change'],
   },
 }
 
@@ -150,6 +155,8 @@ const FiltersButton = ({ filter, isSelected, onClick }: FiltersButtonProps) => {
       case 3:
         return <Sparkles />
       case 4:
+        return <BadgeCheckIcon className="w-5 h-5" />
+      case 5:
         return <Star />
       default:
         return <QuestionMark />
