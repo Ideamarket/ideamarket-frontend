@@ -5,6 +5,10 @@ button:focus,
   box-shadow: none;
 }
 
+#torusIframe {
+  display: none;
+}
+
 span svg {
   display: inline-block;
 }
