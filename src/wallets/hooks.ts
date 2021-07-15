@@ -4,12 +4,46 @@ import { setWeb3 } from 'store/walletStore'
 
 import { injected, connectorsById } from './connectors/index'
 
+type SendReturnResult = { result: any }
+type SendReturn = any
+type Send = (
+  method: string,
+  params?: any[]
+) => Promise<SendReturnResult | SendReturn>
+
 export function useEagerConnect() {
   const { activate, active, library } = useWeb3React()
 
   const [tried, setTried] = useState(false)
 
   useEffect(() => {
+    function parseSendReturn(sendReturn: SendReturnResult | SendReturn): any {
+      return sendReturn.hasOwnProperty('result')
+        ? sendReturn.result
+        : sendReturn
+    }
+
+    async function isAuthorized(): Promise<boolean> {
+      const anyWindow = window as any
+      if (!anyWindow.ethereum) {
+        return false
+      }
+
+      try {
+        return await (anyWindow.ethereum.send as Send)('eth_accounts').then(
+          (sendReturn) => {
+            if (parseSendReturn(sendReturn).length > 0) {
+              return true
+            } else {
+              return false
+            }
+          }
+        )
+      } catch {
+        return false
+      }
+    }
+
     let isCancelled = false
 
     async function run() {
@@ -17,11 +51,7 @@ export function useEagerConnect() {
       // If connected before, connect back
       if (walletStr) {
         const previousConnector = connectorsById[parseInt(walletStr)]
-        if (
-          walletStr === '6' || // Torus connector does not have isAuthorized method
-          (previousConnector.isAuthorized &&
-            (await previousConnector.isAuthorized()))
-        ) {
+        if (await isAuthorized()) {
           if (isCancelled) {
             return
           }
