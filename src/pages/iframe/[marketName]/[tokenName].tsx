@@ -68,6 +68,7 @@ export default function IframeEmbed() {
 
   if (
     isDoc &&
+    document.getElementById('torusIframe') &&
     torusIframeDisplay !== document.getElementById('torusIframe').style.display
   ) {
     setTorusIframeDisplay(document.getElementById('torusIframe').style.display)
