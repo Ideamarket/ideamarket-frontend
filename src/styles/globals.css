@@ -6,7 +6,7 @@ button:focus,
 }
 
 #torusIframe {
-  display: none;
+  display: none !important;
 }
 
 span svg {
