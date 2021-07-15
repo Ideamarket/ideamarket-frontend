@@ -59,27 +59,11 @@ export default function IframeEmbed() {
     querySingleToken
   )
 
-  const [torusIframeDisplay, setTorusIframeDisplay] = useState(null)
-  const [isDoc, setDoc] = useState(false)
-
   useEffect(() => {
-    setDoc(true)
+    const sheet = document.createElement('style')
+    sheet.innerHTML = '#torusIframe { display: none; }'
+    document.body.appendChild(sheet)
   }, [])
-
-  if (
-    isDoc &&
-    document.getElementById('torusIframe') &&
-    torusIframeDisplay !== document.getElementById('torusIframe').style.display
-  ) {
-    setTorusIframeDisplay(document.getElementById('torusIframe').style.display)
-  }
-
-  useEffect(() => {
-    const torusIframe = document.getElementById('torusIframe')
-    if (torusIframe) {
-      torusIframe.style.display = 'none'
-    }
-  }, [torusIframeDisplay])
 
   if (!router.isReady || isTokenLoading || !token) {
     return null
