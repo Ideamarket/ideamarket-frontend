@@ -61,7 +61,7 @@ export default function IframeEmbed() {
 
   useEffect(() => {
     const sheet = document.createElement('style')
-    sheet.innerHTML = `body #torusIframe { display: none !important; }`
+    sheet.innerHTML = `body #torusIframe {}`
     document.body.appendChild(sheet)
   }, [])
 
