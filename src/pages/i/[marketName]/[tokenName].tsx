@@ -269,7 +269,7 @@ export default function TokenDetails({
     }
   }
 
-  const SEO = () => (
+  const SEO = (
     <NextSeo
       title={tokenName}
       openGraph={{
@@ -289,16 +289,12 @@ export default function TokenDetails({
 
   // Todo: Invalid token supplied
   if (!token) {
-    return (
-      <>
-        <SEO />
-      </>
-    )
+    return <>{SEO}</>
   }
 
   return (
     <>
-      <SEO />
+      {SEO}
       <div className="min-h-screen bg-brand-gray dark:bg-gray-900 pb-20">
         <div className="px-4 md:px-6 pt-12 md:pt-10 pb-5 text-white bg-top-mobile md:bg-top-desktop h-156.5 md:max-h-96 md:mb-10">
           <div className="mx-auto max-w-88 md:max-w-304">
