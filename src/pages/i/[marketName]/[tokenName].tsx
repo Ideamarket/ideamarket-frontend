@@ -298,7 +298,7 @@ export default function TokenDetails({
 
   // Todo: Invalid token supplied
   if (!token) {
-    return <>{SEO}</>
+    return SEO
   }
 
   return (
