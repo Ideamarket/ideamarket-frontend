@@ -285,7 +285,9 @@ export default function TokenDetails({
         images: [
           {
             url: `${
-              process.env.NEXT_PUBLIC_OG_IMAGE_URL ?? getURL()
+              process.env.NEXT_PUBLIC_OG_IMAGE_URL
+                ? process.env.NEXT_PUBLIC_OG_IMAGE_URL
+                : 'https://og-image.ideamarket.io'
             }/api/${rawMarketName}/${rawTokenName}.png`,
             width: 120,
             height: 120,
