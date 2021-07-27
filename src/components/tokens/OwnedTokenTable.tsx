@@ -44,6 +44,11 @@ const headers: Header[] = [
     sortable: true,
   },
   {
+    title: 'PNL',
+    value: 'change',
+    sortable: true,
+  },
+  {
     title: '',
     value: 'lockButton',
     sortable: false,
@@ -188,7 +193,7 @@ export default function OwnedTokenTable({
 
   return (
     <>
-      <div className="flex flex-col">
+      <div className="flex flex-col overflow-x-hidden">
         <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
           <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
             <div className="overflow-hidden dark:border-gray-500">
@@ -241,6 +246,7 @@ export default function OwnedTokenTable({
                           balance={pair.balance}
                           balanceBN={pair.rawBalance}
                           refetch={refetch}
+                          daiPNL={pair.daiPNL}
                         />
                       ))}
 

@@ -19,6 +19,7 @@ export default function getQueryTokenBalances({
             id
             holder
             amount
+            daiPNL
             token {
               name
             }

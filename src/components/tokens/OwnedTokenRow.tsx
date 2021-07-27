@@ -21,18 +21,20 @@ import LockModal from 'components/trade/LockModal'
 
 const tenPow18 = new BigNumber('10').pow(new BigNumber('18'))
 
-export default function TokenRow({
+export default function OwnTokenRow({
   token,
   market,
   balance,
   balanceBN,
   refetch,
+  daiPNL,
 }: {
   token: IdeaToken
   market: IdeaMarket
   balance: string
   balanceBN: BN
   refetch: () => void
+  daiPNL: BN
 }) {
   const router = useRouter()
   const marketSpecifics = getMarketSpecificsByMarketName(market.name)
@@ -59,6 +61,13 @@ export default function TokenRow({
   const balanceValue = formatNumberWithCommasAsThousandsSerperator(
     web3BNToFloatString(balanceValueBN, bigNumberTenPow18, 2)
   )
+
+  const finalDaiPNL =
+    Number(
+      formatNumberWithCommasAsThousandsSerperator(
+        web3BNToFloatString(daiPNL, bigNumberTenPow18, 2)
+      )
+    ) + Number(balanceValue)
 
   return (
     <>
@@ -179,13 +188,18 @@ export default function TokenRow({
           </p>
           <p
             className={classNames(
-              'text-base font-semibold leading-4 tracking-tightest-2 text-very-dark-blue dark:text-gray-300 uppercase',
-              parseFloat(token.dayChange) >= 0.0
-                ? 'text-brand-green dark:text-green-400'
-                : 'text-brand-red dark:text-red-400'
+              'text-base font-semibold leading-4 tracking-tightest-2 uppercase',
+              {
+                'text-brand-red dark:text-red-400':
+                  parseFloat(token.dayChange) < 0.0,
+                'text-brand-green dark:text-green-400':
+                  parseFloat(token.dayChange) > 0.0,
+                'text-very-dark-blue dark:text-gray-300':
+                  parseFloat(token.dayChange) === 0.0,
+              }
             )}
             title={
-              parseFloat(token.dayChange) >= 0.0
+              parseFloat(token.dayChange) > 0.0
                 ? `+ ${token.dayChange}%`
                 : `- ${token.dayChange.slice(1)}%`
             }
@@ -207,6 +221,31 @@ export default function TokenRow({
           >
             <span>Lock</span>
           </button>
+        </td>
+        <td className="px-6 py-4 whitespace-nowrap">
+          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-400">
+            PNL
+          </p>
+          <p
+            className={classNames(
+              'text-base font-semibold leading-4 tracking-tightest-2 uppercase',
+              {
+                'text-brand-red dark:text-red-400':
+                  parseFloat(finalDaiPNL.toFixed(2)) < 0.0,
+                'text-brand-green dark:text-green-400':
+                  parseFloat(finalDaiPNL.toFixed(2)) > 0.0,
+                'text-very-dark-blue dark:text-gray-300':
+                  parseFloat(finalDaiPNL.toFixed(2)) === 0.0,
+              }
+            )}
+            title={
+              parseFloat(finalDaiPNL.toFixed(2)) > 0.0
+                ? `+ ${token.dayChange}%`
+                : `- ${token.dayChange.slice(1)}%`
+            }
+          >
+            ${finalDaiPNL.toFixed(2)}
+          </p>
         </td>
         {/* Add to Metamask button */}
         <td className="px-4 py-4">

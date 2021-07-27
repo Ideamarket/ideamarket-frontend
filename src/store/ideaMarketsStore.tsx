@@ -92,6 +92,7 @@ export type IdeaTokenMarketPair = {
   market: IdeaMarket
   rawBalance: BN
   balance: string
+  daiPNL: BN
 }
 
 export type LockedIdeaTokenMarketPair = {
@@ -173,6 +174,7 @@ export async function queryOwnedTokensMaybeMarket(
     (balance) =>
       ({
         token: apiResponseToIdeaToken(balance.token, balance.market),
+        daiPNL: balance.daiPNL,
         market: apiResponseToIdeaMarket(balance.market),
         rawBalance: balance.amount ? new BN(balance.amount) : undefined,
         balance: balance.amount
@@ -824,4 +826,45 @@ function apiResponseToLockedIdeaTokenMarketPair(
   } as LockedIdeaTokenMarketPair
 
   return ret
+}
+
+export async function queryDaiPNLByTokenName(queryKey, marketName, tokenName) {
+  if (!marketName || !tokenName) {
+    return null
+  }
+
+  let page = 0
+
+  type Balance = {
+    id: string
+    amount: string
+    holder: string
+    daiPNL: BN
+    token: {
+      name: string
+    }
+  }
+  const balances: Balance[] = []
+
+  while (true) {
+    const result = await request(
+      HTTP_GRAPHQL_ENDPOINT,
+      getQueryTokenBalances({
+        marketName,
+        tokenName,
+        first: 100,
+        skip: page * 100,
+      })
+    )
+
+    const balancesInThisPage: Balance[] =
+      result?.ideaMarkets?.[0]?.tokens?.[0].balances ?? []
+    balances.push(...balancesInThisPage)
+    if (balancesInThisPage.length < 100) {
+      break
+    }
+    page += 1
+  }
+
+  return balances[0].daiPNL
 }

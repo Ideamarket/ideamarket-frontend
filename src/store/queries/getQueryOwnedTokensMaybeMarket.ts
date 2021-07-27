@@ -17,6 +17,7 @@ export default function getQueryOwnedTokensMaybeMarket(
     {
       ideaTokenBalances(${where}) {
         amount
+        daiPNL
         token {
           id
           tokenID

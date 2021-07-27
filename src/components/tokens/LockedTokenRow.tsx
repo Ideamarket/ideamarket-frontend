@@ -11,11 +11,17 @@ import {
   calculateIdeaTokenDaiValue,
   ZERO_ADDRESS,
 } from 'utils'
-import { IdeaMarket, IdeaToken } from 'store/ideaMarketsStore'
+import {
+  queryDaiPNLByTokenName,
+  IdeaMarket,
+  IdeaToken,
+} from 'store/ideaMarketsStore'
 import { getMarketSpecificsByMarketName } from 'store/markets'
 import { A, AddToMetamaskButton } from 'components'
 import { useTokenIconURL } from 'actions'
 import { BadgeCheckIcon } from '@heroicons/react/solid'
+import { useQuery } from 'react-query'
+import classNames from 'classnames'
 
 const tenPow18 = new BigNumber('10').pow(new BigNumber('18'))
 
@@ -59,6 +65,22 @@ export default function LockedTokenRow({
     web3BNToFloatString(balanceValueBN, bigNumberTenPow18, 2)
   )
 
+  const { data: daiPNL, isLoading: isLockedPairsDataLoading } = useQuery(
+    ['dai-pnl', token.marketName, token.name],
+    queryDaiPNLByTokenName
+  )
+
+  const getFinalPNL = () => {
+    if (daiPNL && !isLockedPairsDataLoading) {
+      const stringDaiPNL = web3BNToFloatString(daiPNL, bigNumberTenPow18, 2)
+
+      const finalDaiPNL =
+        Number(formatNumberWithCommasAsThousandsSerperator(stringDaiPNL)) +
+        Number(balanceValue)
+
+      return finalDaiPNL.toFixed(2)
+    }
+  }
   return (
     <>
       <tr
@@ -181,6 +203,27 @@ export default function LockedTokenRow({
             title={moment(lockedUntil * 1000).format('LLL')}
           >
             {moment(lockedUntil * 1000).format('LLL')}
+          </p>
+        </td>
+        <td className="px-6 py-4">
+          <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-400">
+            PNL
+          </p>
+          <p
+            className={classNames(
+              'text-base font-semibold leading-4 tracking-tightest-2 uppercase',
+              {
+                'text-brand-red dark:text-red-400':
+                  parseFloat(getFinalPNL()) < 0.0,
+                'text-brand-green dark:text-green-400':
+                  parseFloat(getFinalPNL()) > 0.0,
+                'text-very-dark-blue dark:text-gray-300':
+                  parseFloat(getFinalPNL()) === 0.0,
+              }
+            )}
+            title={getFinalPNL()}
+          >
+            ${getFinalPNL()}
           </p>
         </td>
         {/* Add to Metamask button */}
