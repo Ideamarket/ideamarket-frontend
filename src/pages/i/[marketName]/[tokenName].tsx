@@ -298,6 +298,35 @@ export default function TokenDetails({
     />
   )
 
+  // Todo: Invalid token supplied
+  if (!token) {
+    return (
+      <>
+        <NextSeo
+          title={tokenName}
+          description={DEFAULT_DESCRIPTION}
+          openGraph={{
+            type: 'website',
+            url: `${DEFAULT_CANONICAL}/i/${rawMarketName}/${rawTokenName}`,
+            title: DEFAULT_TITLE,
+            images: [
+              {
+                url: `${
+                  process.env.NEXT_PUBLIC_OG_IMAGE_URL
+                    ? process.env.NEXT_PUBLIC_OG_IMAGE_URL
+                    : 'https://og-image.ideamarket.io'
+                }/api/${rawMarketName}/${rawTokenName}.png`,
+                width: 120,
+                height: 120,
+                alt: 'twitter:image',
+              },
+            ],
+          }}
+        />
+      </>
+    )
+  }
+
   return (
     <>
       <NextSeo
