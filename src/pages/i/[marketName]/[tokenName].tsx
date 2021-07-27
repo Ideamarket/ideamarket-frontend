@@ -300,56 +300,12 @@ export default function TokenDetails({
 
   // Todo: Invalid token supplied
   if (!token) {
-    return (
-      <>
-        <NextSeo
-          title={tokenName}
-          description={DEFAULT_DESCRIPTION}
-          openGraph={{
-            type: 'website',
-            url: `${DEFAULT_CANONICAL}/i/${rawMarketName}/${rawTokenName}`,
-            title: DEFAULT_TITLE,
-            images: [
-              {
-                url: `${
-                  process.env.NEXT_PUBLIC_OG_IMAGE_URL
-                    ? process.env.NEXT_PUBLIC_OG_IMAGE_URL
-                    : 'https://og-image.ideamarket.io'
-                }/api/${rawMarketName}/${rawTokenName}.png`,
-                width: 120,
-                height: 120,
-                alt: 'twitter:image',
-              },
-            ],
-          }}
-        />
-      </>
-    )
+    return <>{SEO}</>
   }
 
   return (
     <>
-      <NextSeo
-        title={tokenName}
-        description={DEFAULT_DESCRIPTION}
-        openGraph={{
-          type: 'website',
-          url: `${DEFAULT_CANONICAL}/i/${rawMarketName}/${rawTokenName}`,
-          title: DEFAULT_TITLE,
-          images: [
-            {
-              url: `${
-                process.env.NEXT_PUBLIC_OG_IMAGE_URL
-                  ? process.env.NEXT_PUBLIC_OG_IMAGE_URL
-                  : 'https://og-image.ideamarket.io'
-              }/api/${rawMarketName}/${rawTokenName}.png`,
-              width: 120,
-              height: 120,
-              alt: 'twitter:image',
-            },
-          ],
-        }}
-      />
+      {SEO}
       <div className="min-h-screen bg-brand-gray dark:bg-gray-900 pb-20">
         <div className="px-4 md:px-6 pt-12 md:pt-10 pb-5 text-white bg-top-mobile md:bg-top-desktop h-156.5 md:max-h-96 md:mb-10">
           <div className="mx-auto max-w-88 md:max-w-304">
