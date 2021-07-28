@@ -43,6 +43,7 @@ export default function MyTokens() {
     useState(undefined)
 
   const address = useWalletStore((state) => state.address)
+  console.log(address)
 
   const {
     data: rawOwnedPairs,
@@ -62,7 +63,7 @@ export default function MyTokens() {
     queryLockedTokens
   )
 
-  const [table, setTable] = useState('holdings')
+  const [table, setTable] = useState('locked')
 
   useEffect(() => {
     // Calculate the total value of non-locked tokens

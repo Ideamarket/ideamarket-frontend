@@ -828,7 +828,12 @@ function apiResponseToLockedIdeaTokenMarketPair(
   return ret
 }
 
-export async function queryDaiPNLByTokenName(queryKey, marketName, tokenName) {
+export async function queryDaiPNLByTokenName(
+  queryKey,
+  marketName,
+  tokenName,
+  holder
+) {
   if (!marketName || !tokenName) {
     return null
   }
@@ -854,6 +859,7 @@ export async function queryDaiPNLByTokenName(queryKey, marketName, tokenName) {
         tokenName,
         first: 100,
         skip: page * 100,
+        holder,
       })
     )
 
@@ -866,5 +872,5 @@ export async function queryDaiPNLByTokenName(queryKey, marketName, tokenName) {
     page += 1
   }
 
-  return balances[0].daiPNL
+  return balances
 }

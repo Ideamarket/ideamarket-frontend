@@ -210,18 +210,6 @@ export default function OwnTokenRow({
             %
           </p>
         </td>
-        {/* Lock Button */}
-        <td className="px-4 md:px-0 py-4 whitespace-nowrap">
-          <button
-            onClick={(e) => {
-              e.stopPropagation()
-              ModalService.open(LockModal, { token, refetch })
-            }}
-            className="w-20 h-10 text-base font-medium bg-brand-blue dark:bg-gray-600 border-2 rounded-lg border-brand-blue text-white dark:text-gray-300 tracking-tightest-2 font-sf-compact-medium"
-          >
-            <span>Lock</span>
-          </button>
-        </td>
         <td className="px-6 py-4 whitespace-nowrap">
           <p className="text-sm font-semibold md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-400">
             PNL
@@ -246,6 +234,18 @@ export default function OwnTokenRow({
           >
             ${finalDaiPNL.toFixed(2)}
           </p>
+        </td>
+        {/* Lock Button */}
+        <td className="px-4 md:px-0 py-4 whitespace-nowrap">
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              ModalService.open(LockModal, { token, refetch })
+            }}
+            className="w-20 h-10 text-base font-medium bg-brand-blue dark:bg-gray-600 border-2 rounded-lg border-brand-blue text-white dark:text-gray-300 tracking-tightest-2 font-sf-compact-medium"
+          >
+            <span>Lock</span>
+          </button>
         </td>
         {/* Add to Metamask button */}
         <td className="px-4 py-4">

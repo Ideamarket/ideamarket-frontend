@@ -21,6 +21,7 @@ export default function getQueryBalancesOfHolders({
       )} }, first: ${first}, skip: ${skip}) {
         id
         amount
+        daiPNL
         token {
           id
           tokenID

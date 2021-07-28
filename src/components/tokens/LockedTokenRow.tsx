@@ -22,6 +22,7 @@ import { useTokenIconURL } from 'actions'
 import { BadgeCheckIcon } from '@heroicons/react/solid'
 import { useQuery } from 'react-query'
 import classNames from 'classnames'
+import { useWalletStore } from 'store/walletStore'
 
 const tenPow18 = new BigNumber('10').pow(new BigNumber('18'))
 
@@ -65,22 +66,27 @@ export default function LockedTokenRow({
     web3BNToFloatString(balanceValueBN, bigNumberTenPow18, 2)
   )
 
+  const userAddress = useWalletStore((state) => state.address)
+
   const { data: daiPNL, isLoading: isLockedPairsDataLoading } = useQuery(
-    ['dai-pnl', token.marketName, token.name],
+    ['dai-pnl', token.marketName, token.name, userAddress],
     queryDaiPNLByTokenName
   )
 
+  console.log(daiPNL)
+
   const getFinalPNL = () => {
-    if (daiPNL && !isLockedPairsDataLoading) {
-      const stringDaiPNL = web3BNToFloatString(daiPNL, bigNumberTenPow18, 2)
+    //   if (daiPNL && !isLockedPairsDataLoading) {
+    //     const stringDaiPNL = web3BNToFloatString(daiPNL, bigNumberTenPow18, 2)
 
-      const finalDaiPNL =
-        Number(formatNumberWithCommasAsThousandsSerperator(stringDaiPNL)) +
-        Number(balanceValue)
+    //     const finalDaiPNL =
+    //       Number(formatNumberWithCommasAsThousandsSerperator(stringDaiPNL)) +
+    //       Number(balanceValue)
 
-      return finalDaiPNL.toFixed(2)
-    }
+    //     return finalDaiPNL.toFixed(2)
+    return 1
   }
+
   return (
     <>
       <tr
@@ -213,15 +219,12 @@ export default function LockedTokenRow({
             className={classNames(
               'text-base font-semibold leading-4 tracking-tightest-2 uppercase',
               {
-                'text-brand-red dark:text-red-400':
-                  parseFloat(getFinalPNL()) < 0.0,
-                'text-brand-green dark:text-green-400':
-                  parseFloat(getFinalPNL()) > 0.0,
-                'text-very-dark-blue dark:text-gray-300':
-                  parseFloat(getFinalPNL()) === 0.0,
+                'text-brand-red dark:text-red-400': getFinalPNL() < 0.0,
+                'text-brand-green dark:text-green-400': getFinalPNL() > 0.0,
+                'text-very-dark-blue dark:text-gray-300': getFinalPNL() === 0.0,
               }
             )}
-            title={getFinalPNL()}
+            title={getFinalPNL().toString()}
           >
             ${getFinalPNL()}
           </p>
