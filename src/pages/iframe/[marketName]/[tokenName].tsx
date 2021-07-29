@@ -6,6 +6,8 @@ import { useQuery } from 'react-query'
 import { querySingleToken } from 'store/ideaMarketsStore'
 import { getMarketSpecificsByMarketNameInURLRepresentation } from 'store/markets'
 import { formatNumber } from 'utils'
+import { NextSeo } from 'next-seo'
+import { getURL } from 'utils/seo-constants'
 
 export function IframeEmbedSkeleton() {
   return (
@@ -63,58 +65,72 @@ export default function IframeEmbed() {
   }
 
   return (
-    <div className="w-full h-full p-2">
-      <div className="flex items-center w-full h-full p-2 shadow-embed rounded-2xl">
-        <div className="flex-grow-0">
-          <img
-            className="block w-8 h-auto"
-            src="/logo-32x32.png"
-            alt="Ideamarket Logo"
-          />
-        </div>
-
-        <div className="flex-grow-0 ml-2">
-          {isLoading ? (
-            <div className="w-8 h-8 bg-gray-400 animate-pulse" />
-          ) : (
+    <>
+      <NextSeo
+        title={tokenName}
+        openGraph={{
+          images: [
+            {
+              url: `${
+                process.env.NEXT_PUBLIC_OG_IMAGE_URL ?? getURL()
+              }/api/${rawMarketName}/${rawTokenName}.png`,
+            },
+          ],
+        }}
+      />
+      <div className="w-full h-full p-2">
+        <div className="flex items-center w-full h-full p-2 shadow-embed rounded-2xl">
+          <div className="flex-grow-0">
             <img
-              src={tokenIconURL}
-              alt={rawTokenName}
-              className="w-8 h-auto rounded-full"
+              className="block w-8 h-auto"
+              src="/logo-32x32.png"
+              alt="Ideamarket Logo"
             />
-          )}
-        </div>
+          </div>
 
-        <div className="flex-grow-0 ml-2 font-medium text-brand-new-dark dark:text-gray-300">
-          {tokenName}
-        </div>
+          <div className="flex-grow-0 ml-2">
+            {isLoading ? (
+              <div className="w-8 h-8 bg-gray-400 animate-pulse" />
+            ) : (
+              <img
+                src={tokenIconURL}
+                alt={rawTokenName}
+                className="w-8 h-auto rounded-full"
+              />
+            )}
+          </div>
 
-        <div className="flex-grow">{/* free space */}</div>
+          <div className="flex-grow-0 ml-2 font-medium text-brand-new-dark dark:text-gray-300">
+            {tokenName}
+          </div>
 
-        <div className="flex-grow-0 font-medium text-brand-new-dark bg-brand-gray-white w-[68px] h-full rounded-md flex items-center justify-center">
-          ${formatNumber(token.latestPricePoint.price)}
-        </div>
+          <div className="flex-grow">{/* free space */}</div>
 
-        <div className="-ml-2 flex-grow-0 flex items-center justify-center w-[68px] h-full font-medium text-white bg-brand-new-blue rounded-md">
-          <A
-            className="flex items-center justify-center"
-            href={`https://app.ideamarket.io/i/${rawMarketName}/${rawTokenName}`}
-          >
-            <ArrowCircleUpIcon className="w-5 h-5 mr-1 text-[#a5bbfb]" />
-            Buy
-          </A>
-        </div>
+          <div className="flex-grow-0 font-medium text-brand-new-dark bg-brand-gray-white w-[68px] h-full rounded-md flex items-center justify-center">
+            ${formatNumber(token.latestPricePoint.price)}
+          </div>
 
-        <div className="flex-grow-0 ml-2">
-          <A
-            className="font-medium underline cursor-pointer text-brand-gray-white-2"
-            href="https://ideamarket.io"
-            style={{ fontSize: '10px' }}
-          >
-            What's this?
-          </A>
+          <div className="-ml-2 flex-grow-0 flex items-center justify-center w-[68px] h-full font-medium text-white bg-brand-new-blue rounded-md">
+            <A
+              className="flex items-center justify-center"
+              href={`https://app.ideamarket.io/i/${rawMarketName}/${rawTokenName}`}
+            >
+              <ArrowCircleUpIcon className="w-5 h-5 mr-1 text-[#a5bbfb]" />
+              Buy
+            </A>
+          </div>
+
+          <div className="flex-grow-0 ml-2">
+            <A
+              className="font-medium underline cursor-pointer text-brand-gray-white-2"
+              href="https://ideamarket.io"
+              style={{ fontSize: '10px' }}
+            >
+              What's this?
+            </A>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
