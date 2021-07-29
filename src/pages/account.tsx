@@ -63,7 +63,7 @@ export default function MyTokens() {
     queryLockedTokens
   )
 
-  const [table, setTable] = useState('locked')
+  const [table, setTable] = useState('holdings')
 
   useEffect(() => {
     // Calculate the total value of non-locked tokens

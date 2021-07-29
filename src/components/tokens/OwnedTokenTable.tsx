@@ -1,16 +1,38 @@
 import classNames from 'classnames'
 import BigNumber from 'bignumber.js'
-import { useEffect, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import { IdeaTokenMarketPair } from 'store/ideaMarketsStore'
 import { calculateCurrentPriceBN, web3BNToFloatString } from 'utils'
 import OwnedTokenRow from './OwnedTokenRow'
 import OwnedTokenRowSkeleton from './OwnedTokenRowSkeleton'
+import Tooltip from 'components/tooltip/Tooltip'
+import A from 'components/A'
 
 type Header = {
-  title: string
+  title: string | ReactNode
   value: string
   sortable: boolean
 }
+
+const PnlTitleWithTooltip = () => (
+  <div className="flex">
+    PNL
+    <Tooltip className="ml-2">
+      <div className="w-32 md:w-64">
+        PnL stands for profit and loss, and it can be either realized or
+        unrealized. When you have open positions, your PnL is unrealized,
+        meaning it’s still changing in response to market moves.
+        <br />
+        <br />
+        For more information, see{' '}
+        <A href="" target="_blank" className="underline">
+          PnL explanation
+        </A>
+        .
+      </div>
+    </Tooltip>
+  </div>
+)
 
 const headers: Header[] = [
   {
@@ -44,7 +66,7 @@ const headers: Header[] = [
     sortable: true,
   },
   {
-    title: 'PNL',
+    title: <PnlTitleWithTooltip />,
     value: 'change',
     sortable: true,
   },
@@ -193,7 +215,7 @@ export default function OwnedTokenTable({
 
   return (
     <>
-      <div className="flex flex-col overflow-x-scroll">
+      <div className="flex flex-col">
         <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
           <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
             <div className="overflow-hidden dark:border-gray-500">
