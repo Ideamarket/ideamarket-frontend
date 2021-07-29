@@ -1,6 +1,6 @@
 name: Lint
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
   run-linters:
@@ -21,9 +21,4 @@ jobs:
         run: yarn
 
       - name: Run linters
-        uses: wearerequired/lint-action@v1.10.0
-        with:
-          eslint: true
-          eslint_args: "--max-warnings 0"
-          eslint_extensions: "js,ts,tsx"
-          prettier: true
+        run: yarn lint
