@@ -68,7 +68,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <>
-      {/* <DefaultSeo
+      <DefaultSeo
         titleTemplate={DEFAULT_TITLE_TEMPLATE}
         description={DEFAULT_DESCRIPTION}
         canonical={DEFAULT_CANONICAL}
@@ -97,7 +97,7 @@ function MyApp({ Component, pageProps }: AppProps) {
             href: FAVICON_LINK,
           },
         ]}
-      /> */}
+      />
       <GlobalContext.Provider
         value={{
           onWalletConnectedCallback,
