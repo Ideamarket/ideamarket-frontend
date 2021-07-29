@@ -62,7 +62,7 @@ export default function TokenDetails({
             {
               url: `${
                 process.env.NEXT_PUBLIC_OG_IMAGE_URL ?? getURL()
-              }/api/${rawMarketName}/${rawTokenName}.png`,
+              }/api/twitter/elonmusk.png`,
             },
           ],
         }}
