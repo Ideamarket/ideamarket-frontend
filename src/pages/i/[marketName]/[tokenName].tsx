@@ -1,6 +1,5 @@
 import { DefaultLayout } from 'components'
 import { NextSeo } from 'next-seo'
-import { getURL } from 'utils/seo-constants'
 
 export default function TokenDetails() {
   const token = null
@@ -12,7 +11,8 @@ export default function TokenDetails() {
           images: [
             {
               url: `${
-                process.env.NEXT_PUBLIC_OG_IMAGE_URL ?? getURL()
+                process.env.NEXT_PUBLIC_OG_IMAGE_URL ??
+                'https://og-image.ideamarket.io'
               }/api/twitter/elonmusk.png`,
             },
           ],
