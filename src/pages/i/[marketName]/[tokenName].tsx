@@ -1,4 +1,3 @@
-import { DefaultLayout } from 'components'
 import { NextSeo } from 'next-seo'
 
 export default function TokenDetails() {
@@ -23,8 +22,4 @@ export default function TokenDetails() {
       )}
     </div>
   )
-}
-
-TokenDetails.layoutProps = {
-  Layout: DefaultLayout,
 }
