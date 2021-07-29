@@ -7,7 +7,7 @@ import { ThemeProvider } from 'next-themes'
 
 import { createContext, Fragment, ReactNode, useEffect, useState } from 'react'
 import type { AppProps } from 'next/app'
-import { DefaultSeo } from 'next-seo'
+import { NextSeo } from 'next-seo'
 import {
   DEFAULT_CANONICAL,
   DEFAULT_DESCRIPTION,
@@ -68,7 +68,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <>
-      <DefaultSeo
+      <NextSeo
         titleTemplate={DEFAULT_TITLE_TEMPLATE}
         description={DEFAULT_DESCRIPTION}
         canonical={DEFAULT_CANONICAL}
