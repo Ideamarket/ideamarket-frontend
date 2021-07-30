@@ -24,12 +24,10 @@ export default function DefaultLayout({ children }: { children: ReactNode }) {
   if (!mounted) return null
 
   return (
-    <>
+    <div className="min-h-screen bg-brand-gray dark:bg-gray-900 py-16">
       <Toaster />
-      <div className="min-h-screen bg-brand-gray dark:bg-gray-900 py-16">
-        <NavBar />
-        <div>{children}</div>
-      </div>
+      <NavBar />
+      {children}
       <div className="fixed bottom-0 z-20 w-full">
         <CookieConsent
           style={{ position: 'relative', background: '#708090' }}
@@ -47,6 +45,6 @@ export default function DefaultLayout({ children }: { children: ReactNode }) {
           <></>
         )}
       </div>
-    </>
+    </div>
   )
 }
