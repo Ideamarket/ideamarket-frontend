@@ -2,12 +2,6 @@ import { IMarketSpecifics } from '.'
 import SubstackOutlineWhite from '../../assets/substack-outline-white.svg'
 import SubstackOutlineBlack from '../../assets/substack-outline-black.svg'
 import { queryLambdavatar } from 'actions'
-import { useTheme } from 'next-themes'
-
-function ThemeValue() {
-  const { resolvedTheme } = useTheme()
-  return resolvedTheme
-}
 
 export default class SubstackMarketSpecifics implements IMarketSpecifics {
   // Market
@@ -32,13 +26,11 @@ export default class SubstackMarketSpecifics implements IMarketSpecifics {
     return <SubstackOutlineWhite />
   }
 
-  getMarketSVGTheme(): JSX.Element {
-    if (ThemeValue() === 'dark') {
+  getMarketSVGTheme(theme?): JSX.Element {
+    if (theme === 'dark') {
       return <SubstackOutlineWhite />
-    } else if (ThemeValue() === 'light') {
-      return <SubstackOutlineBlack />
     } else {
-      return null
+      return <SubstackOutlineBlack />
     }
   }
 

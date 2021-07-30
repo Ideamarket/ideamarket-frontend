@@ -1,6 +1,6 @@
 import { getMarketSpecificsByMarketName, useMarketStore } from 'store/markets'
 import DropDown from 'components/DropDown'
-import { useTheme } from 'next-themes'
+import useThemeMode from 'components/useThemeMode'
 
 export default function MarketSelect({
   onChange,
@@ -11,7 +11,7 @@ export default function MarketSelect({
   disabled: boolean
   isClearable?: boolean
 }) {
-  const { theme } = useTheme()
+  const { theme } = useThemeMode()
 
   const markets = useMarketStore((state) => state.markets)
 

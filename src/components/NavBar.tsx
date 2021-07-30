@@ -6,13 +6,13 @@ import Close from '../assets/close.svg'
 import Hamburger from '../assets/hamburger.svg'
 import NProgress from 'nprogress'
 import A from './A'
-import { useTheme } from 'next-themes'
 import { SunIcon, MoonIcon } from '@heroicons/react/solid'
 import ModalService from 'components/modals/ModalService'
 import WalletModal from './wallet/WalletModal'
+import useThemeMode from './useThemeMode'
 
 export default function Nav() {
-  const { theme, resolvedTheme, setTheme } = useTheme()
+  const { theme, resolvedTheme, setTheme } = useThemeMode()
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false)
   const router = useRouter()
   const closeMenu = () => setIsMobileNavOpen(false)

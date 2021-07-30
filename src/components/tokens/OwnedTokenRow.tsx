@@ -18,6 +18,7 @@ import { useTokenIconURL } from 'actions'
 import { BadgeCheckIcon } from '@heroicons/react/solid'
 import ModalService from 'components/modals/ModalService'
 import LockModal from 'components/trade/LockModal'
+import useThemeMode from 'components/useThemeMode'
 
 const tenPow18 = new BigNumber('10').pow(new BigNumber('18'))
 
@@ -50,6 +51,7 @@ export default function TokenRow({
     tenPow18,
     2
   )
+  const { resolvedTheme } = useThemeMode()
 
   const balanceValueBN = calculateIdeaTokenDaiValue(
     token?.rawSupply,
@@ -76,7 +78,7 @@ export default function TokenRow({
         <td className="flex items-center justify-center py-4 text-sm leading-5 text-center text-gray-500 dark:text-gray-300 hidden md:table-cell whitespace-nowrap">
           <div className="flex items-center justify-end w-full h-full">
             <div className="w-5 h-auto">
-              {marketSpecifics.getMarketSVGTheme()}
+              {marketSpecifics.getMarketSVGTheme(resolvedTheme)}
             </div>
           </div>
         </td>
@@ -132,7 +134,7 @@ export default function TokenRow({
             Market
           </p>
           <div className="inline-block w-4 h-4">
-            {marketSpecifics.getMarketSVGTheme()}
+            {marketSpecifics.getMarketSVGTheme(resolvedTheme)}
           </div>
         </td>
         <td className="px-6 py-4 whitespace-nowrap">

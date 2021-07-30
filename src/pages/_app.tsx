@@ -39,7 +39,6 @@ function getLibrary(provider: any): Web3 {
 }
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const [mounted, setMounted] = useState(false)
   const Layout =
     (
       Component as typeof Component & {
@@ -55,7 +54,6 @@ function MyApp({ Component, pageProps }: AppProps) {
       ? localStorage.getItem('IS_EMAIL_BAR_CLOSED') === 'true'
       : false
     setIsEmailFooterActive(!isEmailBarClosed)
-    setMounted(true)
   }, [])
 
   useEffect(() => {
@@ -67,10 +65,6 @@ function MyApp({ Component, pageProps }: AppProps) {
   )
 
   initUseMarketStore()
-
-  // Need to wait for mount because we cannot know the theme on the server, many of the values returned from useTheme will be undefined until mounted on the client
-  // Otherwise, will have to do this null check in every single file that useTheme is used
-  if (!mounted) return null
 
   return (
     <>

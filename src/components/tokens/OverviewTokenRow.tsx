@@ -19,6 +19,7 @@ import {
 } from 'store/compoundStore'
 import { useQuery } from 'react-query'
 import { BadgeCheckIcon, ArrowSmUpIcon } from '@heroicons/react/solid'
+import useThemeMode from 'components/useThemeMode'
 
 const tenPow18 = new BigNumber('10').pow(new BigNumber('18'))
 
@@ -45,6 +46,7 @@ export default function TokenRow({
     marketSpecifics,
     tokenName: token.name,
   })
+  const { resolvedTheme } = useThemeMode()
 
   const yearIncome = (
     parseFloat(token.daiInToken) * compoundSupplyRate
@@ -94,14 +96,14 @@ export default function TokenRow({
         <td className="flex items-center justify-center py-4 text-sm leading-5 text-center text-gray-500 dark:text-gray-300 md:table-cell whitespace-nowrap">
           <div className="flex items-center justify-end w-full h-full">
             <div className="w-5 h-auto mr-2 md:mr-0">
-              {marketSpecifics.getMarketSVGTheme()}
+              {marketSpecifics.getMarketSVGTheme(resolvedTheme)}
             </div>
           </div>
         </td>
         {/* Icon and Name */}
         <td className="flex py-4 pl-2 md:table-cell md:col-span-3 md:pl-6 whitespace-nowrap">
           <div className="flex items-center w-full text-gray-900 dark:text-gray-200">
-            {showMarketSVG && marketSpecifics.getMarketSVGTheme()}
+            {showMarketSVG && marketSpecifics.getMarketSVGTheme(resolvedTheme)}
             <div
               className={classNames(
                 'flex-shrink-0 w-7.5 h-7.5',

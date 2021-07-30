@@ -1,5 +1,5 @@
 import Select from 'react-select'
-import { useTheme } from 'next-themes'
+import useThemeMode from './useThemeMode'
 export default function MarketSelect({
   onChange,
   isDisabled,
@@ -21,7 +21,7 @@ export default function MarketSelect({
   name: string
   className: string
 }) {
-  const { resolvedTheme } = useTheme()
+  const { resolvedTheme } = useThemeMode()
 
   return (
     <Select

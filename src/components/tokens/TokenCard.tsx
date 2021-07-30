@@ -9,6 +9,7 @@ import {
   web3BNToFloatString,
 } from '../../utils'
 import { useTokenIconURL } from 'actions'
+import useThemeMode from 'components/useThemeMode'
 
 const tenPow18 = new BigNumber('10').pow(new BigNumber('18'))
 
@@ -33,6 +34,7 @@ export default function TokenCard({
     marketSpecifics,
     tokenName: token.name,
   })
+  const { resolvedTheme } = useThemeMode()
   const tokenPrice = isLoading
     ? ''
     : web3BNToFloatString(
@@ -83,7 +85,7 @@ export default function TokenCard({
           <>
             <div>on</div>
             <div className="ml-2.5 mr-1">
-              {marketSpecifics.getMarketSVGTheme()}
+              {marketSpecifics.getMarketSVGTheme(resolvedTheme)}
             </div>
             <div>{market.name}</div>
           </>

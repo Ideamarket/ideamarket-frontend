@@ -1,8 +1,8 @@
 import Select, { components } from 'react-select'
 import SelectTokensFormat from './SelectTokenFormat'
-import { useTheme } from 'next-themes'
 import { TokenListEntry } from 'store/tokenListStore'
 import { useState } from 'react'
+import useThemeMode from 'components/useThemeMode'
 
 const selectStyles = {
   container: (provided) => ({
@@ -69,7 +69,7 @@ export default function TokenSelect({
   selectedIdeaToken,
   selectedToken,
 }: TokenSelectProps) {
-  const { resolvedTheme } = useTheme()
+  const { resolvedTheme } = useThemeMode()
   const [isAllTokensLoaded, setAllTokensLoaded] = useState(false)
 
   return (
