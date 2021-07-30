@@ -1,6 +1,6 @@
 import { useRouter } from 'next/dist/client/router'
 import { NavBar, EmailFooter } from 'components'
-import { ReactNode, useEffect, useContext, useState } from 'react'
+import { ReactNode, useEffect, useContext } from 'react'
 import CookieConsent from 'react-cookie-consent'
 import { Toaster } from 'react-hot-toast'
 
@@ -11,17 +11,11 @@ import { GlobalContext } from '../../pages/_app'
 export default function DefaultLayout({ children }: { children: ReactNode }) {
   const router = useRouter()
   const { isEmailFooterActive } = useContext(GlobalContext)
-  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
     initIdeaMarketsStore()
     initTokenList()
-    setMounted(true)
   }, [])
-
-  // Need to wait for mount because we cannot know the theme on the server, many of the values returned from useTheme will be undefined until mounted on the client
-  // Otherwise, will have to do this null check in every single file that useTheme is used
-  if (!mounted) return null
 
   return (
     <div className="min-h-screen bg-brand-gray dark:bg-gray-900 py-16">
