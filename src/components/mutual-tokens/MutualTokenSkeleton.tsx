@@ -20,10 +20,7 @@ export default function MutualTokenSkeleton() {
             </div>
           </div>
         </div>
-        <div className="grid grid-cols-1 border-t border-gray-200 divide-y divide-gray-200 bg-gray-50 lg:grid-cols-3 lg:divide-y-0 lg:divide-x">
-          <div className="grid px-6 py-5 text-center lg:flex lg:flex-col place-items-center">
-            <span className="w-24 h-6 bg-gray-400 rounded"></span>{' '}
-          </div>
+        <div className="grid grid-cols-1 border-t border-gray-200 divide-y divide-gray-200 bg-gray-50 lg:grid-cols-2 lg:divide-y-0 lg:divide-x">
           <div className="grid px-6 py-5 text-center lg:flex lg:flex-col place-items-center">
             <span className="w-24 h-6 bg-gray-400 rounded"></span>{' '}
           </div>
