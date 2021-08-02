@@ -1,0 +1,17 @@
+name: CI
+on: [push]
+jobs:
+  lighthouseci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+      - run: npm install && npm install -g @lhci/cli@0.8.x
+      - run: echo “NEXT_PUBLIC_NETWORK=mainnet” > .env.local
+      - run: npm run build
+      - run: lhci autorun --config=.github/lighthouse/lighthouserc-desktop.json
+      - run: lhci autorun --config=.github/lighthouse/lighthouserc-mobile.json
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
