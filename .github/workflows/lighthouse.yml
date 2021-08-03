@@ -1,0 +1,20 @@
+name: Lighthouse
+on: [push]
+jobs:
+  lighthouse-ci:
+    name: Lighthouse CI
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+      - run: yarn install --frozen-lockfile && yarn global add @lhci/cli
+      - run: echo "NEXT_PUBLIC_NETWORK=mainnet" > .env.local
+      - run: yarn build
+      - run: lhci autorun --config=.github/lighthouse/lighthouserc-desktop.json
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+      - run: lhci autorun --config=.github/lighthouse/lighthouserc-mobile.json
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}

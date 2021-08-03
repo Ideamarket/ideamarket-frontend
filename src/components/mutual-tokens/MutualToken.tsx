@@ -1,13 +1,11 @@
 import classNames from 'classnames'
-import { useState } from 'react'
 import { IdeaToken } from 'store/ideaMarketsStore'
 import { getMarketSpecificsByMarketName } from 'store/markets'
 import {
   formatNumber,
   formatNumberWithCommasAsThousandsSerperator,
 } from 'utils'
-import ReactTimeAgo from 'react-time-ago'
-import { MutualTokenDetails, MutualTokensListSortBy, A } from 'components'
+import { MutualTokensListSortBy, A } from 'components'
 import { useTokenIconURL } from 'actions'
 import useThemeMode from 'components/useThemeMode'
 
@@ -25,11 +23,9 @@ export default function MutualToken({
     marketSpecifics,
     tokenName: token.name,
   })
-  const [isOpen, setIsOpen] = useState(false)
   const { resolvedTheme } = useThemeMode()
   return (
     <>
-      <MutualTokenDetails isOpen={isOpen} setIsOpen={setIsOpen} token={token} />
       <div className="overflow-hidden bg-white dark:bg-gray-700 rounded-lg shadow ">
         <h2 className="sr-only" id="profile-overview-title">
           Profile Overview
@@ -70,16 +66,19 @@ export default function MutualToken({
               </div>
             </div>
             <div className="flex justify-center mt-5 lg:mt-0">
-              <button
-                className="flex items-center justify-center dark:bg-gray-500 dark:border-gray-500 dark:text-gray-300 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50"
-                onClick={() => setIsOpen(true)}
+              <A
+                href={`/i/${marketSpecifics.getMarketNameURLRepresentation()}/${marketSpecifics.getTokenNameURLRepresentation(
+                  token.name
+                )}`}
               >
-                View details
-              </button>
+                <button className="flex items-center justify-center dark:bg-gray-500 dark:border-gray-500 dark:text-gray-300 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50">
+                  View details
+                </button>
+              </A>
             </div>
           </div>
         </div>
-        <div className="grid grid-cols-1 border-t border-gray-200 divide-y divide-gray-200 bg-gray-50 dark:bg-gray-600 lg:grid-cols-3 lg:divide-y-0 lg:divide-x">
+        <div className="grid grid-cols-1 border-t border-gray-200 divide-y divide-gray-200 bg-gray-50 dark:bg-gray-600 lg:grid-cols-2 lg:divide-y-0 lg:divide-x">
           <div
             className={classNames(
               'px-6 py-5 text-sm font-medium text-center lg:flex lg:flex-col',
@@ -105,23 +104,6 @@ export default function MutualToken({
             </span>{' '}
             <span className="text-gray-600 dark:text-gray-300">
               tokens held
-            </span>
-          </div>
-          <div
-            className={classNames(
-              'px-6 py-5 text-sm font-medium text-center lg:flex lg:flex-col',
-              sortBy === 'latestTimestamp' &&
-                'bg-brand-light-blue dark:bg-gray-500'
-            )}
-          >
-            <span className="text-gray-900 dark:text-gray-200">
-              <ReactTimeAgo
-                date={new Date(stats.latestTimestamp * 1000)}
-                locale="en-US"
-              />
-            </span>{' '}
-            <span className="text-gray-600 dark:text-gray-300">
-              Last bought{' '}
             </span>
           </div>
         </div>

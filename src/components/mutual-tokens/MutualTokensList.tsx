@@ -7,10 +7,7 @@ import {
 import { MutualToken, MutualTokenSkeleton } from 'components'
 import DropDown from 'components/DropDown'
 
-export type MutualTokensListSortBy =
-  | 'latestTimestamp'
-  | 'totalAmount'
-  | 'totalHolders'
+export type MutualTokensListSortBy = 'totalAmount' | 'totalHolders'
 
 const options = [
   {
@@ -20,10 +17,6 @@ const options = [
   {
     value: 'totalAmount',
     label: 'Mutual Tokens',
-  },
-  {
-    value: 'latestTimestamp',
-    label: 'Most Recent',
   },
 ]
 

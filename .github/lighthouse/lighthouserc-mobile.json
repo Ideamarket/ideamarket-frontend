@@ -1,0 +1,18 @@
+{
+  "ci": {
+    "upload": {
+      "target": "lhci",
+      "serverBaseUrl": "https://lighthouse.ideamarket.io",
+      "token": "fa530e6c-1025-4c4d-9002-7ef7deef08b4"
+    },
+    "collect": {
+      "startServerCommand": "yarn start",
+      "url": [
+        "http://localhost:3000/",
+        "http://localhost:3000/account",
+        "http://localhost:3000/i/twitter/elonmusk"
+      ],
+      "numberOfRuns": 3
+    }
+  }
+}
