@@ -5,7 +5,9 @@ export default function ListingSEO({ tokenName, rawMarketName, rawTokenName }) {
   return (
     <NextSeo
       title={tokenName}
+      canonical={`${getURL}/i/${rawMarketName}/${rawTokenName}`}
       openGraph={{
+        url: `${getURL}/i/${rawMarketName}/${rawTokenName}`,
         images: [
           {
             url: `${
