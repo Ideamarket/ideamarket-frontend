@@ -10,8 +10,7 @@ jobs:
         with:
           node-version: 12
       - run: yarn install --frozen-lockfile && yarn global add @lhci/cli
-      - run: echo "NEXT_PUBLIC_NETWORK=mainnet" > .env.local
-      - run: echo "NEXT_PUBLIC_OG_IMAGE_URL=https://og-image.ideamarket.io" > .env.local
+      - run: echo -e "NEXT_PUBLIC_NETWORK=mainnet\nNEXT_PUBLIC_OG_IMAGE_URL=https://og-image.ideamarket.io" > .env.local
       - run: yarn build
       - run: lhci autorun --config=.github/lighthouse/lighthouserc-desktop.json
         env:
