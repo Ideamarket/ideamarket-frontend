@@ -1,5 +1,5 @@
 import { NextSeo } from 'next-seo'
-import { getURL } from 'next/dist/next-server/lib/utils'
+import { getURL } from 'utils/seo-constants'
 
 export default function ListingSEO({ tokenName, rawMarketName, rawTokenName }) {
   return (
