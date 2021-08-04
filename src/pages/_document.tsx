@@ -98,6 +98,33 @@ class MyDocument extends Document {
             />
           </noscript>
           {/* End Facebook Pixel Code */}
+
+          <link rel="manifest" href="/manifest.json" />
+          <link
+            rel="icon"
+            type="image/png"
+            sizes="192x192"
+            href="/icons/icon-192x192.png"
+          />
+          <link
+            rel="icon"
+            type="image/png"
+            sizes="256x256"
+            href="/icons/icon-256x256.png"
+          />
+          <link
+            rel="apple-touch-icon"
+            type="image/png"
+            sizes="192x192"
+            href="/icons/icon-192x192-iphone.png"
+          />
+          <link
+            rel="apple-touch-icon"
+            type="image/png"
+            sizes="256x256"
+            href="/icons/icon-256x256-iphone.png"
+          />
+          <meta name="theme-color" content="#317EFB" />
         </Head>
         <body>
           <Main />
