@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { useQuery } from 'react-query'
 import { IdeaMarket, IdeaToken } from 'store/ideaMarketsStore'
+import { useQuery } from 'react-query'
 import {
   queryCDaiBalance,
   queryExchangeRate,
