@@ -4,8 +4,8 @@
   "display": "standalone",
   "scope": ".",
   "start_url": "/",
-  "name": "IdeaMarket",
-  "short_name": "IdeaMarket",
+  "name": "Ideamarket",
+  "short_name": "Ideamarket",
   "icons": [
     {
       "src": "/icons/icon-192x192.png",
