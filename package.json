@@ -9,7 +9,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint --fix --max-warnings=2 --ext .js,.ts,.tsx --ignore-path .gitignore .",
+    "lint": "eslint --fix --max-warnings=0 --ext .js,.ts,.tsx --ignore-path .gitignore .",
     "check-types": "tsc",
     "prettier": "prettier --ignore-path .gitignore --write \"**/*.+(js|json|ts|tsx)\"",
     "format": "npm run prettier -- --write",
