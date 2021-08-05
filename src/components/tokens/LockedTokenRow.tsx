@@ -17,6 +17,7 @@ import { A, AddToMetamaskButton } from 'components'
 import { useTokenIconURL } from 'actions'
 import { BadgeCheckIcon } from '@heroicons/react/solid'
 import useThemeMode from 'components/useThemeMode'
+import Image from 'next/image'
 
 const tenPow18 = new BigNumber('10').pow(new BigNumber('18'))
 
@@ -87,11 +88,15 @@ export default function LockedTokenRow({
               {isTokenIconLoading ? (
                 <div className="w-full h-full bg-gray-400 rounded-full animate-pulse"></div>
               ) : (
-                <img
-                  className="w-full h-full rounded-full"
-                  src={tokenIconURL}
-                  alt=""
-                />
+                <div className="w-full h-full relative">
+                  <Image
+                    src={tokenIconURL || '/gray.svg'}
+                    alt="token"
+                    layout="fill"
+                    objectFit="contain"
+                    className="rounded-full"
+                  />
+                </div>
               )}
             </div>
             <div className="ml-4 text-base font-semibold leading-5">

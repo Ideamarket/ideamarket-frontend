@@ -13,6 +13,7 @@ import {
 import A from 'components/A'
 import { useTokenIconURL } from 'actions'
 import { BadgeCheckIcon } from '@heroicons/react/solid'
+import Image from 'next/image'
 
 const tenPow18 = new BigNumber('10').pow(new BigNumber('18'))
 
@@ -79,11 +80,17 @@ export default function TokenCard({
   return (
     <>
       <div className="flex flex-none mt-7">
-        <div className="w-20 h-20 mr-5">
+        <div className="w-20 h-20 mr-5 relative">
           {loading || isTokenIconLoading ? (
             <div className="bg-gray-400 rounded-full w-18 h-18 animate animate-pulse"></div>
           ) : (
-            <img className="rounded-full" src={tokenIconURL} alt="" />
+            <Image
+              className="rounded-full"
+              src={tokenIconURL || '/gray.svg'}
+              alt=""
+              layout="fill"
+              objectFit="contain"
+            />
           )}
         </div>
         <div className="mt-1 text-2xl font-semibold text-brand-alto">

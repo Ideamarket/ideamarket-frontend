@@ -3,6 +3,7 @@ import { useWalletStore } from 'store/walletStore'
 import { NETWORK } from 'store/networks'
 
 import dynamic from 'next/dynamic'
+import Image from 'next/image'
 
 const NoSSRWalletInterface = dynamic(() => import('./WalletInterface'), {
   ssr: false,
@@ -33,11 +34,15 @@ export default function WrongNetworkOverlay() {
     <div className="absolute top-0 left-0 z-50 w-screen h-screen bg-gray-200 dark:bg-gray-800">
       <div className="flex items-center justify-center w-full h-full overflow-auto">
         <div className="flex flex-col items-center">
-          <img
-            className="block w-auto h-32 md:h-64"
-            src="/logo.png"
-            alt="Workflow logo"
-          />
+          <div className="relative w-full h-32 md:h-64">
+            <Image
+              src="/logo.png"
+              alt="Workflow logo"
+              layout="fill"
+              objectFit="contain"
+            />
+          </div>
+
           <h1 className="mt-5 text-2xl md:text-3xl">
             Change network selection
           </h1>

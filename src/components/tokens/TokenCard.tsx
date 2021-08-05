@@ -10,6 +10,7 @@ import {
 } from '../../utils'
 import { useTokenIconURL } from 'actions'
 import useThemeMode from 'components/useThemeMode'
+import Image from 'next/image'
 
 const tenPow18 = new BigNumber('10').pow(new BigNumber('18'))
 
@@ -59,11 +60,15 @@ export default function TokenCard({
         {loading || isTokenIconLoading ? (
           <div className="bg-gray-400 rounded-full w-18 h-18 animate animate-pulse"></div>
         ) : (
-          <img
-            className="rounded-full max-w-18 max-h-18"
-            src={tokenIconURL}
-            alt=""
-          />
+          <div className="w-full h-full rounded-full relative max-w-18 max-h-18">
+            <Image
+              src={tokenIconURL || '/gray.svg'}
+              alt="token"
+              layout="fill"
+              objectFit="contain"
+              className="rounded-full"
+            />
+          </div>
         )}
       </div>
       <div className="mt-1 text-4xl font-semibold text-center">

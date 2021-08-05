@@ -1,6 +1,7 @@
 import { ArrowCircleUpIcon } from '@heroicons/react/solid'
 import { useTokenIconURL } from 'actions'
 import { A } from 'components'
+import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useQuery } from 'react-query'
 import { querySingleToken } from 'store/ideaMarketsStore'
@@ -65,11 +66,12 @@ export default function IframeEmbed() {
   return (
     <div className="w-full h-full p-2">
       <div className="flex items-center w-full h-full p-2 shadow-embed rounded-2xl">
-        <div className="flex-grow-0">
-          <img
-            className="block w-8 h-auto"
+        <div className="flex-grow-0 w-8 h-8 relative">
+          <Image
             src="/logo-32x32.png"
             alt="Ideamarket Logo"
+            layout="fill"
+            objectFit="contain"
           />
         </div>
 
@@ -77,11 +79,15 @@ export default function IframeEmbed() {
           {isLoading ? (
             <div className="w-8 h-8 bg-gray-400 animate-pulse" />
           ) : (
-            <img
-              src={tokenIconURL}
-              alt={rawTokenName}
-              className="w-8 h-auto rounded-full"
-            />
+            <div className="w-8 h-8 relative">
+              <Image
+                src={tokenIconURL || '/gray.svg'}
+                alt={rawTokenName}
+                className="rounded-full"
+                layout="fill"
+                objectFit="contain"
+              />
+            </div>
           )}
         </div>
 

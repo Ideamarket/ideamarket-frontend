@@ -1,5 +1,6 @@
 import classNames from 'classnames'
 import { Router, useRouter } from 'next/dist/client/router'
+import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import { WalletStatus } from 'components'
 import Close from '../assets/close.svg'
@@ -66,15 +67,17 @@ export default function Nav() {
         <div className="px-2 mx-auto transform max-w-88 md:max-w-304">
           <div className="relative flex items-center justify-between h-16">
             <div
-              className="z-20 flex items-center flex-shrink-0 cursor-pointer"
+              className="z-20 flex items-center flex-shrink-0 cursor-pointer "
               onClick={() => router.push('/')}
             >
-              <img
-                className="block w-auto h-8"
-                src="/logo.png"
-                alt="Workflow logo"
-              />
-
+              <div className="relative w-10 h-8">
+                <Image
+                  src="/logo.png"
+                  alt="Workflow logo"
+                  layout="fill"
+                  objectFit="contain"
+                />
+              </div>
               <span className="w-auto h-full text-2xl leading-none text-white md:text-3xl font-gilroy-bold">
                 Ideamarket
               </span>

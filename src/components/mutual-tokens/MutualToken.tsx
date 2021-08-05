@@ -8,6 +8,7 @@ import {
 import { MutualTokensListSortBy, A } from 'components'
 import { useTokenIconURL } from 'actions'
 import useThemeMode from 'components/useThemeMode'
+import Image from 'next/image'
 
 export default function MutualToken({
   stats,
@@ -37,11 +38,15 @@ export default function MutualToken({
                 {isTokenIconLoading ? (
                   <div className="w-20 h-20 mx-auto bg-gray-400 rounded-full animate-pulse"></div>
                 ) : (
-                  <img
-                    className="w-20 h-20 mx-auto rounded-full"
-                    src={tokenIconURL}
-                    alt={token.name}
-                  />
+                  <div className="relative w-20 h-20 mx-auto">
+                    <Image
+                      src={tokenIconURL || '/gray.svg'}
+                      alt={token.name}
+                      layout="fill"
+                      objectFit="contain"
+                      className="rounded-full"
+                    />
+                  </div>
                 )}
               </div>
               <div className="mt-4 text-center lg:mt-0 lg:pt-1 lg:text-left">

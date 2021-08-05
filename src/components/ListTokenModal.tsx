@@ -266,6 +266,7 @@ export default function ListTokenModal({ close }: { close: () => void }) {
                     )
               }
             >
+              {/* TODO: replace <img/> with <Image /> OnLoadingComlete when Next v11.0.2 will be released */}
               <img
                 className={classNames(
                   'rounded-full max-w-12 max-h-12 ml-3 inline-block',

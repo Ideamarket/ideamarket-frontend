@@ -20,6 +20,7 @@ import {
 import { useQuery } from 'react-query'
 import { BadgeCheckIcon, ArrowSmUpIcon } from '@heroicons/react/solid'
 import useThemeMode from 'components/useThemeMode'
+import Image from 'next/image'
 
 const tenPow18 = new BigNumber('10').pow(new BigNumber('18'))
 
@@ -113,11 +114,15 @@ export default function TokenRow({
               {isTokenIconLoading ? (
                 <div className="w-full h-full bg-gray-400 rounded-full animate-pulse"></div>
               ) : (
-                <img
-                  className="w-full h-full rounded-full"
-                  src={tokenIconURL}
-                  alt=""
-                />
+                <div className="w-full h-full rounded-full relative">
+                  <Image
+                    src={tokenIconURL || '/gray.svg'}
+                    alt="token"
+                    layout="fill"
+                    objectFit="contain"
+                    className="rounded-full"
+                  />
+                </div>
               )}
             </div>
             <div className="ml-4 text-base font-medium leading-5 truncate hover:underline">

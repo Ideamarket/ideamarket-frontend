@@ -2,6 +2,7 @@ import { TransactionManager } from 'utils'
 import { TokenListEntry } from '../../../store/tokenListStore'
 import { useEffect, useState } from 'react'
 import TokenSelect from './TokenSelect'
+import Image from 'next/image'
 
 type TradeInterfaceBoxProps = {
   label: string
@@ -143,12 +144,15 @@ const TradeInterfaceBox: React.FC<TradeInterfaceBoxProps> = ({
             <div className="flex items-center px-2 py-1 bg-white dark:bg-gray-700 shadow-md rounded-2xl">
               <div className="flex items-center">
                 {selectedIdeaToken?.logoURL ? (
-                  <img
-                    className="w-7.5 rounded-full"
-                    style={{ minWidth: 24, minHeight: 24 }}
-                    src={selectedIdeaToken?.logoURL}
-                    alt="token"
-                  />
+                  <div className="w-7 h-7 relative">
+                    <Image
+                      src={selectedIdeaToken?.logoURL || '/gray.svg'}
+                      alt="token"
+                      layout="fill"
+                      objectFit="contain"
+                      className="rounded-full"
+                    />
+                  </div>
                 ) : (
                   <div className="w-7.5 h-7.5 rounded-full bg-gray-400 animate animate-pulse" />
                 )}

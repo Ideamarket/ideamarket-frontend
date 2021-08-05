@@ -2,6 +2,7 @@ import classNames from 'classnames'
 import array from 'lodash/array'
 import { ListingOverview, TimeXFloatYChartInLine } from 'components'
 import A from 'components/A'
+import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
@@ -118,12 +119,8 @@ export default function ListingStats({ isLoading, market, token }) {
           >
             Listings
           </span>
-          <span>
-            <img
-              className="inline-block w-2 ml-2 mr-2"
-              src="/arrow@3x.png"
-              alt=""
-            />
+          <span className="inline-block w-2 ml-2 mr-2">
+            <Image src="/arrow@3x.png" height={12} width={8} alt="" />
           </span>
           <span className="text-base font-medium text-brand-gray text-opacity-60">
             {market?.name || '..'}

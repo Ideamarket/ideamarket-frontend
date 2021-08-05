@@ -5,6 +5,13 @@ module.exports = withPWA({
     dest: 'public',
     disable: process.env.NODE_ENV === 'development',
   },
+  images: {
+    domains: [
+      'd3hjr60szea5ud.cloudfront.net',
+      'app.ideamarket.io',
+      'raw.githubusercontent.com',
+    ],
+  },
   async redirects() {
     return [
       {
