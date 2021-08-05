@@ -9,7 +9,7 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 12
-      - run: yarn install --frozen-lockfile && yarn global add @lhci/cli
+      - run: yarn install --frozen-lockfile && yarn global add @lhci/cli csp_evaluator@1.0.4
       - run: echo -e "NEXT_PUBLIC_NETWORK=mainnet\nNEXT_PUBLIC_OG_IMAGE_URL=https://og-image.ideamarket.io" > .env.local
       - run: yarn build
       - run: lhci autorun --config=.github/lighthouse/lighthouserc-desktop.json
