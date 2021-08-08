@@ -1,17 +1,18 @@
 import React from 'react'
-import { DefaultLayout, Home as HomeComponent } from 'components'
+import { DefaultLayout } from 'components'
 import {
   getMarketSpecificsByMarketNameInURLRepresentation,
   getMarketSpecifics,
 } from 'store/markets'
 import { GetServerSideProps } from 'next'
+import Home from 'pages'
 
 export default function MarketsHome({
   marketsList,
 }: {
   marketsList: string[]
 }) {
-  return <HomeComponent urlMarkets={marketsList} />
+  return <Home urlMarkets={marketsList} />
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
