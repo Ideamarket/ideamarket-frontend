@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import Chart from 'chart.js'
 
-export default function TimeXFloatYChart({ chartData }) {
+export default function TimeXFloatYChartInLineOld({ chartData }) {
   const ref = useRef(null)
 
   useEffect(() => {
@@ -27,7 +27,7 @@ export default function TimeXFloatYChart({ chartData }) {
             data: data,
             pointRadius: 0,
             fill: false,
-            borderColor: '#0857e0',
+            borderColor: '#08a2dd',
             steppedLine: true,
           },
         ],
@@ -45,8 +45,9 @@ export default function TimeXFloatYChart({ chartData }) {
           xAxes: [
             {
               type: 'time',
+              display: false,
               ticks: {
-                display: true,
+                display: false,
               },
               gridLines: { display: false, drawBorder: false },
             },
@@ -54,7 +55,7 @@ export default function TimeXFloatYChart({ chartData }) {
           yAxes: [
             {
               ticks: {
-                display: true,
+                display: false,
                 min: min,
                 max: max,
               },
@@ -77,10 +78,14 @@ export default function TimeXFloatYChart({ chartData }) {
         },
       },
     })
+    // ref.current.style.height = '100px'
   }, [chartData])
 
   return (
-    <div className="flex-grow">
+    <div
+      className="flex-grow"
+      style={{ position: 'relative', height: '80px', width: '100%' }}
+    >
       <canvas ref={ref}></canvas>
     </div>
   )

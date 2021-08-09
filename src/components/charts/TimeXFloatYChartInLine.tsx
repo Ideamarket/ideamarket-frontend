@@ -1,34 +1,33 @@
 import { useEffect, useRef } from 'react'
 import Chart from 'chart.js'
+import { getAxes, getMinMax, getTimePeriod } from './utils'
 
-export default function TimeXFloatYChart({ chartData }) {
+export default function TimeXFloatYChartInLine({
+  chartData,
+  chartFromTs,
+  chartDurationSeconds,
+}) {
   const ref = useRef(null)
 
   useEffect(() => {
-    const data = chartData.map((pair) => ({
-      x: new Date(Math.floor(pair[0] * 1000)),
-      y: parseFloat(pair[1]),
-    }))
+    const timePeriodArray = getTimePeriod(chartFromTs, chartDurationSeconds)
 
-    const ys = data.map(({ y }) => y)
-    let min = Math.min(...ys)
-    let max = Math.max(...ys)
+    const { xAxe, yAxe } = getAxes(chartData, timePeriodArray, chartFromTs)
 
-    if (min === max) {
-      min = 0.0
-      max = max * 2.0
-    }
+    const { min, max } = getMinMax(yAxe)
 
     new Chart(ref.current.getContext('2d'), {
       type: 'line',
       data: {
+        labels: xAxe,
         datasets: [
           {
-            data: data,
+            data: yAxe,
             pointRadius: 0,
             fill: false,
             borderColor: '#08a2dd',
-            steppedLine: true,
+            borderWidth: 3,
+            lineTension: 0.25,
           },
         ],
       },
@@ -44,7 +43,7 @@ export default function TimeXFloatYChart({ chartData }) {
         scales: {
           xAxes: [
             {
-              type: 'time',
+              // type: 'time',
               display: false,
               ticks: {
                 display: false,
@@ -56,8 +55,8 @@ export default function TimeXFloatYChart({ chartData }) {
             {
               ticks: {
                 display: false,
-                min: min,
-                max: max,
+                min: min - max * 0.01,
+                max: max + max * 0.01,
               },
               gridLines: { display: false, drawBorder: false },
             },
@@ -79,7 +78,7 @@ export default function TimeXFloatYChart({ chartData }) {
       },
     })
     // ref.current.style.height = '100px'
-  }, [chartData])
+  }, [chartData, chartDurationSeconds, chartFromTs])
 
   return (
     <div

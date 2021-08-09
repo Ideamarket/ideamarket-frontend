@@ -1,6 +1,10 @@
 import classNames from 'classnames'
 import array from 'lodash/array'
-import { ListingOverview, TimeXFloatYChartInLine } from 'components'
+import {
+  ListingOverview,
+  TimeXFloatYChartInLine,
+  TimeXFloatYChartInLineOld,
+} from 'components'
 import A from 'components/A'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
@@ -53,11 +57,12 @@ export default function ListingStats({ isLoading, market, token }) {
       queryTokenLockedChartData
     )
   const [priceChartData, setPriceChartData] = useState([])
-  const [lockedChartData, setLockedChartData] = useState([])
+  const [, setLockedChartData] = useState([])
+
+  const now = Math.floor(Date.now() / 1000)
+  const chartFromTs = now - chartDurationSeconds
 
   useEffect(() => {
-    const now = Math.floor(Date.now() / 1000)
-    const chartFromTs = now - chartDurationSeconds
     let beginPrice: number
     let endPrice: number
 
@@ -79,7 +84,13 @@ export default function ListingStats({ isLoading, market, token }) {
     )
     finalChartData.push([now, endPrice])
     setPriceChartData(finalChartData)
-  }, [chartDurationSeconds, rawPriceChartData, token.latestPricePoint.price])
+  }, [
+    chartDurationSeconds,
+    chartFromTs,
+    now,
+    rawPriceChartData,
+    token.latestPricePoint.price,
+  ])
 
   useEffect(() => {
     if (!rawLockedChartData) {
@@ -108,6 +119,11 @@ export default function ListingStats({ isLoading, market, token }) {
 
     setLockedChartData(finalChartData)
   }, [chartDurationSeconds, rawLockedChartData, token.lockedAmount])
+
+  // const mappedlockedChartData = lockedChartData.map((item) => [
+  //   item[0] - ONE_UNIX_TIME_YEAR,
+  //   item[1],
+  // ])
 
   return (
     <div className="px-4 md:px-6 pt-12 md:pt-10 pb-5 text-white bg-top-mobile md:bg-top-desktop h-156.5 md:max-h-96 md:mb-10">
@@ -146,9 +162,13 @@ export default function ListingStats({ isLoading, market, token }) {
               }}
             ></div>
           ) : selectedChart === CHART.PRICE ? (
-            <TimeXFloatYChartInLine chartData={priceChartData} />
+            <TimeXFloatYChartInLine
+              chartData={priceChartData}
+              chartDurationSeconds={chartDurationSeconds}
+              chartFromTs={chartFromTs}
+            />
           ) : (
-            <TimeXFloatYChartInLine chartData={lockedChartData} />
+            <TimeXFloatYChartInLineOld chartData={priceChartData} />
           )}
         </div>
         <div className="mt-1"></div>
