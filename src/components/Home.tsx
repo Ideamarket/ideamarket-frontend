@@ -241,7 +241,7 @@ export default function Home({ urlMarkets }: { urlMarkets?: string[] }) {
     <>
       <NextSeo title="Home" />
       <div className="overflow-x-hidden lg:overflow-x-visible bg-brand-gray dark:bg-gray-900">
-        <div className="px-6 pt-10 pb-40 text-center text-white dark:text-gray-200 bg-cover bg-top-mobile md:bg-top-desktop">
+        <div className="px-6 pt-10 pb-40 text-center text-white bg-cover dark:text-gray-200 bg-top-mobile md:bg-top-desktop">
           <div>
             <h2 className="text-3xl md:text-6xl font-gilroy-bold">
               The credibility layer{' '}
@@ -251,7 +251,7 @@ export default function Home({ urlMarkets }: { urlMarkets?: string[] }) {
               Profit by discovering the world’s best information.
             </p>
           </div>
-          <div className="flex flex-col md:flex-row justify-center items-center">
+          <div className="flex flex-col items-center justify-center md:flex-row">
             <button
               onClick={() => {
                 onListTokenClicked()
@@ -264,7 +264,7 @@ export default function Home({ urlMarkets }: { urlMarkets?: string[] }) {
               </div>
             </button>
             <button
-              className="py-2 mt-3 md:mt-10 md:ml-5 text-lg font-bold text-white rounded-lg w-44 font-sf-compact-medium border-white border hover:bg-white hover:text-brand-blue"
+              className="py-2 mt-3 text-lg font-bold text-white border border-white rounded-lg md:mt-10 md:ml-5 w-44 font-sf-compact-medium hover:bg-white hover:text-brand-blue"
               onClick={() =>
                 window.open(
                   'https://chrome.google.com/webstore/detail/ideamarket/hgpemhabnkecancnpcdilfojngkoahei',

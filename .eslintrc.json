@@ -1,7 +1,7 @@
 {
   "plugins": ["prettier"],
   "extends": ["react-app", "plugin:prettier/recommended"],
-  "ignorePatterns": [".github/*", "public/*.js"],
+  "ignorePatterns": [".github/*", "public/*.js", "public/*.js.map"],
   "rules": {
     "prettier/prettier": ["off", { "singleQuote": true }],
     "react/react-in-jsx-scope": "off",
