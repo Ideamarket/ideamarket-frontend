@@ -6,8 +6,8 @@ import {
   verifyTokenName,
   useTokenIconURL,
 } from 'actions'
-import { getMarketSpecificsByMarketName } from 'store/markets'
 import { isAddress, useTransactionManager } from 'utils'
+import { getMarketSpecificsByMarketName } from 'store/markets'
 import { NETWORK } from 'store/networks'
 import { Modal, MarketSelect, TradeInterface } from './'
 import ApproveButton from './trade/ApproveButton'
@@ -20,6 +20,7 @@ import ModalService from './modals/ModalService'
 import TradeCompleteModal, {
   TRANSACTION_TYPES,
 } from './trade/TradeCompleteModal'
+import Image from 'next/image'
 
 export default function ListTokenModal({ close }: { close: () => void }) {
   const { account } = useWeb3React()
@@ -268,19 +269,27 @@ export default function ListTokenModal({ close }: { close: () => void }) {
                 )
           }
         >
-          {/* TODO: replace <img/> with <Image /> OnLoadingComlete when Next v11.0.2 will be released */}
-          <img
+          <div
             className={classNames(
-              'rounded-full max-w-12 max-h-12 ml-3 inline-block',
+              'relative rounded-full w-12 h-12 ml-3',
               (isTokenIconLoading ||
                 isTokenIconURLLoading ||
                 !isValidTokenName) &&
                 'hidden'
             )}
-            onLoad={() => setIsTokenIconLoading(false)}
-            src={selectedMarket && marketSpecifics && tokenIconURL}
-            alt=""
-          />
+          >
+            <Image
+              className="rounded-full"
+              src={
+                (selectedMarket && marketSpecifics && tokenIconURL) ||
+                '/gray.svg'
+              }
+              onLoadingComplete={() => setIsTokenIconLoading(false)}
+              alt=""
+              layout="fill"
+              objectFit="contain"
+            />
+          </div>
         </A>
       </div>
       <div className="flex items-center justify-center mt-5 text-sm">
