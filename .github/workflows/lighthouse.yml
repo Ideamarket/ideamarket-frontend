@@ -6,9 +6,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v2
         with:
-          node-version: 12
+          node-version: 14
       - run: yarn install --frozen-lockfile && yarn global add @lhci/cli
       - run: echo -e "NEXT_PUBLIC_NETWORK=mainnet\nNEXT_PUBLIC_OG_IMAGE_URL=https://og-image.ideamarket.io" > .env.local
       - run: yarn build
