@@ -4,49 +4,6 @@ import { setWeb3 } from 'store/walletStore'
 
 import { injected, connectorsById } from './connectors/index'
 
-export type SendReturnResult = { result: any }
-export type SendReturn = any
-
-export type Send = (
-  method: string,
-  params?: any[]
-) => Promise<SendReturnResult | SendReturn>
-export type SendOld = ({
-  method,
-}: {
-  method: string
-}) => Promise<SendReturnResult | SendReturn>
-
-function parseSendReturn(sendReturn: SendReturnResult | SendReturn): any {
-  return sendReturn.hasOwnProperty('result') ? sendReturn.result : sendReturn
-}
-
-/**
- * This method is defined in web3-react by every connector EXCEPT Torus.
- * This causes issues with Torus, so defining this here fixes those issues.
- *
- * @returns false if no ETH provider. Returns true if there is
- */
-async function isAuthorized(): Promise<boolean> {
-  if (!(window as any).ethereum) {
-    return false
-  }
-
-  try {
-    return await ((window as any).ethereum.send as Send)('eth_accounts').then(
-      (sendReturn) => {
-        if (parseSendReturn(sendReturn).length > 0) {
-          return true
-        } else {
-          return false
-        }
-      }
-    )
-  } catch {
-    return false
-  }
-}
-
 export function useEagerConnect() {
   const { activate, active, library } = useWeb3React()
 
@@ -61,7 +18,11 @@ export function useEagerConnect() {
       // If connected before, connect back
       if (walletStr) {
         const previousConnector = connectorsById[parseInt(walletStr)]
-        if (await isAuthorized()) {
+        if (
+          walletStr === '6' || // Torus connector does not have isAuthorized method
+          (previousConnector.isAuthorized &&
+            (await previousConnector.isAuthorized()))
+        ) {
           if (isCancelled) {
             return
           }
@@ -79,7 +40,7 @@ export function useEagerConnect() {
     return () => {
       isCancelled = true
     }
-  }, [activate])
+  }, [])
 
   // if the connection worked, wait until we get confirmation of that to flip the flag
   useEffect(() => {
@@ -88,7 +49,7 @@ export function useEagerConnect() {
       setWeb3(library, undefined)
       setTried(true)
     }
-  }, [tried, active, library])
+  }, [tried, active])
 
   return tried
 }
