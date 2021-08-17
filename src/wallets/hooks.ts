@@ -24,6 +24,7 @@ export function useEagerConnect() {
             (await previousConnector.isAuthorized()))
         ) {
           if (isCancelled) {
+            console.log('was canceled')
             return
           }
 
