@@ -18,8 +18,9 @@ export function useEagerConnect() {
       if (walletStr) {
         const previousConnector = connectorsById[parseInt(walletStr)]
         if (
-          previousConnector.isAuthorized &&
-          (await previousConnector.isAuthorized())
+          walletStr === '6' || // Torus connector does not have isAuthorized method
+          (previousConnector.isAuthorized &&
+            (await previousConnector.isAuthorized()))
         ) {
           if (isCancelled) {
             return

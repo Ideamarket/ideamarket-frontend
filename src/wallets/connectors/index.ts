@@ -3,6 +3,7 @@ import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
 import { WalletLinkConnector } from '@web3-react/walletlink-connector'
 import { FortmaticConnector } from '@web3-react/fortmatic-connector'
 import { PortisConnector } from '@web3-react/portis-connector'
+import { TorusConnector } from '@web3-react/torus-connector'
 import { MAINNET, RINKEBY } from 'wallets/chains'
 import { AbstractConnector } from '@web3-react/abstract-connector'
 import { NETWORK } from 'store/networks'
@@ -65,6 +66,19 @@ export const portis = new PortisConnector({
   networks: [1, 100],
 })
 
+export const torus = new TorusConnector({
+  chainId: isMainnet ? MAINNET : RINKEBY,
+  initOptions: {
+    buildEnv: isMainnet ? 'production' : 'testing',
+    network: {
+      host: isMainnet ? 'mainnet' : 'rinkeby',
+      chainId: isMainnet ? MAINNET : RINKEBY,
+    },
+    showTorusButton: false,
+    useLocalStorage: true,
+  },
+})
+
 export enum ConnectorIds {
   Injected = 1,
   Metamask = 1,
@@ -73,6 +87,7 @@ export enum ConnectorIds {
   WalletLink = 4,
   Coinbase = 4,
   Portis = 5,
+  Torus = 6,
 }
 
 export const connectorsById: { [connectorName in ConnectorIds]: any } = {
@@ -83,4 +98,5 @@ export const connectorsById: { [connectorName in ConnectorIds]: any } = {
   [ConnectorIds.Coinbase]: walletlink,
   [ConnectorIds.Fortmatic]: fortmatic,
   [ConnectorIds.Portis]: portis,
+  [ConnectorIds.Torus]: torus,
 }
