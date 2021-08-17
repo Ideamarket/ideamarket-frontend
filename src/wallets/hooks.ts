@@ -57,6 +57,7 @@ export function useEagerConnect() {
 
     async function run() {
       const walletStr = localStorage.getItem('WALLET_TYPE')
+      console.log('walletStr==', walletStr)
       // If connected before, connect back
       if (walletStr) {
         const previousConnector = connectorsById[parseInt(walletStr)]
@@ -65,6 +66,7 @@ export function useEagerConnect() {
             return
           }
 
+          console.log('active using previousConnector==', previousConnector)
           activate(previousConnector).catch(() => {
             setTried(true)
           })
@@ -82,6 +84,7 @@ export function useEagerConnect() {
   // if the connection worked, wait until we get confirmation of that to flip the flag
   useEffect(() => {
     if (!tried && active) {
+      console.log('now active, so set web3')
       setWeb3(library, undefined)
       setTried(true)
     }
@@ -97,17 +100,21 @@ export function useInactiveListener(suppress: boolean = false) {
     const { ethereum } = window as any
     if (ethereum && ethereum.on && !active && !error && !suppress) {
       const handleConnect = () => {
+        console.log('handleConnect')
         activate(injected)
       }
       const handleChainChanged = (chainId: string | number) => {
+        console.log('handleChainChanged')
         activate(injected)
       }
       const handleAccountsChanged = (accounts: string[]) => {
         if (accounts.length > 0) {
+          console.log('handleAccountsChanged')
           activate(injected)
         }
       }
       const handleNetworkChanged = (networkId: string | number) => {
+        console.log('handleNetworkChanged')
         activate(injected)
       }
 
