@@ -10,6 +10,8 @@ import { querySupplyRate } from 'store/compoundStore'
 import { useWalletStore } from 'store/walletStore'
 import MyTokenRow from './MyTokenRow'
 import MyTokenRowSkeleton from './MyTokenRowSkeleton'
+import { sortNumberByOrder, sortStringByOrder } from './utils'
+import TablePagination from './TablePagination'
 
 type Header = {
   title: string
@@ -81,22 +83,8 @@ export default function MyTokenTable({
     }
 
     let sorted
-    const strCmpFunc =
-      orderDirection === 'asc'
-        ? (a, b) => {
-            return a.localeCompare(b)
-          }
-        : (a, b) => {
-            return b.localeCompare(a)
-          }
-    const numCmpFunc =
-      orderDirection === 'asc'
-        ? (a, b) => {
-            return a - b
-          }
-        : (a, b) => {
-            return b - a
-          }
+    const strCmpFunc = sortStringByOrder(orderDirection)
+    const numCmpFunc = sortNumberByOrder(orderDirection)
 
     if (orderBy === 'name') {
       sorted = rawPairs.sort((lhs, rhs) => {
@@ -193,7 +181,7 @@ export default function MyTokenTable({
                     ))}
                   </tr>
                 </thead>
-                <tbody className="bg-white dark:bg-gray-700 divide-y dark:divide-gray-500 divide-gray-200">
+                <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-700 dark:divide-gray-500">
                   {isLoading ? (
                     Array.from(Array(TOKENS_PER_PAGE).keys()).map((token) => (
                       <MyTokenRowSkeleton key={token} />
@@ -229,37 +217,11 @@ export default function MyTokenTable({
           </div>
         </div>
       </div>
-      <div className="flex flex-row items-stretch justify-between px-10 py-5 md:justify-center md:flex md:border-b dark:border-gray-500 md:space-x-10">
-        <button
-          onClick={() => {
-            if (currentPage > 0) setCurrentPage(currentPage - 1)
-          }}
-          className={classNames(
-            'px-4 py-2 text-sm font-medium leading-none cursor-pointer focus:outline-none font-sf-pro-text text-brand-gray-4 dark:text-gray-300 tracking-tightest',
-            currentPage <= 0
-              ? 'cursor-not-allowed opacity-50'
-              : 'hover:bg-brand-gray'
-          )}
-          disabled={currentPage <= 0}
-        >
-          &larr; Previous
-        </button>
-        <button
-          onClick={() => {
-            if (pairs && pairs.length === TOKENS_PER_PAGE)
-              setCurrentPage(currentPage + 1)
-          }}
-          className={classNames(
-            'px-4 py-2 text-sm font-medium leading-none cursor-pointer focus:outline-none font-sf-pro-text dark:text-gray-300 text-brand-gray-4 tracking-tightest',
-            pairs?.length !== TOKENS_PER_PAGE
-              ? 'cursor-not-allowed opacity-50'
-              : 'hover:bg-brand-gray'
-          )}
-          disabled={pairs?.length !== TOKENS_PER_PAGE}
-        >
-          Next &rarr;
-        </button>
-      </div>
+      <TablePagination
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        pairs={pairs}
+      />
     </>
   )
 }
