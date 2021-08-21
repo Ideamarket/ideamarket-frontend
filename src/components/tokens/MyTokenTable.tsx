@@ -10,6 +10,7 @@ import { querySupplyRate } from 'store/compoundStore'
 import { useWalletStore } from 'store/walletStore'
 import MyTokenRow from './MyTokenRow'
 import MyTokenRowSkeleton from './MyTokenRowSkeleton'
+import { sortNumberByOrder, sortStringByOrder } from './utils'
 
 type Header = {
   title: string
@@ -81,22 +82,8 @@ export default function MyTokenTable({
     }
 
     let sorted
-    const strCmpFunc =
-      orderDirection === 'asc'
-        ? (a, b) => {
-            return a.localeCompare(b)
-          }
-        : (a, b) => {
-            return b.localeCompare(a)
-          }
-    const numCmpFunc =
-      orderDirection === 'asc'
-        ? (a, b) => {
-            return a - b
-          }
-        : (a, b) => {
-            return b - a
-          }
+    const strCmpFunc = sortStringByOrder(orderDirection)
+    const numCmpFunc = sortNumberByOrder(orderDirection)
 
     if (orderBy === 'name') {
       sorted = rawPairs.sort((lhs, rhs) => {
@@ -193,7 +180,7 @@ export default function MyTokenTable({
                     ))}
                   </tr>
                 </thead>
-                <tbody className="bg-white dark:bg-gray-700 divide-y dark:divide-gray-500 divide-gray-200">
+                <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-700 dark:divide-gray-500">
                   {isLoading ? (
                     Array.from(Array(TOKENS_PER_PAGE).keys()).map((token) => (
                       <MyTokenRowSkeleton key={token} />

@@ -1,6 +1,8 @@
 import classNames from 'classnames'
 import { useEffect, useState } from 'react'
 import { IdeaTokenTrade } from 'store/ideaMarketsStore'
+import TablePagination from '../TablePagination'
+import { sortNumberByOrder, sortStringByOrder } from '../utils'
 import { MyTradesRow, MyTradesRowSkeleton } from './components'
 import headers from './headers'
 
@@ -32,22 +34,8 @@ export default function MyTradesTable({
     }
 
     let sorted
-    const strCmpFunc =
-      orderDirection === 'asc'
-        ? (a, b) => {
-            return a.localeCompare(b)
-          }
-        : (a, b) => {
-            return b.localeCompare(a)
-          }
-    const numCmpFunc =
-      orderDirection === 'asc'
-        ? (a, b) => {
-            return a - b
-          }
-        : (a, b) => {
-            return b - a
-          }
+    const strCmpFunc = sortStringByOrder(orderDirection)
+    const numCmpFunc = sortNumberByOrder(orderDirection)
 
     if (orderBy === 'type') {
       sorted = rawPairs.sort((lhs: any, rhs: any) => {
@@ -172,37 +160,11 @@ export default function MyTradesTable({
           </div>
         </div>
       </div>
-      <div className="flex flex-row items-stretch justify-between px-10 py-5 md:justify-center md:flex md:space-x-10">
-        <button
-          onClick={() => {
-            if (currentPage > 0) setCurrentPage(currentPage - 1)
-          }}
-          className={classNames(
-            'px-4 py-2 text-sm font-medium leading-none cursor-pointer focus:outline-none font-sf-pro-text text-brand-gray-4 tracking-tightest',
-            currentPage <= 0
-              ? 'cursor-not-allowed opacity-50'
-              : 'hover:bg-brand-gray'
-          )}
-          disabled={currentPage <= 0}
-        >
-          &larr; Previous
-        </button>
-        <button
-          onClick={() => {
-            if (pairs && pairs.length === TOKENS_PER_PAGE)
-              setCurrentPage(currentPage + 1)
-          }}
-          className={classNames(
-            'px-4 py-2 text-sm font-medium leading-none cursor-pointer focus:outline-none font-sf-pro-text text-brand-gray-4 tracking-tightest',
-            pairs?.length !== TOKENS_PER_PAGE
-              ? 'cursor-not-allowed opacity-50'
-              : 'hover:bg-brand-gray'
-          )}
-          disabled={pairs?.length !== TOKENS_PER_PAGE}
-        >
-          Next &rarr;
-        </button>
-      </div>
+      <TablePagination
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        pairs={pairs}
+      />
     </>
   )
 }
