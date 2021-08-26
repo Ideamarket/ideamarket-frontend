@@ -15,7 +15,10 @@ import {
   startingOptionalColumns,
 } from 'components/home/utils'
 import { HomeHeader } from 'components'
-import { CheckboxFilters, MainFilters } from 'components/tokens/utils/OverviewUtils'
+import {
+  CheckboxFilters,
+  MainFilters,
+} from 'components/tokens/utils/OverviewUtils'
 
 type Props = { urlMarkets?: string[] }
 
@@ -116,7 +119,7 @@ const Home = ({ urlMarkets }: Props) => {
     setSelectedFilterId,
     onColumnChanged,
     onNameSearchChanged,
-    setIsVerifiedFilterActive
+    setIsVerifiedFilterActive,
   }
 
   const tableProps = {

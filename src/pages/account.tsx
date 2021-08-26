@@ -141,7 +141,7 @@ export default function MyTokens() {
                 Wallet
               </div>
               <div className="flex">
-                <div className="text-center pr-6">
+                <div className="pr-6 text-center">
                   <div className="text-sm font-semibold text-brand-gray text-opacity-60">
                     Total Purchase Value
                   </div>
@@ -177,10 +177,10 @@ export default function MyTokens() {
             <div className="pt-2 bg-white border rounded-md dark:bg-gray-700 dark:border-gray-500 border-brand-border-gray ">
               <div className="flex flex-col mx-5 dark:border-gray-500 md:flex-row md:items-center md:justify-between">
                 <div>
-                  <div className="md:inline-block">
+                  <div className="xs:inline-block">
                     <div
                       className={classNames(
-                        'text-base text-brand-new-dark dark:text-gray-300 font-semibold sm:px-2 mr-5 py-3 pt-2 inline-block cursor-pointer',
+                        'text-base text-brand-new-dark dark:text-gray-300 font-semibold lg:px-2 mr-5 py-3 pt-2 inline-block cursor-pointer',
                         table === 'holdings'
                           ? 'border-b-2 border-brand-new-dark dark:border-gray-300'
                           : ''
@@ -193,7 +193,7 @@ export default function MyTokens() {
                     </div>
                     <div
                       className={classNames(
-                        'text-base text-brand-new-dark dark:text-gray-300 font-semibold sm:px-2 mr-5 py-3 pt-2 inline-block cursor-pointer',
+                        'text-base text-brand-new-dark dark:text-gray-300 font-semibold lg:px-2 mr-5 py-3 pt-2 inline-block cursor-pointer',
                         table === 'listings'
                           ? 'border-b-2 border-brand-new-dark dark:border-gray-300'
                           : ''
@@ -205,10 +205,10 @@ export default function MyTokens() {
                       Listings
                     </div>
                   </div>
-                  <div className="md:inline-block">
+                  <div className="xs:inline-block">
                     <div
                       className={classNames(
-                        'text-base text-brand-new-dark dark:text-gray-300 font-semibold sm:px-2 mr-5 py-3 pt-2 inline-block cursor-pointer',
+                        'text-base text-brand-new-dark dark:text-gray-300 font-semibold lg:px-2 mr-5 py-3 pt-2 inline-block cursor-pointer',
                         table === 'locked'
                           ? 'border-b-2 border-brand-new-dark dark:border-gray-300'
                           : ''
@@ -221,7 +221,7 @@ export default function MyTokens() {
                     </div>
                     <div
                       className={classNames(
-                        'text-base text-brand-new-dark dark:text-gray-300 font-semibold sm:px-2 py-3 pt-2 inline-block cursor-pointer',
+                        'text-base text-brand-new-dark dark:text-gray-300 font-semibold lg:px-2 py-3 pt-2 inline-block cursor-pointer',
                         table === 'trades'
                           ? 'border-b-2 border-brand-new-dark dark:border-gray-300'
                           : ''
@@ -235,7 +235,7 @@ export default function MyTokens() {
                   </div>
                 </div>
                 <div
-                  className="w-48 pt-6 pr-0 mb-4 lg:w-80 md:pt-0 md:mb-0"
+                  className="w-full pt-6 pr-0 mb-4 md:w-80 md:pt-0 md:mb-0"
                   style={{ marginTop: -8 }}
                 >
                   <MarketSelect
