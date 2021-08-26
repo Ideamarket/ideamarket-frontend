@@ -24,7 +24,7 @@ export default function TooltipContent({
         left: left,
       }}
     >
-      <div className="p-3 mb-1 text-sm bg-gray-300 dark:bg-gray-800 rounded-lg">
+      <div className="p-3 mb-1 text-sm bg-gray-300 rounded-lg dark:bg-gray-800">
         {children}
       </div>
     </div>,
