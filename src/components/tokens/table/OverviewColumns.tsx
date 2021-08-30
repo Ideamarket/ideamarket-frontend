@@ -145,9 +145,8 @@ export const OverviewColumns = ({
                       </div>
                     ))}
                     <br />
-                    If you represent one of these companies, verify ownership of
-                    your official Twitter account on Ideamarket to claim your
-                    new income stream.
+                    If you represent one of these companies, email
+                    team@ideamarket.io to claim your new income stream.
                   </div>
                 </Tooltip>
               </div>
