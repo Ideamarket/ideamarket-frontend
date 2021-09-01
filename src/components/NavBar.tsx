@@ -35,8 +35,8 @@ export default function Nav() {
     {
       name: 'Wallet',
       value: 'wallet',
-      onClick: () => router.push('/account'),
-      isSelected: router.pathname === '/account',
+      onClick: () => router.push('/wallet'),
+      isSelected: router.pathname === '/wallet',
     },
     {
       name: 'Community',
