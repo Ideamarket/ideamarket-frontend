@@ -21,16 +21,16 @@ const handlers: Handlers<Partial<ApiResponseData>> = {
       }
 
       aws.config.update({
-        accessKeyId: process.env.AWS_ACCESS_KEY,
-        secretAccessKey: process.env.AWS_SECRET_KEY,
-        region: process.env.NEXT_AWS_PUBLIC_REGION,
+        accessKeyId: process.env.IM_AWS_ACCESS_KEY,
+        secretAccessKey: process.env.IM_AWS_SECRET_KEY,
+        region: process.env.NEXT_PUBLIC_IM_AWS_REGION,
         signatureVersion: 'v4',
       })
 
       const { fileName, fileType } = req.body
       const s3 = new aws.S3()
       const preSignedPost = await s3.createPresignedPost({
-        Bucket: process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME,
+        Bucket: process.env.NEXT_PUBLIC_IM_AWS_S3_BUCKET_NAME,
         Fields: {
           key: fileName,
           'Content-Type': fileType,
