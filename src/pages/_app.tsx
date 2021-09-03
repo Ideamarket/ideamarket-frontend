@@ -27,6 +27,7 @@ import Web3ReactManager from 'components/wallet/Web3ReactManager'
 import ModalRoot from 'components/modals/ModalRoot'
 import { WrongNetworkOverlay } from 'components'
 import { initUseMarketStore } from 'store/markets'
+import { Provider } from 'next-auth/client'
 
 export const GlobalContext = createContext({
   onWalletConnectedCallback: () => {},
@@ -99,26 +100,28 @@ function MyApp({ Component, pageProps }: AppProps) {
           },
         ]}
       />
-      <GlobalContext.Provider
-        value={{
-          onWalletConnectedCallback,
-          setOnWalletConnectedCallback,
-          isEmailFooterActive,
-          setIsEmailFooterActive,
-        }}
-      >
-        <ThemeProvider attribute="class" defaultTheme="light">
-          <Web3ReactProvider getLibrary={getLibrary}>
-            <Web3ReactManager>
-              <Layout>
-                <Component {...pageProps} />
-              </Layout>
-            </Web3ReactManager>
-            <WrongNetworkOverlay />
-            <ModalRoot />
-          </Web3ReactProvider>
-        </ThemeProvider>
-      </GlobalContext.Provider>
+      <Provider session={pageProps.session}>
+        <GlobalContext.Provider
+          value={{
+            onWalletConnectedCallback,
+            setOnWalletConnectedCallback,
+            isEmailFooterActive,
+            setIsEmailFooterActive,
+          }}
+        >
+          <ThemeProvider attribute="class" defaultTheme="light">
+            <Web3ReactProvider getLibrary={getLibrary}>
+              <Web3ReactManager>
+                <Layout>
+                  <Component {...pageProps} />
+                </Layout>
+              </Web3ReactManager>
+              <WrongNetworkOverlay />
+              <ModalRoot />
+            </Web3ReactProvider>
+          </ThemeProvider>
+        </GlobalContext.Provider>
+      </Provider>
     </>
   )
 }
