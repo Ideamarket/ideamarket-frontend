@@ -27,9 +27,13 @@ import Web3ReactManager from 'components/wallet/Web3ReactManager'
 import ModalRoot from 'components/modals/ModalRoot'
 import { WrongNetworkOverlay } from 'components'
 import { initUseMarketStore } from 'store/markets'
+<<<<<<< HEAD
 import { NETWORK, INetworkSpecifics } from 'store/networks'
 //import ModalService from 'components/modals/ModalService'
 //import MigrationDoneModal from 'components/MigrationDoneModal'
+=======
+import { Provider } from 'next-auth/client'
+>>>>>>> cbe1800 (feat: add api for user settings and basic user-settings page to test the api)
 
 export const GlobalContext = createContext({
   onWalletConnectedCallback: () => {},
