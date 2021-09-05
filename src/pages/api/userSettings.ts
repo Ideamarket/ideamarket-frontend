@@ -18,19 +18,18 @@ const handlers: Handlers<Partial<ApiResponseData>> = {
         res.status(401).json({ message: 'Unauthorized' })
         return
       }
+      const cloudFrontDomain = process.env.USER_ACCOUNTS_CLOUDFRONT_DOMAIN
 
       const {
         username: initialUsername,
         redirectionUrl: initialUrl,
         bio,
-        profilePhoto,
+        profilePhotoFilePath,
         ethAddresses,
         visibilityOptions,
       } = req.body
 
-      let username = (initialUsername as string).trim().toLowerCase()
-      const redirectionUrl = removeHttpProtocol(initialUrl as string)
-
+      let username = (initialUsername as string)?.trim().toLowerCase()
       if (session.user.username) {
         if (session.user.username !== username) {
           res.status(400).json({ message: 'Username cannot be updated' })
@@ -47,9 +46,20 @@ const handlers: Handlers<Partial<ApiResponseData>> = {
           return
         }
       }
-      if (!isRedirectionUrlValid(redirectionUrl)) {
-        res.status(400).json({ message: 'Redirection URL is not valid' })
-        return
+
+      let redirectionUrl = ''
+      if (initialUrl && initialUrl !== '') {
+        redirectionUrl = removeHttpProtocol(initialUrl as string)
+        if (!isRedirectionUrlValid(redirectionUrl)) {
+          res.status(400).json({ message: 'Redirection URL is not valid' })
+          return
+        }
+        redirectionUrl = addHttpsProtocol(redirectionUrl)
+      }
+
+      let profilePhoto = ''
+      if (profilePhotoFilePath && profilePhotoFilePath !== '') {
+        profilePhoto = cloudFrontDomain + profilePhotoFilePath
       }
 
       await updateUserSettings({
@@ -58,7 +68,7 @@ const handlers: Handlers<Partial<ApiResponseData>> = {
           username,
           bio,
           profilePhoto,
-          redirectionUrl: addHttpsProtocol(redirectionUrl),
+          redirectionUrl,
           ethAddresses,
           visibilityOptions,
         },
