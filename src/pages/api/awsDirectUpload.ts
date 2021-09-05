@@ -34,7 +34,6 @@ const handlers: Handlers<Partial<ApiResponseData>> = {
         Fields: {
           key: fileName,
           'Content-Type': fileType,
-          ACL: 'public-read',
         },
         Expires: 60,
         Conditions: [
