@@ -4,25 +4,38 @@ import { User } from 'next-auth'
 /**
  * Updates the user settings by userId
  */
-export function updateUserSettings({
+export async function updateUserSettings({
   userId,
   userSettings,
 }: {
   userId: string
   userSettings: Partial<User>
 }) {
-  return getClient().query(
-    q.Update(q.Ref(q.Collection('users'), userId), {
-      data: userSettings,
-    })
-  )
+  try {
+    await getClient().query(
+      q.Update(q.Ref(q.Collection('users'), userId), {
+        data: userSettings,
+      })
+    )
+  } catch (error) {
+    console.error(error)
+  }
 }
 
 /**
  * Returns whether the username is already taken or not
  */
-export function isUsernameTaken(username: string): Promise<boolean> {
-  return getClient().query(
-    q.If(q.Exists(q.Match(q.Index('user_by_username'), username)), true, false)
-  )
+export async function isUsernameTaken(username: string): Promise<boolean> {
+  try {
+    const response = await getClient().query<boolean>(
+      q.If(
+        q.Exists(q.Match(q.Index('user_by_username'), username)),
+        true,
+        false
+      )
+    )
+    return response
+  } catch (error) {
+    console.error(error)
+  }
 }
