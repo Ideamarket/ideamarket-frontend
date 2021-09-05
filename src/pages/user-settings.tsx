@@ -25,7 +25,7 @@ export default function UserAccount() {
     message: string
   }>(
     () =>
-      fetch('api/userSettings', {
+      fetch('/api/userSettings', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -153,7 +153,7 @@ export default function UserAccount() {
             className="ml-auto w-2/3"
             type="text"
             placeholder="Username"
-            value={username}
+            value={username ?? ''}
             onChange={(e) => {
               if (!currentSession.user.username) {
                 setUsername(e.target.value)
@@ -168,7 +168,7 @@ export default function UserAccount() {
             className="ml-auto w-2/3"
             type="text"
             placeholder="Redirection Url"
-            value={redirectionUrl}
+            value={redirectionUrl ?? ''}
             onChange={(e) => {
               setRedirectionUrl(e.target.value)
             }}
@@ -181,7 +181,7 @@ export default function UserAccount() {
             className="ml-auto w-2/3"
             type="text"
             placeholder="Bio"
-            value={bio}
+            value={bio ?? ''}
             onChange={(e) => {
               setBio(e.target.value)
             }}
@@ -194,7 +194,7 @@ export default function UserAccount() {
             className="ml-auto w-2/3"
             type="text"
             placeholder="Eth Address"
-            value={ethAddresses}
+            value={ethAddresses?.[0] ?? ''}
             onChange={(e) => {
               const addresses: string[] = []
               addresses.push(e.target.value)
@@ -209,7 +209,7 @@ export default function UserAccount() {
             className="ml-auto w-2/3"
             type="text"
             placeholder="Profile Photo"
-            value={profilePhoto}
+            value={profilePhoto ?? ''}
             onChange={(e) => {
               setProfilePhoto(e.target.value)
             }}
@@ -234,7 +234,7 @@ export default function UserAccount() {
             <input
               type="checkbox"
               id="display_email"
-              checked={displayEmail}
+              checked={displayEmail ?? false}
               onChange={(e) => {
                 setDisplayEmail(e.target.checked)
               }}
@@ -246,7 +246,7 @@ export default function UserAccount() {
             <input
               type="checkbox"
               id="display_bio"
-              checked={displayBio}
+              checked={displayBio ?? false}
               onChange={(e) => {
                 setDisplayBio(e.target.checked)
               }}
@@ -258,7 +258,7 @@ export default function UserAccount() {
             <input
               type="checkbox"
               id="display_eth_addresses"
-              checked={displayEthAddresses}
+              checked={displayEthAddresses ?? false}
               onChange={(e) => {
                 setDisplayEthAddresses(e.target.checked)
               }}
@@ -273,7 +273,7 @@ export default function UserAccount() {
             <input
               type="checkbox"
               id="display_holdings"
-              checked={displayHoldings}
+              checked={displayHoldings ?? false}
               onChange={(e) => {
                 setDisplayHoldings(e.target.checked)
               }}
