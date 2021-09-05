@@ -12,6 +12,7 @@ export default function UserAccount() {
   const [username, setUsername] = useState('')
   const [bio, setBio] = useState('')
   const [imageFile, setImageFile] = useState(null)
+  const [filePath, setFilePath] = useState('')
   const [profilePhoto, setProfilePhoto] = useState('')
   const [redirectionUrl, setRedirectionUrl] = useState('')
   const [ethAddresses, setEthAddresses] = useState<string[]>([])
@@ -34,7 +35,7 @@ export default function UserAccount() {
           username,
           redirectionUrl,
           bio,
-          profilePhoto,
+          profilePhotoFilePath: filePath,
           ethAddresses,
           visibilityOptions: {
             email: displayEmail,
@@ -56,6 +57,15 @@ export default function UserAccount() {
         toast.success(data.message)
         getSession().then((_session) => {
           setCurrentSession(_session)
+          setUsername(_session?.user.username)
+          setBio(_session?.user.bio)
+          setProfilePhoto(_session?.user.profilePhoto)
+          setRedirectionUrl(_session?.user.redirectionUrl)
+          setEthAddresses(_session?.user.ethAddresses)
+          setDisplayEmail(_session?.user.visibilityOptions?.email)
+          setDisplayBio(_session?.user.visibilityOptions?.bio)
+          setDisplayEthAddresses(_session?.user.visibilityOptions?.ethAddresses)
+          setDisplayHoldings(_session?.user.visibilityOptions?.holdings)
         })
       },
       onError: (e: Error) => {
@@ -133,9 +143,9 @@ export default function UserAccount() {
           toast.loading('Saving user settings')
           e.preventDefault()
           if (imageFile) {
-            const uploadedUrl = await uploadFile(imageFile)
-            if (uploadedUrl) {
-              setProfilePhoto(uploadedUrl)
+            const uploadedFilePath = await uploadFile(imageFile)
+            if (uploadedFilePath) {
+              setFilePath(uploadedFilePath)
             } else {
               toast.error('Profile photo upload failed')
             }
@@ -213,22 +223,27 @@ export default function UserAccount() {
             onChange={(e) => {
               setProfilePhoto(e.target.value)
             }}
-            disabled={isUpdateLoading}
-          />
-        </div>
-        <div className="flex items-center space-x-2">
-          <label>Upload Profile Photo</label>
-          <input
-            onChange={async (e) => {
-              setImageFile(e.target.files[0])
-            }}
-            type="file"
-            accept="image/png, image/jpeg"
-            disabled={isUpdateLoading}
-            ref={ref}
+            disabled={true}
           />
         </div>
         <div className="flex-col space-y-2">
+          <div className="flex items-center space-x-2">
+            <label>Upload Profile Photo</label>
+            <input
+              onChange={async (e) => {
+                setImageFile(e.target.files[0])
+              }}
+              type="file"
+              accept="image/png, image/jpeg"
+              disabled={isUpdateLoading}
+              ref={ref}
+            />
+          </div>
+          <div>
+            <label>(only jpg/png, upto 3MB)</label>
+          </div>
+        </div>
+        <div className="flex-col space-y-2 pt-5">
           <h3 className="font-bold underline">Visibility Options</h3>
           <div className="flex items-center space-x-2">
             <input
