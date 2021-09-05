@@ -23,14 +23,14 @@ const handlers: Handlers<Partial<ApiResponseData>> = {
       aws.config.update({
         accessKeyId: process.env.IM_AWS_ACCESS_KEY,
         secretAccessKey: process.env.IM_AWS_SECRET_KEY,
-        region: process.env.NEXT_PUBLIC_IM_AWS_REGION,
+        region: process.env.IM_AWS_REGION,
         signatureVersion: 'v4',
       })
 
       const { fileName, fileType } = req.body
       const s3 = new aws.S3()
       const preSignedPost = await s3.createPresignedPost({
-        Bucket: process.env.NEXT_PUBLIC_IM_AWS_S3_BUCKET_NAME,
+        Bucket: process.env.USER_ACCOUNTS_S3_BUCKET,
         Fields: {
           key: fileName,
           'Content-Type': fileType,
@@ -38,7 +38,7 @@ const handlers: Handlers<Partial<ApiResponseData>> = {
         },
         Expires: 60,
         Conditions: [
-          ['content-length-range', 0, 2097152], // up to 2 MB
+          ['content-length-range', 0, 3145728], // up to 3 MB
         ],
       })
 
