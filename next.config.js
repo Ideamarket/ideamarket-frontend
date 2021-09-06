@@ -16,6 +16,7 @@ const moduleExports = withPWA({
       'app.ideamarket.io',
       'ideamarket.io',
       'raw.githubusercontent.com',
+      'd37wda20o7ykez.cloudfront.net',
     ],
   },
   async redirects() {
