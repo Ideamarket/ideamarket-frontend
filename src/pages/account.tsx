@@ -1,315 +1,305 @@
+import { DefaultLayout, Footer } from 'components'
+import { useEffect, useRef, useState } from 'react'
+import Image from 'next/image'
+import ProfileTab from 'components/account/ProfileTab'
+import toast, { Toaster } from 'react-hot-toast'
+import { getSession, signIn, signOut } from 'next-auth/client'
+import SettingsTab from 'components/account/SettingsTab'
+import TabSwitcher from 'components/account/TabSwitcher'
+import { Session } from 'next-auth'
+import { useMutation } from 'react-query'
 import classNames from 'classnames'
-import BN from 'bn.js'
-import { useState, useEffect } from 'react'
-import { useQuery } from 'react-query'
-import {
-  MarketSelect,
-  Footer,
-  OwnedTokenTable,
-  MyTokenTable,
-  LockedTokenTable,
-  DefaultLayout,
-  WalletModal,
-} from '../components'
-import { useWalletStore } from '../store/walletStore'
-import {
-  formatNumberWithCommasAsThousandsSerperator,
-  web3BNToFloatString,
-  calculateIdeaTokenDaiValue,
-  bigNumberTenPow18,
-} from 'utils'
-import { NextSeo } from 'next-seo'
-import {
-  queryOwnedTokensMaybeMarket,
-  queryLockedTokens,
-  queryMyTrades,
-} from 'store/ideaMarketsStore'
-import ModalService from 'components/modals/ModalService'
-import MyTradesTable from 'components/tokens/MyTradesTable/MyTradesTable'
+import { uploadFile } from 'lib/utils/uploadFileToS3'
+import ProfileMobileTab from 'components/account/ProfileMobileTab'
 
-export default function MyTokens() {
-  const web3 = useWalletStore((state) => state.web3)
+const tabs = {
+  SETTINGS: 'SETTINGS',
+  PROFILE: 'PROFILE',
+}
 
-  const [ownedTokensTablePage, setOwnedTokensTablePage] = useState(0)
-  const [selectedMarketOwnedTokens, setSelectedMarketOwnedTokens] =
-    useState(undefined)
-  const [ownedTokenTotalValue, setOwnedTokensTotalValue] = useState('0.00')
-  const [lockedTokenTotalValue, setLockedTokensTotalValue] = useState('0.00')
-  const [purchaseTotalValue, setPurchaseTotalValue] = useState('0.00')
+const Account = () => {
+  const [isSessionLoading, setIsSessionLoading] = useState(true)
+  const [currentSession, setCurrentSession] = useState<Session | null>(null)
+  const [username, setUsername] = useState('')
+  const [bio, setBio] = useState('')
+  const [imageFile, setImageFile] = useState(null)
+  const [filePath, setFilePath] = useState('')
+  const [profilePhoto, setProfilePhoto] = useState('')
+  const [redirectionUrl, setRedirectionUrl] = useState('')
+  const [ethAddresses, setEthAddresses] = useState<string[]>([])
+  const [displayEmail, setDisplayEmail] = useState(false)
+  const [displayEthAddresses, setDisplayEthAddresses] = useState(false)
+  const [displayBio, setDisplayBio] = useState(false)
+  const [displayHoldings, setDisplayHoldings] = useState(false)
 
-  const [myTokensTablePage, setMyTokensTablePage] = useState(0)
-  const [selectedMarketMyTokens, setSelectedMarketMyTokens] =
-    useState(undefined)
+  const [cardTab, setCardTab] = useState(tabs.SETTINGS)
 
-  const [lockedTokensTablePage, setLockedTokensTablePage] = useState(0)
-  const [selectedMarketLockedTokens, setSelectedMarketLockedTokens] =
-    useState(undefined)
-
-  const address = useWalletStore((state) => state.address)
-
-  const {
-    data: rawOwnedPairs,
-    isLoading: isOwnedPairsDataLoading,
-    refetch: refetchOwned,
-  } = useQuery(
-    ['owned-tokens', selectedMarketOwnedTokens, address],
-    queryOwnedTokensMaybeMarket
-  )
-
-  const {
-    data: rawLockedPairs,
-    isLoading: isLockedPairsDataLoading,
-    refetch: refetchLocked,
-  } = useQuery(
-    ['locked-tokens', selectedMarketLockedTokens, address],
-    queryLockedTokens
-  )
-
-  const {
-    data: myTrades,
-    isLoading: isMyTradesDataLoading,
-    refetch: refetchMyTrades,
-  } = useQuery(
-    ['my-trades', selectedMarketLockedTokens, address],
-    queryMyTrades
-  )
-
-  const [table, setTable] = useState('holdings')
+  const ref = useRef<HTMLInputElement>()
 
   useEffect(() => {
-    // Calculate the total value of non-locked tokens
-    let ownedTotal = new BN('0')
-    for (const pair of rawOwnedPairs ?? []) {
-      ownedTotal = ownedTotal.add(
-        calculateIdeaTokenDaiValue(
-          pair.token?.rawSupply,
-          pair.market,
-          pair.rawBalance
-        )
-      )
+    getSession().then((_session) => {
+      setIsSessionLoading(false)
+      setCurrentSession(_session)
+      setUsername(_session?.user.username)
+      setBio(_session?.user.bio)
+      setProfilePhoto(_session?.user.profilePhoto)
+      setRedirectionUrl(_session?.user.redirectionUrl)
+      setEthAddresses(_session?.user.ethAddresses)
+      setDisplayEmail(_session?.user.visibilityOptions?.email)
+      setDisplayBio(_session?.user.visibilityOptions?.bio)
+      setDisplayEthAddresses(_session?.user.visibilityOptions?.ethAddresses)
+      setDisplayHoldings(_session?.user.visibilityOptions?.holdings)
+    })
+  }, [])
+
+  const [updateUserSettings, { isLoading: isUpdateLoading }] = useMutation<{
+    message: string
+  }>(
+    () =>
+      fetch('/api/userSettings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username,
+          redirectionUrl,
+          bio,
+          profilePhotoFilePath: filePath,
+          ethAddresses,
+          visibilityOptions: {
+            email: displayEmail,
+            bio: displayBio,
+            ethAddresses: displayEthAddresses,
+            holdings: displayHoldings,
+          },
+        }),
+      }).then(async (res) => {
+        if (!res.ok) {
+          const response = await res.json()
+          throw new Error(response.message)
+        }
+        return res.json()
+      }),
+    {
+      onSuccess: (data) => {
+        toast.dismiss()
+        toast.success(data.message)
+        getSession().then((_session) => {
+          setCurrentSession(_session)
+          setUsername(_session?.user.username)
+          setBio(_session?.user.bio)
+          setProfilePhoto(_session?.user.profilePhoto)
+          setRedirectionUrl(_session?.user.redirectionUrl)
+          setEthAddresses(_session?.user.ethAddresses)
+          setDisplayEmail(_session?.user.visibilityOptions?.email)
+          setDisplayBio(_session?.user.visibilityOptions?.bio)
+          setDisplayEthAddresses(_session?.user.visibilityOptions?.ethAddresses)
+          setDisplayHoldings(_session?.user.visibilityOptions?.holdings)
+        })
+      },
+      onError: (e: Error) => {
+        toast.dismiss()
+        toast.error(e.message)
+      },
     }
+  )
 
-    // Calculate the total value of locked tokens
-    let lockedTotal = new BN('0')
-    for (const pair of rawLockedPairs ?? []) {
-      lockedTotal = lockedTotal.add(
-        calculateIdeaTokenDaiValue(
-          pair.token?.rawSupply,
-          pair.market,
-          pair.rawBalance
-        )
-      )
-    }
+  const settingsProps = {
+    isUpdateLoading,
+    setEthAddresses,
+    ethAddresses,
+    currentSession,
+    setUsername,
+    username,
+    displayEmail,
+    bio,
+    setBio,
+    setDisplayHoldings,
+    displayHoldings,
+    setDisplayEthAddresses,
+    displayEthAddresses,
+    setDisplayBio,
+    setDisplayEmail,
+    displayBio,
+    redirectionUrl,
+    setRedirectionUrl,
+    profilePhoto,
+    setProfilePhoto,
+    setImageFile,
+    ref,
+  }
 
-    // Calculate the total purchase value
-    let purchaseTotal = new BN('0')
-    for (const pair of myTrades ?? []) {
-      if (pair.isBuy) purchaseTotal = purchaseTotal.add(pair.rawDaiAmount)
-    }
+  if (isSessionLoading) {
+    return <p>loading...</p>
+  }
 
-    setPurchaseTotalValue(
-      myTrades
-        ? web3BNToFloatString(purchaseTotal, bigNumberTenPow18, 18)
-        : '0.00'
+  if (!currentSession) {
+    return (
+      <div className="flex flex-col p-10 space-y-10">
+        <div className="flex">
+          <p>Not Signed in.</p> <br />
+          <button
+            onClick={() => {
+              signIn()
+            }}
+            className="px-4 py-2 ml-auto text-white rounded bg-brand-blue"
+          >
+            Sign in
+          </button>
+        </div>
+      </div>
     )
-    setOwnedTokensTotalValue(
-      rawOwnedPairs
-        ? web3BNToFloatString(ownedTotal, bigNumberTenPow18, 18)
-        : '0.00'
-    )
-    setLockedTokensTotalValue(
-      rawLockedPairs
-        ? web3BNToFloatString(lockedTotal, bigNumberTenPow18, 18)
-        : '0.00'
-    )
-  }, [rawOwnedPairs, rawLockedPairs, myTrades])
-
-  function refetch() {
-    refetchOwned()
-    refetchLocked()
-    refetchMyTrades()
   }
 
   return (
-    <>
-      <NextSeo title="Wallet" />
-      <div className="min-h-screen bg-brand-gray dark:bg-gray-900 font-inter">
-        <div className="h-64 px-4 pt-8 pb-5 text-white md:px-6 md:pt-6 bg-top-mobile md:bg-top-desktop md:h-96">
-          <div className="mx-auto md:px-4 max-w-88 md:max-w-304">
-            <div className="flex justify-between">
-              <div className="text-2xl font-semibold flex flex-col justify-end mb-2.5">
-                Wallet
-              </div>
-              <div className="flex">
-                <div className="pr-6 text-center">
-                  <div className="text-sm font-semibold text-brand-gray text-opacity-60">
-                    Total Purchase Value
-                  </div>
-                  <div
-                    className="text-2xl mb-2.5 font-semibold uppercase"
-                    title={'$' + +purchaseTotalValue}
-                  >
-                    $
-                    {formatNumberWithCommasAsThousandsSerperator(
-                      (+purchaseTotalValue).toFixed(2)
-                    )}
-                  </div>
-                </div>
+    <div className="min-h-screen bg-top-desktop-new">
+      <form
+        onSubmit={async (e) => {
+          toast.loading('Saving user settings')
+          e.preventDefault()
+          if (imageFile) {
+            const uploadedFilePath = await uploadFile(imageFile)
+            if (uploadedFilePath) {
+              setFilePath(uploadedFilePath)
+            } else {
+              toast.error('Profile photo upload failed')
+            }
+          }
+          updateUserSettings()
+          setImageFile('')
+          ref.current.value = ''
+        }}
+        className="flex flex-col max-w-xl space-y-2"
+      >
+        <Toaster />
 
-                <div className="text-center">
-                  <div className="text-sm font-semibold text-brand-gray text-opacity-60">
-                    Total Current Value
-                  </div>
-                  <div
-                    className="text-2xl mb-2.5 font-semibold uppercase"
-                    title={'$' + +ownedTokenTotalValue + +lockedTokenTotalValue}
-                  >
-                    $
-                    {formatNumberWithCommasAsThousandsSerperator(
-                      (+ownedTokenTotalValue + +lockedTokenTotalValue).toFixed(
-                        2
-                      )
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="pt-2 bg-white border rounded-md dark:bg-gray-700 dark:border-gray-500 border-brand-border-gray ">
-              <div className="flex flex-col mx-5 dark:border-gray-500 md:flex-row md:items-center md:justify-between">
-                <div>
-                  <div className="xs:inline-block">
-                    <div
-                      className={classNames(
-                        'text-base text-brand-new-dark dark:text-gray-300 font-semibold lg:px-2 mr-5 py-3 pt-2 inline-block cursor-pointer',
-                        table === 'holdings'
-                          ? 'border-b-2 border-brand-new-dark dark:border-gray-300'
-                          : ''
-                      )}
-                      onClick={() => {
-                        setTable('holdings')
-                      }}
-                    >
-                      Holdings
-                    </div>
-                    <div
-                      className={classNames(
-                        'text-base text-brand-new-dark dark:text-gray-300 font-semibold lg:px-2 mr-5 py-3 pt-2 inline-block cursor-pointer',
-                        table === 'listings'
-                          ? 'border-b-2 border-brand-new-dark dark:border-gray-300'
-                          : ''
-                      )}
-                      onClick={() => {
-                        setTable('listings')
-                      }}
-                    >
-                      Listings
-                    </div>
-                  </div>
-                  <div className="xs:inline-block">
-                    <div
-                      className={classNames(
-                        'text-base text-brand-new-dark dark:text-gray-300 font-semibold lg:px-2 mr-5 py-3 pt-2 inline-block cursor-pointer',
-                        table === 'locked'
-                          ? 'border-b-2 border-brand-new-dark dark:border-gray-300'
-                          : ''
-                      )}
-                      onClick={() => {
-                        setTable('locked')
-                      }}
-                    >
-                      Locked
-                    </div>
-                    <div
-                      className={classNames(
-                        'text-base text-brand-new-dark dark:text-gray-300 font-semibold lg:px-2 py-3 pt-2 inline-block cursor-pointer',
-                        table === 'trades'
-                          ? 'border-b-2 border-brand-new-dark dark:border-gray-300'
-                          : ''
-                      )}
-                      onClick={() => {
-                        setTable('trades')
-                      }}
-                    >
-                      Trades
-                    </div>
-                  </div>
-                </div>
-                <div
-                  className="w-full pt-6 pr-0 mb-4 md:w-80 md:pt-0 md:mb-0"
-                  style={{ marginTop: -8 }}
-                >
-                  <MarketSelect
-                    isClearable={true}
-                    onChange={(value) => {
-                      setMyTokensTablePage(0)
-                      setLockedTokensTablePage(0)
-                      setOwnedTokensTablePage(0)
-                      setSelectedMarketOwnedTokens(value?.market)
-                      setSelectedMarketMyTokens(value?.market)
-                      setSelectedMarketLockedTokens(value?.market)
-                    }}
-                    disabled={false}
-                  />
-                </div>
-              </div>
-              <div className="border-t border-brand-border-gray dark:border-gray-500 shadow-home ">
-                {!web3 && (
-                  <div className="flex items-center justify-center">
-                    <button
-                      onClick={() => {
-                        ModalService.open(WalletModal)
-                      }}
-                      className="my-40 p-2.5 text-base font-medium text-white border-2 rounded-lg border-brand-blue tracking-tightest-2 font-sf-compact-medium bg-brand-blue"
-                    >
-                      Connect Wallet to View
-                    </button>
-                  </div>
-                )}
-                {table === 'holdings' && web3 !== undefined && (
-                  <OwnedTokenTable
-                    rawPairs={rawOwnedPairs}
-                    isPairsDataLoading={isOwnedPairsDataLoading}
-                    currentPage={ownedTokensTablePage}
-                    setCurrentPage={setOwnedTokensTablePage}
-                    refetch={refetch}
-                  />
-                )}
-                {table === 'listings' && web3 !== undefined && (
-                  <MyTokenTable
-                    currentPage={myTokensTablePage}
-                    setCurrentPage={setMyTokensTablePage}
-                    market={selectedMarketMyTokens}
-                  />
-                )}
-
-                {table === 'locked' && web3 !== undefined && (
-                  <LockedTokenTable
-                    rawPairs={rawLockedPairs}
-                    isPairsDataLoading={isLockedPairsDataLoading}
-                    currentPage={lockedTokensTablePage}
-                    setCurrentPage={setLockedTokensTablePage}
-                  />
-                )}
-                {table === 'trades' && web3 !== undefined && (
-                  <MyTradesTable
-                    rawPairs={myTrades}
-                    isPairsDataLoading={isMyTradesDataLoading}
-                    currentPage={lockedTokensTablePage}
-                    setCurrentPage={setLockedTokensTablePage}
-                  />
-                )}
-              </div>
-            </div>
-            <div className="px-1 mt-12 text-brand-gray-2">
-              <Footer />
+        <div className="flex-col items-center justify-center hidden w-screen pt-12 margin md:flex font-inter">
+          <div className="flex flex-col items-end w-3/4 mb-2">
+            <div className="mb-4 text-4xl italic text-white">My Account</div>
+            <div>
+              <TabSwitcher
+                cardTab={cardTab}
+                setCardTab={setCardTab}
+                tabs={tabs}
+                hasSpaceBetween
+              />
             </div>
           </div>
+          <div className="relative flex items-start justify-center w-4/5 px-6 py-5 bg-white rounded-lg h-3/5">
+            <div className="relative flex flex-col w-1/4 mt-16 mr-8 text-center">
+              <div className="absolute transform -translate-x-1/2 -translate-y-1/2 rounded-full -top-24 left-1/2 w-36 h-36">
+                <Image
+                  src={profilePhoto || '/gray.svg'}
+                  alt="token"
+                  layout="fill"
+                  objectFit="contain"
+                  className="rounded-full"
+                />
+              </div>
+              <div className="p-3 border-b border-gray-100">
+                <div className="text-xs text-blue-400">USERNAME</div>
+                <div className="text-3xl font-semibold">{username ?? ''}</div>
+              </div>
+              <div className="p-3 border-b border-gray-100">
+                <div className="text-xs text-blue-400">EMAIL ADDRESS</div>
+                <div>{currentSession.user.email}</div>
+              </div>
+              <div className="p-3 border-b border-gray-100">
+                <div className="text-xs text-blue-400">ETH ADDRESS</div>
+                <div>{ethAddresses?.[0] ?? ''}</div>
+              </div>
+              <div>
+                <div className="p-3 text-xs text-blue-400">BIO</div>
+                <div className="leading-5">{bio ?? ''}</div>
+              </div>
+
+              <button
+                type="submit"
+                className="py-2 m-3 text-white rounded-lg bg-brand-blue hover:bg-blue-800"
+              >
+                {isUpdateLoading ? <p>Saving...</p> : <p> Save Profile</p>}
+              </button>
+
+              <button
+                onClick={() => {
+                  signOut()
+                }}
+                className="px-4 py-2 ml-auto text-white rounded bg-brand-blue"
+              >
+                Sign out
+              </button>
+            </div>
+            {cardTab === tabs.SETTINGS && <SettingsTab {...settingsProps} />}
+            {cardTab === tabs.PROFILE && <ProfileTab />}
+          </div>
+          <div className="w-3/4 mt-16 text-white">
+            <Footer />
+          </div>
         </div>
-      </div>
-    </>
+
+        <div className="flex flex-col items-center justify-start w-screen py-24 bg-top-desktop-new md:hidden font-inter">
+          <div className="flex justify-between w-5/6 px-2 text-white">
+            <TabSwitcher
+              cardTab={cardTab}
+              setCardTab={setCardTab}
+              tabs={tabs}
+              hasSpaceBetween={false}
+            />
+          </div>
+          <div className="relative flex flex-col items-center justify-center w-5/6 px-6 pt-20 pb-5 text-center bg-white rounded-lg">
+            <div className="absolute rounded-full -top-16 w-36 h-36">
+              <Image
+                src={'/gray.svg'}
+                alt="token"
+                layout="fill"
+                objectFit="contain"
+                className="rounded-full"
+              />
+            </div>
+            <div className="w-full py-3 border-b border-gray-100">
+              <div className="text-xs text-blue-400">USERNAME</div>
+              <div className="text-3xl font-semibold">
+                {currentSession.user.username || ''}
+              </div>
+            </div>
+            <div className="w-full py-3 border-b border-gray-100">
+              <div className="text-xs text-blue-400">BIO</div>
+              <div className="text-lg leading-5">{bio ?? ''}</div>
+            </div>
+            <div className="w-full py-3 border-b border-gray-100">
+              <div className="text-xs text-blue-400">EMAIL ADDRESS</div>
+              <div className="text-lg">{currentSession.user.email || ''}</div>
+            </div>
+            <div className="w-full py-3 border-b border-gray-100">
+              <div className="text-xs text-blue-400">ETH ADDRESS</div>
+              <div className="text-lg">{ethAddresses?.[0] || ''}</div>
+            </div>
+
+            {cardTab === tabs.SETTINGS && (
+              <ProfileMobileTab {...settingsProps} />
+            )}
+            {cardTab === tabs.PROFILE && <ProfileTab />}
+
+            <button
+              className={classNames(
+                'bg-brand-blue text-white px-4 py-2  ml-auto rounded-lg ',
+                isUpdateLoading ? 'cursor-not-allowed' : 'cursor-pointer'
+              )}
+              type="submit"
+              disabled={isUpdateLoading}
+            >
+              Save Profile
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
   )
 }
 
-MyTokens.layoutProps = {
+export default Account
+
+Account.layoutProps = {
   Layout: DefaultLayout,
 }
