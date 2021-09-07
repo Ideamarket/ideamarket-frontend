@@ -1,21 +1,13 @@
-import { DefaultLayout, Footer } from 'components'
+import { DefaultLayout } from 'components'
 import { useEffect, useRef, useState } from 'react'
-import Image from 'next/image'
-import ProfileTab from 'components/account/ProfileTab'
 import toast, { Toaster } from 'react-hot-toast'
-import { getSession, signIn, signOut } from 'next-auth/client'
-import SettingsTab from 'components/account/SettingsTab'
-import TabSwitcher from 'components/account/TabSwitcher'
+import { getSession, signIn } from 'next-auth/client'
 import { Session } from 'next-auth'
 import { useMutation } from 'react-query'
-import classNames from 'classnames'
 import { uploadFile } from 'lib/utils/uploadFileToS3'
-import ProfileMobileTab from 'components/account/ProfileMobileTab'
-
-const tabs = {
-  SETTINGS: 'SETTINGS',
-  PROFILE: 'PROFILE',
-}
+import AccountMobile from 'components/account/AccountMobile'
+import AccountDesktop from 'components/account/AccountDesktop'
+import { accountTabs } from 'components/account/constants'
 
 const Account = () => {
   const [isSessionLoading, setIsSessionLoading] = useState(true)
@@ -31,13 +23,13 @@ const Account = () => {
   const [displayEthAddresses, setDisplayEthAddresses] = useState(false)
   const [displayBio, setDisplayBio] = useState(false)
   const [displayHoldings, setDisplayHoldings] = useState(false)
-
-  const [cardTab, setCardTab] = useState(tabs.SETTINGS)
+  const [cardTab, setCardTab] = useState(accountTabs.SETTINGS)
 
   const ref = useRef<HTMLInputElement>()
 
   useEffect(() => {
     getSession().then((_session) => {
+      console.log(_session)
       setIsSessionLoading(false)
       setCurrentSession(_session)
       setUsername(_session?.user.username)
@@ -105,6 +97,25 @@ const Account = () => {
     }
   )
 
+  const onFormSubmit = async (e) => {
+    toast.loading('Saving user settings')
+    e.preventDefault()
+    if (imageFile) {
+      const uploadedFilePath = await uploadFile(imageFile)
+      if (uploadedFilePath) {
+        setFilePath(uploadedFilePath)
+      } else {
+        toast.error('Profile photo upload failed')
+      }
+    }
+    updateUserSettings()
+    setImageFile('')
+
+    if (ref?.current) {
+      ref.current.value = ''
+    }
+  }
+
   const settingsProps = {
     isUpdateLoading,
     setEthAddresses,
@@ -126,8 +137,15 @@ const Account = () => {
     setRedirectionUrl,
     profilePhoto,
     setProfilePhoto,
-    setImageFile,
     ref,
+    cardTab,
+    updateUserSettings,
+    setCardTab,
+    imageFile,
+    setImageFile,
+    setFilePath,
+    uploadFile,
+    onFormSubmit,
   }
 
   if (isSessionLoading) {
@@ -154,146 +172,9 @@ const Account = () => {
 
   return (
     <div className="min-h-screen bg-top-desktop-new">
-      <form
-        onSubmit={async (e) => {
-          toast.loading('Saving user settings')
-          e.preventDefault()
-          if (imageFile) {
-            const uploadedFilePath = await uploadFile(imageFile)
-            if (uploadedFilePath) {
-              setFilePath(uploadedFilePath)
-            } else {
-              toast.error('Profile photo upload failed')
-            }
-          }
-          updateUserSettings()
-          setImageFile('')
-          ref.current.value = ''
-        }}
-        className="flex flex-col max-w-xl space-y-2"
-      >
-        <Toaster />
-
-        <div className="flex-col items-center justify-center hidden w-screen pt-12 margin md:flex font-inter">
-          <div className="flex flex-col items-end w-3/4 mb-2">
-            <div className="mb-4 text-4xl italic text-white">My Account</div>
-            <div>
-              <TabSwitcher
-                cardTab={cardTab}
-                setCardTab={setCardTab}
-                tabs={tabs}
-                hasSpaceBetween
-              />
-            </div>
-          </div>
-          <div className="relative flex items-start justify-center w-4/5 px-6 py-5 bg-white rounded-lg h-3/5">
-            <div className="relative flex flex-col w-1/4 mt-16 mr-8 text-center">
-              <div className="absolute transform -translate-x-1/2 -translate-y-1/2 rounded-full -top-24 left-1/2 w-36 h-36">
-                <Image
-                  src={profilePhoto || '/gray.svg'}
-                  alt="token"
-                  layout="fill"
-                  objectFit="contain"
-                  className="rounded-full"
-                />
-              </div>
-              <div className="p-3 border-b border-gray-100">
-                <div className="text-xs text-blue-400">USERNAME</div>
-                <div className="text-3xl font-semibold">{username ?? ''}</div>
-              </div>
-              <div className="p-3 border-b border-gray-100">
-                <div className="text-xs text-blue-400">EMAIL ADDRESS</div>
-                <div>{currentSession.user.email}</div>
-              </div>
-              <div className="p-3 border-b border-gray-100">
-                <div className="text-xs text-blue-400">ETH ADDRESS</div>
-                <div>{ethAddresses?.[0] ?? ''}</div>
-              </div>
-              <div>
-                <div className="p-3 text-xs text-blue-400">BIO</div>
-                <div className="leading-5">{bio ?? ''}</div>
-              </div>
-
-              <button
-                type="submit"
-                className="py-2 m-3 text-white rounded-lg bg-brand-blue hover:bg-blue-800"
-              >
-                {isUpdateLoading ? <p>Saving...</p> : <p> Save Profile</p>}
-              </button>
-
-              <button
-                onClick={() => {
-                  signOut()
-                }}
-                className="px-4 py-2 ml-auto text-white rounded bg-brand-blue"
-              >
-                Sign out
-              </button>
-            </div>
-            {cardTab === tabs.SETTINGS && <SettingsTab {...settingsProps} />}
-            {cardTab === tabs.PROFILE && <ProfileTab />}
-          </div>
-          <div className="w-3/4 mt-16 text-white">
-            <Footer />
-          </div>
-        </div>
-
-        <div className="flex flex-col items-center justify-start w-screen py-24 bg-top-desktop-new md:hidden font-inter">
-          <div className="flex justify-between w-5/6 px-2 text-white">
-            <TabSwitcher
-              cardTab={cardTab}
-              setCardTab={setCardTab}
-              tabs={tabs}
-              hasSpaceBetween={false}
-            />
-          </div>
-          <div className="relative flex flex-col items-center justify-center w-5/6 px-6 pt-20 pb-5 text-center bg-white rounded-lg">
-            <div className="absolute rounded-full -top-16 w-36 h-36">
-              <Image
-                src={'/gray.svg'}
-                alt="token"
-                layout="fill"
-                objectFit="contain"
-                className="rounded-full"
-              />
-            </div>
-            <div className="w-full py-3 border-b border-gray-100">
-              <div className="text-xs text-blue-400">USERNAME</div>
-              <div className="text-3xl font-semibold">
-                {currentSession.user.username || ''}
-              </div>
-            </div>
-            <div className="w-full py-3 border-b border-gray-100">
-              <div className="text-xs text-blue-400">BIO</div>
-              <div className="text-lg leading-5">{bio ?? ''}</div>
-            </div>
-            <div className="w-full py-3 border-b border-gray-100">
-              <div className="text-xs text-blue-400">EMAIL ADDRESS</div>
-              <div className="text-lg">{currentSession.user.email || ''}</div>
-            </div>
-            <div className="w-full py-3 border-b border-gray-100">
-              <div className="text-xs text-blue-400">ETH ADDRESS</div>
-              <div className="text-lg">{ethAddresses?.[0] || ''}</div>
-            </div>
-
-            {cardTab === tabs.SETTINGS && (
-              <ProfileMobileTab {...settingsProps} />
-            )}
-            {cardTab === tabs.PROFILE && <ProfileTab />}
-
-            <button
-              className={classNames(
-                'bg-brand-blue text-white px-4 py-2  ml-auto rounded-lg ',
-                isUpdateLoading ? 'cursor-not-allowed' : 'cursor-pointer'
-              )}
-              type="submit"
-              disabled={isUpdateLoading}
-            >
-              Save Profile
-            </button>
-          </div>
-        </div>
-      </form>
+      <Toaster />
+      <AccountDesktop {...settingsProps} />
+      <AccountMobile {...settingsProps} />
     </div>
   )
 }
