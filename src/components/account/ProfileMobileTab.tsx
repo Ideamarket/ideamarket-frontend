@@ -57,7 +57,7 @@ const ProfileMobileTab = ({
             <input
               type="text"
               className="block w-full h-8 border-gray-300 rounded-md shadow-sm sm:text-sm focus:outline-none dark:text-gray-300 dark:bg-gray-600 dark:placeholder-gray-200 dark:border-gray-500 focus:ring-brand-blue focus:border-brand-blue"
-              value={ethAddresses?.[0] || ''}
+              value={ethAddresses || ''}
               onChange={(e) => {
                 setEthAddresses(e.target.value)
               }}
