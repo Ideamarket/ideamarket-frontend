@@ -30,7 +30,7 @@ const SettingsTab = ({
       <div className="flex space-x-2">
         <div className="w-full">
           <div className="p-3 font-bold">Account Information</div>
-          <div className="flex flex-col w-full h-full px-3 py-2 space-y-2 bg-gray-100 rounded-lg">
+          <div className="flex flex-col w-full px-3 py-2 space-y-2 bg-gray-100 rounded-lg">
             <div className="flex items-center justify-between">
               <span>Username</span>
               <input
@@ -62,7 +62,7 @@ const SettingsTab = ({
               <input
                 type="text"
                 className="block h-8 border-gray-300 rounded-md shadow-sm w-52 sm:text-sm focus:outline-none dark:text-gray-300 dark:bg-gray-600 dark:placeholder-gray-200 dark:border-gray-500 focus:ring-brand-blue focus:border-brand-blue"
-                value={ethAddresses?.[0] || ''}
+                value={ethAddresses || ''}
                 onChange={(e) => {
                   setEthAddresses(e.target.value)
                 }}
