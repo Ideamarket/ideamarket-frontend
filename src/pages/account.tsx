@@ -1,5 +1,5 @@
 import { DefaultLayout } from 'components'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
 import { getSession, signIn } from 'next-auth/client'
 import { Session } from 'next-auth'
@@ -8,64 +8,31 @@ import { uploadFile } from 'lib/utils/uploadFileToS3'
 import AccountMobile from 'components/account/AccountMobile'
 import AccountDesktop from 'components/account/AccountDesktop'
 import { accountTabs } from 'components/account/constants'
+import { useForm } from 'react-hook-form'
 
 const Account = () => {
   const [isSessionLoading, setIsSessionLoading] = useState(true)
   const [currentSession, setCurrentSession] = useState<Session | null>(null)
-  const [username, setUsername] = useState('')
-  const [bio, setBio] = useState('')
   const [imageFile, setImageFile] = useState(null)
-  const [filePath, setFilePath] = useState('')
-  const [profilePhoto, setProfilePhoto] = useState('')
-  const [redirectionUrl, setRedirectionUrl] = useState('')
-  const [ethAddresses, setEthAddresses] = useState<string[]>([])
-  const [displayEmail, setDisplayEmail] = useState(false)
-  const [displayEthAddresses, setDisplayEthAddresses] = useState(false)
-  const [displayBio, setDisplayBio] = useState(false)
-  const [displayHoldings, setDisplayHoldings] = useState(false)
   const [cardTab, setCardTab] = useState(accountTabs.SETTINGS)
 
-  const ref = useRef<HTMLInputElement>()
-
   useEffect(() => {
-    getSession().then((_session) => {
-      console.log(_session)
+    getSession().then((session) => {
       setIsSessionLoading(false)
-      setCurrentSession(_session)
-      setUsername(_session?.user.username)
-      setBio(_session?.user.bio)
-      setProfilePhoto(_session?.user.profilePhoto)
-      setRedirectionUrl(_session?.user.redirectionUrl)
-      setEthAddresses(_session?.user.ethAddresses)
-      setDisplayEmail(_session?.user.visibilityOptions?.email)
-      setDisplayBio(_session?.user.visibilityOptions?.bio)
-      setDisplayEthAddresses(_session?.user.visibilityOptions?.ethAddresses)
-      setDisplayHoldings(_session?.user.visibilityOptions?.holdings)
+      setCurrentSession(session)
     })
   }, [])
 
   const [updateUserSettings, { isLoading: isUpdateLoading }] = useMutation<{
     message: string
   }>(
-    () =>
+    (data: any) =>
       fetch('/api/userSettings', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          username,
-          redirectionUrl,
-          bio,
-          profilePhotoFilePath: filePath,
-          ethAddresses,
-          visibilityOptions: {
-            email: displayEmail,
-            bio: displayBio,
-            ethAddresses: displayEthAddresses,
-            holdings: displayHoldings,
-          },
-        }),
+        body: JSON.stringify(data),
       }).then(async (res) => {
         if (!res.ok) {
           const response = await res.json()
@@ -77,18 +44,8 @@ const Account = () => {
       onSuccess: (data) => {
         toast.dismiss()
         toast.success(data.message)
-        getSession().then((_session) => {
-          setCurrentSession(_session)
-          setUsername(_session?.user.username)
-          setBio(_session?.user.bio)
-          setProfilePhoto(_session?.user.profilePhoto)
-          setRedirectionUrl(_session?.user.redirectionUrl)
-          setEthAddresses(_session?.user.ethAddresses)
-          setDisplayEmail(_session?.user.visibilityOptions?.email)
-          setDisplayBio(_session?.user.visibilityOptions?.bio)
-          setDisplayEthAddresses(_session?.user.visibilityOptions?.ethAddresses)
-          setDisplayHoldings(_session?.user.visibilityOptions?.holdings)
-        })
+
+        // update values from server
       },
       onError: (e: Error) => {
         toast.dismiss()
@@ -97,70 +54,84 @@ const Account = () => {
     }
   )
 
-  const onFormSubmit = async (e) => {
+  const onSubmit = async (data) => {
+    const { username, ethAddresses, bio, redirectionUrl } = data
+
+    const values: any = {
+      username,
+      redirectionUrl,
+      bio,
+      ethAddresses,
+      visibilityOptions: {
+        email: data.displayEmail,
+        bio: data.displayBio,
+        ethAddresses: data.displayEthAddresses,
+        holdings: data.displayHoldings,
+      },
+    }
     toast.loading('Saving user settings')
-    e.preventDefault()
-    if (imageFile) {
+
+    if (data?.imageFile) {
       const uploadedFilePath = await uploadFile(imageFile)
       if (uploadedFilePath) {
-        setFilePath(uploadedFilePath)
-      } else {
-        toast.error('Profile photo upload failed')
+        return updateUserSettings({
+          ...values,
+          profilePhotoFilePath: uploadedFilePath,
+        })
       }
+      return toast.error('Profile photo upload failed')
     }
-    updateUserSettings()
-    setImageFile('')
 
-    if (ref?.current) {
-      ref.current.value = ''
-    }
+    updateUserSettings(values)
+    setValue('imageFile', '')
   }
+
+  const { register, handleSubmit, setValue, getValues, reset } = useForm({
+    mode: 'onChange',
+  })
+
+  useEffect(() => {
+    if (currentSession?.user) {
+      const { user } = currentSession
+      const { visibilityOptions } = user
+
+      reset({
+        bio: user.bio,
+        ethAddresses: user.ethAddresses,
+        redirectionUrl: user.redirectionUrl,
+        username: user.username,
+        profilePhoto: user.profilePhoto,
+        email: user.email,
+        displayEmail: visibilityOptions?.email,
+        displayEthAddresses: visibilityOptions?.ethAddresses,
+        displayBio: visibilityOptions?.bio,
+        displayHoldings: visibilityOptions?.holdings,
+      })
+    }
+  }, [currentSession, reset])
 
   const settingsProps = {
     isUpdateLoading,
-    setEthAddresses,
-    ethAddresses,
-    currentSession,
-    setUsername,
-    username,
-    displayEmail,
-    bio,
-    setBio,
-    setDisplayHoldings,
-    displayHoldings,
-    setDisplayEthAddresses,
-    displayEthAddresses,
-    setDisplayBio,
-    setDisplayEmail,
-    displayBio,
-    redirectionUrl,
-    setRedirectionUrl,
-    profilePhoto,
-    setProfilePhoto,
-    ref,
     cardTab,
-    updateUserSettings,
     setCardTab,
     imageFile,
     setImageFile,
-    setFilePath,
-    uploadFile,
-    onFormSubmit,
+    register,
+    getValues,
+    setValue,
   }
 
   if (isSessionLoading) {
     return <p>loading...</p>
   }
 
-  if (!currentSession) {
+  if (!currentSession?.user) {
     return (
       <div className="flex flex-col p-10 space-y-10">
         <div className="flex">
           <p>Not Signed in.</p> <br />
           <button
-            onClick={() => {
-              signIn()
-            }}
+            onClick={() => signIn()}
             className="px-4 py-2 ml-auto text-white rounded bg-brand-blue"
           >
             Sign in
@@ -173,8 +144,10 @@ const Account = () => {
   return (
     <div className="min-h-screen bg-top-desktop-new">
       <Toaster />
-      <AccountDesktop {...settingsProps} />
-      <AccountMobile {...settingsProps} />
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <AccountDesktop {...settingsProps} />
+        <AccountMobile {...settingsProps} />
+      </form>
     </div>
   )
 }
