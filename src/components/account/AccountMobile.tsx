@@ -8,55 +8,22 @@ import TabSwitcher from './TabSwitcher'
 
 const AccountMobile = ({
   isUpdateLoading,
-  setEthAddresses,
-  ethAddresses,
-  currentSession,
-  setUsername,
-  username,
-  displayEmail,
-  bio,
-  setBio,
-  setDisplayHoldings,
-  displayHoldings,
-  setDisplayEthAddresses,
-  displayEthAddresses,
-  setDisplayBio,
-  setDisplayEmail,
-  displayBio,
-  redirectionUrl,
-  setRedirectionUrl,
-  profilePhoto,
-  setProfilePhoto,
-  ref,
   cardTab,
   setCardTab,
   setImageFile,
-  onFormSubmit,
+  register,
+  getValues,
+  setValue,
 }) => {
+  const { profilePhoto, username, email, ethAddresses, bio } = getValues()
   const settingsProps = {
     isUpdateLoading,
-    setEthAddresses,
-    ethAddresses,
-    currentSession,
-    setUsername,
-    username,
-    displayEmail,
-    bio,
-    setBio,
-    setDisplayHoldings,
-    displayHoldings,
-    setDisplayEthAddresses,
-    displayEthAddresses,
-    setDisplayBio,
-    setDisplayEmail,
-    displayBio,
-    redirectionUrl,
-    setRedirectionUrl,
-    profilePhoto,
-    setProfilePhoto,
     setImageFile,
-    ref,
+    register,
+    setValue,
+    getValues,
   }
+
   return (
     <div className="flex flex-col items-center justify-start w-screen py-24 bg-top-desktop-new md:hidden font-inter">
       <div className="flex justify-between w-5/6 px-2 text-white">
@@ -79,9 +46,7 @@ const AccountMobile = ({
         </div>
         <div className="w-full py-3 border-b border-gray-100">
           <div className="text-xs text-blue-400">USERNAME</div>
-          <div className="text-3xl font-semibold">
-            {currentSession.user.username || ''}
-          </div>
+          <div className="text-3xl font-semibold">{username || ''}</div>
         </div>
         <div className="w-full py-3 border-b border-gray-100">
           <div className="text-xs text-blue-400">BIO</div>
@@ -89,7 +54,7 @@ const AccountMobile = ({
         </div>
         <div className="w-full py-3 border-b border-gray-100">
           <div className="text-xs text-blue-400">EMAIL ADDRESS</div>
-          <div className="text-lg">{currentSession.user.email || ''}</div>
+          <div className="text-lg">{email || ''}</div>
         </div>
         <div className="w-full py-3 border-b border-gray-100">
           <div className="text-xs text-blue-400">ETH ADDRESS</div>
@@ -107,7 +72,7 @@ const AccountMobile = ({
             isUpdateLoading ? 'cursor-not-allowed' : 'cursor-pointer'
           )}
           disabled={isUpdateLoading}
-          onClick={onFormSubmit}
+          type="submit"
         >
           {isUpdateLoading ? <p>Saving...</p> : <p> Save Profile</p>}
         </button>
