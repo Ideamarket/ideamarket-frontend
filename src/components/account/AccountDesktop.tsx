@@ -8,55 +8,23 @@ import { accountTabs } from './constants'
 
 const AccountDesktop = ({
   isUpdateLoading,
-  setEthAddresses,
-  ethAddresses,
-  currentSession,
-  setUsername,
-  username,
-  displayEmail,
-  bio,
-  setBio,
-  setDisplayHoldings,
-  displayHoldings,
-  setDisplayEthAddresses,
-  displayEthAddresses,
-  setDisplayBio,
-  setDisplayEmail,
-  displayBio,
-  redirectionUrl,
-  setRedirectionUrl,
-  profilePhoto,
-  setProfilePhoto,
-  ref,
   cardTab,
   setCardTab,
   setImageFile,
-  onFormSubmit,
+  register,
+  getValues,
+  setValue,
 }) => {
   const settingsProps = {
     isUpdateLoading,
-    setEthAddresses,
-    ethAddresses,
-    currentSession,
-    setUsername,
-    username,
-    displayEmail,
-    bio,
-    setBio,
-    setDisplayHoldings,
-    displayHoldings,
-    setDisplayEthAddresses,
-    displayEthAddresses,
-    setDisplayBio,
-    setDisplayEmail,
-    displayBio,
-    redirectionUrl,
-    setRedirectionUrl,
-    profilePhoto,
-    setProfilePhoto,
     setImageFile,
-    ref,
+    register,
+    getValues,
+    setValue,
   }
+
+  const { username, email, ethAddresses, bio, profilePhoto } = getValues()
+
   return (
     <div className="flex-col items-center justify-center hidden w-screen md:pt-24 margin md:flex font-inter">
       <div className="flex flex-col items-end w-3/4 mb-2">
@@ -87,7 +55,7 @@ const AccountDesktop = ({
           </div>
           <div className="p-3 border-b border-gray-100">
             <div className="text-xs text-blue-400">EMAIL ADDRESS</div>
-            <div>{currentSession.user.email}</div>
+            <div>{email}</div>
           </div>
           <div className="p-3 border-b border-gray-100">
             <div className="text-xs text-blue-400">ETH ADDRESS</div>
@@ -100,7 +68,7 @@ const AccountDesktop = ({
 
           <button
             className="py-2 m-3 text-white rounded-lg bg-brand-blue hover:bg-blue-800"
-            onClick={onFormSubmit}
+            type="submit"
           >
             {isUpdateLoading ? <p>Saving...</p> : <p> Save Profile</p>}
           </button>
