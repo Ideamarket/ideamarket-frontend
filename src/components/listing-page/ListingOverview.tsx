@@ -80,7 +80,7 @@ export default function TokenCard({
   return (
     <>
       <div className="flex flex-none mt-7">
-        <div className="w-20 h-20 mr-5 relative">
+        <div className="relative w-20 h-20 mr-5">
           {loading || isTokenIconLoading ? (
             <div className="bg-gray-400 rounded-full w-18 h-18 animate animate-pulse"></div>
           ) : (
@@ -126,7 +126,7 @@ export default function TokenCard({
               <span className="invisible">A</span>
             </div>
           ) : (
-            <div className="mt-1 text-sm flex">
+            <div className="flex mt-1 text-sm">
               Rank {token.rank ? token.rank : '-'}
               <span className="block md:hidden ml-2.5 mr-1 w-5 h-5">
                 {marketSpecifics.getMarketSVGWhite()}

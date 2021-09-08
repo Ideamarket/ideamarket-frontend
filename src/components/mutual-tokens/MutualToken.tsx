@@ -27,7 +27,7 @@ export default function MutualToken({
   const { resolvedTheme } = useThemeMode()
   return (
     <>
-      <div className="overflow-hidden bg-white dark:bg-gray-700 rounded-lg shadow ">
+      <div className="overflow-hidden bg-white rounded-lg shadow dark:bg-gray-700 ">
         <h2 className="sr-only" id="profile-overview-title">
           Profile Overview
         </h2>
@@ -60,7 +60,7 @@ export default function MutualToken({
                 >
                   <p className="flex justify-center text-xl font-bold text-gray-900 dark:text-gray-200 lg:text-xl hover:underline">
                     {token.name}{' '}
-                    <span className="ml-1 w-5 h-5">
+                    <span className="w-5 h-5 ml-1">
                       {marketSpecifics.getMarketSVGTheme(resolvedTheme)}
                     </span>
                   </p>
@@ -76,7 +76,7 @@ export default function MutualToken({
                   token.name
                 )}`}
               >
-                <button className="flex items-center justify-center dark:bg-gray-500 dark:border-gray-500 dark:text-gray-300 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50">
+                <button className="flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm dark:bg-gray-500 dark:border-gray-500 dark:text-gray-300 hover:bg-gray-50">
                   View details
                 </button>
               </A>
