@@ -5,24 +5,11 @@ import ProfileTab from './ProfileTab'
 import { Footer } from 'components'
 import { signOut } from 'next-auth/client'
 import { accountTabs } from './constants'
+import { AccountContext } from 'pages/account'
+import { useContext } from 'react'
 
-const AccountDesktop = ({
-  isUpdateLoading,
-  cardTab,
-  setCardTab,
-  setImageFile,
-  register,
-  getValues,
-  setValue,
-}) => {
-  const settingsProps = {
-    isUpdateLoading,
-    setImageFile,
-    register,
-    getValues,
-    setValue,
-  }
-
+const AccountDesktop = () => {
+  const { getValues, isUpdateLoading, cardTab } = useContext(AccountContext)
   const { username, email, ethAddresses, bio, profilePhoto } = getValues()
 
   return (
@@ -30,12 +17,7 @@ const AccountDesktop = ({
       <div className="flex flex-col items-end w-3/4 mb-2">
         <div className="mb-4 text-4xl italic text-white">My Account</div>
         <div>
-          <TabSwitcher
-            cardTab={cardTab}
-            setCardTab={setCardTab}
-            tabs={accountTabs}
-            hasSpaceBetween
-          />
+          <TabSwitcher hasSpaceBetween />
         </div>
       </div>
       <div className="relative flex items-start justify-center w-4/5 px-6 py-5 bg-white rounded-lg h-3/5">
@@ -49,6 +31,7 @@ const AccountDesktop = ({
               className="rounded-full"
             />
           </div>
+
           <div className="p-3 border-b border-gray-100">
             <div className="text-xs text-blue-400">USERNAME</div>
             <div className="text-3xl font-semibold">{username ?? ''}</div>
@@ -59,11 +42,11 @@ const AccountDesktop = ({
           </div>
           <div className="p-3 border-b border-gray-100">
             <div className="text-xs text-blue-400">ETH ADDRESS</div>
-            <div>{ethAddresses ?? ''}</div>
+            <div>{ethAddresses || ''}</div>
           </div>
           <div>
             <div className="p-3 text-xs text-blue-400">BIO</div>
-            <div className="leading-5">{bio ?? ''}</div>
+            <div className="leading-5">{bio || ''}</div>
           </div>
 
           <button
@@ -80,7 +63,7 @@ const AccountDesktop = ({
             Sign out
           </button>
         </div>
-        {cardTab === accountTabs.SETTINGS && <SettingsTab {...settingsProps} />}
+        {cardTab === accountTabs.SETTINGS && <SettingsTab />}
         {cardTab === accountTabs.PROFILE && <ProfileTab />}
       </div>
       <div className="w-3/4 mt-16 text-white">
