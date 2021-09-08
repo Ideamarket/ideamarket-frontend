@@ -1,5 +1,5 @@
 import { DefaultLayout } from 'components'
-import { useEffect, useState } from 'react'
+import { createContext, useEffect, useState } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
 import { getSession, signIn } from 'next-auth/client'
 import { Session } from 'next-auth'
@@ -10,17 +10,21 @@ import AccountDesktop from 'components/account/AccountDesktop'
 import { accountTabs } from 'components/account/constants'
 import { useForm } from 'react-hook-form'
 
+export const AccountContext = createContext<any>({})
+
 const Account = () => {
   const [isSessionLoading, setIsSessionLoading] = useState(true)
   const [currentSession, setCurrentSession] = useState<Session | null>(null)
-  const [imageFile, setImageFile] = useState(null)
   const [cardTab, setCardTab] = useState(accountTabs.SETTINGS)
 
-  useEffect(() => {
+  const getAndSaveSession = () =>
     getSession().then((session) => {
       setIsSessionLoading(false)
       setCurrentSession(session)
     })
+
+  useEffect(() => {
+    getAndSaveSession()
   }, [])
 
   const [updateUserSettings, { isLoading: isUpdateLoading }] = useMutation<{
@@ -44,6 +48,7 @@ const Account = () => {
       onSuccess: (data) => {
         toast.dismiss()
         toast.success(data.message)
+        getAndSaveSession()
 
         // update values from server
       },
@@ -55,7 +60,7 @@ const Account = () => {
   )
 
   const onSubmit = async (data) => {
-    const { username, ethAddresses, bio, redirectionUrl } = data
+    const { username, ethAddresses, bio, redirectionUrl, imageFile } = data
 
     const values: any = {
       username,
@@ -71,24 +76,15 @@ const Account = () => {
     }
     toast.loading('Saving user settings')
 
-    if (data?.imageFile) {
-      const uploadedFilePath = await uploadFile(imageFile)
-      if (uploadedFilePath) {
-        return updateUserSettings({
-          ...values,
-          profilePhotoFilePath: uploadedFilePath,
-        })
-      }
-      return toast.error('Profile photo upload failed')
-    }
+    const newValues =
+      imageFile?.length > 0
+        ? { ...values, profilePhotoFilePath: await uploadFile(imageFile[0]) }
+        : values
 
-    updateUserSettings(values)
-    setValue('imageFile', '')
+    return updateUserSettings(newValues)
   }
 
-  const { register, handleSubmit, setValue, getValues, reset } = useForm({
-    mode: 'onChange',
-  })
+  const { register, handleSubmit, setValue, getValues, reset } = useForm()
 
   useEffect(() => {
     if (currentSession?.user) {
@@ -110,17 +106,6 @@ const Account = () => {
     }
   }, [currentSession, reset])
 
-  const settingsProps = {
-    isUpdateLoading,
-    cardTab,
-    setCardTab,
-    imageFile,
-    setImageFile,
-    register,
-    getValues,
-    setValue,
-  }
-
   if (isSessionLoading) {
     return <p>loading...</p>
   }
@@ -141,14 +126,25 @@ const Account = () => {
     )
   }
 
+  const contextProps = {
+    cardTab,
+    setCardTab,
+    isUpdateLoading,
+    register,
+    getValues,
+    setValue,
+  }
+
   return (
-    <div className="min-h-screen bg-top-desktop-new">
-      <Toaster />
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <AccountDesktop {...settingsProps} />
-        <AccountMobile {...settingsProps} />
-      </form>
-    </div>
+    <AccountContext.Provider value={contextProps}>
+      <div className="min-h-screen bg-top-desktop-new">
+        <Toaster />
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <AccountDesktop />
+          <AccountMobile />
+        </form>
+      </div>
+    </AccountContext.Provider>
   )
 }
 
