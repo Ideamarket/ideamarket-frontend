@@ -249,6 +249,7 @@ export default function ProfileWallet() {
           {!web3 && (
             <div className="flex items-center justify-center">
               <button
+                type="button"
                 onClick={() => {
                   ModalService.open(WalletModal)
                 }}
