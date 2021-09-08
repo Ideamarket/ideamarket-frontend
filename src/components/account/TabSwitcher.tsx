@@ -1,24 +1,29 @@
 import classNames from 'classnames'
 import A from 'components/A'
+import { AccountContext } from 'pages/account'
+import { useContext } from 'react'
+import { accountTabs } from './constants'
 
-const TabSwitcher = ({ setCardTab, tabs, cardTab, hasSpaceBetween }) => {
+const TabSwitcher = ({ hasSpaceBetween }) => {
+  const { cardTab, setCardTab } = useContext(AccountContext)
+
   return (
     <>
       <A
         className={classNames(
           'italic cursor-pointer',
-          cardTab === tabs.SETTINGS ? 'text-blue-400' : ' text-white'
+          cardTab === accountTabs.SETTINGS ? 'text-blue-400' : ' text-white'
         )}
-        onClick={() => setCardTab(tabs.SETTINGS)}
+        onClick={() => setCardTab(accountTabs.SETTINGS)}
       >
         Settings
       </A>
       <A
         className={classNames(
           `italic cursor-pointer ${hasSpaceBetween ? `ml-8` : ''}`,
-          cardTab === tabs.PROFILE ? 'text-blue-400' : ' text-white'
+          cardTab === accountTabs.PROFILE ? 'text-blue-400' : ' text-white'
         )}
-        onClick={() => setCardTab(tabs.PROFILE)}
+        onClick={() => setCardTab(accountTabs.PROFILE)}
       >
         Profile
       </A>
