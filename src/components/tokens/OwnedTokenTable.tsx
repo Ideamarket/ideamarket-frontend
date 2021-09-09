@@ -1,14 +1,16 @@
 import classNames from 'classnames'
-import { useEffect, useState } from 'react'
-import { IdeaTokenMarketPair } from 'store/ideaMarketsStore'
+import BigNumber from 'bignumber.js'
 import {
-  bigNumberTenPow18,
-  calculateCurrentPriceBN,
-  web3BNToFloatString,
-} from 'utils'
+  useEffect,
+  useState,
+  useCallback,
+  useRef,
+  MutableRefObject,
+} from 'react'
+import { IdeaTokenMarketPair } from 'store/ideaMarketsStore'
+import { calculateCurrentPriceBN, web3BNToFloatString } from 'utils'
 import OwnedTokenRow from './OwnedTokenRow'
 import OwnedTokenRowSkeleton from './OwnedTokenRowSkeleton'
-import TablePagination from './TablePagination'
 import { sortNumberByOrder, sortStringByOrder } from './utils'
 
 type Header = {
@@ -65,20 +67,24 @@ const headers: Header[] = [
   },
 ]
 
+const tenPow18 = new BigNumber('10').pow(new BigNumber('18'))
+
+type OwnedTokenTableProps = {
+  rawPairs: IdeaTokenMarketPair[]
+  isPairsDataLoading: boolean
+  refetch: () => void
+  canFetchMore: boolean
+  fetchMore: () => any
+}
+
 export default function OwnedTokenTable({
   rawPairs,
   isPairsDataLoading,
-  currentPage,
-  setCurrentPage,
   refetch,
-}: {
-  rawPairs: IdeaTokenMarketPair[]
-  isPairsDataLoading: boolean
-  currentPage: number
-  setCurrentPage: (p: number) => void
-  refetch: () => void
-}) {
-  const TOKENS_PER_PAGE = 6
+  canFetchMore,
+  fetchMore,
+}: OwnedTokenTableProps) {
+  const TOKENS_PER_PAGE = 10
 
   const [currentHeader, setCurrentHeader] = useState('price')
   const [orderBy, setOrderBy] = useState('price')
@@ -86,44 +92,55 @@ export default function OwnedTokenTable({
 
   const [pairs, setPairs]: [IdeaTokenMarketPair[], any] = useState([])
 
-  useEffect(() => {
-    if (!rawPairs) {
-      setPairs([])
-      return
-    }
+  const observer: MutableRefObject<any> = useRef()
+  const lastElementRef = useCallback(
+    (node) => {
+      if (observer.current) observer.current.disconnect()
 
-    let sorted
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && canFetchMore) {
+          fetchMore()
+        }
+      })
+
+      if (node) observer.current.observe(node)
+    },
+    [canFetchMore, fetchMore]
+  )
+
+  useEffect(() => {
+    let sorted = [...rawPairs]
     const strCmpFunc = sortStringByOrder(orderDirection)
     const numCmpFunc = sortNumberByOrder(orderDirection)
 
     if (orderBy === 'name') {
-      sorted = rawPairs.sort((lhs, rhs) => {
+      sorted.sort((lhs, rhs) => {
         return strCmpFunc(lhs.token.name, rhs.token.name)
       })
     } else if (orderBy === 'market') {
-      sorted = rawPairs.sort((lhs, rhs) => {
+      sorted.sort((lhs, rhs) => {
         return strCmpFunc(lhs.market.name, rhs.market.name)
       })
     } else if (orderBy === 'price') {
-      sorted = rawPairs.sort((lhs, rhs) => {
+      sorted.sort((lhs, rhs) => {
         return numCmpFunc(
           parseFloat(lhs.token.supply),
           parseFloat(rhs.token.supply)
         )
       })
     } else if (orderBy === 'change') {
-      sorted = rawPairs.sort((lhs, rhs) => {
+      sorted.sort((lhs, rhs) => {
         return numCmpFunc(
           parseFloat(lhs.token.dayChange),
           parseFloat(rhs.token.dayChange)
         )
       })
     } else if (orderBy === 'balance') {
-      sorted = rawPairs.sort((lhs, rhs) => {
+      sorted.sort((lhs, rhs) => {
         return numCmpFunc(parseFloat(lhs.balance), parseFloat(rhs.balance))
       })
     } else if (orderBy === 'value') {
-      sorted = rawPairs.sort((lhs, rhs) => {
+      sorted.sort((lhs, rhs) => {
         const lhsValue =
           parseFloat(
             web3BNToFloatString(
@@ -133,7 +150,7 @@ export default function OwnedTokenTable({
                 lhs.market.rawPriceRise,
                 lhs.market.rawHatchTokens
               ),
-              bigNumberTenPow18,
+              tenPow18,
               2
             )
           ) * parseFloat(lhs.balance)
@@ -147,26 +164,19 @@ export default function OwnedTokenTable({
                 rhs.market.rawPriceRise,
                 rhs.market.rawHatchTokens
               ),
-              bigNumberTenPow18,
+              tenPow18,
               2
             )
           ) * parseFloat(rhs.balance)
 
         return numCmpFunc(lhsValue, rhsValue)
       })
-    } else {
-      sorted = rawPairs
     }
 
-    const sliced = sorted.slice(
-      currentPage * TOKENS_PER_PAGE,
-      currentPage * TOKENS_PER_PAGE + TOKENS_PER_PAGE
-    )
-    setPairs(sliced)
-  }, [rawPairs, orderBy, orderDirection, currentPage, TOKENS_PER_PAGE])
+    setPairs(sorted)
+  }, [rawPairs, orderBy, orderDirection, TOKENS_PER_PAGE])
 
   function headerClicked(headerValue: string) {
-    setCurrentPage(0)
     if (currentHeader === headerValue) {
       if (orderDirection === 'asc') {
         setOrderDirection('desc')
@@ -181,88 +191,68 @@ export default function OwnedTokenTable({
   }
 
   return (
-    <>
-      <div className="flex flex-col">
-        <div className="-my-2 overflow-x-auto">
-          <div className="inline-block min-w-full py-2 align-middle">
-            <div className="overflow-hidden dark:border-gray-500">
-              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-500">
-                <thead className="hidden md:table-header-group">
-                  <tr>
-                    {headers.map((header) => (
-                      <th
-                        className={classNames(
-                          'px-5 py-4 text-sm font-semibold leading-4 tracking-wider text-left text-brand-gray-4 dark:text-gray-200 bg-gray-100 dark:bg-gray-600',
-                          header.sortable && 'cursor-pointer'
-                        )}
-                        key={header.value}
-                        onClick={() => {
-                          if (header.sortable) {
-                            headerClicked(header.value)
-                          }
-                        }}
-                      >
-                        {header.sortable && (
-                          <>
-                            {currentHeader === header.value &&
-                              orderDirection === 'asc' && (
-                                <span className="text-xs">&#x25B2;</span>
-                              )}
-                            {currentHeader === header.value &&
-                              orderDirection === 'desc' && (
-                                <span className="text-xs">&#x25bc;</span>
-                              )}
-                            &nbsp;
-                          </>
-                        )}
-                        {header.title}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-700 dark:divide-gray-500">
-                  {isPairsDataLoading ? (
-                    Array.from(Array(TOKENS_PER_PAGE).keys()).map((token) => (
+    <div className="flex flex-col">
+      <div className="-my-2 overflow-x-auto">
+        <div className="inline-block min-w-full py-2 align-middle">
+          <div className="overflow-hidden dark:border-gray-500">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-500">
+              <thead className="hidden md:table-header-group">
+                <tr>
+                  {headers.map((header) => (
+                    <th
+                      className={classNames(
+                        'px-5 py-4 text-sm font-semibold leading-4 tracking-wider text-left text-brand-gray-4 dark:text-gray-200 bg-gray-100 dark:bg-gray-600',
+                        header.sortable && 'cursor-pointer'
+                      )}
+                      key={header.value}
+                      onClick={() => {
+                        if (header.sortable) {
+                          headerClicked(header.value)
+                        }
+                      }}
+                    >
+                      {header.sortable && (
+                        <>
+                          {currentHeader === header.value &&
+                            orderDirection === 'asc' && (
+                              <span className="text-xs">&#x25B2;</span>
+                            )}
+                          {currentHeader === header.value &&
+                            orderDirection === 'desc' && (
+                              <span className="text-xs">&#x25bc;</span>
+                            )}
+                          &nbsp;
+                        </>
+                      )}
+                      {header.title}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-700 dark:divide-gray-500">
+                {pairs.map((pair, index) => (
+                  <OwnedTokenRow
+                    key={pair.token.address}
+                    token={pair.token}
+                    market={pair.market}
+                    balance={pair.balance}
+                    balanceBN={pair.rawBalance}
+                    refetch={refetch}
+                    lastElementRef={
+                      pairs.length === index + 1 ? lastElementRef : null
+                    }
+                  />
+                ))}
+                {isPairsDataLoading
+                  ? Array.from(Array(TOKENS_PER_PAGE).keys()).map((token) => (
                       <OwnedTokenRowSkeleton key={token} />
                     ))
-                  ) : (
-                    <>
-                      {pairs.map((pair) => (
-                        <OwnedTokenRow
-                          key={pair.token.address}
-                          token={pair.token}
-                          market={pair.market}
-                          balance={pair.balance}
-                          balanceBN={pair.rawBalance}
-                          refetch={refetch}
-                        />
-                      ))}
-
-                      {Array.from(
-                        Array(
-                          TOKENS_PER_PAGE - (pairs?.length ?? 0) >= 0
-                            ? TOKENS_PER_PAGE - (pairs?.length ?? 0)
-                            : 0
-                        )
-                      ).map((a, b) => (
-                        <tr
-                          key={`${'filler-' + b.toString()}`}
-                          className="hidden h-16 md:table-row"
-                        ></tr>
-                      ))}
-                    </>
-                  )}
-                </tbody>
-              </table>
-            </div>
+                  : null}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
-      <TablePagination
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-        pairs={pairs}
-      />
-    </>
+    </div>
   )
 }
