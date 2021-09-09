@@ -2,7 +2,7 @@ import { gql } from 'graphql-request'
 
 export default function getQueryMyTokensMaybeMarket(
   marketID: number,
-  owner: string
+  owner: string,
 ): string {
   let where
 
@@ -12,8 +12,6 @@ export default function getQueryMyTokensMaybeMarket(
   } else {
     where = `where:{tokenOwner:"${owner.toLowerCase()}"}`
   }
-
-  //where = 'where:{}'
 
   return gql`
     {
