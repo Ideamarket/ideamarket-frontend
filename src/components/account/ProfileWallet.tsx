@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import BN from 'bn.js'
 import { useState, useEffect } from 'react'
-import { useQuery } from 'react-query'
+import { useInfiniteQuery, useQuery } from 'react-query'
 import {
   MarketSelect,
   OwnedTokenTable,
@@ -21,25 +21,25 @@ import {
   queryOwnedTokensMaybeMarket,
   queryLockedTokens,
   queryMyTrades,
+  queryMyTokensMaybeMarket,
 } from 'store/ideaMarketsStore'
 import ModalService from 'components/modals/ModalService'
 import MyTradesTable from 'components/tokens/MyTradesTable/MyTradesTable'
+import { flatten } from 'lodash'
 
 export default function ProfileWallet() {
+  const TOKENS_PER_PAGE = 10
   const web3 = useWalletStore((state) => state.web3)
 
-  const [ownedTokensTablePage, setOwnedTokensTablePage] = useState(0)
   const [selectedMarketOwnedTokens, setSelectedMarketOwnedTokens] =
     useState(undefined)
   const [ownedTokenTotalValue, setOwnedTokensTotalValue] = useState('0.00')
   const [lockedTokenTotalValue, setLockedTokensTotalValue] = useState('0.00')
   const [purchaseTotalValue, setPurchaseTotalValue] = useState('0.00')
 
-  const [myTokensTablePage, setMyTokensTablePage] = useState(0)
   const [selectedMarketMyTokens, setSelectedMarketMyTokens] =
     useState(undefined)
 
-  const [lockedTokensTablePage, setLockedTokensTablePage] = useState(0)
   const [selectedMarketLockedTokens, setSelectedMarketLockedTokens] =
     useState(undefined)
 
@@ -47,32 +47,159 @@ export default function ProfileWallet() {
 
   const {
     data: rawOwnedPairs,
-    isLoading: isOwnedPairsDataLoading,
-    refetch: refetchOwned,
+    isLoading: isRawOwnedPairsDataLoading,
   } = useQuery(
     ['owned-tokens', selectedMarketOwnedTokens, address],
     queryOwnedTokensMaybeMarket
   )
 
   const {
+    data: infiniteOwnedData,
+    isFetching: isOwnedPairsDataLoading,
+    fetchMore: fetchMoreOwned,
+    refetch: refetchOwned,
+    canFetchMore: canFetchMoreOwned,
+  } = useInfiniteQuery(
+    ['owned-tokens', TOKENS_PER_PAGE],
+    (key, numTokens: number, skip: number = 0) => {
+      const lastIndex = (numTokens + skip) > rawOwnedPairs?.length ? rawOwnedPairs?.length : numTokens + skip
+      return rawOwnedPairs?.slice(skip, lastIndex) || []
+    },
+    {
+      getFetchMore: (lastGroup, allGroups) => {
+        const morePagesExist = lastGroup?.length === TOKENS_PER_PAGE
+
+        if (!morePagesExist) {
+          return false
+        }
+
+        return allGroups.length * TOKENS_PER_PAGE
+      },
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      enabled: false,
+    }
+  )
+
+  const ownedPairs = flatten(infiniteOwnedData || [])
+
+  const { data: rawListingPairs, isLoading: isRawListingPairsDataLoading } = useQuery(
+    ['my-tokens', selectedMarketMyTokens, address],
+    queryMyTokensMaybeMarket
+  )
+
+  const {
+    data: infiniteListingsData,
+    isFetching: isListingsPairsDataLoading,
+    fetchMore: fetchMoreListings,
+    refetch: refetchListings,
+    canFetchMore: canFetchMoreListings,
+  } = useInfiniteQuery(
+    ['my-tokens', TOKENS_PER_PAGE],
+    (key, numTokens: number, skip: number = 0) => {
+      const lastIndex = (numTokens + skip) > rawListingPairs?.length ? rawListingPairs?.length : numTokens + skip
+      return rawListingPairs?.slice(skip, lastIndex) || []
+    },
+    {
+      getFetchMore: (lastGroup, allGroups) => {
+        const morePagesExist = lastGroup?.length === TOKENS_PER_PAGE
+
+        if (!morePagesExist) {
+          return false
+        }
+
+        return allGroups.length * TOKENS_PER_PAGE
+      },
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      enabled: false,
+    }
+  )
+
+  const listingPairs = flatten(infiniteListingsData || [])
+
+  const {
     data: rawLockedPairs,
-    isLoading: isLockedPairsDataLoading,
-    refetch: refetchLocked,
+    isLoading: isRawLockedPairsDataLoading,
   } = useQuery(
     ['locked-tokens', selectedMarketLockedTokens, address],
     queryLockedTokens
   )
 
   const {
-    data: myTrades,
-    isLoading: isMyTradesDataLoading,
-    refetch: refetchMyTrades,
+    data: infiniteLockedData,
+    isFetching: isLockedPairsDataLoading,
+    fetchMore: fetchMoreLocked,
+    refetch: refetchLocked,
+    canFetchMore: canFetchMoreLocked,
+  } = useInfiniteQuery(
+    ['locked-tokens', TOKENS_PER_PAGE],
+    (key, numTokens: number, skip: number = 0) => {
+      const lastIndex = (numTokens + skip) > rawLockedPairs?.length ? rawLockedPairs?.length : numTokens + skip
+      return rawLockedPairs?.slice(skip, lastIndex) || []
+    },
+    {
+      getFetchMore: (lastGroup, allGroups) => {
+        const morePagesExist = lastGroup?.length === TOKENS_PER_PAGE
+
+        if (!morePagesExist) {
+          return false
+        }
+
+        return allGroups.length * TOKENS_PER_PAGE
+      },
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      enabled: false,
+    }
+  )
+
+  const lockedPairs = flatten(infiniteLockedData || [])
+
+  const {
+    data: rawMyTrades,
+    isLoading: isRawMyTradesDataLoading,
   } = useQuery(
     ['my-trades', selectedMarketLockedTokens, address],
     queryMyTrades
   )
 
+  const {
+    data: infiniteTradesData,
+    isFetching: isTradesPairsDataLoading,
+    fetchMore: fetchMoreTrades,
+    refetch: refetchMyTrades,
+    canFetchMore: canFetchMoreTrades,
+  } = useInfiniteQuery(
+    ['my-trades', TOKENS_PER_PAGE],
+    (key, numTokens: number, skip: number = 0) => {
+      const lastIndex = (numTokens + skip) > rawMyTrades?.length ? rawMyTrades?.length : numTokens + skip
+      return rawMyTrades?.slice(skip, lastIndex) || []
+    },
+    {
+      getFetchMore: (lastGroup, allGroups) => {
+        const morePagesExist = lastGroup?.length === TOKENS_PER_PAGE
+
+        if (!morePagesExist) {
+          return false
+        }
+
+        return allGroups.length * TOKENS_PER_PAGE
+      },
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      enabled: false,
+    }
+  )
+
+  const myTrades = flatten(infiniteTradesData || [])
+
   const [table, setTable] = useState('holdings')
+
+  useEffect(() => {
+    refetch()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isRawOwnedPairsDataLoading, isRawListingPairsDataLoading, isRawLockedPairsDataLoading, isRawMyTradesDataLoading])
 
   useEffect(() => {
     // Calculate the total value of non-locked tokens
@@ -101,12 +228,12 @@ export default function ProfileWallet() {
 
     // Calculate the total purchase value
     let purchaseTotal = new BN('0')
-    for (const pair of myTrades ?? []) {
+    for (const pair of rawMyTrades ?? []) {
       if (pair.isBuy) purchaseTotal = purchaseTotal.add(pair.rawDaiAmount)
     }
 
     setPurchaseTotalValue(
-      myTrades
+      rawMyTrades
         ? web3BNToFloatString(purchaseTotal, bigNumberTenPow18, 18)
         : '0.00'
     )
@@ -120,12 +247,13 @@ export default function ProfileWallet() {
         ? web3BNToFloatString(lockedTotal, bigNumberTenPow18, 18)
         : '0.00'
     )
-  }, [rawOwnedPairs, rawLockedPairs, myTrades])
+  }, [rawOwnedPairs, rawLockedPairs, rawMyTrades])
 
   function refetch() {
     refetchOwned()
     refetchLocked()
     refetchMyTrades()
+    refetchListings()
   }
 
   return (
@@ -234,9 +362,6 @@ export default function ProfileWallet() {
             <MarketSelect
               isClearable={true}
               onChange={(value) => {
-                setMyTokensTablePage(0)
-                setLockedTokensTablePage(0)
-                setOwnedTokensTablePage(0)
                 setSelectedMarketOwnedTokens(value?.market)
                 setSelectedMarketMyTokens(value?.market)
                 setSelectedMarketLockedTokens(value?.market)
@@ -261,35 +386,36 @@ export default function ProfileWallet() {
           )}
           {table === 'holdings' && web3 !== undefined && (
             <OwnedTokenTable
-              rawPairs={rawOwnedPairs}
+              rawPairs={ownedPairs}
               isPairsDataLoading={isOwnedPairsDataLoading}
-              currentPage={ownedTokensTablePage}
-              setCurrentPage={setOwnedTokensTablePage}
               refetch={refetch}
+              canFetchMore={canFetchMoreOwned}
+              fetchMore={fetchMoreOwned}
             />
           )}
           {table === 'listings' && web3 !== undefined && (
             <MyTokenTable
-              currentPage={myTokensTablePage}
-              setCurrentPage={setMyTokensTablePage}
-              market={selectedMarketMyTokens}
+              rawPairs={listingPairs}
+              isPairsDataLoading={isListingsPairsDataLoading}
+              canFetchMore={canFetchMoreListings}
+              fetchMore={fetchMoreListings}
             />
           )}
 
           {table === 'locked' && web3 !== undefined && (
             <LockedTokenTable
-              rawPairs={rawLockedPairs}
+              rawPairs={lockedPairs}
               isPairsDataLoading={isLockedPairsDataLoading}
-              currentPage={lockedTokensTablePage}
-              setCurrentPage={setLockedTokensTablePage}
+              canFetchMore={canFetchMoreLocked}
+              fetchMore={fetchMoreLocked}
             />
           )}
           {table === 'trades' && web3 !== undefined && (
             <MyTradesTable
               rawPairs={myTrades}
-              isPairsDataLoading={isMyTradesDataLoading}
-              currentPage={lockedTokensTablePage}
-              setCurrentPage={setLockedTokensTablePage}
+              isPairsDataLoading={isTradesPairsDataLoading}
+              canFetchMore={canFetchMoreTrades}
+              fetchMore={fetchMoreTrades}
             />
           )}
         </div>
