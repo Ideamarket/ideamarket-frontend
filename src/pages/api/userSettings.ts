@@ -6,6 +6,7 @@ import { isUsernameTaken, updateUserSettings } from 'lib/models/userModel'
 import { addHttpsProtocol, removeHttpProtocol } from 'lib/utils/httpProtocol'
 import { isUsernameValid } from 'lib/utils/isUsernameValid'
 import { isRedirectionUrlValid } from 'lib/utils/isRedirectionUrlValid'
+import { User } from 'next-auth'
 
 /**
  * POST: Validates and update the user settings in DB
@@ -22,29 +23,36 @@ const handlers: Handlers<Partial<ApiResponseData>> = {
 
       const {
         username: initialUsername,
+        uuid,
         redirectionUrl: initialUrl,
         bio,
         profilePhotoFilePath,
+        removeProfilePhoto,
         ethAddresses,
         visibilityOptions,
       } = req.body
 
+      const userSettings: Partial<User> = {}
+
       let username = (initialUsername as string)?.trim().toLowerCase()
-      if (session.user.username) {
-        if (session.user.username !== username) {
-          res.status(400).json({ message: 'Username cannot be updated' })
-          return
+      if (username && username !== '') {
+        if (session.user.username) {
+          if (session.user.username !== username) {
+            res.status(400).json({ message: 'Username cannot be updated' })
+            return
+          }
+          username = session.user.username
+        } else {
+          if (!isUsernameValid(username)) {
+            res.status(400).json({ message: 'Username is not valid' })
+            return
+          }
+          if (await isUsernameTaken(username)) {
+            res.status(400).json({ message: 'Username is not available' })
+            return
+          }
         }
-        username = session.user.username
-      } else {
-        if (!isUsernameValid(username)) {
-          res.status(400).json({ message: 'Username is not valid' })
-          return
-        }
-        if (await isUsernameTaken(username)) {
-          res.status(400).json({ message: 'Username is not available' })
-          return
-        }
+        userSettings.username = username
       }
 
       let redirectionUrl = ''
@@ -56,22 +64,24 @@ const handlers: Handlers<Partial<ApiResponseData>> = {
         }
         redirectionUrl = addHttpsProtocol(redirectionUrl)
       }
+      userSettings.redirectionUrl = redirectionUrl
 
       let profilePhoto = ''
-      if (profilePhotoFilePath && profilePhotoFilePath !== '') {
+      if (removeProfilePhoto) {
+        userSettings.profilePhoto = profilePhoto
+      } else if (profilePhotoFilePath && profilePhotoFilePath !== '') {
         profilePhoto = cloudFrontDomain + profilePhotoFilePath
+        userSettings.profilePhoto = profilePhoto
       }
+
+      userSettings.uuid = uuid
+      userSettings.bio = bio
+      userSettings.ethAddresses = ethAddresses
+      userSettings.visibilityOptions = visibilityOptions
 
       await updateUserSettings({
         userId: session.user.id,
-        userSettings: {
-          username,
-          bio,
-          profilePhoto,
-          redirectionUrl,
-          ethAddresses,
-          visibilityOptions,
-        },
+        userSettings,
       })
 
       res.status(200).json({ message: 'Successfully updated user settings' })
