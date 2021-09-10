@@ -45,10 +45,7 @@ export default function ProfileWallet() {
 
   const address = useWalletStore((state) => state.address)
 
-  const {
-    data: rawOwnedPairs,
-    isLoading: isRawOwnedPairsDataLoading,
-  } = useQuery(
+  const { data: rawOwnedPairs } = useQuery(
     ['owned-tokens', selectedMarketOwnedTokens, address],
     queryOwnedTokensMaybeMarket
   )
@@ -62,7 +59,10 @@ export default function ProfileWallet() {
   } = useInfiniteQuery(
     ['owned-tokens', TOKENS_PER_PAGE],
     (key, numTokens: number, skip: number = 0) => {
-      const lastIndex = (numTokens + skip) > rawOwnedPairs?.length ? rawOwnedPairs?.length : numTokens + skip
+      const lastIndex =
+        numTokens + skip > rawOwnedPairs?.length
+          ? rawOwnedPairs?.length
+          : numTokens + skip
       return rawOwnedPairs?.slice(skip, lastIndex) || []
     },
     {
@@ -83,7 +83,7 @@ export default function ProfileWallet() {
 
   const ownedPairs = flatten(infiniteOwnedData || [])
 
-  const { data: rawListingPairs, isLoading: isRawListingPairsDataLoading } = useQuery(
+  const { data: rawListingPairs } = useQuery(
     ['my-tokens', selectedMarketMyTokens, address],
     queryMyTokensMaybeMarket
   )
@@ -97,7 +97,10 @@ export default function ProfileWallet() {
   } = useInfiniteQuery(
     ['my-tokens', TOKENS_PER_PAGE],
     (key, numTokens: number, skip: number = 0) => {
-      const lastIndex = (numTokens + skip) > rawListingPairs?.length ? rawListingPairs?.length : numTokens + skip
+      const lastIndex =
+        numTokens + skip > rawListingPairs?.length
+          ? rawListingPairs?.length
+          : numTokens + skip
       return rawListingPairs?.slice(skip, lastIndex) || []
     },
     {
@@ -118,10 +121,7 @@ export default function ProfileWallet() {
 
   const listingPairs = flatten(infiniteListingsData || [])
 
-  const {
-    data: rawLockedPairs,
-    isLoading: isRawLockedPairsDataLoading,
-  } = useQuery(
+  const { data: rawLockedPairs } = useQuery(
     ['locked-tokens', selectedMarketLockedTokens, address],
     queryLockedTokens
   )
@@ -135,7 +135,10 @@ export default function ProfileWallet() {
   } = useInfiniteQuery(
     ['locked-tokens', TOKENS_PER_PAGE],
     (key, numTokens: number, skip: number = 0) => {
-      const lastIndex = (numTokens + skip) > rawLockedPairs?.length ? rawLockedPairs?.length : numTokens + skip
+      const lastIndex =
+        numTokens + skip > rawLockedPairs?.length
+          ? rawLockedPairs?.length
+          : numTokens + skip
       return rawLockedPairs?.slice(skip, lastIndex) || []
     },
     {
@@ -156,10 +159,7 @@ export default function ProfileWallet() {
 
   const lockedPairs = flatten(infiniteLockedData || [])
 
-  const {
-    data: rawMyTrades,
-    isLoading: isRawMyTradesDataLoading,
-  } = useQuery(
+  const { data: rawMyTrades } = useQuery(
     ['my-trades', selectedMarketLockedTokens, address],
     queryMyTrades
   )
@@ -173,7 +173,10 @@ export default function ProfileWallet() {
   } = useInfiniteQuery(
     ['my-trades', TOKENS_PER_PAGE],
     (key, numTokens: number, skip: number = 0) => {
-      const lastIndex = (numTokens + skip) > rawMyTrades?.length ? rawMyTrades?.length : numTokens + skip
+      const lastIndex =
+        numTokens + skip > rawMyTrades?.length
+          ? rawMyTrades?.length
+          : numTokens + skip
       return rawMyTrades?.slice(skip, lastIndex) || []
     },
     {
@@ -195,11 +198,6 @@ export default function ProfileWallet() {
   const myTrades = flatten(infiniteTradesData || [])
 
   const [table, setTable] = useState('holdings')
-
-  useEffect(() => {
-    refetch()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isRawOwnedPairsDataLoading, isRawListingPairsDataLoading, isRawLockedPairsDataLoading, isRawMyTradesDataLoading])
 
   useEffect(() => {
     // Calculate the total value of non-locked tokens
@@ -247,6 +245,9 @@ export default function ProfileWallet() {
         ? web3BNToFloatString(lockedTotal, bigNumberTenPow18, 18)
         : '0.00'
     )
+
+    refetch()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rawOwnedPairs, rawLockedPairs, rawMyTrades])
 
   function refetch() {
