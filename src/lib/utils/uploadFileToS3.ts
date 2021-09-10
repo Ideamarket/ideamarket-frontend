@@ -23,8 +23,7 @@ export async function uploadFile(file) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        userId: session.user.id,
-        userSettings: { uuid },
+        uuid,
       }),
     })
   }
