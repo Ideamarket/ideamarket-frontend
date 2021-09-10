@@ -169,7 +169,7 @@ export async function queryMarket(
 export async function queryOwnedTokensMaybeMarket(
   queryKey: string,
   market: IdeaMarket,
-  owner: string,
+  owner: string
 ): Promise<IdeaTokenMarketPair[]> {
   if (owner === undefined) {
     return []
@@ -177,10 +177,7 @@ export async function queryOwnedTokensMaybeMarket(
 
   const result = await request(
     HTTP_GRAPHQL_ENDPOINT,
-    getQueryOwnedTokensMaybeMarket(
-      market ? market.marketID : undefined,
-      owner,
-    )
+    getQueryOwnedTokensMaybeMarket(market ? market.marketID : undefined, owner)
   )
 
   return result.ideaTokenBalances.map(
@@ -199,7 +196,7 @@ export async function queryOwnedTokensMaybeMarket(
 export async function queryMyTokensMaybeMarket(
   queryKey: string,
   market: IdeaMarket,
-  owner: string,
+  owner: string
 ): Promise<IdeaTokenMarketPair[]> {
   if (owner === undefined) {
     return []
@@ -594,7 +591,7 @@ export async function queryLockedAmounts(
 export async function queryLockedTokens(
   queryKey,
   market: IdeaMarket,
-  ownerAddress: string,
+  ownerAddress: string
 ): Promise<LockedIdeaTokenMarketPair[]> {
   if (!ownerAddress) {
     return []
@@ -645,7 +642,7 @@ export async function queryLockedTokens(
 export async function queryMyTrades(
   queryKey,
   market: IdeaMarket,
-  ownerAddress: string,
+  ownerAddress: string
 ): Promise<IdeaTokenTrade[]> {
   if (!ownerAddress) {
     return []
