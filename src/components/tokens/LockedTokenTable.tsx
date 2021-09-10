@@ -1,6 +1,12 @@
 import classNames from 'classnames'
 import BigNumber from 'bignumber.js'
-import { useEffect, useState, useCallback, useRef, MutableRefObject } from 'react'
+import {
+  useEffect,
+  useState,
+  useCallback,
+  useRef,
+  MutableRefObject,
+} from 'react'
 import { LockedIdeaTokenMarketPair } from 'store/ideaMarketsStore'
 import { calculateCurrentPriceBN, web3BNToFloatString } from 'utils'
 import LockedTokenRowSkeleton from './LockedTokenRowSkeleton'
@@ -195,9 +201,7 @@ export default function LockedTokenTable({
                           {currentHeader === header.value &&
                             orderDirection === 'asc' && <span>&#x25B2;</span>}
                           {currentHeader === header.value &&
-                            orderDirection === 'desc' && (
-                              <span>&#x25bc;</span>
-                            )}
+                            orderDirection === 'desc' && <span>&#x25bc;</span>}
                           &nbsp;
                         </>
                       )}
@@ -220,11 +224,11 @@ export default function LockedTokenTable({
                     }
                   />
                 ))}
-                {isPairsDataLoading ? (
-                  Array.from(Array(TOKENS_PER_PAGE).keys()).map((token) => (
-                    <LockedTokenRowSkeleton key={token} />
-                  ))
-                ) : null}
+                {isPairsDataLoading
+                  ? Array.from(Array(TOKENS_PER_PAGE).keys()).map((token) => (
+                      <LockedTokenRowSkeleton key={token} />
+                    ))
+                  : null}
               </tbody>
             </table>
           </div>

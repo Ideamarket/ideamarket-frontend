@@ -1,9 +1,13 @@
 import classNames from 'classnames'
-import { useEffect, useState, useCallback, useRef, MutableRefObject } from 'react'
-import { useQuery } from 'react-query'
 import {
-  IdeaTokenMarketPair,
-} from 'store/ideaMarketsStore'
+  useEffect,
+  useState,
+  useCallback,
+  useRef,
+  MutableRefObject,
+} from 'react'
+import { useQuery } from 'react-query'
+import { IdeaTokenMarketPair } from 'store/ideaMarketsStore'
 import { querySupplyRate } from 'store/compoundStore'
 import MyTokenRow from './MyTokenRow'
 import MyTokenRowSkeleton from './MyTokenRowSkeleton'
@@ -115,13 +119,7 @@ export default function MyTokenTable({
     }
 
     setPairs(sorted)
-  }, [
-    rawPairs,
-    orderBy,
-    orderDirection,
-    compoundSupplyRate,
-    TOKENS_PER_PAGE,
-  ])
+  }, [rawPairs, orderBy, orderDirection, compoundSupplyRate, TOKENS_PER_PAGE])
 
   function headerClicked(headerValue: string) {
     if (currentHeader === headerValue) {
@@ -188,11 +186,11 @@ export default function MyTokenTable({
                     }
                   />
                 ))}
-                {isLoading ? (
-                  Array.from(Array(TOKENS_PER_PAGE).keys()).map((token) => (
-                    <MyTokenRowSkeleton key={token} />
-                  ))
-                ) : null}
+                {isLoading
+                  ? Array.from(Array(TOKENS_PER_PAGE).keys()).map((token) => (
+                      <MyTokenRowSkeleton key={token} />
+                    ))
+                  : null}
               </tbody>
             </table>
           </div>
