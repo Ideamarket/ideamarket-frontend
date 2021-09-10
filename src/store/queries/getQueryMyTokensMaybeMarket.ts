@@ -2,7 +2,7 @@ import { gql } from 'graphql-request'
 
 export default function getQueryMyTokensMaybeMarket(
   marketID: number,
-  owner: string,
+  owner: string
 ): string {
   let where
 
