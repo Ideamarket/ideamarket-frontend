@@ -1,6 +1,12 @@
 import classNames from 'classnames'
 import BigNumber from 'bignumber.js'
-import { useEffect, useState, useCallback, useRef, MutableRefObject } from 'react'
+import {
+  useEffect,
+  useState,
+  useCallback,
+  useRef,
+  MutableRefObject,
+} from 'react'
 import { IdeaTokenMarketPair } from 'store/ideaMarketsStore'
 import { calculateCurrentPriceBN, web3BNToFloatString } from 'utils'
 import OwnedTokenRow from './OwnedTokenRow'
@@ -237,11 +243,11 @@ export default function OwnedTokenTable({
                     }
                   />
                 ))}
-                {isPairsDataLoading ? (
-                  Array.from(Array(TOKENS_PER_PAGE).keys()).map((token) => (
-                    <OwnedTokenRowSkeleton key={token} />
-                  ))
-                ) : null}
+                {isPairsDataLoading
+                  ? Array.from(Array(TOKENS_PER_PAGE).keys()).map((token) => (
+                      <OwnedTokenRowSkeleton key={token} />
+                    ))
+                  : null}
               </tbody>
             </table>
           </div>

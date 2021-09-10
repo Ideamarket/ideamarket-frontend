@@ -1,5 +1,11 @@
 import classNames from 'classnames'
-import { useEffect, useState, useCallback, useRef, MutableRefObject } from 'react'
+import {
+  useEffect,
+  useState,
+  useCallback,
+  useRef,
+  MutableRefObject,
+} from 'react'
 import { IdeaTokenTrade } from 'store/ideaMarketsStore'
 import { MyTradesRow, MyTradesRowSkeleton } from './components'
 import headers from './headers'
@@ -125,9 +131,7 @@ export default function MyTradesTable({
                           {currentHeader === header.value &&
                             orderDirection === 'asc' && <span>&#x25B2;</span>}
                           {currentHeader === header.value &&
-                            orderDirection === 'desc' && (
-                              <span>&#x25bc;</span>
-                            )}
+                            orderDirection === 'desc' && <span>&#x25bc;</span>}
                           &nbsp;
                         </>
                       )}
@@ -151,11 +155,11 @@ export default function MyTradesTable({
                     }
                   />
                 ))}
-                {isPairsDataLoading ? (
-                  Array.from(Array(TOKENS_PER_PAGE).keys()).map((token) => (
-                    <MyTradesRowSkeleton key={token} />
-                  ))
-                ) : null}
+                {isPairsDataLoading
+                  ? Array.from(Array(TOKENS_PER_PAGE).keys()).map((token) => (
+                      <MyTradesRowSkeleton key={token} />
+                    ))
+                  : null}
               </tbody>
             </table>
           </div>
