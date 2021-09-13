@@ -27,26 +27,35 @@ import ModalService from 'components/modals/ModalService'
 import MyTradesTable from 'components/tokens/MyTradesTable/MyTradesTable'
 import { flatten } from 'lodash'
 
+const TOKENS_PER_PAGE = 10
+
+const infiniteQueryConfig = {
+  getFetchMore: (lastGroup, allGroups) => {
+    const morePagesExist = lastGroup?.length === TOKENS_PER_PAGE
+
+    if (!morePagesExist) {
+      return false
+    }
+
+    return allGroups.length * TOKENS_PER_PAGE
+  },
+  refetchOnMount: false,
+  refetchOnWindowFocus: false,
+  enabled: false,
+}
+
 export default function ProfileWallet() {
-  const TOKENS_PER_PAGE = 10
   const web3 = useWalletStore((state) => state.web3)
 
-  const [selectedMarketOwnedTokens, setSelectedMarketOwnedTokens] =
-    useState(undefined)
+  const [selectedMarket, setSelectedMarket] = useState(undefined)
   const [ownedTokenTotalValue, setOwnedTokensTotalValue] = useState('0.00')
   const [lockedTokenTotalValue, setLockedTokensTotalValue] = useState('0.00')
   const [purchaseTotalValue, setPurchaseTotalValue] = useState('0.00')
 
-  const [selectedMarketMyTokens, setSelectedMarketMyTokens] =
-    useState(undefined)
-
-  const [selectedMarketLockedTokens, setSelectedMarketLockedTokens] =
-    useState(undefined)
-
   const address = useWalletStore((state) => state.address)
 
   const { data: rawOwnedPairs } = useQuery(
-    ['owned-tokens', selectedMarketOwnedTokens, address],
+    ['owned-tokens', selectedMarket, address],
     queryOwnedTokensMaybeMarket
   )
 
@@ -65,26 +74,13 @@ export default function ProfileWallet() {
           : numTokens + skip
       return rawOwnedPairs?.slice(skip, lastIndex) || []
     },
-    {
-      getFetchMore: (lastGroup, allGroups) => {
-        const morePagesExist = lastGroup?.length === TOKENS_PER_PAGE
-
-        if (!morePagesExist) {
-          return false
-        }
-
-        return allGroups.length * TOKENS_PER_PAGE
-      },
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      enabled: false,
-    }
+    infiniteQueryConfig
   )
 
   const ownedPairs = flatten(infiniteOwnedData || [])
 
   const { data: rawListingPairs } = useQuery(
-    ['my-tokens', selectedMarketMyTokens, address],
+    ['my-tokens', selectedMarket, address],
     queryMyTokensMaybeMarket
   )
 
@@ -103,26 +99,13 @@ export default function ProfileWallet() {
           : numTokens + skip
       return rawListingPairs?.slice(skip, lastIndex) || []
     },
-    {
-      getFetchMore: (lastGroup, allGroups) => {
-        const morePagesExist = lastGroup?.length === TOKENS_PER_PAGE
-
-        if (!morePagesExist) {
-          return false
-        }
-
-        return allGroups.length * TOKENS_PER_PAGE
-      },
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      enabled: false,
-    }
+    infiniteQueryConfig
   )
 
   const listingPairs = flatten(infiniteListingsData || [])
 
   const { data: rawLockedPairs } = useQuery(
-    ['locked-tokens', selectedMarketLockedTokens, address],
+    ['locked-tokens', selectedMarket, address],
     queryLockedTokens
   )
 
@@ -141,26 +124,13 @@ export default function ProfileWallet() {
           : numTokens + skip
       return rawLockedPairs?.slice(skip, lastIndex) || []
     },
-    {
-      getFetchMore: (lastGroup, allGroups) => {
-        const morePagesExist = lastGroup?.length === TOKENS_PER_PAGE
-
-        if (!morePagesExist) {
-          return false
-        }
-
-        return allGroups.length * TOKENS_PER_PAGE
-      },
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      enabled: false,
-    }
+    infiniteQueryConfig
   )
 
   const lockedPairs = flatten(infiniteLockedData || [])
 
   const { data: rawMyTrades } = useQuery(
-    ['my-trades', selectedMarketLockedTokens, address],
+    ['my-trades', selectedMarket, address],
     queryMyTrades
   )
 
@@ -179,20 +149,7 @@ export default function ProfileWallet() {
           : numTokens + skip
       return rawMyTrades?.slice(skip, lastIndex) || []
     },
-    {
-      getFetchMore: (lastGroup, allGroups) => {
-        const morePagesExist = lastGroup?.length === TOKENS_PER_PAGE
-
-        if (!morePagesExist) {
-          return false
-        }
-
-        return allGroups.length * TOKENS_PER_PAGE
-      },
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      enabled: false,
-    }
+    infiniteQueryConfig
   )
 
   const myTrades = flatten(infiniteTradesData || [])
@@ -363,9 +320,7 @@ export default function ProfileWallet() {
             <MarketSelect
               isClearable={true}
               onChange={(value) => {
-                setSelectedMarketOwnedTokens(value?.market)
-                setSelectedMarketMyTokens(value?.market)
-                setSelectedMarketLockedTokens(value?.market)
+                setSelectedMarket(value?.market)
               }}
               disabled={false}
             />
