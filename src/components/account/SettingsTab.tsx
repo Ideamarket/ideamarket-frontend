@@ -8,11 +8,11 @@ const SettingsTab = () => {
   const { username } = getValues()
 
   return (
-    <div className="w-3/4 h-full">
+    <div className="w-full h-full lg:w-3/4">
       <div className="p-3 text-3xl font-semibold border-b border-gray-100">
         Profile
       </div>
-      <div className="flex space-x-2">
+      <div className="flex flex-col lg:flex-row lg:space-x-2">
         <div className="w-full">
           <div className="p-3 font-bold">Account Information</div>
           <div className="flex flex-col w-full px-3 py-2 space-y-2 bg-gray-100 rounded-lg">
@@ -21,7 +21,7 @@ const SettingsTab = () => {
 
               <input
                 type="text"
-                className="block h-8 border-gray-300 rounded-md shadow-sm w-52 sm:text-sm focus:outline-none dark:text-gray-300 dark:bg-gray-600 dark:placeholder-gray-200 dark:border-gray-500 focus:ring-brand-blue focus:border-brand-blue"
+                className="block h-8 break-all border-gray-300 rounded-md shadow-sm w-52 sm:text-sm focus:outline-none dark:text-gray-300 dark:bg-gray-600 dark:placeholder-gray-200 dark:border-gray-500 focus:ring-brand-blue focus:border-brand-blue"
                 {...register('username')}
                 onChange={(e) => {
                   if (!username) {
@@ -35,7 +35,7 @@ const SettingsTab = () => {
               <span>Email Address</span>
               <input
                 type="email"
-                className="block h-8 border-gray-300 rounded-md shadow-sm w-52 sm:text-sm focus:outline-none dark:text-gray-300 dark:bg-gray-600 dark:placeholder-gray-200 dark:border-gray-500 focus:ring-brand-blue focus:border-brand-blue"
+                className="block h-8 break-all border-gray-300 rounded-md shadow-sm w-52 sm:text-sm focus:outline-none dark:text-gray-300 dark:bg-gray-600 dark:placeholder-gray-200 dark:border-gray-500 focus:ring-brand-blue focus:border-brand-blue"
                 placeholder="you@example.com"
                 {...register('email')}
                 disabled
@@ -46,7 +46,7 @@ const SettingsTab = () => {
               <span>Eth address</span>
               <input
                 type="text"
-                className="block h-8 border-gray-300 rounded-md shadow-sm w-52 sm:text-sm focus:outline-none dark:text-gray-300 dark:bg-gray-600 dark:placeholder-gray-200 dark:border-gray-500 focus:ring-brand-blue focus:border-brand-blue"
+                className="block h-8 break-all border-gray-300 rounded-md shadow-sm w-52 sm:text-sm focus:outline-none dark:text-gray-300 dark:bg-gray-600 dark:placeholder-gray-200 dark:border-gray-500 focus:ring-brand-blue focus:border-brand-blue"
                 {...register('ethAddresses')}
                 disabled={isUpdateLoading}
               />
@@ -56,7 +56,7 @@ const SettingsTab = () => {
               <span>Redirection url</span>
               <input
                 type="text"
-                className="block h-8 border-gray-300 rounded-md shadow-sm w-52 sm:text-sm focus:outline-none dark:text-gray-300 dark:bg-gray-600 dark:placeholder-gray-200 dark:border-gray-500 focus:ring-brand-blue focus:border-brand-blue"
+                className="block h-8 break-all border-gray-300 rounded-md shadow-sm w-52 sm:text-sm focus:outline-none dark:text-gray-300 dark:bg-gray-600 dark:placeholder-gray-200 dark:border-gray-500 focus:ring-brand-blue focus:border-brand-blue"
                 {...register('redirectionUrl')}
                 disabled={isUpdateLoading}
               />
@@ -68,7 +68,7 @@ const SettingsTab = () => {
                 placeholder="Bio"
                 {...register('bio')}
                 disabled={isUpdateLoading}
-                className="border-gray-300 rounded-md w-52 dark:border-gray-500"
+                className="break-all border-gray-300 rounded-md w-52 dark:border-gray-500"
               />
             </div>
 
