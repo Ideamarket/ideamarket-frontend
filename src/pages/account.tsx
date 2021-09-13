@@ -5,8 +5,7 @@ import { getSession, signIn } from 'next-auth/client'
 import { Session } from 'next-auth'
 import { useMutation } from 'react-query'
 import { uploadFile } from 'lib/utils/uploadFileToS3'
-import AccountMobile from 'components/account/AccountMobile'
-import AccountDesktop from 'components/account/AccountDesktop'
+import AccountInnerForm from 'components/account/AccountInnerForm'
 import { accountTabs } from 'components/account/constants'
 import { useForm } from 'react-hook-form'
 
@@ -140,8 +139,7 @@ const Account = () => {
       <div className="min-h-screen bg-top-desktop-new">
         <Toaster />
         <form onSubmit={handleSubmit(onSubmit)}>
-          <AccountDesktop />
-          <AccountMobile />
+          <AccountInnerForm />
         </form>
       </div>
     </AccountContext.Provider>
