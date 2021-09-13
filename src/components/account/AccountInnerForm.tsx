@@ -8,20 +8,20 @@ import { accountTabs } from './constants'
 import { AccountContext } from 'pages/account'
 import { useContext } from 'react'
 
-const AccountDesktop = () => {
+const AccountInnerForm = () => {
   const { getValues, isUpdateLoading, cardTab } = useContext(AccountContext)
   const { username, email, ethAddresses, bio, profilePhoto } = getValues()
 
   return (
-    <div className="flex-col items-center justify-center hidden w-screen md:pt-24 margin md:flex font-inter">
+    <div className="flex-col items-center justify-center w-screen md:pt-24 margin md:flex font-inter">
       <div className="flex flex-col items-end w-3/4 mb-2">
         <div className="mb-4 text-4xl italic text-white">My Account</div>
         <div>
           <TabSwitcher hasSpaceBetween />
         </div>
       </div>
-      <div className="relative flex items-start justify-center w-4/5 px-6 py-5 bg-white rounded-lg h-3/5">
-        <div className="relative flex flex-col w-1/4 mt-16 mr-8 text-center">
+      <div className="relative flex flex-col items-start justify-center px-6 py-5 bg-white rounded-lg lg:w-4/5 h-3/5 lg:flex-row">
+        <div className="relative flex flex-col w-full mt-16 text-center lg:mr-8 lg:w-1/4">
           <div className="absolute transform -translate-x-1/2 -translate-y-1/2 rounded-full -top-24 left-1/2 w-36 h-36">
             <Image
               src={profilePhoto || '/gray.svg'}
@@ -73,4 +73,4 @@ const AccountDesktop = () => {
   )
 }
 
-export default AccountDesktop
+export default AccountInnerForm
