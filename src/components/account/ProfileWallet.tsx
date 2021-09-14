@@ -120,6 +120,7 @@ export default function ProfileWallet() {
     canFetchMoreLocked,
     canFetchMoreTrades,
     selectedMarket,
+    web3,
   ])
 
   function refetch() {
