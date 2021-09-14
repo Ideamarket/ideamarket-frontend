@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import BN from 'bn.js'
 import { useState, useEffect } from 'react'
-import { useInfiniteQuery, useQuery } from 'react-query'
+import { useInfiniteQuery } from 'react-query'
 import {
   MarketSelect,
   OwnedTokenTable,
@@ -54,11 +54,6 @@ export default function ProfileWallet() {
 
   const address = useWalletStore((state) => state.address)
 
-  const { data: rawOwnedPairs } = useQuery(
-    ['owned-tokens', selectedMarket, address],
-    queryOwnedTokensMaybeMarket
-  )
-
   const {
     data: infiniteOwnedData,
     isFetching: isOwnedPairsDataLoading,
@@ -67,22 +62,11 @@ export default function ProfileWallet() {
     canFetchMore: canFetchMoreOwned,
   } = useInfiniteQuery(
     ['owned-tokens', TOKENS_PER_PAGE],
-    (key, numTokens: number, skip: number = 0) => {
-      const lastIndex =
-        numTokens + skip > rawOwnedPairs?.length
-          ? rawOwnedPairs?.length
-          : numTokens + skip
-      return rawOwnedPairs?.slice(skip, lastIndex) || []
-    },
+    ownedQueryFunction,
     infiniteQueryConfig
   )
 
   const ownedPairs = flatten(infiniteOwnedData || [])
-
-  const { data: rawListingPairs } = useQuery(
-    ['my-tokens', selectedMarket, address],
-    queryMyTokensMaybeMarket
-  )
 
   const {
     data: infiniteListingsData,
@@ -92,22 +76,11 @@ export default function ProfileWallet() {
     canFetchMore: canFetchMoreListings,
   } = useInfiniteQuery(
     ['my-tokens', TOKENS_PER_PAGE],
-    (key, numTokens: number, skip: number = 0) => {
-      const lastIndex =
-        numTokens + skip > rawListingPairs?.length
-          ? rawListingPairs?.length
-          : numTokens + skip
-      return rawListingPairs?.slice(skip, lastIndex) || []
-    },
+    listingsQueryFunction,
     infiniteQueryConfig
   )
 
   const listingPairs = flatten(infiniteListingsData || [])
-
-  const { data: rawLockedPairs } = useQuery(
-    ['locked-tokens', selectedMarket, address],
-    queryLockedTokens
-  )
 
   const {
     data: infiniteLockedData,
@@ -117,22 +90,11 @@ export default function ProfileWallet() {
     canFetchMore: canFetchMoreLocked,
   } = useInfiniteQuery(
     ['locked-tokens', TOKENS_PER_PAGE],
-    (key, numTokens: number, skip: number = 0) => {
-      const lastIndex =
-        numTokens + skip > rawLockedPairs?.length
-          ? rawLockedPairs?.length
-          : numTokens + skip
-      return rawLockedPairs?.slice(skip, lastIndex) || []
-    },
+    lockedQueryFunction,
     infiniteQueryConfig
   )
 
   const lockedPairs = flatten(infiniteLockedData || [])
-
-  const { data: rawMyTrades } = useQuery(
-    ['my-trades', selectedMarket, address],
-    queryMyTrades
-  )
 
   const {
     data: infiniteTradesData,
@@ -142,13 +104,7 @@ export default function ProfileWallet() {
     canFetchMore: canFetchMoreTrades,
   } = useInfiniteQuery(
     ['my-trades', TOKENS_PER_PAGE],
-    (key, numTokens: number, skip: number = 0) => {
-      const lastIndex =
-        numTokens + skip > rawMyTrades?.length
-          ? rawMyTrades?.length
-          : numTokens + skip
-      return rawMyTrades?.slice(skip, lastIndex) || []
-    },
+    tradesQueryFunction,
     infiniteQueryConfig
   )
 
@@ -157,9 +113,35 @@ export default function ProfileWallet() {
   const [table, setTable] = useState('holdings')
 
   useEffect(() => {
+    refetch()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    canFetchMoreOwned,
+    canFetchMoreLocked,
+    canFetchMoreTrades,
+    selectedMarket,
+  ])
+
+  function refetch() {
+    refetchOwned()
+    refetchLocked()
+    refetchMyTrades()
+    refetchListings()
+  }
+
+  async function ownedQueryFunction(
+    key: string,
+    numTokens: number,
+    skip: number = 0
+  ) {
+    const result = await queryOwnedTokensMaybeMarket(
+      key,
+      selectedMarket,
+      address
+    )
     // Calculate the total value of non-locked tokens
     let ownedTotal = new BN('0')
-    for (const pair of rawOwnedPairs ?? []) {
+    for (const pair of result ?? []) {
       ownedTotal = ownedTotal.add(
         calculateIdeaTokenDaiValue(
           pair.token?.rawSupply,
@@ -168,10 +150,38 @@ export default function ProfileWallet() {
         )
       )
     }
+    setOwnedTokensTotalValue(
+      result ? web3BNToFloatString(ownedTotal, bigNumberTenPow18, 18) : '0.00'
+    )
 
+    const lastIndex =
+      numTokens + skip > result?.length ? result?.length : numTokens + skip
+
+    return result?.slice(skip, lastIndex) || []
+  }
+
+  async function listingsQueryFunction(
+    key: string,
+    numTokens: number,
+    skip: number = 0
+  ) {
+    const result = await queryMyTokensMaybeMarket(key, selectedMarket, address)
+
+    const lastIndex =
+      numTokens + skip > result?.length ? result?.length : numTokens + skip
+
+    return result?.slice(skip, lastIndex) || []
+  }
+
+  async function lockedQueryFunction(
+    key: string,
+    numTokens: number,
+    skip: number = 0
+  ) {
+    const result = await queryLockedTokens(key, selectedMarket, address)
     // Calculate the total value of locked tokens
     let lockedTotal = new BN('0')
-    for (const pair of rawLockedPairs ?? []) {
+    for (const pair of result ?? []) {
       lockedTotal = lockedTotal.add(
         calculateIdeaTokenDaiValue(
           pair.token?.rawSupply,
@@ -180,38 +190,38 @@ export default function ProfileWallet() {
         )
       )
     }
+    setLockedTokensTotalValue(
+      result ? web3BNToFloatString(lockedTotal, bigNumberTenPow18, 18) : '0.00'
+    )
 
+    const lastIndex =
+      numTokens + skip > result?.length ? result?.length : numTokens + skip
+
+    return result?.slice(skip, lastIndex) || []
+  }
+
+  async function tradesQueryFunction(
+    key: string,
+    numTokens: number,
+    skip: number = 0
+  ) {
+    const result = await queryMyTrades(key, selectedMarket, address)
     // Calculate the total purchase value
     let purchaseTotal = new BN('0')
-    for (const pair of rawMyTrades ?? []) {
+    for (const pair of result ?? []) {
       if (pair.isBuy) purchaseTotal = purchaseTotal.add(pair.rawDaiAmount)
     }
 
     setPurchaseTotalValue(
-      rawMyTrades
+      result
         ? web3BNToFloatString(purchaseTotal, bigNumberTenPow18, 18)
         : '0.00'
     )
-    setOwnedTokensTotalValue(
-      rawOwnedPairs
-        ? web3BNToFloatString(ownedTotal, bigNumberTenPow18, 18)
-        : '0.00'
-    )
-    setLockedTokensTotalValue(
-      rawLockedPairs
-        ? web3BNToFloatString(lockedTotal, bigNumberTenPow18, 18)
-        : '0.00'
-    )
 
-    refetch()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rawOwnedPairs, rawLockedPairs, rawMyTrades])
+    const lastIndex =
+      numTokens + skip > result?.length ? result?.length : numTokens + skip
 
-  function refetch() {
-    refetchOwned()
-    refetchLocked()
-    refetchMyTrades()
-    refetchListings()
+    return result?.slice(skip, lastIndex) || []
   }
 
   return (
