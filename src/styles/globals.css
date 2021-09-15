@@ -41,7 +41,7 @@ select:-webkit-autofill:focus {
   @supports (-webkit-appearance: none) {
     @media (min-width: 768px) {
       .sticky-safari {
-        top: 4rem;
+        top: 0rem;
       }
     }
   }
