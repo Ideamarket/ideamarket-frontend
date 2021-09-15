@@ -24,7 +24,7 @@ const MobileNavItems = ({ isMobileNavOpen }: Props) => {
     >
       <div className="px-2 pt-2 pb-3 space-y-3 sm:px-3">
         {navbarConfig.menu.map((menuItem, i) => (
-          <NavItem menuItem={menuItem} i={i} />
+          <NavItem menuItem={menuItem} key={i} />
         ))}
         <div className="flex px-2 mt-5">
           <WalletStatus openModal={() => ModalService.open(WalletModal)} />

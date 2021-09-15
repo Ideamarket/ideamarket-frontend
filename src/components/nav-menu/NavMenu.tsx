@@ -55,7 +55,7 @@ const NavMenu = () => {
           {/* Desktop START */}
           <div className="relative items-center justify-center hidden md:flex">
             {navbarConfig.menu.map((menuItem, i) => (
-              <NavItem menuItem={menuItem} i={i} />
+              <NavItem menuItem={menuItem} key={i} />
             ))}
           </div>
           <div className="hidden md:flex">

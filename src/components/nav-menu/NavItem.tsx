@@ -4,7 +4,7 @@ import { A } from 'components'
 import { useRef, useState } from 'react'
 import useOnClickOutside from 'utils/useOnClickOutside'
 
-const NavItem = ({ menuItem, i }) => {
+const NavItem = ({ menuItem }) => {
   const ref = useRef()
   const [isOpen, setIsOpen] = useState(false)
 
@@ -15,9 +15,9 @@ const NavItem = ({ menuItem, i }) => {
   }
 
   return (
-    <div key={i}>
+    <div>
       <div
-        className="inline-flex px-4 py-2 text-lg leading-5 text-white transition duration-150 ease-in-out bg-transparent rounded-md shadow-sm md:justify-center hover:text-gray-500 active:text-gray-800"
+        className="inline-flex px-4 py-2 text-lg leading-5 text-white transition duration-150 ease-in-out bg-transparent rounded-md shadow-sm md:justify-center hover:text-gray-500 active:text-gray-800 cursor-pointer"
         onClick={onMenuItemClick}
       >
         <span>{menuItem.name}</span>
