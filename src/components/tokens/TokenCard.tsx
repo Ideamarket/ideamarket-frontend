@@ -60,7 +60,7 @@ export default function TokenCard({
         {loading || isTokenIconLoading ? (
           <div className="bg-gray-400 rounded-full w-18 h-18 animate animate-pulse"></div>
         ) : (
-          <div className="w-full h-full rounded-full relative max-w-18 max-h-18">
+          <div className="relative w-full h-full rounded-full max-w-18 max-h-18">
             <Image
               src={tokenIconURL || '/gray.svg'}
               alt="token"

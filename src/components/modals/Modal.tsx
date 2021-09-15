@@ -35,7 +35,7 @@ export default function Modal({
         leave="ease-in duration-200"
         leaveFrom="opacity-100 translate-y-0 sm:scale-100"
         leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-        className="inline-block w-full md:w-auto text-left transition-all transform rounded-lg overflow-hidden"
+        className="inline-block w-full overflow-hidden text-left transition-all transform rounded-lg md:w-auto"
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-headline"

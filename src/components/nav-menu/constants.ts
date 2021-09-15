@@ -1,6 +1,6 @@
 import router from 'next/router'
 
-export const config: any = {
+export const navbarConfig: any = {
   menu: [
     {
       name: 'Start',
