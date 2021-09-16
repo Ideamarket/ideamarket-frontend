@@ -75,7 +75,7 @@ export const config: any = {
       ],
     },
     {
-      name: 'Wallet',
+      name: 'Account',
       onClick: () => router.push('/account'),
     },
   ],
