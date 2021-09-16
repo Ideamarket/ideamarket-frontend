@@ -17,7 +17,7 @@ const DesktopRelatedInfo = ({ rawTokenName, tokenName, marketName }: Props) => {
           className="twitter-timeline"
           href={`https://twitter.com/${rawTokenName}`}
         >
-          Tweets by {tokenName}
+          No tweets found for {tokenName}
         </a>
       </div>
       <div className="w-1/2 ml-5">

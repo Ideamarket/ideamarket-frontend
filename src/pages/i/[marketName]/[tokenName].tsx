@@ -58,6 +58,12 @@ export default function TokenDetails({
   const isLoading =
     isTokenLoading || isMarketLoading || isCompoundExchangeRateLoading
 
+  const retalatedInfoProps = {
+    rawTokenName,
+    tokenName,
+    marketName,
+  }
+
   function onTradeComplete(
     isSuccess: boolean,
     tokenName: string,
@@ -72,8 +78,13 @@ export default function TokenDetails({
   }
 
   useEffect(() => {
-    setTimeout(() => (window as any)?.twttr?.widgets?.load(), 3000) // Load tweets
-  }, [])
+    const timeout = setTimeout(
+      () => (window as any)?.twttr?.widgets?.load(),
+      3000
+    ) // Load tweets
+
+    return () => clearTimeout(timeout)
+  }, [rawTokenName])
 
   return (
     <>
@@ -131,16 +142,8 @@ export default function TokenDetails({
           <div className="px-2 mx-auto max-w-88 md:max-w-304 -mt-30 md:-mt-28">
             {marketName?.toLowerCase() === 'twitter' ? (
               <>
-                <MobileRelatedInfo
-                  rawTokenName={rawTokenName}
-                  tokenName={tokenName}
-                  marketName={marketName}
-                />
-                <DesktopRelatedInfo
-                  rawTokenName={rawTokenName}
-                  tokenName={tokenName}
-                  marketName={marketName}
-                />
+                <MobileRelatedInfo {...retalatedInfoProps} />
+                <DesktopRelatedInfo {...retalatedInfoProps} />
               </>
             ) : (
               <MutualTokensList tokenName={tokenName} marketName={marketName} />
