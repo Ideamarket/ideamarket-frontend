@@ -15,13 +15,13 @@ const SettingsTab = () => {
       <div className="flex flex-col lg:flex-row lg:space-x-2">
         <div className="w-full">
           <div className="p-3 font-bold">Account Information</div>
-          <div className="flex flex-col w-full px-3 py-2 space-y-2 bg-gray-100 rounded-lg">
-            <div className="flex items-center justify-between">
+          <div className="flex flex-col w-full px-3 py-2 space-y-2 rounded-lg bg-blue-50">
+            <div className="flex flex-col justify-between sm:flex-row">
               <span>Username</span>
 
               <input
                 type="text"
-                className="block h-8 break-all border-gray-300 rounded-md shadow-sm w-52 sm:text-sm focus:outline-none dark:text-gray-300 dark:bg-gray-600 dark:placeholder-gray-200 dark:border-gray-500 focus:ring-brand-blue focus:border-brand-blue"
+                className="block w-full h-8 break-all border-gray-300 rounded-md shadow-sm sm:w-64 sm:text-sm focus:outline-none dark:text-gray-300 dark:bg-gray-600 dark:placeholder-gray-200 dark:border-gray-500 focus:ring-brand-blue focus:border-brand-blue"
                 {...register('username')}
                 onChange={(e) => {
                   if (!username) {
@@ -31,49 +31,49 @@ const SettingsTab = () => {
                 disabled={!!username}
               />
             </div>
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col justify-between sm:flex-row">
               <span>Email Address</span>
               <input
                 type="email"
-                className="block h-8 break-all border-gray-300 rounded-md shadow-sm w-52 sm:text-sm focus:outline-none dark:text-gray-300 dark:bg-gray-600 dark:placeholder-gray-200 dark:border-gray-500 focus:ring-brand-blue focus:border-brand-blue"
+                className="block w-full h-8 break-all border-gray-300 rounded-md shadow-sm sm:w-64 sm:text-sm focus:outline-none dark:text-gray-300 dark:bg-gray-600 dark:placeholder-gray-200 dark:border-gray-500 focus:ring-brand-blue focus:border-brand-blue"
                 placeholder="you@example.com"
                 {...register('email')}
                 disabled
               />
             </div>
 
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col justify-between sm:flex-row">
               <span>Eth address</span>
               <input
                 type="text"
-                className="block h-8 break-all border-gray-300 rounded-md shadow-sm w-52 sm:text-sm focus:outline-none dark:text-gray-300 dark:bg-gray-600 dark:placeholder-gray-200 dark:border-gray-500 focus:ring-brand-blue focus:border-brand-blue"
+                className="block w-full h-8 break-all border-gray-300 rounded-md shadow-sm sm:w-64 sm:text-sm focus:outline-none dark:text-gray-300 dark:bg-gray-600 dark:placeholder-gray-200 dark:border-gray-500 focus:ring-brand-blue focus:border-brand-blue"
                 {...register('ethAddresses')}
                 disabled={isUpdateLoading}
               />
             </div>
 
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col justify-between sm:flex-row">
               <span>Redirection url</span>
               <input
                 type="text"
-                className="block h-8 break-all border-gray-300 rounded-md shadow-sm w-52 sm:text-sm focus:outline-none dark:text-gray-300 dark:bg-gray-600 dark:placeholder-gray-200 dark:border-gray-500 focus:ring-brand-blue focus:border-brand-blue"
+                className="block w-full h-8 break-all border-gray-300 rounded-md shadow-sm sm:w-64 sm:text-sm focus:outline-none dark:text-gray-300 dark:bg-gray-600 dark:placeholder-gray-200 dark:border-gray-500 focus:ring-brand-blue focus:border-brand-blue"
                 {...register('redirectionUrl')}
                 disabled={isUpdateLoading}
               />
             </div>
 
-            <div className="flex justify-between">
+            <div className="flex flex-col justify-between sm:flex-row">
               <span>Bio</span>
               <textarea
                 placeholder="Bio"
                 {...register('bio')}
                 disabled={isUpdateLoading}
-                className="break-all border-gray-300 rounded-md w-52 dark:border-gray-500"
+                className="w-full break-all border-gray-300 rounded-md sm:w-64 dark:border-gray-500"
               />
             </div>
 
             <div className="flex-col space-y-2">
-              <div className="flex items-center space-x-2">
+              <div className="flex space-x-2">
                 <label>Upload Profile Photo</label>
                 <input
                   {...register('imageFile')}
