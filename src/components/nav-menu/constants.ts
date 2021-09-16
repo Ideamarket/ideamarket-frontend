@@ -75,7 +75,7 @@ export const navbarConfig: any = {
       ],
     },
     {
-      name: 'Wallet',
+      name: 'Account',
       onClick: () => router.push('/account'),
     },
   ],
