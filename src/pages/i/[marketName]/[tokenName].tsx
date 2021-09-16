@@ -17,6 +17,9 @@ import ListingSEO from 'components/listing-page/ListingSEO'
 import TradeCompleteModal, {
   TRANSACTION_TYPES,
 } from 'components/trade/TradeCompleteModal'
+import { useEffect } from 'react'
+import DesktopRelatedInfo from 'components/listing-page/DesktopRelatedInfo'
+import MobileRelatedInfo from 'components/listing-page/MobileRelatedInfo'
 
 export default function TokenDetails({
   rawMarketName,
@@ -67,6 +70,10 @@ export default function TokenDetails({
       transactionType,
     })
   }
+
+  useEffect(() => {
+    setTimeout(() => (window as any)?.twttr?.widgets?.load(), 3000) // Load tweets
+  }, [])
 
   return (
     <>
@@ -123,27 +130,18 @@ export default function TokenDetails({
           </div>
           <div className="px-2 mx-auto max-w-88 md:max-w-304 -mt-30 md:-mt-28">
             {marketName?.toLowerCase() === 'twitter' ? (
-              <div className="flex">
-                <div className="w-1/2 mr-5">
-                  <div className="md:h-20 pb-5 mb-12 border-b border-gray-200 sm:flex sm:items-end sm:justify-between">
-                    <h3 className="text-2xl font-medium leading-6">
-                      Latest tweets
-                    </h3>
-                  </div>
-                  <a
-                    className="twitter-timeline"
-                    href={`https://twitter.com/${rawTokenName}`}
-                  >
-                    Tweets by {tokenName}
-                  </a>
-                </div>
-                <div className="w-1/2 ml-5">
-                  <MutualTokensList
-                    tokenName={tokenName}
-                    marketName={marketName}
-                  />
-                </div>
-              </div>
+              <>
+                <MobileRelatedInfo
+                  rawTokenName={rawTokenName}
+                  tokenName={tokenName}
+                  marketName={marketName}
+                />
+                <DesktopRelatedInfo
+                  rawTokenName={rawTokenName}
+                  tokenName={tokenName}
+                  marketName={marketName}
+                />
+              </>
             ) : (
               <MutualTokensList tokenName={tokenName} marketName={marketName} />
             )}

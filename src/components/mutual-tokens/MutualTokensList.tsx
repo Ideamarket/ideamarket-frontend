@@ -67,7 +67,7 @@ export default function MutualTokensList({
         </h3>
         <div
           className={classNames(
-            'mt-3 sm:mt-0 sm:ml-4',
+            'mt-3 sm:mt-0',
             marketName.toLowerCase() === 'twitter' && 'order-1'
           )}
         >
