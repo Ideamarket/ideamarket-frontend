@@ -37,6 +37,11 @@ class MyDocument extends Document {
         <Head>
           <script
             async
+            src="https://platform.twitter.com/widgets.js"
+            charSet="utf-8"
+          />
+          <script
+            async
             src={`https://www.googletagmanager.com/gtag/js?id=${MyDocument.GA_TRACKING_ID}`}
           />
           <script

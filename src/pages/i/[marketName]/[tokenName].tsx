@@ -122,7 +122,31 @@ export default function TokenDetails({
             </div>
           </div>
           <div className="px-2 mx-auto max-w-88 md:max-w-304 -mt-30 md:-mt-28">
-            <MutualTokensList tokenName={tokenName} marketName={marketName} />
+            {marketName?.toLowerCase() === 'twitter' ? (
+              <div className="flex">
+                <div className="w-1/2 mr-5">
+                  <div className="md:h-20 pb-5 mb-12 border-b border-gray-200 sm:flex sm:items-end sm:justify-between">
+                    <h3 className="text-2xl font-medium leading-6">
+                      Latest tweets
+                    </h3>
+                  </div>
+                  <a
+                    className="twitter-timeline"
+                    href={`https://twitter.com/${rawTokenName}`}
+                  >
+                    Tweets by {tokenName}
+                  </a>
+                </div>
+                <div className="w-1/2 ml-5">
+                  <MutualTokensList
+                    tokenName={tokenName}
+                    marketName={marketName}
+                  />
+                </div>
+              </div>
+            ) : (
+              <MutualTokensList tokenName={tokenName} marketName={marketName} />
+            )}
           </div>
         </div>
       )}

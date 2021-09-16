@@ -6,6 +6,7 @@ import {
 } from 'store/ideaMarketsStore'
 import { MutualToken, MutualTokenSkeleton } from 'components'
 import DropDown from 'components/DropDown'
+import classNames from 'classnames'
 
 export type MutualTokensListSortBy = 'totalAmount' | 'totalHolders'
 
@@ -55,9 +56,21 @@ export default function MutualTokensList({
 
   return (
     <>
-      <div className="pb-5 mb-12 border-b border-gray-200 sm:flex sm:items-end sm:justify-between">
-        <h3 className="text-2xl font-medium leading-6">Holders also bought</h3>
-        <div className="mt-3 sm:mt-0 sm:ml-4">
+      <div className="md:h-20 pb-5 mb-12 border-b border-gray-200 sm:flex sm:items-end sm:justify-between">
+        <h3
+          className={classNames(
+            'text-2xl font-medium leading-6',
+            marketName.toLowerCase() === 'twitter' && 'order-2'
+          )}
+        >
+          Holders also bought
+        </h3>
+        <div
+          className={classNames(
+            'mt-3 sm:mt-0 sm:ml-4',
+            marketName.toLowerCase() === 'twitter' && 'order-1'
+          )}
+        >
           <p>Sort By</p>
           <DropDown
             name="Sort By"
@@ -75,7 +88,14 @@ export default function MutualTokensList({
         </div>
       </div>
 
-      <dl className="grid grid-cols-1 gap-10 mt-5 md:grid-cols-2">
+      <dl
+        className={classNames(
+          marketName.toLowerCase() === 'twitter'
+            ? 'grid-cols-1'
+            : 'grid-cols-1 md:grid-cols-2',
+          'grid gap-10 mt-5'
+        )}
+      >
         {isLoading && (
           <>
             <MutualTokenSkeleton />
