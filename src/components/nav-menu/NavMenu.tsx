@@ -34,7 +34,7 @@ const NavMenu = () => {
   return (
     <div className="relative items-center w-full shadow bg-top-desktop overflow-none font-inter">
       <div className="px-2 py-3 lg:px-24">
-        <nav className="relative flex flex-wrap items-center justify-center w-full lg:justify-between">
+        <nav className="relative flex flex-wrap items-center justify-center w-full mx-auto max-w-7xl lg:justify-between">
           <div
             className="flex items-center cursor-pointer"
             onClick={() => router.push('/')}
