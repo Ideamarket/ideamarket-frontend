@@ -80,6 +80,10 @@ export const navbarConfig: any = {
     },
     {
       name: 'Wallet',
+      onClick: () => router.push('/wallet'),
+    },
+    {
+      name: 'Account',
       onClick: () => router.push('/account'),
     },
   ],
