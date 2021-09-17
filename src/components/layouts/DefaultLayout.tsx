@@ -19,7 +19,7 @@ export default function DefaultLayout({ children }: { children: ReactNode }) {
   }, [])
 
   return (
-    <div className="min-h-screen bg-brand-gray dark:bg-gray-900 pb-16">
+    <div className="bg-brand-gray dark:bg-gray-900">
       <Toaster />
       <NavMenu />
       {children}

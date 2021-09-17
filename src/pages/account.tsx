@@ -5,8 +5,7 @@ import { getSession, signIn } from 'next-auth/client'
 import { Session } from 'next-auth'
 import { useMutation } from 'react-query'
 import { uploadFile } from 'lib/utils/uploadFileToS3'
-import AccountInnerForm from 'components/account/AccountInnerForm'
-import { accountTabs } from 'components/account/constants'
+import { accountTabs, AccountInnerForm } from 'components/account'
 import { useForm } from 'react-hook-form'
 
 export const AccountContext = createContext<any>({})
