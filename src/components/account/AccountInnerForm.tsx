@@ -1,3 +1,4 @@
+import { useContext } from 'react'
 import Image from 'next/image'
 import TabSwitcher from './TabSwitcher'
 import SettingsTab from './SettingsTab'
@@ -5,7 +6,6 @@ import { Footer } from 'components'
 import { signOut } from 'next-auth/client'
 import { accountTabs } from './constants'
 import { AccountContext } from 'pages/account'
-import { useContext } from 'react'
 import ProfileWallet from './ProfileWallet'
 
 const AccountInnerForm = () => {
@@ -53,12 +53,14 @@ const AccountInnerForm = () => {
             <div className="leading-5 break-all">{bio || ''}</div>
           </div>
 
-          <button
-            className="py-2 m-3 text-white rounded-lg bg-brand-blue hover:bg-blue-800"
-            type="submit"
-          >
-            {isUpdateLoading ? <p>Saving...</p> : <p> Save Profile</p>}
-          </button>
+          {cardTab === accountTabs.SETTINGS && (
+            <button
+              className="py-2 m-3 text-white rounded-lg bg-brand-blue hover:bg-blue-800"
+              type="submit"
+            >
+              {isUpdateLoading ? <p>Saving...</p> : <p> Save Profile</p>}
+            </button>
+          )}
 
           <button
             onClick={() => signOut()}
@@ -68,11 +70,7 @@ const AccountInnerForm = () => {
           </button>
         </div>
         {cardTab === accountTabs.SETTINGS && <SettingsTab />}
-        {cardTab === accountTabs.PROFILE && (
-          <div className="w-3/4 h-full">
-            <ProfileWallet />
-          </div>
-        )}
+        {cardTab === accountTabs.PROFILE && <ProfileWallet />}
       </div>
       <Footer />
     </div>

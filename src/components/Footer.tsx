@@ -5,7 +5,7 @@ import A from './A'
 
 export default function Footer() {
   return (
-    <div className="mt-5 md:flex md:justify-between">
+    <div className="py-5 md:flex md:justify-between">
       <div className="flex justify-center space-x-5 font-sf-pro-text">
         <A
           href="https://docs.ideamarket.io"

@@ -1,6 +1,6 @@
-import { AccountContext } from 'pages/account'
 import { useContext } from 'react'
-import VisibilityOptions from './VisibilityOptions'
+import { AccountContext } from 'pages/account'
+import { VisibilityOptions } from '.'
 
 const SettingsTab = () => {
   const { isUpdateLoading, register, getValues, setValue } =
@@ -86,7 +86,6 @@ const SettingsTab = () => {
             </div>
           </div>
         </div>
-
         <VisibilityOptions />
       </div>
     </div>
