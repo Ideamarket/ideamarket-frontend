@@ -1,3 +1,4 @@
+import { flatten } from 'lodash'
 import classNames from 'classnames'
 import BN from 'bn.js'
 import { useState, useEffect } from 'react'
@@ -25,7 +26,6 @@ import {
 } from 'store/ideaMarketsStore'
 import ModalService from 'components/modals/ModalService'
 import MyTradesTable from 'components/tokens/MyTradesTable/MyTradesTable'
-import { flatten } from 'lodash'
 
 const TOKENS_PER_PAGE = 10
 
@@ -226,12 +226,12 @@ export default function ProfileWallet() {
   }
 
   return (
-    <>
-      <div className="flex justify-between">
-        <div className="p-3 text-3xl font-semibold border-b border-gray-100">
+    <div className="w-full h-full mt-8 md:w-3/4 md:mt-0">
+      <div className="flex flex-col justify-between sm:flex-row">
+        <div className="hidden p-3 text-3xl font-semibold border-gray-100 sm:block sm:border-b">
           Profile
         </div>
-        <div className="flex">
+        <div className="flex justify-between">
           <div className="pr-6 text-center">
             <div className="text-sm font-semibold text-opacity-60">
               Total Purchase Value
@@ -387,7 +387,7 @@ export default function ProfileWallet() {
           )}
         </div>
       </div>
-    </>
+    </div>
   )
 }
 
