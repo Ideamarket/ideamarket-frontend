@@ -1,17 +1,10 @@
 import classNames from 'classnames'
-import {
-  useEffect,
-  useState,
-  useCallback,
-  useRef,
-  MutableRefObject,
-} from 'react'
+import { useCallback, useRef, MutableRefObject } from 'react'
 import { useQuery } from 'react-query'
 import { IdeaTokenMarketPair } from 'store/ideaMarketsStore'
 import { querySupplyRate } from 'store/compoundStore'
 import MyTokenRow from './MyTokenRow'
 import MyTokenRowSkeleton from './MyTokenRowSkeleton'
-import { sortNumberByOrder, sortStringByOrder } from './utils'
 
 type Header = {
   title: string
@@ -51,25 +44,25 @@ type MyTokenTableProps = {
   rawPairs: IdeaTokenMarketPair[]
   isPairsDataLoading: boolean
   canFetchMore: boolean
+  orderDirection: string
+  orderBy: string
   fetchMore: () => any
+  headerClicked: (value: string) => void
 }
 
 export default function MyTokenTable({
   rawPairs,
   isPairsDataLoading,
   canFetchMore,
+  orderDirection,
+  orderBy,
   fetchMore,
+  headerClicked,
 }: MyTokenTableProps) {
   const TOKENS_PER_PAGE = 10
 
-  const [currentHeader, setCurrentHeader] = useState('price')
-  const [orderBy, setOrderBy] = useState('price')
-  const [orderDirection, setOrderDirection] = useState('desc')
-
   const { data: compoundSupplyRate, isLoading: isCompoundSupplyRateLoading } =
     useQuery('compound-supply-rate', querySupplyRate)
-
-  const [pairs, setPairs]: [IdeaTokenMarketPair[], any] = useState([])
 
   const observer: MutableRefObject<any> = useRef()
   const lastElementRef = useCallback(
@@ -88,52 +81,6 @@ export default function MyTokenTable({
   )
 
   const isLoading = isPairsDataLoading || isCompoundSupplyRateLoading
-
-  useEffect(() => {
-    let sorted = [...rawPairs]
-    const strCmpFunc = sortStringByOrder(orderDirection)
-    const numCmpFunc = sortNumberByOrder(orderDirection)
-
-    if (orderBy === 'name') {
-      sorted.sort((lhs, rhs) => {
-        return strCmpFunc(lhs.token.name, rhs.token.name)
-      })
-    } else if (orderBy === 'market') {
-      sorted.sort((lhs, rhs) => {
-        return strCmpFunc(lhs.market.name, rhs.market.name)
-      })
-    } else if (orderBy === 'price' || orderBy === 'income') {
-      sorted.sort((lhs, rhs) => {
-        return numCmpFunc(
-          parseFloat(lhs.token.supply),
-          parseFloat(rhs.token.supply)
-        )
-      })
-    } else if (orderBy === 'change') {
-      sorted.sort((lhs, rhs) => {
-        return numCmpFunc(
-          parseFloat(lhs.token.dayChange),
-          parseFloat(rhs.token.dayChange)
-        )
-      })
-    }
-
-    setPairs(sorted)
-  }, [rawPairs, orderBy, orderDirection, compoundSupplyRate, TOKENS_PER_PAGE])
-
-  function headerClicked(headerValue: string) {
-    if (currentHeader === headerValue) {
-      if (orderDirection === 'asc') {
-        setOrderDirection('desc')
-      } else {
-        setOrderDirection('asc')
-      }
-    } else {
-      setCurrentHeader(headerValue)
-      setOrderBy(headerValue)
-      setOrderDirection('desc')
-    }
-  }
 
   return (
     <div className="flex flex-col">
@@ -158,11 +105,11 @@ export default function MyTokenTable({
                     >
                       {header.sortable && (
                         <>
-                          {currentHeader === header.value &&
+                          {orderBy === header.value &&
                             orderDirection === 'asc' && (
                               <span className="text-xs">&#x25B2;</span>
                             )}
-                          {currentHeader === header.value &&
+                          {orderBy === header.value &&
                             orderDirection === 'desc' && (
                               <span className="text-xs">&#x25bc;</span>
                             )}
@@ -175,14 +122,14 @@ export default function MyTokenTable({
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-700 dark:divide-gray-500">
-                {pairs.map((pair, index) => (
+                {rawPairs.map((pair, index) => (
                   <MyTokenRow
                     key={pair.token.tokenID}
                     token={pair.token}
                     market={pair.market}
                     compoundSupplyRate={compoundSupplyRate}
                     lastElementRef={
-                      pairs.length === index + 1 ? lastElementRef : null
+                      rawPairs.length === index + 1 ? lastElementRef : null
                     }
                   />
                 ))}
