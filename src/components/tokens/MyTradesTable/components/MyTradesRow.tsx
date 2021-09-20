@@ -60,7 +60,7 @@ const MyTradesRow = ({
 
   const daiNumber = Number(web3BNToFloatString(rawDaiAmount, tenPow18, 2))
 
-  const plnPercentage = (pnlNumber / daiNumber) * 100
+  const pnlPercentage = (pnlNumber / daiNumber) * 100
 
   return (
     <tr
@@ -192,13 +192,13 @@ const MyTradesRow = ({
           className={classNames(
             'text-base leading-4 tracking-tightest-2 uppercase',
             {
-              'text-brand-red dark:text-red-400': plnPercentage < 0.0,
-              'text-brand-green dark:text-green-400': plnPercentage > 0.0,
-              'text-very-dark-blue dark:text-gray-300': plnPercentage === 0.0,
+              'text-brand-red dark:text-red-400': pnlPercentage < 0.0,
+              'text-brand-green dark:text-green-400': pnlPercentage > 0.0,
+              'text-very-dark-blue dark:text-gray-300': pnlPercentage === 0.0,
             }
           )}
         >
-          {plnPercentage.toFixed(2)}%
+          {pnlPercentage.toFixed(2)}%
         </p>
       </td>
       <td className="px-4 py-4">
