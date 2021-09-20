@@ -17,15 +17,20 @@ import {
   web3BNToFloatString,
   calculateIdeaTokenDaiValue,
   bigNumberTenPow18,
+  calculateCurrentPriceBN,
 } from 'utils'
 import {
   queryOwnedTokensMaybeMarket,
   queryLockedTokens,
   queryMyTrades,
   queryMyTokensMaybeMarket,
+  IdeaTokenTrade,
+  IdeaTokenMarketPair,
+  LockedIdeaTokenMarketPair,
 } from 'store/ideaMarketsStore'
 import ModalService from 'components/modals/ModalService'
 import MyTradesTable from 'components/tokens/MyTradesTable/MyTradesTable'
+import { sortNumberByOrder, sortStringByOrder } from 'components/tokens/utils'
 
 const TOKENS_PER_PAGE = 10
 
@@ -111,6 +116,8 @@ export default function ProfileWallet() {
   const myTrades = flatten(infiniteTradesData || [])
 
   const [table, setTable] = useState('holdings')
+  const [orderBy, setOrderBy] = useState('price')
+  const [orderDirection, setOrderDirection] = useState('desc')
 
   useEffect(() => {
     refetch()
@@ -121,6 +128,8 @@ export default function ProfileWallet() {
     canFetchMoreTrades,
     selectedMarket,
     web3,
+    orderDirection,
+    orderBy,
   ])
 
   function refetch() {
@@ -140,6 +149,8 @@ export default function ProfileWallet() {
       selectedMarket,
       address
     )
+    sortOwned(result)
+
     // Calculate the total value of non-locked tokens
     let ownedTotal = new BN('0')
     for (const pair of result ?? []) {
@@ -167,6 +178,7 @@ export default function ProfileWallet() {
     skip: number = 0
   ) {
     const result = await queryMyTokensMaybeMarket(key, selectedMarket, address)
+    sortListings(result)
 
     const lastIndex =
       numTokens + skip > result?.length ? result?.length : numTokens + skip
@@ -180,6 +192,8 @@ export default function ProfileWallet() {
     skip: number = 0
   ) {
     const result = await queryLockedTokens(key, selectedMarket, address)
+    sortLocked(result)
+
     // Calculate the total value of locked tokens
     let lockedTotal = new BN('0')
     for (const pair of result ?? []) {
@@ -207,6 +221,7 @@ export default function ProfileWallet() {
     skip: number = 0
   ) {
     const result = await queryMyTrades(key, selectedMarket, address)
+    sortTrades(result)
     // Calculate the total purchase value
     let purchaseTotal = new BN('0')
     for (const pair of result ?? []) {
@@ -223,6 +238,280 @@ export default function ProfileWallet() {
       numTokens + skip > result?.length ? result?.length : numTokens + skip
 
     return result?.slice(skip, lastIndex) || []
+  }
+
+  function sortOwned(pairs: IdeaTokenMarketPair[]) {
+    if (table === 'holdings') {
+      const strCmpFunc = sortStringByOrder(orderDirection)
+      const numCmpFunc = sortNumberByOrder(orderDirection)
+
+      if (orderBy === 'name') {
+        pairs.sort((lhs, rhs) => {
+          return strCmpFunc(lhs.token.name, rhs.token.name)
+        })
+      } else if (orderBy === 'market') {
+        pairs.sort((lhs, rhs) => {
+          return strCmpFunc(lhs.market.name, rhs.market.name)
+        })
+      } else if (orderBy === 'price') {
+        pairs.sort((lhs, rhs) => {
+          return numCmpFunc(
+            parseFloat(lhs.token.supply),
+            parseFloat(rhs.token.supply)
+          )
+        })
+      } else if (orderBy === 'change') {
+        pairs.sort((lhs, rhs) => {
+          return numCmpFunc(
+            parseFloat(lhs.token.dayChange),
+            parseFloat(rhs.token.dayChange)
+          )
+        })
+      } else if (orderBy === 'balance') {
+        pairs.sort((lhs, rhs) => {
+          return numCmpFunc(parseFloat(lhs.balance), parseFloat(rhs.balance))
+        })
+      } else if (orderBy === 'value') {
+        pairs.sort((lhs, rhs) => {
+          const lhsValue =
+            parseFloat(
+              web3BNToFloatString(
+                calculateCurrentPriceBN(
+                  lhs.token.rawSupply,
+                  lhs.market.rawBaseCost,
+                  lhs.market.rawPriceRise,
+                  lhs.market.rawHatchTokens
+                ),
+                bigNumberTenPow18,
+                2
+              )
+            ) * parseFloat(lhs.balance)
+
+          const rhsValue =
+            parseFloat(
+              web3BNToFloatString(
+                calculateCurrentPriceBN(
+                  rhs.token.rawSupply,
+                  rhs.market.rawBaseCost,
+                  rhs.market.rawPriceRise,
+                  rhs.market.rawHatchTokens
+                ),
+                bigNumberTenPow18,
+                2
+              )
+            ) * parseFloat(rhs.balance)
+
+          return numCmpFunc(lhsValue, rhsValue)
+        })
+      }
+    }
+  }
+
+  function sortListings(pairs: IdeaTokenMarketPair[]) {
+    if (table === 'listings') {
+      const strCmpFunc = sortStringByOrder(orderDirection)
+      const numCmpFunc = sortNumberByOrder(orderDirection)
+
+      if (orderBy === 'name') {
+        pairs.sort((lhs, rhs) => {
+          return strCmpFunc(lhs.token.name, rhs.token.name)
+        })
+      } else if (orderBy === 'market') {
+        pairs.sort((lhs, rhs) => {
+          return strCmpFunc(lhs.market.name, rhs.market.name)
+        })
+      } else if (orderBy === 'price' || orderBy === 'income') {
+        pairs.sort((lhs, rhs) => {
+          return numCmpFunc(
+            parseFloat(lhs.token.supply),
+            parseFloat(rhs.token.supply)
+          )
+        })
+      } else if (orderBy === 'change') {
+        pairs.sort((lhs, rhs) => {
+          return numCmpFunc(
+            parseFloat(lhs.token.dayChange),
+            parseFloat(rhs.token.dayChange)
+          )
+        })
+      }
+    }
+  }
+
+  function sortLocked(pairs: LockedIdeaTokenMarketPair[]) {
+    if (table === 'locked') {
+      const strCmpFunc = sortStringByOrder(orderDirection)
+      const numCmpFunc = sortNumberByOrder(orderDirection)
+
+      if (orderBy === 'name') {
+        pairs.sort((lhs, rhs) => {
+          return strCmpFunc(lhs.token.name, rhs.token.name)
+        })
+      } else if (orderBy === 'market') {
+        pairs.sort((lhs, rhs) => {
+          return strCmpFunc(lhs.market.name, rhs.market.name)
+        })
+      } else if (orderBy === 'price') {
+        pairs.sort((lhs, rhs) => {
+          return numCmpFunc(
+            parseFloat(lhs.token.supply),
+            parseFloat(rhs.token.supply)
+          )
+        })
+      } else if (orderBy === 'lockedUntil') {
+        pairs.sort((lhs, rhs) => {
+          return numCmpFunc(lhs.lockedUntil, rhs.lockedUntil)
+        })
+      } else if (orderBy === 'balance') {
+        pairs.sort((lhs, rhs) => {
+          return numCmpFunc(parseFloat(lhs.balance), parseFloat(rhs.balance))
+        })
+      } else if (orderBy === 'value') {
+        pairs.sort((lhs, rhs) => {
+          const lhsValue =
+            parseFloat(
+              web3BNToFloatString(
+                calculateCurrentPriceBN(
+                  lhs.token.rawSupply,
+                  lhs.market.rawBaseCost,
+                  lhs.market.rawPriceRise,
+                  lhs.market.rawHatchTokens
+                ),
+                bigNumberTenPow18,
+                2
+              )
+            ) * parseFloat(lhs.balance)
+
+          const rhsValue =
+            parseFloat(
+              web3BNToFloatString(
+                calculateCurrentPriceBN(
+                  rhs.token.rawSupply,
+                  rhs.market.rawBaseCost,
+                  rhs.market.rawPriceRise,
+                  rhs.market.rawHatchTokens
+                ),
+                bigNumberTenPow18,
+                2
+              )
+            ) * parseFloat(rhs.balance)
+
+          return numCmpFunc(lhsValue, rhsValue)
+        })
+      }
+    }
+  }
+
+  function sortTrades(pairs: IdeaTokenTrade[]) {
+    if (table === 'trades') {
+      const strCmpFunc = sortStringByOrder(orderDirection)
+      const numCmpFunc = sortNumberByOrder(orderDirection)
+
+      if (orderBy === 'name') {
+        pairs.sort((lhs, rhs) => {
+          return strCmpFunc(lhs.token.name, rhs.token.name)
+        })
+      } else if (orderBy === 'type') {
+        pairs.sort((lhs: any, rhs: any) => {
+          return numCmpFunc(lhs.isBuy, rhs.isBuy)
+        })
+      } else if (orderBy === 'amount') {
+        pairs.sort((lhs, rhs) => {
+          return numCmpFunc(lhs.ideaTokenAmount, rhs.ideaTokenAmount)
+        })
+      } else if (orderBy === 'purchaseValue') {
+        pairs.sort((lhs, rhs) => {
+          return numCmpFunc(lhs.daiAmount, rhs.daiAmount)
+        })
+      } else if (orderBy === 'currentValue') {
+        pairs.sort((lhs, rhs) => {
+          const tokenSupplyLeft = lhs?.isBuy
+            ? lhs?.token.rawSupply
+            : lhs?.token.rawSupply.add(lhs?.rawIdeaTokenAmount)
+          const ideaTokenValueLeft = parseFloat(
+            web3BNToFloatString(
+              calculateIdeaTokenDaiValue(
+                tokenSupplyLeft,
+                lhs?.market,
+                lhs?.rawIdeaTokenAmount
+              ),
+              bigNumberTenPow18,
+              2
+            )
+          )
+          const tokenSupplyRight = rhs?.isBuy
+            ? rhs?.token.rawSupply
+            : rhs?.token.rawSupply.add(rhs?.rawIdeaTokenAmount)
+          const ideaTokenValueRight = parseFloat(
+            web3BNToFloatString(
+              calculateIdeaTokenDaiValue(
+                tokenSupplyRight,
+                rhs?.market,
+                rhs?.rawIdeaTokenAmount
+              ),
+              bigNumberTenPow18,
+              2
+            )
+          )
+          return numCmpFunc(ideaTokenValueLeft, ideaTokenValueRight)
+        })
+      } else if (orderBy === 'pnl') {
+        pairs.sort((lhs, rhs) => {
+          const tokenSupplyLeft = lhs?.isBuy
+            ? lhs?.token.rawSupply
+            : lhs?.token.rawSupply.add(lhs?.rawIdeaTokenAmount)
+          const ideaTokenValueLeft = parseFloat(
+            web3BNToFloatString(
+              calculateIdeaTokenDaiValue(
+                tokenSupplyLeft,
+                lhs?.market,
+                lhs?.rawIdeaTokenAmount
+              ),
+              bigNumberTenPow18,
+              2
+            )
+          )
+          const pnlNumberLeft = ideaTokenValueLeft - lhs.daiAmount
+          const pnlPercentageLeft = (pnlNumberLeft / lhs.daiAmount) * 100
+
+          const tokenSupplyRight = rhs?.isBuy
+            ? rhs?.token.rawSupply
+            : rhs?.token.rawSupply.add(rhs?.rawIdeaTokenAmount)
+          const ideaTokenValueRight = parseFloat(
+            web3BNToFloatString(
+              calculateIdeaTokenDaiValue(
+                tokenSupplyRight,
+                rhs?.market,
+                rhs?.rawIdeaTokenAmount
+              ),
+              bigNumberTenPow18,
+              2
+            )
+          )
+          const pnlNumberRight = ideaTokenValueRight - rhs.daiAmount
+          const pnlPercentageRight = (pnlNumberRight / rhs.daiAmount) * 100
+
+          return numCmpFunc(pnlPercentageLeft, pnlPercentageRight)
+        })
+      } else if (orderBy === 'date') {
+        pairs.sort((lhs, rhs) => {
+          return numCmpFunc(lhs.timestamp, rhs.timestamp)
+        })
+      }
+    }
+  }
+
+  function headerClicked(headerValue: string) {
+    if (orderBy === headerValue) {
+      if (orderDirection === 'asc') {
+        setOrderDirection('desc')
+      } else {
+        setOrderDirection('asc')
+      }
+    } else {
+      setOrderBy(headerValue)
+      setOrderDirection('desc')
+    }
   }
 
   return (
@@ -277,6 +566,8 @@ export default function ProfileWallet() {
                 )}
                 onClick={() => {
                   setTable('holdings')
+                  setOrderBy('price')
+                  setOrderDirection('desc')
                 }}
               >
                 Holdings
@@ -290,6 +581,8 @@ export default function ProfileWallet() {
                 )}
                 onClick={() => {
                   setTable('listings')
+                  setOrderBy('price')
+                  setOrderDirection('desc')
                 }}
               >
                 Listings
@@ -305,6 +598,8 @@ export default function ProfileWallet() {
                 )}
                 onClick={() => {
                   setTable('locked')
+                  setOrderBy('lockedUntil')
+                  setOrderDirection('asc')
                 }}
               >
                 Locked
@@ -318,6 +613,8 @@ export default function ProfileWallet() {
                 )}
                 onClick={() => {
                   setTable('trades')
+                  setOrderBy('date')
+                  setOrderDirection('desc')
                 }}
               >
                 Trades
@@ -357,7 +654,10 @@ export default function ProfileWallet() {
               isPairsDataLoading={isOwnedPairsDataLoading}
               refetch={refetch}
               canFetchMore={canFetchMoreOwned}
+              orderDirection={orderDirection}
+              orderBy={orderBy}
               fetchMore={fetchMoreOwned}
+              headerClicked={headerClicked}
             />
           )}
           {table === 'listings' && web3 !== undefined && (
@@ -365,7 +665,10 @@ export default function ProfileWallet() {
               rawPairs={listingPairs}
               isPairsDataLoading={isListingsPairsDataLoading}
               canFetchMore={canFetchMoreListings}
+              orderDirection={orderDirection}
+              orderBy={orderBy}
               fetchMore={fetchMoreListings}
+              headerClicked={headerClicked}
             />
           )}
 
@@ -374,7 +677,10 @@ export default function ProfileWallet() {
               rawPairs={lockedPairs}
               isPairsDataLoading={isLockedPairsDataLoading}
               canFetchMore={canFetchMoreLocked}
+              orderDirection={orderDirection}
+              orderBy={orderBy}
               fetchMore={fetchMoreLocked}
+              headerClicked={headerClicked}
             />
           )}
           {table === 'trades' && web3 !== undefined && (
@@ -382,7 +688,10 @@ export default function ProfileWallet() {
               rawPairs={myTrades}
               isPairsDataLoading={isTradesPairsDataLoading}
               canFetchMore={canFetchMoreTrades}
+              orderDirection={orderDirection}
+              orderBy={orderBy}
               fetchMore={fetchMoreTrades}
+              headerClicked={headerClicked}
             />
           )}
         </div>

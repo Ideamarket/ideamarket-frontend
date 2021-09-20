@@ -1,17 +1,8 @@
 import classNames from 'classnames'
-import BigNumber from 'bignumber.js'
-import {
-  useEffect,
-  useState,
-  useCallback,
-  useRef,
-  MutableRefObject,
-} from 'react'
+import { useCallback, useRef, MutableRefObject } from 'react'
 import { LockedIdeaTokenMarketPair } from 'store/ideaMarketsStore'
-import { calculateCurrentPriceBN, web3BNToFloatString } from 'utils'
 import LockedTokenRowSkeleton from './LockedTokenRowSkeleton'
 import LockedTokenRow from './LockedTokenRow'
-import { sortNumberByOrder, sortStringByOrder } from './utils'
 
 type Header = {
   title: string
@@ -57,28 +48,26 @@ const headers: Header[] = [
   },
 ]
 
-const tenPow18 = new BigNumber('10').pow(new BigNumber('18'))
-
 type LockedTokenTableProps = {
   rawPairs: LockedIdeaTokenMarketPair[]
   isPairsDataLoading: boolean
   canFetchMore: boolean
+  orderDirection: string
+  orderBy: string
   fetchMore: () => any
+  headerClicked: (value: string) => void
 }
 
 export default function LockedTokenTable({
   rawPairs,
   isPairsDataLoading,
   canFetchMore,
+  orderDirection,
+  orderBy,
   fetchMore,
+  headerClicked,
 }: LockedTokenTableProps) {
   const TOKENS_PER_PAGE = 10
-
-  const [currentHeader, setCurrentHeader] = useState('lockedUntil')
-  const [orderBy, setOrderBy] = useState('lockedUntil')
-  const [orderDirection, setOrderDirection] = useState('asc')
-
-  const [pairs, setPairs]: [LockedIdeaTokenMarketPair[], any] = useState([])
 
   const observer: MutableRefObject<any> = useRef()
   const lastElementRef = useCallback(
@@ -95,85 +84,6 @@ export default function LockedTokenTable({
     },
     [canFetchMore, fetchMore]
   )
-
-  useEffect(() => {
-    let sorted = [...rawPairs]
-    const strCmpFunc = sortStringByOrder(orderDirection)
-    const numCmpFunc = sortNumberByOrder(orderDirection)
-
-    if (orderBy === 'name') {
-      sorted.sort((lhs, rhs) => {
-        return strCmpFunc(lhs.token.name, rhs.token.name)
-      })
-    } else if (orderBy === 'market') {
-      sorted.sort((lhs, rhs) => {
-        return strCmpFunc(lhs.market.name, rhs.market.name)
-      })
-    } else if (orderBy === 'price') {
-      sorted.sort((lhs, rhs) => {
-        return numCmpFunc(
-          parseFloat(lhs.token.supply),
-          parseFloat(rhs.token.supply)
-        )
-      })
-    } else if (orderBy === 'lockedUntil') {
-      sorted.sort((lhs, rhs) => {
-        return numCmpFunc(lhs.lockedUntil, rhs.lockedUntil)
-      })
-    } else if (orderBy === 'balance') {
-      sorted.sort((lhs, rhs) => {
-        return numCmpFunc(parseFloat(lhs.balance), parseFloat(rhs.balance))
-      })
-    } else if (orderBy === 'value') {
-      sorted.sort((lhs, rhs) => {
-        const lhsValue =
-          parseFloat(
-            web3BNToFloatString(
-              calculateCurrentPriceBN(
-                lhs.token.rawSupply,
-                lhs.market.rawBaseCost,
-                lhs.market.rawPriceRise,
-                lhs.market.rawHatchTokens
-              ),
-              tenPow18,
-              2
-            )
-          ) * parseFloat(lhs.balance)
-
-        const rhsValue =
-          parseFloat(
-            web3BNToFloatString(
-              calculateCurrentPriceBN(
-                rhs.token.rawSupply,
-                rhs.market.rawBaseCost,
-                rhs.market.rawPriceRise,
-                rhs.market.rawHatchTokens
-              ),
-              tenPow18,
-              2
-            )
-          ) * parseFloat(rhs.balance)
-
-        return numCmpFunc(lhsValue, rhsValue)
-      })
-    }
-
-    setPairs(sorted)
-  }, [rawPairs, orderBy, orderDirection, TOKENS_PER_PAGE])
-
-  function headerClicked(headerValue: string) {
-    if (currentHeader === headerValue) {
-      if (orderDirection === 'asc') {
-        setOrderDirection('desc')
-      } else {
-        setOrderDirection('asc')
-      }
-    } else {
-      setCurrentHeader(headerValue)
-      setOrderBy(headerValue)
-      setOrderDirection('desc')
-    }
-  }
 
   return (
     <div className="flex flex-col">
@@ -198,9 +108,9 @@ export default function LockedTokenTable({
                     >
                       {header.sortable && (
                         <>
-                          {currentHeader === header.value &&
+                          {orderBy === header.value &&
                             orderDirection === 'asc' && <span>&#x25B2;</span>}
-                          {currentHeader === header.value &&
+                          {orderBy === header.value &&
                             orderDirection === 'desc' && <span>&#x25bc;</span>}
                           &nbsp;
                         </>
@@ -211,7 +121,7 @@ export default function LockedTokenTable({
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-700">
-                {pairs.map((pair, index) => (
+                {rawPairs.map((pair, index) => (
                   <LockedTokenRow
                     key={index}
                     token={pair.token}
@@ -221,7 +131,7 @@ export default function LockedTokenTable({
                     lockedUntil={pair.lockedUntil}
                     isL1={pair.token.isL1}
                     lastElementRef={
-                      pairs.length === index + 1 ? lastElementRef : null
+                      rawPairs.length === index + 1 ? lastElementRef : null
                     }
                   />
                 ))}
