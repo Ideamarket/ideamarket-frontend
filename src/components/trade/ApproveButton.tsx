@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
 import classNames from 'classnames'
 import BN from 'bn.js'
-import _ from 'lodash'
 
 import { useTokenAllowance, approveToken } from '../../actions'
 import { TransactionManager, web3UintMax } from '../../utils'
 import Tooltip from 'components/tooltip/Tooltip'
+import { cloneDeep } from 'utils/lodash'
 
 export default function ApproveButton({
   tokenAddress,
@@ -59,7 +59,7 @@ export default function ApproveButton({
       return
     }
 
-    const allowances = _.cloneDeep(hasAllowanceFor)
+    const allowances = cloneDeep(hasAllowanceFor)
     if (!allowances[tokenAddress]) {
       allowances[tokenAddress] = {}
     }

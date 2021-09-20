@@ -1,5 +1,4 @@
 import classNames from 'classnames'
-import array from 'lodash/array'
 import {
   ListingOverview,
   TimeXFloatYChartInLine,
@@ -21,6 +20,7 @@ import {
   WEEK_SECONDS,
   YEAR_SECONDS,
 } from 'utils'
+import { array } from 'utils/lodash'
 import ChartDurationEntry from './ChartDurationEntry'
 
 export default function ListingStats({ isLoading, market, token }) {

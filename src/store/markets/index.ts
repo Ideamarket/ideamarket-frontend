@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import create from 'zustand'
 
 import TwitterMarketSpecifics from './twitter'
@@ -6,6 +5,7 @@ import SubstackMarketSpecifics from './substack'
 import ShowtimeMarketSpecifics from './showtime'
 import TwitchMarketSpecifics from './twitch'
 import { queryMarkets } from 'store/ideaMarketsStore'
+import { find } from 'utils/lodash'
 
 export type IMarketSpecifics = {
   // Market
@@ -52,13 +52,13 @@ export function getMarketSpecifics() {
 export function getMarketSpecificsByMarketName(
   marketName: string
 ): IMarketSpecifics {
-  return _.find(specifics, (s) => s.getMarketName() === marketName)
+  return find(specifics, (s) => s.getMarketName() === marketName)
 }
 
 export function getMarketSpecificsByMarketNameInURLRepresentation(
   marketNameInURLRepresentation: string
 ): IMarketSpecifics {
-  return _.find(
+  return find(
     specifics,
     (s) => s.getMarketNameURLRepresentation() === marketNameInURLRepresentation
   )

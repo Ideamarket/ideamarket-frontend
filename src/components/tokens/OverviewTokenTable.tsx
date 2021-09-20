@@ -6,7 +6,6 @@ import React, {
   useState,
 } from 'react'
 import { useInfiniteQuery, useQuery } from 'react-query'
-import { flatten } from 'lodash'
 
 import { WEEK_SECONDS } from 'utils'
 import {
@@ -21,6 +20,7 @@ import TokenRow from './OverviewTokenRow'
 import TokenRowSkeleton from './OverviewTokenRowSkeleton'
 import { OverviewColumns } from './table/OverviewColumns'
 import { MainFilters } from './utils/OverviewUtils'
+import { flatten } from 'utils/lodash'
 
 type Props = {
   selectedMarkets: Set<string>
