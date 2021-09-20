@@ -1,17 +1,8 @@
 import classNames from 'classnames'
-import BigNumber from 'bignumber.js'
-import {
-  useEffect,
-  useState,
-  useCallback,
-  useRef,
-  MutableRefObject,
-} from 'react'
+import { useCallback, useRef, MutableRefObject } from 'react'
 import { IdeaTokenMarketPair } from 'store/ideaMarketsStore'
-import { calculateCurrentPriceBN, web3BNToFloatString } from 'utils'
 import OwnedTokenRow from './OwnedTokenRow'
 import OwnedTokenRowSkeleton from './OwnedTokenRowSkeleton'
-import { sortNumberByOrder, sortStringByOrder } from './utils'
 
 type Header = {
   title: string
@@ -67,14 +58,15 @@ const headers: Header[] = [
   },
 ]
 
-const tenPow18 = new BigNumber('10').pow(new BigNumber('18'))
-
 type OwnedTokenTableProps = {
   rawPairs: IdeaTokenMarketPair[]
   isPairsDataLoading: boolean
   refetch: () => void
   canFetchMore: boolean
+  orderDirection: string
+  orderBy: string
   fetchMore: () => any
+  headerClicked: (value: string) => void
 }
 
 export default function OwnedTokenTable({
@@ -82,15 +74,12 @@ export default function OwnedTokenTable({
   isPairsDataLoading,
   refetch,
   canFetchMore,
+  orderDirection,
+  orderBy,
   fetchMore,
+  headerClicked,
 }: OwnedTokenTableProps) {
   const TOKENS_PER_PAGE = 10
-
-  const [currentHeader, setCurrentHeader] = useState('price')
-  const [orderBy, setOrderBy] = useState('price')
-  const [orderDirection, setOrderDirection] = useState('desc')
-
-  const [pairs, setPairs]: [IdeaTokenMarketPair[], any] = useState([])
 
   const observer: MutableRefObject<any> = useRef()
   const lastElementRef = useCallback(
@@ -107,88 +96,6 @@ export default function OwnedTokenTable({
     },
     [canFetchMore, fetchMore]
   )
-
-  useEffect(() => {
-    let sorted = [...rawPairs]
-    const strCmpFunc = sortStringByOrder(orderDirection)
-    const numCmpFunc = sortNumberByOrder(orderDirection)
-
-    if (orderBy === 'name') {
-      sorted.sort((lhs, rhs) => {
-        return strCmpFunc(lhs.token.name, rhs.token.name)
-      })
-    } else if (orderBy === 'market') {
-      sorted.sort((lhs, rhs) => {
-        return strCmpFunc(lhs.market.name, rhs.market.name)
-      })
-    } else if (orderBy === 'price') {
-      sorted.sort((lhs, rhs) => {
-        return numCmpFunc(
-          parseFloat(lhs.token.supply),
-          parseFloat(rhs.token.supply)
-        )
-      })
-    } else if (orderBy === 'change') {
-      sorted.sort((lhs, rhs) => {
-        return numCmpFunc(
-          parseFloat(lhs.token.dayChange),
-          parseFloat(rhs.token.dayChange)
-        )
-      })
-    } else if (orderBy === 'balance') {
-      sorted.sort((lhs, rhs) => {
-        return numCmpFunc(parseFloat(lhs.balance), parseFloat(rhs.balance))
-      })
-    } else if (orderBy === 'value') {
-      sorted.sort((lhs, rhs) => {
-        const lhsValue =
-          parseFloat(
-            web3BNToFloatString(
-              calculateCurrentPriceBN(
-                lhs.token.rawSupply,
-                lhs.market.rawBaseCost,
-                lhs.market.rawPriceRise,
-                lhs.market.rawHatchTokens
-              ),
-              tenPow18,
-              2
-            )
-          ) * parseFloat(lhs.balance)
-
-        const rhsValue =
-          parseFloat(
-            web3BNToFloatString(
-              calculateCurrentPriceBN(
-                rhs.token.rawSupply,
-                rhs.market.rawBaseCost,
-                rhs.market.rawPriceRise,
-                rhs.market.rawHatchTokens
-              ),
-              tenPow18,
-              2
-            )
-          ) * parseFloat(rhs.balance)
-
-        return numCmpFunc(lhsValue, rhsValue)
-      })
-    }
-
-    setPairs(sorted)
-  }, [rawPairs, orderBy, orderDirection, TOKENS_PER_PAGE])
-
-  function headerClicked(headerValue: string) {
-    if (currentHeader === headerValue) {
-      if (orderDirection === 'asc') {
-        setOrderDirection('desc')
-      } else {
-        setOrderDirection('asc')
-      }
-    } else {
-      setCurrentHeader(headerValue)
-      setOrderBy(headerValue)
-      setOrderDirection('desc')
-    }
-  }
 
   return (
     <div className="flex flex-col">
@@ -213,11 +120,11 @@ export default function OwnedTokenTable({
                     >
                       {header.sortable && (
                         <>
-                          {currentHeader === header.value &&
+                          {orderBy === header.value &&
                             orderDirection === 'asc' && (
                               <span className="text-xs">&#x25B2;</span>
                             )}
-                          {currentHeader === header.value &&
+                          {orderBy === header.value &&
                             orderDirection === 'desc' && (
                               <span className="text-xs">&#x25bc;</span>
                             )}
@@ -230,7 +137,7 @@ export default function OwnedTokenTable({
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-700 dark:divide-gray-500">
-                {pairs.map((pair, index) => (
+                {rawPairs.map((pair, index) => (
                   <OwnedTokenRow
                     key={pair.token.address}
                     token={pair.token}
@@ -239,7 +146,7 @@ export default function OwnedTokenTable({
                     balanceBN={pair.rawBalance}
                     refetch={refetch}
                     lastElementRef={
-                      pairs.length === index + 1 ? lastElementRef : null
+                      rawPairs.length === index + 1 ? lastElementRef : null
                     }
                   />
                 ))}
