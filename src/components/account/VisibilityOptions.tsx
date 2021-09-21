@@ -33,15 +33,6 @@ const VisibilityOptions = () => {
             {...register('displayEthAddresses')}
             disabled={isUpdateLoading}
           />
-        </div>{' '}
-        <div className="flex items-center justify-between">
-          <span>Holdings</span>
-          <input
-            className="rounded-lg cursor-pointer"
-            type="checkbox"
-            {...register('displayHoldings')}
-            disabled={isUpdateLoading}
-          />
         </div>
       </div>
     </div>
