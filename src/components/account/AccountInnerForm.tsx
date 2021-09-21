@@ -10,7 +10,16 @@ import ProfileWallet from './ProfileWallet'
 
 const AccountInnerForm = () => {
   const { getValues, isUpdateLoading, cardTab } = useContext(AccountContext)
-  const { username, email, ethAddresses, bio, profilePhoto } = getValues()
+  const {
+    username,
+    email,
+    ethAddresses,
+    bio,
+    profilePhoto,
+    displayEmail,
+    displayEthAddresses,
+    displayBio,
+  } = getValues()
 
   return (
     <div className="w-11/12 mx-auto my-0 max-w-7xl md:pt-24 font-inter w-90">
@@ -40,18 +49,24 @@ const AccountInnerForm = () => {
               {username ?? ''}
             </div>
           </div>
-          <div className="p-3 border-b border-gray-100">
-            <div className="text-xs text-blue-400">EMAIL ADDRESS</div>
-            <div break-all>{email}</div>
-          </div>
-          <div className="p-3 border-b border-gray-100">
-            <div className="text-xs text-blue-400">ETH ADDRESS</div>
-            <div break-all>{ethAddresses || ''}</div>
-          </div>
-          <div>
-            <div className="p-3 text-xs text-blue-400">BIO</div>
-            <div className="leading-5 break-all">{bio || ''}</div>
-          </div>
+          {displayEmail && (
+            <div className="p-3 border-b border-gray-100">
+              <div className="text-xs text-blue-400">EMAIL ADDRESS</div>
+              <div break-all>{email}</div>
+            </div>
+          )}
+          {displayEthAddresses && (
+            <div className="p-3 border-b border-gray-100">
+              <div className="text-xs text-blue-400">ETH ADDRESS</div>
+              <div break-all>{ethAddresses || ''}</div>
+            </div>
+          )}
+          {displayBio && (
+            <div>
+              <div className="p-3 text-xs text-blue-400">BIO</div>
+              <div className="leading-5 break-all">{bio || ''}</div>
+            </div>
+          )}
 
           <button
             className="py-2 m-3 text-white rounded-lg bg-brand-blue hover:bg-blue-800"
