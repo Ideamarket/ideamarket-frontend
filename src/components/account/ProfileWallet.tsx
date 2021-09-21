@@ -228,7 +228,7 @@ export default function ProfileWallet() {
   return (
     <div className="w-full h-full mt-8 md:w-3/4 md:mt-0">
       <div className="flex flex-col justify-between sm:flex-row">
-        <div className="hidden p-3 text-3xl font-semibold border-gray-100 sm:block sm:border-b">
+        <div className="hidden p-3 text-3xl font-semibold border-gray-100 sm:block sm:border-b dark:border-gray-400">
           Profile
         </div>
         <div className="flex justify-between">

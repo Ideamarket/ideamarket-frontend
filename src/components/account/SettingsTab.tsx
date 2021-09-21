@@ -9,13 +9,13 @@ const SettingsTab = () => {
 
   return (
     <div className="w-full h-full lg:w-3/4">
-      <div className="p-3 text-3xl font-semibold border-b border-gray-100">
+      <div className="p-3 text-3xl font-semibold border-b border-gray-100 dark:border-gray-400">
         Profile
       </div>
       <div className="flex flex-col lg:flex-row lg:space-x-2">
         <div className="w-full">
           <div className="p-3 font-bold">Account Information</div>
-          <div className="flex flex-col w-full px-3 py-2 space-y-2 rounded-lg bg-blue-50">
+          <div className="flex flex-col w-full px-3 py-2 space-y-2 rounded-lg bg-blue-50 dark:bg-gray-600">
             <div className="flex flex-col justify-between sm:flex-row">
               <span>Username</span>
 
@@ -68,7 +68,7 @@ const SettingsTab = () => {
                 placeholder="Bio"
                 {...register('bio')}
                 disabled={isUpdateLoading}
-                className="w-full break-all border-gray-300 rounded-md sm:w-64 dark:border-gray-500"
+                className="w-full break-all border-gray-300 rounded-md sm:w-64 dark:border-gray-500 dark:bg-gray-600"
               />
             </div>
 

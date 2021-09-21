@@ -31,7 +31,7 @@ const AccountInnerForm = () => {
           <TabSwitcher hasSpaceBetween />
         </div>
       </div>
-      <div className="flex flex-col items-start justify-center px-6 py-5 bg-white rounded-lg md:flex-row">
+      <div className="flex flex-col items-start justify-center px-6 py-5 bg-white rounded-lg md:flex-row dark:bg-gray-500">
         <div className="relative flex flex-col w-full mt-16 text-center md:mr-8 md:w-1/4">
           <div className="absolute transform -translate-x-1/2 -translate-y-1/2 rounded-full -top-24 left-1/2 w-28 h-28 sm:w-36 sm:h-36">
             <Image
@@ -43,20 +43,20 @@ const AccountInnerForm = () => {
             />
           </div>
 
-          <div className="p-3 border-b border-gray-100">
+          <div className="p-3 border-b border-gray-100 dark:border-gray-400">
             <div className="text-xs text-blue-400">USERNAME</div>
             <div className="text-3xl font-semibold break-all">
               {username ?? ''}
             </div>
           </div>
           {displayEmail && (
-            <div className="p-3 border-b border-gray-100">
+            <div className="p-3 border-b border-gray-100 dark:border-gray-400">
               <div className="text-xs text-blue-400">EMAIL ADDRESS</div>
               <div break-all>{email}</div>
             </div>
           )}
           {displayEthAddresses && (
-            <div className="p-3 border-b border-gray-100">
+            <div className="p-3 border-b border-gray-100 dark:border-gray-400">
               <div className="text-xs text-blue-400">ETH ADDRESS</div>
               <div break-all>{ethAddresses || ''}</div>
             </div>

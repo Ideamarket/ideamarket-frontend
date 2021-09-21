@@ -132,7 +132,7 @@ const TradeInterfaceBox: React.FC<TradeInterfaceBoxProps> = ({
       )}
       <div className="flex justify-between mb-2">
         <input
-          className="w-full max-w-sm text-3xl text-left placeholder-gray-500 dark:placeholder-gray-300 placeholder-opacity-50 border-none outline-none text-brand-gray-2 dark:text-white bg-gray-50 dark:bg-gray-600"
+          className="w-full max-w-sm text-3xl text-left placeholder-gray-500 placeholder-opacity-50 border-none outline-none dark:placeholder-gray-300 text-brand-gray-2 dark:text-white bg-gray-50 dark:bg-gray-600"
           min="0"
           placeholder="0.0"
           disabled={txManager.isPending}
@@ -141,10 +141,10 @@ const TradeInterfaceBox: React.FC<TradeInterfaceBoxProps> = ({
         />
         {selectedIdeaToken ? (
           <div className="flex flex-row items-center justify-end w-full text-xs font-medium border-gray-200 rounded-md text-brand-gray-4 dark:text-gray-300 trade-select">
-            <div className="flex items-center px-2 py-1 bg-white dark:bg-gray-700 shadow-md rounded-2xl">
+            <div className="flex items-center px-2 py-1 bg-white shadow-md dark:bg-gray-700 rounded-2xl">
               <div className="flex items-center">
                 {selectedIdeaToken?.logoURL ? (
-                  <div className="w-7 h-7 relative">
+                  <div className="relative w-7 h-7">
                     <Image
                       src={selectedIdeaToken?.logoURL || '/gray.svg'}
                       alt="token"
