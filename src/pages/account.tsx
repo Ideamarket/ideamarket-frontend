@@ -69,7 +69,6 @@ const Account = () => {
         email: data.displayEmail,
         bio: data.displayBio,
         ethAddresses: data.displayEthAddresses,
-        holdings: data.displayHoldings,
       },
     }
     toast.loading('Saving user settings')
@@ -99,7 +98,6 @@ const Account = () => {
         displayEmail: visibilityOptions?.email,
         displayEthAddresses: visibilityOptions?.ethAddresses,
         displayBio: visibilityOptions?.bio,
-        displayHoldings: visibilityOptions?.holdings,
       })
     }
   }, [currentSession, reset])
