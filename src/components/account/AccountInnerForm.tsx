@@ -7,6 +7,7 @@ import { signOut } from 'next-auth/client'
 import { accountTabs } from './constants'
 import { AccountContext } from 'pages/account'
 import ProfileWallet from './ProfileWallet'
+import copy from 'copy-to-clipboard'
 
 const AccountInnerForm = () => {
   const { getValues, isUpdateLoading, cardTab } = useContext(AccountContext)
@@ -45,26 +46,34 @@ const AccountInnerForm = () => {
 
           <div className="p-3 border-b border-gray-100 dark:border-gray-400">
             <div className="text-xs text-blue-400">USERNAME</div>
-            <div className="text-3xl font-semibold break-all">
-              {username ?? ''}
-            </div>
+            <div className="text-3xl font-semibold">{username ?? ''}</div>
           </div>
           {displayEmail && (
             <div className="p-3 border-b border-gray-100 dark:border-gray-400">
               <div className="text-xs text-blue-400">EMAIL ADDRESS</div>
-              <div break-all>{email}</div>
+              <div>{email}</div>
             </div>
           )}
           {displayEthAddresses && (
             <div className="p-3 border-b border-gray-100 dark:border-gray-400">
               <div className="text-xs text-blue-400">ETH ADDRESS</div>
-              <div break-all>{ethAddresses || ''}</div>
+              <div
+                onClick={() => copy(ethAddresses)}
+                className="cursor-pointer"
+              >
+                {ethAddresses
+                  ? ethAddresses?.substr(
+                      0,
+                      ethAddresses?.length > 16 ? 16 : ethAddresses?.length
+                    ) + (ethAddresses?.length > 16 ? '...' : '')
+                  : ''}
+              </div>
             </div>
           )}
           {displayBio && (
             <div>
               <div className="p-3 text-xs text-blue-400">BIO</div>
-              <div className="leading-5 break-all">{bio || ''}</div>
+              <div className="leading-5">{bio || ''}</div>
             </div>
           )}
 
