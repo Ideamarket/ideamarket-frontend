@@ -21,7 +21,7 @@ const SettingsTab = () => {
 
               <input
                 type="text"
-                className="block w-full h-8 break-all border-gray-300 rounded-md shadow-sm sm:w-64 sm:text-sm focus:outline-none dark:text-gray-300 dark:bg-gray-600 dark:placeholder-gray-200 dark:border-gray-500 focus:ring-brand-blue focus:border-brand-blue"
+                className="block w-full h-8 border-gray-300 rounded-md shadow-sm sm:w-64 sm:text-sm focus:outline-none dark:text-gray-300 dark:bg-gray-600 dark:placeholder-gray-200 dark:border-gray-500 focus:ring-brand-blue focus:border-brand-blue"
                 {...register('username')}
                 onChange={(e) => {
                   if (!username) {
@@ -35,7 +35,7 @@ const SettingsTab = () => {
               <span>Email Address</span>
               <input
                 type="email"
-                className="block w-full h-8 break-all border-gray-300 rounded-md shadow-sm sm:w-64 sm:text-sm focus:outline-none dark:text-gray-300 dark:bg-gray-600 dark:placeholder-gray-200 dark:border-gray-500 focus:ring-brand-blue focus:border-brand-blue"
+                className="block w-full h-8 border-gray-300 rounded-md shadow-sm sm:w-64 sm:text-sm focus:outline-none dark:text-gray-300 dark:bg-gray-600 dark:placeholder-gray-200 dark:border-gray-500 focus:ring-brand-blue focus:border-brand-blue"
                 placeholder="you@example.com"
                 {...register('email')}
                 disabled
@@ -46,7 +46,7 @@ const SettingsTab = () => {
               <span>Eth address</span>
               <input
                 type="text"
-                className="block w-full h-8 break-all border-gray-300 rounded-md shadow-sm sm:w-64 sm:text-sm focus:outline-none dark:text-gray-300 dark:bg-gray-600 dark:placeholder-gray-200 dark:border-gray-500 focus:ring-brand-blue focus:border-brand-blue"
+                className="block w-full h-8 border-gray-300 rounded-md shadow-sm sm:w-64 sm:text-sm focus:outline-none dark:text-gray-300 dark:bg-gray-600 dark:placeholder-gray-200 dark:border-gray-500 focus:ring-brand-blue focus:border-brand-blue"
                 {...register('ethAddresses')}
                 disabled={isUpdateLoading}
               />
@@ -56,7 +56,7 @@ const SettingsTab = () => {
               <span>Redirection url</span>
               <input
                 type="text"
-                className="block w-full h-8 break-all border-gray-300 rounded-md shadow-sm sm:w-64 sm:text-sm focus:outline-none dark:text-gray-300 dark:bg-gray-600 dark:placeholder-gray-200 dark:border-gray-500 focus:ring-brand-blue focus:border-brand-blue"
+                className="block w-full h-8 border-gray-300 rounded-md shadow-sm sm:w-64 sm:text-sm focus:outline-none dark:text-gray-300 dark:bg-gray-600 dark:placeholder-gray-200 dark:border-gray-500 focus:ring-brand-blue focus:border-brand-blue"
                 {...register('redirectionUrl')}
                 disabled={isUpdateLoading}
               />
@@ -68,7 +68,7 @@ const SettingsTab = () => {
                 placeholder="Bio"
                 {...register('bio')}
                 disabled={isUpdateLoading}
-                className="w-full break-all border-gray-300 rounded-md sm:w-64 dark:border-gray-500 dark:bg-gray-600"
+                className="w-full border-gray-300 rounded-md sm:w-64 dark:border-gray-500 dark:bg-gray-600"
               />
             </div>
 
