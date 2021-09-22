@@ -3,7 +3,6 @@ import Image from 'next/image'
 import TabSwitcher from './TabSwitcher'
 import SettingsTab from './SettingsTab'
 import { Footer } from 'components'
-import { signOut } from 'next-auth/client'
 import { accountTabs } from './constants'
 import { AccountContext } from 'pages/account'
 import ProfileWallet from './ProfileWallet'
@@ -76,13 +75,6 @@ const AccountInnerForm = () => {
               {isUpdateLoading ? <p>Saving...</p> : <p> Save Profile</p>}
             </button>
           )}
-
-          <button
-            onClick={() => signOut()}
-            className="py-2 m-3 text-white rounded-lg bg-brand-blue hover:bg-blue-800"
-          >
-            Sign out
-          </button>
         </div>
         {cardTab === accountTabs.SETTINGS && <SettingsTab />}
         {cardTab === accountTabs.PROFILE && <ProfileWallet />}
