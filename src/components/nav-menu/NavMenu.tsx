@@ -10,6 +10,7 @@ import WalletModal from '../wallet/WalletModal'
 import MobileNavItems from './MobileNavItems'
 import NavItem from './NavItem'
 import NavThemeButton from './NavThemeButton'
+import LoginAndLogoutButton from './LoginAndLogoutButton'
 
 const NavMenu = () => {
   const router = useRouter()
@@ -61,6 +62,7 @@ const NavMenu = () => {
           <div className="hidden md:flex">
             <NavThemeButton />
             <WalletStatus openModal={() => ModalService.open(WalletModal)} />
+            <LoginAndLogoutButton />
           </div>
           {/* Desktop END */}
 
