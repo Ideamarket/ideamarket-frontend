@@ -3,7 +3,6 @@ import { WalletStatus } from 'components'
 import ModalService from 'components/modals/ModalService'
 import WalletModal from '../wallet/WalletModal'
 import { navbarConfig } from './constants'
-import LoginAndLogoutButton from './LoginAndLogoutButton'
 import NavItem from './NavItem'
 import NavThemeButton from './NavThemeButton'
 
@@ -32,10 +31,6 @@ const MobileNavItems = ({ isMobileNavOpen }: Props) => {
         </div>
         <div className="flex px-1 mt-5">
           <NavThemeButton />
-        </div>
-
-        <div className="flex px-1 mt-5">
-          <LoginAndLogoutButton />
         </div>
       </div>
     </Transition>
