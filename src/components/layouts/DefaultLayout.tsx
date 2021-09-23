@@ -22,7 +22,7 @@ export default function DefaultLayout({ children }: { children: ReactNode }) {
     <div className="bg-brand-gray dark:bg-gray-900">
       <Toaster />
       <NavMenu />
-      {children}
+      <div className="pt-16">{children}</div>
       <div className="fixed bottom-0 z-20 w-full">
         <CookieConsent
           style={{ position: 'relative', background: '#708090' }}

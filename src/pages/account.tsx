@@ -6,6 +6,7 @@ import { useMutation } from 'react-query'
 import { uploadFile } from 'lib/utils/uploadFileToS3'
 import { accountTabs, AccountInnerForm } from 'components/account'
 import { useForm } from 'react-hook-form'
+import router from 'next/router'
 
 export const AccountContext = createContext<any>({})
 
@@ -86,6 +87,12 @@ const Account = () => {
       })
     }
   }, [session, reset])
+
+  useEffect(() => {
+    if (!loading && session === null) {
+      router.push('/')
+    }
+  }, [session, loading])
 
   if (loading) {
     return <p>loading...</p>
