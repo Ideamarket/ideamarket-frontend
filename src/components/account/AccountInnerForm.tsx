@@ -45,7 +45,7 @@ const AccountInnerForm = () => {
 
           <div className="p-3 border-b border-gray-100 dark:border-gray-400">
             <div className="text-xs text-blue-400">USERNAME</div>
-            <div className="text-3xl font-semibold">{username ?? ''}</div>
+            <div className="text-xs font-semibold">{username ?? ''}</div>
           </div>
           {displayEmail && (
             <div className="p-3 border-b border-gray-100 dark:border-gray-400">

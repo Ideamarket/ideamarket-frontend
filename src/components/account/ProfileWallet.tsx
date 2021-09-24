@@ -8,7 +8,6 @@ import {
   OwnedTokenTable,
   MyTokenTable,
   LockedTokenTable,
-  DefaultLayout,
   WalletModal,
 } from '../../components'
 import { useWalletStore } from '../../store/walletStore'
@@ -698,8 +697,4 @@ export default function ProfileWallet() {
       </div>
     </div>
   )
-}
-
-ProfileWallet.layoutProps = {
-  Layout: DefaultLayout,
 }
