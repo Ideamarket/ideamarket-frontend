@@ -1,16 +1,26 @@
 import { getMarketSpecifics } from 'store/markets'
+import { removeHttpProtocol } from './httpProtocol'
 
 const IDEAMARKET_LISTING_URL_PREFIX = 'ideamarket.io/i/'
 
 /**
  * Returns whether the redirection url is valid or not
  */
-export function isRedirectionUrlValid(url: string): boolean {
-  if (!url.startsWith(IDEAMARKET_LISTING_URL_PREFIX)) {
+export function isRedirectionUrlValidOrEmpty(url: string): boolean {
+  const sanitizedURL = removeHttpProtocol(url as string)
+
+  if (!sanitizedURL) {
+    return true
+  }
+
+  if (!sanitizedURL.startsWith(IDEAMARKET_LISTING_URL_PREFIX)) {
     return false
   }
 
-  const suffix = url.split(IDEAMARKET_LISTING_URL_PREFIX).slice(1).join('')
+  const suffix = sanitizedURL
+    .split(IDEAMARKET_LISTING_URL_PREFIX)
+    .slice(1)
+    .join('')
   if (suffix.split('/').length !== 2) {
     return false
   }
