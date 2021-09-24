@@ -4,9 +4,13 @@ import toast, { Toaster } from 'react-hot-toast'
 import { useSession } from 'next-auth/client'
 import { useMutation } from 'react-query'
 import { uploadFile } from 'lib/utils/uploadFileToS3'
-import { accountTabs, AccountInnerForm } from 'components/account'
+import {
+  accountTabs,
+  AccountInnerForm,
+  ProfileWallet,
+} from 'components/account'
 import { useForm } from 'react-hook-form'
-import router from 'next/router'
+import LoginAndLogoutButton from 'components/nav-menu/LoginAndLogoutButton'
 
 export const AccountContext = createContext<any>({})
 
@@ -88,12 +92,6 @@ const Account = () => {
     }
   }, [session, reset])
 
-  useEffect(() => {
-    if (!loading && session === null) {
-      router.push('/')
-    }
-  }, [session, loading])
-
   if (loading) {
     return <p>loading...</p>
   }
@@ -110,10 +108,31 @@ const Account = () => {
   return (
     <AccountContext.Provider value={contextProps}>
       <div className="min-h-screen bg-top-desktop-new">
-        <Toaster />
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <AccountInnerForm />
-        </form>
+        {!loading && session === null ? (
+          <div className="pt-16">
+            <div className="w-11/12 mx-auto my-0 bg-white rounded-lg max-w-7xl font-inter w-90">
+              <div className="flex flex-col items-start justify-center px-6 py-5 bg-white rounded-lg md:flex-row dark:bg-gray-500">
+                <div className="relative flex flex-col w-full mt-2 text-center md:mr-8 md:w-1/4">
+                  <div className="p-3 border-b border-gray-100 dark:border-gray-400">
+                    <div className="pb-4 text-3xl text-blue-400">Account</div>
+                    <div className="text-base font-semibold">
+                      Click here to log in
+                    </div>
+                  </div>
+                  <LoginAndLogoutButton />
+                </div>
+                <ProfileWallet />
+              </div>
+            </div>
+          </div>
+        ) : (
+          <>
+            <Toaster />
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <AccountInnerForm />
+            </form>
+          </>
+        )}
       </div>
     </AccountContext.Provider>
   )
