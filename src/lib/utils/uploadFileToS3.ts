@@ -1,3 +1,4 @@
+import { postData } from './fetch'
 import { ApiResponseData } from './createHandlers'
 import { getSession } from 'next-auth/client'
 import { v4 as uuidv4 } from 'uuid'
@@ -17,33 +18,21 @@ export async function uploadFile(file) {
   let uuid = session.user.uuid
   if (!uuid) {
     uuid = uuidv4()
-    await fetch('/api/userSettings', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        uuid,
-      }),
-    })
   }
 
   const fileType = encodeURIComponent(file.type)
-  const fileName = `${uuid}/profile_photo.${fileType.split('%2F')[1]}`
-  const preSignedPost = await fetch('api/awsDirectUpload', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      fileName,
-      fileType,
-    }),
-  })
+  const fileName = `profile_photo.${fileType.split('%2F')[1]}`
 
   const {
     data: { url: directPostUploadUrl, fields },
-  }: ApiResponseData = await preSignedPost.json()
+  } = await postData<ApiResponseData>({
+    url: '/api/awsDirectUpload',
+    data: {
+      fileName: `${uuid}/${fileName}`,
+      fileType,
+    },
+  })
+
   const formData = new FormData()
   Object.entries({ ...fields, file }).forEach(([key, value]) => {
     formData.append(key, value as any)
@@ -54,6 +43,12 @@ export async function uploadFile(file) {
   })
 
   if (upload.ok) {
-    return `/${fileName}`
+    await postData({
+      url: '/api/updateProfilePhoto',
+      data: {
+        uuid,
+        profilePhotoFileName: fileName,
+      },
+    })
   }
 }
