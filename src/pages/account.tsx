@@ -63,12 +63,10 @@ const Account = () => {
     }
     toast.loading('Saving user settings')
 
-    const newValues =
-      imageFile?.length > 0
-        ? { ...values, profilePhotoFilePath: await uploadFile(imageFile[0]) }
-        : values
-
-    return updateUserSettings(newValues)
+    if (imageFile?.length > 0) {
+      await uploadFile(imageFile[0])
+    }
+    return updateUserSettings(values)
   }
 
   const { register, handleSubmit, setValue, getValues, reset } = useForm()

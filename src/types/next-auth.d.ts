@@ -14,7 +14,7 @@ declare module 'next-auth' {
     uuid?: string
     username?: string
     bio?: string
-    profilePhoto?: string
+    profilePhotoFileName?: string
     redirectionUrl?: string
     ethAddresses?: string[]
     visibilityOptions?: VisibilityOptions
