@@ -42,7 +42,7 @@ const SettingsTab = () => {
               />
             </div>
 
-            <div className="flex flex-col justify-between sm:flex-row">
+            {/* <div className="flex flex-col justify-between sm:flex-row">
               <span>Eth address</span>
               <input
                 type="text"
@@ -50,7 +50,7 @@ const SettingsTab = () => {
                 {...register('ethAddresses')}
                 disabled={isUpdateLoading}
               />
-            </div>
+            </div> */}
 
             <div className="flex flex-col justify-between sm:flex-row">
               <span>Redirection url</span>

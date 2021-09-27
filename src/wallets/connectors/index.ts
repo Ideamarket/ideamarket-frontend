@@ -14,6 +14,13 @@ const RPC_URLS: { [chainId: number]: string } = {
 }
 const isMainnet = NETWORK.getNetworkName() === 'mainnet'
 
+export function getRPCUrl() {
+  if (isMainnet) {
+    return RPC_URLS[1]
+  }
+  return RPC_URLS[4]
+}
+
 export const injected = new InjectedConnector({
   supportedChainIds: [1, 3, 4, 5, 42],
 })
