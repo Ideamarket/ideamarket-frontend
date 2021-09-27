@@ -60,18 +60,23 @@ const AccountInnerForm = () => {
             <div className="p-3 border-b border-gray-100 dark:border-gray-400">
               <div className="flex justify-center items-center">
                 <div className="text-xs text-blue-400 mr-2">ETH ADDRESS</div>
-                <PlusCircleIcon onClick={() => ModalService.open(AddWalletModal)} className="w-5 h-5 cursor-pointer" />
+                <PlusCircleIcon
+                  onClick={() => ModalService.open(AddWalletModal)}
+                  className="w-5 h-5 cursor-pointer"
+                />
               </div>
-              <div
-                onClick={() => copy(ethAddresses)}
-                className="cursor-pointer"
-              >
-                {ethAddresses
-                  ? ethAddresses?.substr(
+              <div className="cursor-pointer">
+                {ethAddresses.map((ethAddress, index) => (
+                  <p
+                    key={`${ethAddress}-${index}`}
+                    onClick={() => copy(ethAddress)}
+                  >
+                    {ethAddress?.substr(
                       0,
-                      ethAddresses?.length > 16 ? 16 : ethAddresses?.length
-                    ) + (ethAddresses?.length > 16 ? '...' : '')
-                  : ''}
+                      ethAddress?.length > 16 ? 16 : ethAddress?.length
+                    ) + (ethAddress?.length > 16 ? '...' : '')}
+                  </p>
+                ))}
               </div>
             </div>
           )}
