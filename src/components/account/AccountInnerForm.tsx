@@ -7,6 +7,9 @@ import { accountTabs } from './constants'
 import { AccountContext } from 'pages/account'
 import ProfileWallet from './ProfileWallet'
 import copy from 'copy-to-clipboard'
+import { PlusCircleIcon } from '@heroicons/react/outline'
+import ModalService from 'components/modals/ModalService'
+import AddWalletModal from './AddWalletModal'
 
 const AccountInnerForm = () => {
   const { getValues, isUpdateLoading, cardTab } = useContext(AccountContext)
@@ -55,7 +58,10 @@ const AccountInnerForm = () => {
           )}
           {displayEthAddresses && (
             <div className="p-3 border-b border-gray-100 dark:border-gray-400">
-              <div className="text-xs text-blue-400">ETH ADDRESS</div>
+              <div className="flex justify-center items-center">
+                <div className="text-xs text-blue-400 mr-2">ETH ADDRESS</div>
+                <PlusCircleIcon onClick={() => ModalService.open(AddWalletModal)} className="w-5 h-5 cursor-pointer" />
+              </div>
               <div
                 onClick={() => copy(ethAddresses)}
                 className="cursor-pointer"
