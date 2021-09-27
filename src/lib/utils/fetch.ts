@@ -15,3 +15,13 @@ export const postData = async <TData>({
 
   return res.json()
 }
+
+export const getData = async <TData>({
+  url,
+}: {
+  url: string
+}): Promise<TData> => {
+  const res = await fetch(url)
+
+  return res.json()
+}
