@@ -6,58 +6,58 @@ import WalletModal from '../wallet/WalletModal'
 import { useWeb3React } from '@web3-react/core'
 import { useMutation } from 'react-query'
 
-export default function AddWalletModal({
-  close,
-}: {
-  close: () => void
-}) {
-  const PAGES = {
-    OWNER_ADDRESS: 0,
-    SHOW_SHA: 1,
-    SUCCESS: 2,
-    ERROR: 3,
-  }
+const STATE = {
+  OWNER_ADDRESS: 0,
+  SHOW_SHA: 1,
+  SUCCESS: 2,
+  ERROR: 3,
+}
 
+type Props = {
+  close: () => void
+}
+
+export default function AddWalletModal({ close }: Props) {
   const { library, account } = useWeb3React()
 
-  const [page, setPage] = useState(PAGES.OWNER_ADDRESS)
-
-  const [walletVerificationRequest, { isLoading: isRequestLoading }] = useMutation<{
-    message: string,
-    data: any,
-  }>(
-    () =>
-      fetch('/api/walletVerificationRequest', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }).then(async (res) => {
-        if (!res.ok) {
-          const response = await res.json()
-          throw new Error(response.message)
-        }
-        return res.json()
-      }),
+  const [verificationState, setVerificationState] = useState(
+    STATE.OWNER_ADDRESS
   )
 
-  const [submitWallet, { isLoading: isSubmitLoading }] = useMutation<{
+  const [walletVerificationRequest] = useMutation<{
     message: string
-  }>(
-    (data: any) =>
-      fetch('/api/submitWallet', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      }).then(async (res) => {
-        if (!res.ok) {
-          const response = await res.json()
-          throw new Error(response.message)
-        }
-        return res.json()
-      }),
+    data: any
+  }>(() =>
+    fetch('/api/walletVerificationRequest', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }).then(async (res) => {
+      if (!res.ok) {
+        const response = await res.json()
+        throw new Error(response.message)
+      }
+      return res.json()
+    })
+  )
+
+  const [submitWallet] = useMutation<{
+    message: string
+  }>((data: any) =>
+    fetch('/api/submitWallet', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    }).then(async (res) => {
+      if (!res.ok) {
+        const response = await res.json()
+        throw new Error(response.message)
+      }
+      return res.json()
+    })
   )
 
   const [uuid, setUUID] = useState('')
@@ -72,41 +72,38 @@ export default function AddWalletModal({
   async function verificationSubmitted() {
     setIsLoading(true)
     try {
-      const signature = await library?.eth?.personal?.sign(uuid, account, "")
-      const recoveredAddress = await library?.eth?.personal?.ecRecover(uuid, signature)
-
+      const signature = await library?.eth?.personal?.sign(uuid, account, '')
       const body: any = {
-        address: recoveredAddress
+        uuid,
+        signature,
       }
-
-      if (recoveredAddress === account) {
-        await submitWallet(body)
-      }
+      await submitWallet(body)
     } catch (ex) {
       setErrorMessage(ex)
-      setPage(PAGES.ERROR)
+      setVerificationState(STATE.ERROR)
     }
 
-    setPage(PAGES.SUCCESS)
+    setVerificationState(STATE.SUCCESS)
     setIsLoading(false)
   }
 
   useEffect(() => {
     const sendVerificationRequest = async () => {
-      const data = (await walletVerificationRequest()).data
+      const { data } = await walletVerificationRequest()
       setUUID(data?.uuid)
     }
 
-    setPage(PAGES.OWNER_ADDRESS)
+    setVerificationState(STATE.OWNER_ADDRESS)
     try {
       sendVerificationRequest()
     } catch (ex) {
       setErrorMessage(ex)
-      setPage(PAGES.ERROR)
+      setVerificationState(STATE.ERROR)
     }
     setIsLoading(false)
     setErrorMessage('')
-  }, [PAGES.OWNER_ADDRESS])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [STATE.OWNER_ADDRESS])
 
   return (
     <Modal close={close}>
@@ -117,10 +114,11 @@ export default function AddWalletModal({
           </p>
         </div>
         <div className="p-5 text-brand-gray-2 dark:text-gray-300">
-          {page === PAGES.OWNER_ADDRESS && (
+          {verificationState === STATE.OWNER_ADDRESS && (
             <>
               <p className="text-sm text-center">
-                In order to add the connected address, you need to verify ownership.
+                In order to add the connected address, you need to verify
+                ownership.
               </p>
               <div className="my-5 p-5 border border-brand-gray-2 bg-gray-200 rounded text-black text-center">
                 Ideamarket - Prove Ownership: {uuid}
@@ -140,7 +138,7 @@ export default function AddWalletModal({
               </div>
             </>
           )}
-          {page === PAGES.SHOW_SHA && (
+          {verificationState === STATE.SHOW_SHA && (
             <>
               <div className="flex justify-center">
                 <button
@@ -165,12 +163,8 @@ export default function AddWalletModal({
               </div>
             </>
           )}
-          {page === PAGES.SUCCESS && (
-            <div>
-              Success!
-            </div>
-          )}
-          {page === PAGES.ERROR && (
+          {verificationState === STATE.SUCCESS && <div>Success!</div>}
+          {verificationState === STATE.ERROR && (
             <>
               <div className="text-2xl text-center text-brand-red">
                 <strong>Something went wrong</strong>

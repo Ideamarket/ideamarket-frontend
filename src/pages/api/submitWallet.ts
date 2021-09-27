@@ -3,9 +3,10 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { ApiResponseData, createHandlers } from 'lib/utils/createHandlers'
 import { getSession } from 'next-auth/client'
 import { updateUserSettings } from 'lib/models/userModel'
+import { recoverAddresses } from 'lib/utils/web3-eth'
 
 /**
- * POST: Check that signature has been created by correct address and if so, add address to DB
+ * POST: Recover the address that is signed and add the recovered address to DB
  */
 const handlers: Handlers<Partial<ApiResponseData>> = {
   POST: async (req, res) => {
@@ -16,15 +17,22 @@ const handlers: Handlers<Partial<ApiResponseData>> = {
         return
       }
 
-      const { address } = req.body
+      const { uuid, signature } = req.body
+      const recoveredAddress = recoverAddresses({ message: uuid, signature })
 
-      // TODO: add address to DB
-      // await updateUserSettings({
-      //   userId: session.user.id,
-      //   userSettings: {
-      //     ethAddresses,
-      //   },
-      // })
+      const ethAddresses = session.user.ethAddresses
+        ? session.user.ethAddresses
+        : []
+      ethAddresses.push(recoveredAddress)
+
+      await updateUserSettings({
+        userId: session.user.id,
+        userSettings: {
+          ethAddresses,
+        },
+      })
+
+      res.status(200).json({ message: 'Successfully updated ethAdress' })
     } catch (error) {
       console.error(error)
       res.status(500).json({ message: 'Something went wrong!!' })
