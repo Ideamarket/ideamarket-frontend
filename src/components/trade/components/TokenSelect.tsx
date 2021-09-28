@@ -44,7 +44,7 @@ const MenuList = (props) => {
           {props.children.slice(0, 5)}
           <div
             onClick={() => props.selectProps.setAllTokensLoaded(true)}
-            className="flex justify-center items-center h-8"
+            className="flex items-center justify-center h-8"
           >
             More...
           </div>
@@ -74,7 +74,7 @@ export default function TokenSelect({
 
   return (
     <Select
-      className="w-32 text-xs font-medium bg-white dark:bg-gray-700 border-2 border-gray-200 shadow-md cursor-pointer text-brand-gray-4 trade-select rounded-2xl"
+      className="w-32 text-xs font-medium bg-white border-2 border-gray-200 shadow-md cursor-pointer dark:bg-gray-700 text-brand-gray-4 trade-select rounded-2xl"
       isClearable={false}
       isSearchable={false}
       isDisabled={disabled}
