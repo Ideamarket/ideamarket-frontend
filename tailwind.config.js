@@ -86,6 +86,9 @@ module.exports = {
       backgroundImage: (theme) => ({
         'top-mobile': "url('/topbg-mobile.svg')",
         'top-desktop': "url('/topbg.svg')",
+        'top-desktop-new': "url('/topbg-new.png')",
+        'top-mobile-new': "url('/topbg-new.png')",
+        'claim-imo-bg': "url('/claim-imo-bg.png')",
       }),
       boxShadow: {
         home: '0 1px 5px 0 rgba(0, 0, 0, 0.05)',
