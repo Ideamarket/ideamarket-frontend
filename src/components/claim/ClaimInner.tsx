@@ -3,6 +3,7 @@ import Select from 'react-select'
 import Image from 'next/image'
 import { useState } from 'react'
 import classNames from 'classnames'
+import useThemeMode from 'components/useThemeMode'
 
 const options = [
   {
@@ -16,11 +17,14 @@ const options = [
 ]
 
 const ClaimInner = () => {
-  const [selectValue, setSelectValue] = useState(null)
+  const [selectedValue, setSelectedValue] = useState(null)
   const [isClaimed, setIsClaimed] = useState(false)
+  const { resolvedTheme } = useThemeMode()
 
   const onClaimButtonClick = () => {
-    setIsClaimed(true)
+    if (selectedValue) {
+      return setIsClaimed(true)
+    }
   }
   return (
     <div className="w-11/12 max-w-5xl mx-auto my-0 md:pt-24 font-inter w-90">
@@ -30,8 +34,8 @@ const ClaimInner = () => {
         </div>
         <div className="flex justify-between w-full mb-2 md:justify-end"></div>
       </div>
-      <div className="flex flex-col items-start justify-center p-8 bg-white rounded-lg md:p-16 md:flex-row dark:bg-gray-500">
-        <div className="md:grid md:grid-cols-2 md:gap-4">
+      <div className="flex flex-col items-start justify-center p-8 bg-white rounded-lg md:p-16 md:pb-32 md:flex-row dark:bg-gray-500">
+        <div className="md:grid md:grid-cols-2 md:gap-8">
           <div className="mb-8 md:mb-0">
             <div className="flex-row hidden max-w-md font-extrabold md:flex">
               <div>1. Claim</div>
@@ -45,7 +49,7 @@ const ClaimInner = () => {
             <div className="my-6 text-4xl font-extrabold">
               Lorem ipsum dolor sit amet, consectetur
             </div>
-            <div className="text-lg">
+            <div className="text-base leading-8">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vel
               congue nibh scelerisque cursus enim. Lectus dui interdum neque
               libero et arcu, scelerisque libero. Diam ut turpis enim amet, quis
@@ -54,22 +58,55 @@ const ClaimInner = () => {
             </div>
           </div>
           <div>
-            <div className="bg-blue-100 rounded-2xl">
-              <div className="p-4 text-xs text-white uppercase bg-no-repeat bg-cover rounded-2xl bg-claim-imo-bg">
+            <div className="bg-blue-100 dark:bg-gray-700 rounded-2xl">
+              <div className="px-6 py-6 text-xs text-white uppercase bg-no-repeat bg-cover rounded-2xl bg-claim-imo-bg">
                 <div>Claim imo token</div>
                 <div className="mt-2 text-3xl font-extrabold">0 IMO</div>
               </div>
-              <div className="px-6 py-4">
+              <div className="px-6 py-4 leading-8">
                 Enter an address to trigger a IMO claim. If the address has any
                 claimable UNI it will be sent to them on submission
               </div>
               <div className="px-6 py-4 font-extrabold">
-                <div>Recipient</div>
+                <div className="pb-1 font-extrabold">Recipient</div>
                 <Select
-                  placeholder="Callet address, ENS name, or select a wallet"
+                  placeholder="Wallet address, ENS name, or select a wallet"
                   options={options}
+                  styles={{
+                    valueContainer: (provided) => ({
+                      ...provided,
+                      padding: 8,
+                      fontSize: 14,
+                    }),
+                    control: (base) => ({
+                      ...base,
+                      borderRadius: 8,
+                    }),
+                    menuList: (base) => ({
+                      ...base,
+                      background:
+                        resolvedTheme === 'dark' ? '#6B7280' : 'white',
+                    }),
+                    singleValue: (base) => ({
+                      ...base,
+                      // Changes color of select box text before dropdown appears
+                      color: resolvedTheme === 'dark' ? '#D1D5DB' : 'black',
+                    }),
+                  }}
+                  theme={(mytheme) => ({
+                    ...mytheme,
+                    borderRadius: 2,
+                    colors: {
+                      ...mytheme.colors,
+                      primary50: resolvedTheme === 'dark' ? '#4B5563' : '', // brand-gray ,
+
+                      primary25:
+                        resolvedTheme === 'dark' ? '#4B5563' : '#f6f6f6', // brand-gray
+                      primary: '#0857e0', // brand-blue
+                    },
+                  })}
                   onChange={(option) => {
-                    setSelectValue(option)
+                    setSelectedValue(option)
                   }}
                 />
               </div>
@@ -78,9 +115,9 @@ const ClaimInner = () => {
                   onClick={onClaimButtonClick}
                   className={classNames(
                     'w-full py-2 text-white rounded-lg',
-                    selectValue
-                      ? 'bg-brand-blue hover:bg-blue-800'
-                      : 'text-gray-700 dark:text-gray-300 bg-brand-gray dark:bg-gray-500 cursor-default border-brand-gray'
+                    selectedValue
+                      ? 'bg-brand-blue hover:bg-blue-800 cursor-pointer'
+                      : 'text-gray-500 dark:text-gray-300 bg-brand-gray dark:bg-gray-500 cursor-default border-brand-gray'
                   )}
                 >
                   Claim IMO
