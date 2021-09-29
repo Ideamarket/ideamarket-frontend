@@ -18,10 +18,9 @@ const handlers: Handlers<Partial<ApiResponseData>> = {
       if (!session) {
         return res.status(401).json({ message: 'Unauthorized' })
       }
-
       const userSettings: Partial<User> = {}
-      const { username, redirectionUrl, bio, ethAddresses, visibilityOptions } =
-        req.body
+
+      const { username, redirectionUrl, bio, visibilityOptions } = req.body
 
       const usernameVerification = await verifyUsername({
         inputUsername: username,
@@ -38,7 +37,6 @@ const handlers: Handlers<Partial<ApiResponseData>> = {
       userSettings.redirectionUrl = addHttpsProtocol(redirectionUrl)
 
       userSettings.bio = bio
-      userSettings.ethAddresses = ethAddresses
       userSettings.visibilityOptions = visibilityOptions
 
       await updateUserSettings({
