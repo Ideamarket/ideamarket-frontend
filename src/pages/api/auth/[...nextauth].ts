@@ -24,8 +24,8 @@ export default NextAuth({
       user: {
         ...user,
         profilePhoto:
-          user.uuid && user.profilePhotoFileName
-            ? `${process.env.NEXT_PUBLIC_USER_ACCOUNTS_CLOUDFRONT_DOMAIN}/${user.uuid}/${user.profilePhotoFileName}`
+          user.imagesFolder && user.profilePhotoFileName
+            ? `${process.env.NEXT_PUBLIC_USER_ACCOUNTS_CLOUDFRONT_DOMAIN}/${user.imagesFolder}/${user.profilePhotoFileName}`
             : null,
       },
     }),

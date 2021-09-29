@@ -6,9 +6,10 @@ import { ApiResponseData, createHandlers } from 'lib/utils/createHandlers'
 import { User } from 'next-auth'
 
 /**
- * POST : Updates profile photo in the DB
- *   - Save   : Send uuid and profilePhotoFileName
- *   - Remove : Send only profilePhotoFileName as null
+ * POST : Updates profile photo in the DB.
+ *        Req Body = {imagesFolderName: string, profilePhotoFileName: string}
+ *
+ * DELETE : Removes profile photo from the DB
  */
 const handlers: Handlers<Partial<ApiResponseData>> = {
   POST: async (req, res) => {
@@ -18,12 +19,14 @@ const handlers: Handlers<Partial<ApiResponseData>> = {
         return res.status(401).json({ message: 'Unauthorized' })
       }
       const userSettings: Partial<User> = {}
-      const { uuid, profilePhotoFileName } = req.body
 
-      userSettings.uuid = uuid
-      if (profilePhotoFileName) {
-        userSettings.profilePhotoFileName = profilePhotoFileName
+      const { imagesFolder, profilePhotoFileName } = req.body
+      if (!imagesFolder || !profilePhotoFileName) {
+        return res.status(400).json({ message: 'Bad Request' })
       }
+
+      userSettings.imagesFolder = imagesFolder
+      userSettings.profilePhotoFileName = profilePhotoFileName
 
       await updateUserSettings({
         userId: session.user.id,
@@ -31,6 +34,28 @@ const handlers: Handlers<Partial<ApiResponseData>> = {
       })
 
       res.status(200).json({ message: 'Profile photo updated successfuly' })
+    } catch (error) {
+      console.error(error)
+      res.status(500).json({ message: 'Something went wrong!!' })
+    }
+  },
+
+  DELETE: async (req, res) => {
+    try {
+      const session = await getSession({ req })
+      if (!session) {
+        return res.status(401).json({ message: 'Unauthorized' })
+      }
+
+      const userSettings: Partial<User> = {}
+      userSettings.profilePhotoFileName = null
+
+      await updateUserSettings({
+        userId: session.user.id,
+        userSettings,
+      })
+
+      res.status(200).json({ message: 'Profile photo removed successfuly' })
     } catch (error) {
       console.error(error)
       res.status(500).json({ message: 'Something went wrong!!' })
