@@ -4,6 +4,8 @@ import { ApiResponseData, createHandlers } from 'lib/utils/createHandlers'
 import { getSession } from 'next-auth/client'
 import { updateUserSettings } from 'lib/models/userModel'
 import { recoverAddresses } from 'lib/utils/web3-eth'
+import { EthAddress } from 'next-auth'
+import { addNewVerifiedAddress, updateVerifiedAddress } from 'lib/utils/address'
 
 /**
  * POST: Recover the address that is signed and add the recovered address to DB
@@ -16,19 +18,31 @@ const handlers: Handlers<Partial<ApiResponseData>> = {
         res.status(401).json({ message: 'Unauthorized' })
         return
       }
+      const ethAddresses: EthAddress[] = session.user.ethAddresses
+        ? session.user.ethAddresses
+        : []
 
       const { uuid, signature } = req.body
       const recoveredAddress = recoverAddresses({ message: uuid, signature })
 
-      const ethAddresses = session.user.ethAddresses
-        ? session.user.ethAddresses
-        : []
-      ethAddresses.push(recoveredAddress)
+      const isAddressAlreadyExists = ethAddresses
+        .map((ethAddress) => ethAddress.address)
+        .includes(recoveredAddress)
+
+      const finalAddresses = isAddressAlreadyExists
+        ? updateVerifiedAddress({
+            verifiedAddress: recoveredAddress,
+            allAddresses: ethAddresses,
+          })
+        : addNewVerifiedAddress({
+            verifiedAddress: recoveredAddress,
+            allAddresses: ethAddresses,
+          })
 
       await updateUserSettings({
         userId: session.user.id,
         userSettings: {
-          ethAddresses,
+          ethAddresses: finalAddresses,
         },
       })
 

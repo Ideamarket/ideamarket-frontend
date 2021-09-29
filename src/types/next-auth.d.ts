@@ -16,14 +16,18 @@ declare module 'next-auth' {
     profilePhotoFileName?: string
     imagesFolder?: string
     redirectionUrl?: string
-    ethAddresses?: string[]
+    ethAddresses?: EthAddress[]
     visibilityOptions?: VisibilityOptions
+  }
+
+  interface EthAddress {
+    address: string
+    verified: boolean
   }
 
   interface VisibilityOptions {
     email?: boolean
     bio?: boolean
     ethAddresses?: boolean
-    holdings?: boolean
   }
 }

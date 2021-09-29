@@ -7,9 +7,11 @@ import { accountTabs } from './constants'
 import { AccountContext } from 'pages/account'
 import ProfileWallet from './ProfileWallet'
 import copy from 'copy-to-clipboard'
-import { PlusCircleIcon } from '@heroicons/react/outline'
+import { PlusCircleIcon, MinusCircleIcon } from '@heroicons/react/outline'
 import ModalService from 'components/modals/ModalService'
 import AddWalletModal from './AddWalletModal'
+import { BadgeCheckIcon } from '@heroicons/react/solid'
+import { useMutation } from 'react-query'
 
 const AccountInnerForm = () => {
   const { getValues, isUpdateLoading, cardTab } = useContext(AccountContext)
@@ -23,6 +25,26 @@ const AccountInnerForm = () => {
     displayEthAddresses,
     displayBio,
   } = getValues()
+
+  const [removeAddress] = useMutation<{
+    message: string
+  }>((address: string) =>
+    fetch('/api/ethAddress', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        addresses: [address],
+      }),
+    }).then(async (res) => {
+      if (!res.ok) {
+        const response = await res.json()
+        throw new Error(response.message)
+      }
+      return res.json()
+    })
+  )
 
   return (
     <div className="w-11/12 mx-auto my-0 max-w-7xl md:pt-24 font-inter w-90">
@@ -66,16 +88,30 @@ const AccountInnerForm = () => {
                 />
               </div>
               <div className="cursor-pointer">
-                {ethAddresses.map((ethAddress, index) => (
-                  <p
-                    key={`${ethAddress}-${index}`}
-                    onClick={() => copy(ethAddress)}
-                  >
-                    {ethAddress?.substr(
-                      0,
-                      ethAddress?.length > 16 ? 16 : ethAddress?.length
-                    ) + (ethAddress?.length > 16 ? '...' : '')}
-                  </p>
+                {ethAddresses?.map((ethAddress, index) => (
+                  <div className="flex items-center">
+                    {ethAddress.verified ? (
+                      <BadgeCheckIcon className="w-5 h-5 flex-shrink-0" />
+                    ) : (
+                      <div className="w-5 h-5"></div>
+                    )}
+                    <p
+                      key={`${ethAddress.address}-${index}`}
+                      onClick={() => copy(ethAddress.address)}
+                      className="ml-2"
+                    >
+                      {ethAddress.address?.substr(
+                        0,
+                        ethAddress.address?.length > 16
+                          ? 16
+                          : ethAddress.address?.length
+                      ) + (ethAddress.address?.length > 16 ? '...' : '')}
+                    </p>
+                    <MinusCircleIcon
+                      onClick={() => removeAddress(ethAddress.address)}
+                      className="w-5 h-5 cursor-pointer ml-auto flex-shrink-0"
+                    />
+                  </div>
                 ))}
               </div>
             </div>
