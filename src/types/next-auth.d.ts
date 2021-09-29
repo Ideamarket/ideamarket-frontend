@@ -11,10 +11,10 @@ declare module 'next-auth' {
 
   interface User {
     id: string
-    uuid?: string
     username?: string
     bio?: string
     profilePhotoFileName?: string
+    imagesFolder?: string
     redirectionUrl?: string
     ethAddresses?: string[]
     visibilityOptions?: VisibilityOptions

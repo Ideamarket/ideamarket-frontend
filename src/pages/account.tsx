@@ -3,12 +3,12 @@ import { createContext, useEffect, useState } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
 import { useSession } from 'next-auth/client'
 import { useMutation } from 'react-query'
-import { uploadFile } from 'lib/utils/uploadFileToS3'
 import {
   accountTabs,
   AccountInnerForm,
   ProfileWallet,
 } from 'components/account'
+import { uploadAndUpdateProfilePhoto } from 'lib/utils/uploadProfilePhoto'
 import { useForm } from 'react-hook-form'
 import LoginAndLogoutButton from 'components/nav-menu/LoginAndLogoutButton'
 
@@ -64,7 +64,7 @@ const Account = () => {
     toast.loading('Saving user settings')
 
     if (imageFile?.length > 0) {
-      await uploadFile(imageFile[0])
+      await uploadAndUpdateProfilePhoto(imageFile[0])
     }
     return updateUserSettings(values)
   }
