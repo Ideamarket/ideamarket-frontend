@@ -109,11 +109,12 @@ export default function TradeInterface({
     useTokenListStore.getState().tokens[0]
   )
   const [tradeToggle, setTradeToggle] = useState(false) // Need toggle to reload balances after trade
-  const [isIdeaTokenBalanceLoading, ideaTokenBalanceBN, ideaTokenBalance] =
-    useBalance(ideaToken?.address, 18, tradeToggle)
+  const [ideaTokenBalance, ideaTokenBalanceBN, isIdeaTokenBalanceLoading] =
+    useBalance(ideaToken?.address, account, 18, tradeToggle)
 
-  const [isTokenBalanceLoading, tokenBalanceBN, tokenBalance] = useBalance(
+  const [tokenBalance, tokenBalanceBN, isTokenBalanceLoading] = useBalance(
     selectedToken?.address,
+    account,
     selectedToken?.decimals,
     tradeToggle
   )
