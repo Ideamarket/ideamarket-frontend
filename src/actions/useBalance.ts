@@ -6,7 +6,8 @@ import BigNumber from 'bignumber.js'
 import BN from 'bn.js'
 
 export default function useBalance(
-  address: string,
+  tokenAddress: string,
+  userAddress: string,
   decimals: number,
   refreshToggle?: boolean // Used to refresh balance whenever needed
 ) {
@@ -21,33 +22,37 @@ export default function useBalance(
 
     function getBalance() {
       return new Promise<BN>((resolve) => {
-        if (!web3 || !address) {
+        if (!web3 || !tokenAddress) {
           resolve(new BN('0'))
           return
         }
 
-        if (address === ZERO_ADDRESS) {
-          web3.eth
-            .getBalance(useWalletStore.getState().address)
-            .then((value) => {
-              resolve(new BN(value))
-            })
-            .catch((error) => {
-              console.log(error)
-              resolve(new BN('0'))
-            })
-        } else {
-          const contract = getERC20Contract(address)
-          contract.methods
-            .balanceOf(useWalletStore.getState().address)
-            .call()
-            .then((value) => {
-              resolve(new BN(value))
-            })
-            .catch((error) => {
-              console.log(error)
-              resolve(new BN('0'))
-            })
+        try {
+          if (tokenAddress === ZERO_ADDRESS) {
+            web3.eth
+              .getBalance(userAddress)
+              .then((value) => {
+                resolve(new BN(value))
+              })
+              .catch((error) => {
+                console.log(error)
+                resolve(new BN('0'))
+              })
+          } else {
+            const contract = getERC20Contract(tokenAddress)
+            contract.methods
+              .balanceOf(userAddress)
+              .call()
+              .then((value) => {
+                resolve(new BN(value))
+              })
+              .catch((error) => {
+                console.log(error)
+                resolve(new BN('0'))
+              })
+          }
+        } catch (error) {
+          resolve(new BN('0'))
         }
       })
     }
@@ -68,7 +73,7 @@ export default function useBalance(
     return () => {
       isCancelled = true
     }
-  }, [address, web3, refreshToggle, decimals])
+  }, [tokenAddress, web3, refreshToggle, decimals, userAddress])
 
-  return [isLoading, balanceBN, balance]
+  return [balance, balanceBN, isLoading]
 }
