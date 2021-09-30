@@ -4,6 +4,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { ApiResponseData, createHandlers } from 'lib/utils/createHandlers'
 import { EthAddress } from 'next-auth'
 import { updateUserSettings } from 'lib/models/userModel'
+import { isAddressValid } from 'lib/utils/web3-eth'
 
 /**
  * This api is to add/remove multiple ethAddress into/from DB at once
@@ -29,17 +30,23 @@ const handlers: Handlers<Partial<ApiResponseData>> = {
           .json({ message: 'Bad request - addresses should be string array' })
       }
 
-      const addressesToBeAdded = addresses
+      const allAddressesValid = addresses.every((address: string) =>
+        isAddressValid(address)
+      )
+      if (!allAddressesValid) {
+        return res.status(400).json({ message: 'Invalid address is present' })
+      }
+
+      const addressesToBeAdded: EthAddress[] = addresses
         .filter(
           (address) =>
             !existingAddresses
               .map((existingAddress) => existingAddress.address)
               .includes(address)
         )
-        .map((address) => ({ address, verified: false }))
+        .map((address: string) => ({ address, verified: false }))
 
-      const finalAddresses = existingAddresses
-      finalAddresses.push(...addressesToBeAdded)
+      const finalAddresses = [...existingAddresses, ...addressesToBeAdded]
       await updateUserSettings({
         userId: session.user.id,
         userSettings: {
