@@ -15,3 +15,10 @@ export function recoverAddresses({
 }) {
   return web3.eth.accounts.recover(message, signature)
 }
+
+/**
+ * Returns whether address is valid or not
+ */
+export function isAddressValid(address: string) {
+  return web3.utils.isAddress(address)
+}
