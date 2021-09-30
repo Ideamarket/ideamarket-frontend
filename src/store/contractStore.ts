@@ -15,6 +15,7 @@ type State = {
   multiActionContract: any
   uniswapFactoryContract: any
   ideaTokenVaultContract: any
+  merkleDistributorContract: any
 }
 
 export const useContractStore = create<State>((set) => ({
@@ -25,6 +26,7 @@ export const useContractStore = create<State>((set) => ({
   multiActionContract: undefined,
   uniswapFactoryContract: undefined,
   ideaTokenVaultContract: undefined,
+  merkleDistributorContract: undefined,
 }))
 
 export function clearContracts() {
@@ -36,6 +38,7 @@ export function clearContracts() {
     multiActionContract: undefined,
     uniswapFactoryContract: undefined,
     ideaTokenVaultContract: undefined,
+    merkleDistributorContract: undefined,
   })
 }
 
@@ -89,6 +92,12 @@ export function initContractsFromWeb3(web3: Web3) {
     { from: web3.eth.defaultAccount }
   )
 
+  const merkleDistributorContract = new web3.eth.Contract(
+    abis.merkleDistributor as any,
+    deployedAddresses.merkleDistributor,
+    { from: web3.eth.defaultAccount }
+  )
+
   useContractStore.setState({
     factoryContract: factoryContract,
     quoterContract: quoterContract,
@@ -97,6 +106,7 @@ export function initContractsFromWeb3(web3: Web3) {
     multiActionContract: multiActionContract,
     uniswapFactoryContract: uniswapFactoryContract,
     ideaTokenVaultContract: ideaTokenVaultContract,
+    merkleDistributorContract: merkleDistributorContract,
   })
 }
 
