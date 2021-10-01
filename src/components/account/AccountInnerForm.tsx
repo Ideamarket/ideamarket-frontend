@@ -11,9 +11,15 @@ import { PlusCircleIcon, MinusCircleIcon } from '@heroicons/react/outline'
 import ModalService from 'components/modals/ModalService'
 import AddWalletModal from './AddWalletModal'
 import { BadgeCheckIcon } from '@heroicons/react/solid'
-import { useMutation } from 'react-query'
+import { SignedAddress } from 'types/customTypes'
 
-const AccountInnerForm = () => {
+const AccountInnerForm = ({
+  submitWallet,
+  removeAddress,
+}: {
+  submitWallet: (signedAddress: SignedAddress) => void
+  removeAddress: (address: string) => void
+}) => {
   const { getValues, isUpdateLoading, cardTab } = useContext(AccountContext)
   const {
     username,
@@ -25,26 +31,6 @@ const AccountInnerForm = () => {
     displayEthAddresses,
     displayBio,
   } = getValues()
-
-  const [removeAddress] = useMutation<{
-    message: string
-  }>((address: string) =>
-    fetch('/api/ethAddress', {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        addresses: [address],
-      }),
-    }).then(async (res) => {
-      if (!res.ok) {
-        const response = await res.json()
-        throw new Error(response.message)
-      }
-      return res.json()
-    })
-  )
 
   return (
     <div className="w-11/12 mx-auto my-0 max-w-7xl md:pt-24 font-inter w-90">
@@ -83,7 +69,9 @@ const AccountInnerForm = () => {
               <div className="flex justify-center items-center">
                 <div className="text-xs text-blue-400 mr-2">ETH ADDRESS</div>
                 <PlusCircleIcon
-                  onClick={() => ModalService.open(AddWalletModal)}
+                  onClick={() =>
+                    ModalService.open(AddWalletModal, { submitWallet })
+                  }
                   className="w-5 h-5 cursor-pointer"
                 />
               </div>
