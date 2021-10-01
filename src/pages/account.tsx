@@ -19,10 +19,13 @@ export const AccountContext = createContext<any>({})
 const Account = () => {
   const [cardTab, setCardTab] = useState(accountTabs.SETTINGS)
   const [currentSession, setCurrentSession] = useState<Session | null>(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    setLoading(true)
     getSession().then((session) => {
       setCurrentSession(session)
+      setLoading(false)
     })
   }, [])
 
@@ -148,7 +151,7 @@ const Account = () => {
     }
   }, [currentSession, reset])
 
-  if (!currentSession) {
+  if (loading) {
     return <p>loading...</p>
   }
 
@@ -164,7 +167,7 @@ const Account = () => {
   return (
     <AccountContext.Provider value={contextProps}>
       <div className="min-h-screen bg-top-desktop-new">
-        {currentSession === null ? (
+        {!loading && !currentSession ? (
           <div className="pt-16">
             <div className="w-11/12 mx-auto my-0 bg-white rounded-lg max-w-7xl font-inter w-90">
               <div className="flex flex-col items-start justify-center px-6 py-5 bg-white rounded-lg md:flex-row dark:bg-gray-500">
