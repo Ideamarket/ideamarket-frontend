@@ -1,7 +1,6 @@
 import { DefaultLayout } from 'components'
 import { createContext, useEffect, useState } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
-import { getSession } from 'next-auth/client'
 import { useMutation } from 'react-query'
 import {
   accountTabs,
@@ -11,23 +10,14 @@ import {
 import { uploadAndUpdateProfilePhoto } from 'lib/utils/uploadProfilePhoto'
 import { useForm } from 'react-hook-form'
 import LoginAndLogoutButton from 'components/nav-menu/LoginAndLogoutButton'
-import { Session } from 'next-auth'
 import { SignedAddress } from 'types/customTypes'
+import { useCustomSession } from 'utils/useCustomSession'
 
 export const AccountContext = createContext<any>({})
 
 const Account = () => {
   const [cardTab, setCardTab] = useState(accountTabs.SETTINGS)
-  const [currentSession, setCurrentSession] = useState<Session | null>(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    setLoading(true)
-    getSession().then((session) => {
-      setCurrentSession(session)
-      setLoading(false)
-    })
-  }, [])
+  const { session, loading, refetchSession } = useCustomSession()
 
   const [updateUserSettings, { isLoading: isUpdateLoading }] = useMutation<{
     message: string
@@ -48,6 +38,7 @@ const Account = () => {
       }),
     {
       onSuccess: (data) => {
+        refetchSession()
         toast.dismiss()
         toast.success(data.message)
       },
@@ -77,7 +68,7 @@ const Account = () => {
       }),
     {
       onSuccess: () => {
-        getSession().then((session) => setCurrentSession(session))
+        refetchSession()
       },
     }
   )
@@ -103,7 +94,8 @@ const Account = () => {
       }),
     {
       onSuccess: () => {
-        getSession().then((session) => setCurrentSession(session))
+        refetchSession()
+        toast.success('Successfully removed!!')
       },
     }
   )
@@ -133,8 +125,8 @@ const Account = () => {
   const { register, handleSubmit, setValue, getValues, reset } = useForm()
 
   useEffect(() => {
-    if (currentSession?.user) {
-      const { user } = currentSession
+    if (session?.user) {
+      const { user } = session
       const { visibilityOptions } = user
 
       reset({
@@ -149,7 +141,7 @@ const Account = () => {
         displayBio: visibilityOptions?.bio,
       })
     }
-  }, [currentSession, reset])
+  }, [session, reset])
 
   if (loading) {
     return <p>loading...</p>
@@ -167,7 +159,7 @@ const Account = () => {
   return (
     <AccountContext.Provider value={contextProps}>
       <div className="min-h-screen bg-top-desktop-new">
-        {!loading && !currentSession ? (
+        {!loading && !session ? (
           <div className="pt-16">
             <div className="w-11/12 mx-auto my-0 bg-white rounded-lg max-w-7xl font-inter w-90">
               <div className="flex flex-col items-start justify-center px-6 py-5 bg-white rounded-lg md:flex-row dark:bg-gray-500">
