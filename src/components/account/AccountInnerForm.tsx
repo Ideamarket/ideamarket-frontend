@@ -7,9 +7,9 @@ import { accountTabs } from './constants'
 import { AccountContext } from 'pages/account'
 import ProfileWallet from './ProfileWallet'
 import copy from 'copy-to-clipboard'
-import { PlusCircleIcon, MinusCircleIcon } from '@heroicons/react/outline'
+import { MinusCircleIcon } from '@heroicons/react/outline'
 import ModalService from 'components/modals/ModalService'
-import AddWalletModal from './AddWalletModal'
+import VerifyWalletModal from './VerifyWalletModal'
 import { BadgeCheckIcon } from '@heroicons/react/solid'
 import { SignedAddress } from 'types/customTypes'
 
@@ -68,16 +68,10 @@ const AccountInnerForm = ({
             <div className="p-3 border-b border-gray-100 dark:border-gray-400">
               <div className="flex justify-center items-center">
                 <div className="text-xs text-blue-400 mr-2">ETH ADDRESS</div>
-                <PlusCircleIcon
-                  onClick={() =>
-                    ModalService.open(AddWalletModal, { submitWallet })
-                  }
-                  className="w-5 h-5 cursor-pointer"
-                />
               </div>
               <div className="cursor-pointer">
                 {ethAddresses?.map((ethAddress, index) => (
-                  <div className="flex items-center">
+                  <div className="flex items-center" key={index}>
                     {ethAddress.verified ? (
                       <BadgeCheckIcon className="w-5 h-5 flex-shrink-0" />
                     ) : (
@@ -112,12 +106,23 @@ const AccountInnerForm = ({
           )}
 
           {cardTab === accountTabs.SETTINGS && (
-            <button
-              className="py-2 m-3 text-white rounded-lg bg-brand-blue hover:bg-blue-800"
-              type="submit"
-            >
-              {isUpdateLoading ? <p>Saving...</p> : <p> Save Profile</p>}
-            </button>
+            <>
+              <button
+                onClick={() =>
+                  ModalService.open(VerifyWalletModal, { submitWallet })
+                }
+                className="py-2 m-3 text-white rounded-lg bg-brand-blue hover:bg-blue-800"
+                type="button"
+              >
+                <p>Verify Wallet</p>
+              </button>
+              <button
+                className="py-2 m-3 text-white rounded-lg bg-brand-blue hover:bg-blue-800"
+                type="submit"
+              >
+                {isUpdateLoading ? <p>Saving...</p> : <p> Save Profile</p>}
+              </button>
+            </>
           )}
         </div>
         {cardTab === accountTabs.SETTINGS && <SettingsTab />}

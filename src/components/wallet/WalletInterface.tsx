@@ -20,6 +20,7 @@ import {
   connectorsById,
   ConnectorIds,
 } from 'wallets/connectors/index'
+import { useCustomSession } from 'utils/useCustomSession'
 
 export default function WalletInterface({
   onWalletConnected,
@@ -33,12 +34,14 @@ export default function WalletInterface({
   const { active, account, library, connector, activate, deactivate } =
     useWeb3React()
 
+  const { session, loading, refetchSession } = useCustomSession()
+
   // handle logic to recognize the connector currently being activated
   const [activatingConnector, setActivatingConnector] = useState<any>()
 
   useEffect(() => {
     const setWeb3WithWait = async () => {
-      await setWeb3(library, connectingWallet)
+      await setWeb3(library, connectingWallet, session, refetchSession)
 
       if (onWalletConnectedCallback) {
         onWalletConnectedCallback()
@@ -70,7 +73,7 @@ export default function WalletInterface({
       setActivatingConnector(undefined)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activatingConnector, connector])
+  }, [activatingConnector, connector, loading])
 
   async function onWalletClicked(wallet) {
     setConnectingWallet(wallet)
