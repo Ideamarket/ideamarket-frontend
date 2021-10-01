@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import classNames from 'classnames'
-import { Modal, CircleSpinner } from '../'
+import { Modal, CircleSpinner } from '..'
 import ModalService from '../modals/ModalService'
 import WalletModal from '../wallet/WalletModal'
 import { useWeb3React } from '@web3-react/core'
@@ -19,7 +19,7 @@ type Props = {
   submitWallet: (signedAddress: SignedAddress) => void
 }
 
-export default function AddWalletModal({ close, submitWallet }: Props) {
+export default function VerifyWalletModal({ close, submitWallet }: Props) {
   const { library, account } = useWeb3React()
 
   const [verificationState, setVerificationState] = useState(
@@ -94,19 +94,16 @@ export default function AddWalletModal({ close, submitWallet }: Props) {
       <div className="md:min-w-150 md:max-w-150">
         <div className="p-4 bg-top-mobile ">
           <p className="text-2xl text-center text-gray-300 md:text-3xl font-gilroy-bold">
-            Add Wallet
+            Verify Wallet
           </p>
         </div>
         <div className="p-5 text-brand-gray-2 dark:text-gray-300">
           {verificationState === STATE.OWNER_ADDRESS && (
             <>
-              <p className="text-sm text-center">
-                In order to add the connected address, you need to verify
-                ownership.
+              <p className="text-sm text-center mb-5">
+                In order to display connected address publicly, you need to
+                verify ownership.
               </p>
-              <div className="my-5 p-5 border border-brand-gray-2 bg-gray-200 rounded text-black text-center">
-                Ideamarket - Prove Ownership: {uuid}
-              </div>
               <div className="flex flex-col items-center justify-center mt-1 md:flex-row md:mx-2">
                 <button
                   className="mt-2 md:mt-0 md:ml-2.5 w-32 h-10 text-sm text-brand-blue bg-white border border-brand-blue rounded-lg hover:bg-brand-blue hover:text-white"
