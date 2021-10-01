@@ -5,6 +5,7 @@ import ModalService from '../modals/ModalService'
 import WalletModal from '../wallet/WalletModal'
 import { useWeb3React } from '@web3-react/core'
 import { useMutation } from 'react-query'
+import { SignedAddress } from 'types/customTypes'
 
 const STATE = {
   OWNER_ADDRESS: 0,
@@ -15,9 +16,10 @@ const STATE = {
 
 type Props = {
   close: () => void
+  submitWallet: (signedAddress: SignedAddress) => void
 }
 
-export default function AddWalletModal({ close }: Props) {
+export default function AddWalletModal({ close, submitWallet }: Props) {
   const { library, account } = useWeb3React()
 
   const [verificationState, setVerificationState] = useState(
@@ -42,24 +44,6 @@ export default function AddWalletModal({ close }: Props) {
     })
   )
 
-  const [submitWallet] = useMutation<{
-    message: string
-  }>((data: any) =>
-    fetch('/api/submitWallet', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    }).then(async (res) => {
-      if (!res.ok) {
-        const response = await res.json()
-        throw new Error(response.message)
-      }
-      return res.json()
-    })
-  )
-
   const [uuid, setUUID] = useState('')
 
   const [isLoading, setIsLoading] = useState(false)
@@ -73,11 +57,11 @@ export default function AddWalletModal({ close }: Props) {
     setIsLoading(true)
     try {
       const signature = await library?.eth?.personal?.sign(uuid, account, '')
-      const body: any = {
-        uuid,
+      const signedAddress: SignedAddress = {
+        message: uuid,
         signature,
       }
-      await submitWallet(body)
+      submitWallet(signedAddress)
     } catch (ex) {
       setErrorMessage(ex)
       setVerificationState(STATE.ERROR)
