@@ -1,7 +1,6 @@
 import type { Handlers } from 'lib/utils/createHandlers'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { ApiResponseData, createHandlers } from 'lib/utils/createHandlers'
-import { getSession } from 'next-auth/client'
 import { fetchUserPublicProfile } from 'lib/models/userModel'
 
 /**
@@ -10,11 +9,6 @@ import { fetchUserPublicProfile } from 'lib/models/userModel'
 const handlers: Handlers<Partial<ApiResponseData>> = {
   GET: async (req, res) => {
     try {
-      const session = await getSession()
-      if (!session) {
-        return res.status(401).json({ message: 'Unauthorized' })
-      }
-
       const username = req.query.username
       const userProfile = await fetchUserPublicProfile(username)
 
