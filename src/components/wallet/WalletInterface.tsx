@@ -21,6 +21,7 @@ import {
   ConnectorIds,
 } from 'wallets/connectors/index'
 import { Tooltip } from 'components'
+import { useCustomSession } from 'utils/useCustomSession'
 
 export default function WalletInterface({
   onWalletConnected,
@@ -34,12 +35,14 @@ export default function WalletInterface({
   const { active, account, library, connector, activate, deactivate } =
     useWeb3React()
 
+  const { session, loading, refetchSession } = useCustomSession()
+
   // handle logic to recognize the connector currently being activated
   const [activatingConnector, setActivatingConnector] = useState<any>()
 
   useEffect(() => {
     const setWeb3WithWait = async () => {
-      await setWeb3(library, connectingWallet)
+      await setWeb3(library, connectingWallet, session, refetchSession)
 
       if (onWalletConnectedCallback) {
         onWalletConnectedCallback()
@@ -71,7 +74,7 @@ export default function WalletInterface({
       setActivatingConnector(undefined)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activatingConnector, connector])
+  }, [activatingConnector, connector, loading])
 
   async function onWalletClicked(wallet) {
     setConnectingWallet(wallet)
@@ -112,10 +115,10 @@ export default function WalletInterface({
     rightSvg?: JSX.Element
   }) {
     return (
-      <div className="flex relative pl-4 pr-4 mt-4">
+      <div className="relative flex pl-4 pr-4 mt-4">
         {isDisabled && (
           <Tooltip
-            className="absolute w-full h-full right-0 cursor-not-allowed"
+            className="absolute right-0 w-full h-full cursor-not-allowed"
             IconComponent={() => <></>}
           >
             Arbitrum support coming soon
