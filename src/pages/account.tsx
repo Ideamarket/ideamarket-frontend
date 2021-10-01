@@ -1,7 +1,7 @@
 import { DefaultLayout } from 'components'
 import { createContext, useEffect, useState } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
-import { useSession } from 'next-auth/client'
+import { getSession } from 'next-auth/client'
 import { useMutation } from 'react-query'
 import {
   accountTabs,
@@ -11,12 +11,20 @@ import {
 import { uploadAndUpdateProfilePhoto } from 'lib/utils/uploadProfilePhoto'
 import { useForm } from 'react-hook-form'
 import LoginAndLogoutButton from 'components/nav-menu/LoginAndLogoutButton'
+import { Session } from 'next-auth'
+import { SignedAddress } from 'types/customTypes'
 
 export const AccountContext = createContext<any>({})
 
 const Account = () => {
   const [cardTab, setCardTab] = useState(accountTabs.SETTINGS)
-  const [session, loading] = useSession()
+  const [currentSession, setCurrentSession] = useState<Session | null>(null)
+
+  useEffect(() => {
+    getSession().then((session) => {
+      setCurrentSession(session)
+    })
+  }, [])
 
   const [updateUserSettings, { isLoading: isUpdateLoading }] = useMutation<{
     message: string
@@ -47,6 +55,56 @@ const Account = () => {
     }
   )
 
+  const [submitWallet] = useMutation<{
+    message: string
+  }>(
+    (signedAddress: SignedAddress) =>
+      fetch('/api/submitWallet', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(signedAddress),
+      }).then(async (res) => {
+        if (!res.ok) {
+          const response = await res.json()
+          throw new Error(response.message)
+        }
+        return res.json()
+      }),
+    {
+      onSuccess: () => {
+        getSession().then((session) => setCurrentSession(session))
+      },
+    }
+  )
+
+  const [removeAddress] = useMutation<{
+    message: string
+  }>(
+    (address: string) =>
+      fetch('/api/ethAddress', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          addresses: [address],
+        }),
+      }).then(async (res) => {
+        if (!res.ok) {
+          const response = await res.json()
+          throw new Error(response.message)
+        }
+        return res.json()
+      }),
+    {
+      onSuccess: () => {
+        getSession().then((session) => setCurrentSession(session))
+      },
+    }
+  )
+
   const onSubmit = async (data) => {
     const { username, ethAddresses, bio, redirectionUrl, imageFile } = data
 
@@ -72,8 +130,8 @@ const Account = () => {
   const { register, handleSubmit, setValue, getValues, reset } = useForm()
 
   useEffect(() => {
-    if (session?.user) {
-      const { user } = session
+    if (currentSession?.user) {
+      const { user } = currentSession
       const { visibilityOptions } = user
 
       reset({
@@ -88,9 +146,9 @@ const Account = () => {
         displayBio: visibilityOptions?.bio,
       })
     }
-  }, [session, reset])
+  }, [currentSession, reset])
 
-  if (loading) {
+  if (!currentSession) {
     return <p>loading...</p>
   }
 
@@ -106,7 +164,7 @@ const Account = () => {
   return (
     <AccountContext.Provider value={contextProps}>
       <div className="min-h-screen bg-top-desktop-new">
-        {!loading && session === null ? (
+        {currentSession === null ? (
           <div className="pt-16">
             <div className="w-11/12 mx-auto my-0 bg-white rounded-lg max-w-7xl font-inter w-90">
               <div className="flex flex-col items-start justify-center px-6 py-5 bg-white rounded-lg md:flex-row dark:bg-gray-500">
@@ -127,7 +185,10 @@ const Account = () => {
           <>
             <Toaster />
             <form onSubmit={handleSubmit(onSubmit)}>
-              <AccountInnerForm />
+              <AccountInnerForm
+                submitWallet={submitWallet}
+                removeAddress={removeAddress}
+              />
             </form>
           </>
         )}
