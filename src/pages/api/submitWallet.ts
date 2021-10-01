@@ -22,8 +22,8 @@ const handlers: Handlers<Partial<ApiResponseData>> = {
         ? session.user.ethAddresses
         : []
 
-      const { uuid, signature } = req.body
-      const recoveredAddress = recoverAddresses({ message: uuid, signature })
+      const { message, signature } = req.body
+      const recoveredAddress = recoverAddresses({ message, signature })
 
       const isAddressAlreadyExists = ethAddresses
         .map((ethAddress) => ethAddress.address)
