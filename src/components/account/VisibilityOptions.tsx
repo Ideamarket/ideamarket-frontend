@@ -26,7 +26,7 @@ const VisibilityOptions = () => {
           />
         </div>
         <div className="flex items-center justify-between">
-          <span> Eth Addresses</span>
+          <span> ETH Addresses</span>
           <input
             className="rounded-lg cursor-pointer"
             type="checkbox"

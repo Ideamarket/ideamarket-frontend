@@ -5,6 +5,7 @@ import { initContractsFromWeb3, clearContracts } from './contractStore'
 
 import ENS, { getEnsAddress } from '@ensdomains/ensjs'
 import { NETWORK } from 'store/networks'
+import { checkForNewAddresses } from 'lib/utils/address'
 
 type State = {
   web3: Web3
@@ -30,10 +31,10 @@ async function handleWeb3Change() {
     web3.currentProvider.off('accountsChanged', handleWeb3Change)
   }
 
-  await setWeb3(web3, localStorage.getItem('WALLET_TYPE'))
+  await setWeb3(web3, localStorage.getItem('WALLET_TYPE'), null, () => null)
 }
 
-export async function setWeb3(web3, wallet) {
+export async function setWeb3(web3, wallet, session, refetchSession) {
   const address = (await web3.eth.getAccounts())[0]
   web3.eth.defaultAccount = address
 
@@ -56,6 +57,8 @@ export async function setWeb3(web3, wallet) {
     chainID: chainID,
     ens,
   })
+
+  checkForNewAddresses(address, session, refetchSession)
 
   if (wallet) {
     localStorage.setItem('WALLET_TYPE', wallet.toString())
