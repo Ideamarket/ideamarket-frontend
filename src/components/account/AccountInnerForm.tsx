@@ -89,10 +89,12 @@ const AccountInnerForm = ({
                           : ethAddress.address?.length
                       ) + (ethAddress.address?.length > 16 ? '...' : '')}
                     </p>
-                    <MinusCircleIcon
-                      onClick={() => removeAddress(ethAddress.address)}
-                      className="w-5 h-5 cursor-pointer ml-auto flex-shrink-0"
-                    />
+                    {cardTab === accountTabs.SETTINGS && (
+                      <MinusCircleIcon
+                        onClick={() => removeAddress(ethAddress.address)}
+                        className="w-5 h-5 cursor-pointer ml-auto flex-shrink-0"
+                      />
+                    )}
                   </div>
                 ))}
               </div>
