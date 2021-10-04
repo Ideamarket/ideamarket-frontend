@@ -32,14 +32,16 @@ function IncomeColumn() {
       1YR
       <br />
       <div className="flex items-center">
-        Income
+        Income [Paused]
         <Tooltip className="ml-1">
           <div className="w-32 md:w-64">
-            Estimated annual passive income paid to the listing owner.
-            Calculated by Deposits * Lending APY at{' '}
+            ARBITRUM UPGRADE: Since{' '}
             <A href="https://compound.finance" className="underline">
               compound.finance
-            </A>
+            </A>{' '}
+            is not on Arbitrum, interest generation has been paused until they
+            launch, or we replace them with another lending protocol. Columns
+            currently display ~3% APR
           </div>
         </Tooltip>
       </div>
