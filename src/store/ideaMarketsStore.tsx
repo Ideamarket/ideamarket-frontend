@@ -272,9 +272,9 @@ export async function queryTokens(
   const fromTs = Math.floor(Date.now() / 1000) - duration
   const marketIds = markets.map((market) => market.marketID)
 
-  let result
+  let L2Result
   if (search.length >= 2) {
-    result = (
+    L2Result = (
       await request(
         HTTP_GRAPHQL_ENDPOINT,
         getQueryTokenNameTextSearch(
@@ -291,7 +291,7 @@ export async function queryTokens(
       )
     ).tokenNameSearch
   } else {
-    result = (
+    L2Result = (
       await request(
         HTTP_GRAPHQL_ENDPOINT,
         getQueryTokens(
@@ -308,20 +308,52 @@ export async function queryTokens(
     ).ideaTokens
   }
 
-  return result.map((token) => apiResponseToIdeaToken(token))
+  const finalResult = await Promise.all(
+    L2Result.map(async (token) => {
+      const l1Token = await querySingleToken(
+        'token',
+        token?.market?.name,
+        token?.name,
+        true
+      )
+      let l1LockedAmount = '0'
+      if (l1Token) {
+        l1LockedAmount = l1Token.lockedAmount
+      }
+      const l2LockedAmount = web3BNToFloatString(
+        new BN(token.lockedAmount),
+        bigNumberTenPow18,
+        2
+      )
+      const supply = web3BNToFloatString(
+        new BN(token.supply),
+        bigNumberTenPow18,
+        2
+      )
+      const lockedPercentage = (
+        ((+l1LockedAmount + +l2LockedAmount) / +supply) *
+        100
+      ).toString()
+
+      return { ...token, lockedPercentage }
+    })
+  )
+
+  return finalResult.map((token) => apiResponseToIdeaToken(token))
 }
 
 export async function querySingleToken(
   queryKey: string,
   marketName: string,
-  tokenName: string
+  tokenName: string,
+  queryL1: boolean = false
 ): Promise<IdeaToken> {
   if (!marketName || !tokenName) {
     return undefined
   }
 
   const result = await request(
-    HTTP_GRAPHQL_ENDPOINT,
+    queryL1 ? HTTP_GRAPHQL_ENDPOINT_L1 : HTTP_GRAPHQL_ENDPOINT,
     getQuerySingleToken(marketName, tokenName)
   )
 

@@ -49,6 +49,7 @@ export default function getQueryTokens(
           marketCap
           market {
             id: marketID
+            name
           }
           rank
           tokenOwner
