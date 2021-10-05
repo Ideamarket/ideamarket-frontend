@@ -85,8 +85,12 @@ export default class TwitterMarketSpecifics implements IMarketSpecifics {
     return 'To verify, you will be asked to post a Tweet from this Twitter account containing a verification code.'
   }
 
-  getVerificationSHAPrompt(sha: string): string {
-    return `Verifying myself on ideamarket.io: ${sha}`
+  getVerificationSHAPrompt(
+    sha: string,
+    marketName: string,
+    tokenName: string
+  ): string {
+    return `Verifying myself on ideamarket.io: ${sha} ideamarket.io/${marketName}/${tokenName}`
   }
 
   getVerificationSHAPromptExplanation(): string {

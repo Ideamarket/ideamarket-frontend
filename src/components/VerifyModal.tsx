@@ -62,7 +62,11 @@ export default function VerifyModal({
     marketSpecifics.getVerificationExplanation()
   const shaPromptExplanation =
     marketSpecifics.getVerificationSHAPromptExplanation()
-  const shaPrompt = marketSpecifics.getVerificationSHAPrompt(sha)
+  const shaPrompt = marketSpecifics.getVerificationSHAPrompt(
+    sha,
+    market.name.toLowerCase(),
+    token.name
+  )
   const confirmCheckboxText =
     marketSpecifics.getVerificationConfirmCheckboxLabel()
 

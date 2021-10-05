@@ -33,7 +33,11 @@ export type IMarketSpecifics = {
   // Verification
   isVerificationEnabled(): boolean
   getVerificationExplanation(): string
-  getVerificationSHAPrompt(uuid: string): string
+  getVerificationSHAPrompt(
+    uuid: string,
+    marketName: string,
+    tokenName: string
+  ): string
   getVerificationSHAPromptExplanation(): string
   getVerificationConfirmCheckboxLabel(): string
 }

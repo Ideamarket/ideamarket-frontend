@@ -85,8 +85,12 @@ export default class ShowtimeMarketSpecifics implements IMarketSpecifics {
     return `To verify, you will be asked to add a verification code to your account's Bio. After verification is complete you can remove it.`
   }
 
-  getVerificationSHAPrompt(sha: string): string {
-    return `Verifying myself on ideamarket.io: ${sha}`
+  getVerificationSHAPrompt(
+    sha: string,
+    marketName: string,
+    tokenName: string
+  ): string {
+    return `Verifying myself on ideamarket.io: ${sha} ideamarket.io/${marketName}/${tokenName}`
   }
 
   getVerificationSHAPromptExplanation(): string {
