@@ -230,10 +230,10 @@ export default function TokenRow({
           </p>
           <p
             className="text-base font-medium leading-4 uppercase tracking-tightest-2 text-very-dark-blue dark:text-gray-300"
-            title={parseInt(token.lockedPercentage) + ' %'}
+            title={parseFloat(token.lockedPercentage) + ' %'}
           >
             {parseFloat(token.lockedPercentage) * 100.0 > 0.0 ? (
-              parseInt(token.lockedPercentage) + ' %'
+              Math.ceil(parseFloat(token.lockedPercentage)) + ' %'
             ) : (
               <>&mdash;</>
             )}
