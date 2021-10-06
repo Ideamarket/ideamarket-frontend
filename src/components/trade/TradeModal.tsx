@@ -21,6 +21,7 @@ export default function TradeModal({
     ModalService.open(TradeCompleteModal, {
       isSuccess,
       tokenName,
+      marketName: market.name,
       transactionType,
     })
   }

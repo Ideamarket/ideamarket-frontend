@@ -90,7 +90,7 @@ export default class TwitchMarketSpecifics implements IMarketSpecifics {
     marketName: string,
     tokenName: string
   ): string {
-    return `Verifying myself on ideamarket.io: ${sha} ideamarket.io/${marketName}/${tokenName}`
+    return `Verifying myself on ideamarket.io: ${sha} ideamarket.io/i/${marketName}/${tokenName}`
   }
 
   getVerificationSHAPromptExplanation(): string {

@@ -22,11 +22,13 @@ export default function LockModal({
   token,
   balance,
   refetch,
+  marketName,
 }: {
   close: () => void
   token: IdeaToken
   balance: string
   refetch: () => void
+  marketName: string
 }) {
   const txManager = useTransactionManager()
   const [amountToLock, setAmountToLock] = useState('')
@@ -64,12 +66,14 @@ export default function LockModal({
   function onTradeComplete(
     isSuccess: boolean,
     tokenName: string,
-    transactionType: TRANSACTION_TYPES
+    transactionType: TRANSACTION_TYPES,
+    marketName: string
   ) {
     ModalService.open(TradeCompleteModal, {
       isSuccess,
       tokenName,
       transactionType,
+      marketName,
     })
   }
 
@@ -82,12 +86,12 @@ export default function LockModal({
       await txManager.executeTx('Lock', lockToken, ...args)
     } catch (ex) {
       console.log(ex)
-      onTradeComplete(false, token.name, TRANSACTION_TYPES.NONE)
+      onTradeComplete(false, token.name, TRANSACTION_TYPES.NONE, marketName)
       return
     }
 
     refetch()
-    onTradeComplete(true, token.name, TRANSACTION_TYPES.LOCK)
+    onTradeComplete(true, token.name, TRANSACTION_TYPES.LOCK, marketName)
   }
 
   return (
@@ -111,7 +115,7 @@ export default function LockModal({
             </div>
           </Tooltip>
         </div>
-        <div className="p-4 flex flex-col items-center space-y-4">
+        <div className="flex flex-col items-center p-4 space-y-4">
           <p>Amount of {token.name} upvotes to lock for 1 year</p>
           <input
             className={classNames(

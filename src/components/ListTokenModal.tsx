@@ -140,6 +140,7 @@ export default function ListTokenModal({ close }: { close: () => void }) {
     ModalService.open(TradeCompleteModal, {
       isSuccess,
       tokenName,
+      marketName: selectedMarket.name,
       transactionType,
     })
   }

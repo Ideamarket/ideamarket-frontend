@@ -23,11 +23,13 @@ export default function GiftModal({
   token,
   balance,
   refetch,
+  marketName,
 }: {
   close: () => void
   token: IdeaToken
   balance: string
   refetch: () => void
+  marketName: string
 }) {
   const txManager = useTransactionManager()
   const [amountToGift, setamountToGift] = useState('')
@@ -69,12 +71,14 @@ export default function GiftModal({
   function onTradeComplete(
     isSuccess: boolean,
     tokenName: string,
-    transactionType: TRANSACTION_TYPES
+    transactionType: TRANSACTION_TYPES,
+    marketName: string
   ) {
     ModalService.open(TradeCompleteModal, {
       isSuccess,
       tokenName,
       transactionType,
+      marketName,
     })
   }
 
@@ -92,12 +96,12 @@ export default function GiftModal({
         : await txManager.executeTx('Transfer', transferToken, ...transferArgs)
     } catch (ex) {
       console.log(ex)
-      onTradeComplete(false, token.name, TRANSACTION_TYPES.NONE)
+      onTradeComplete(false, token.name, TRANSACTION_TYPES.NONE, marketName)
       return
     }
 
     refetch()
-    onTradeComplete(true, token.name, TRANSACTION_TYPES.GIFT)
+    onTradeComplete(true, token.name, TRANSACTION_TYPES.GIFT, marketName)
   }
 
   return (

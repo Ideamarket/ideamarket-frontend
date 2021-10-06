@@ -24,7 +24,7 @@ function getTweetTemplate(
   let tweetText = ''
 
   if (transactionType === TRANSACTION_TYPES.LIST) {
-    tweetText = `Just listed ${tokenName} on @ideamarket_io`
+    tweetText = `Just listed ${tokenName} on @ideamarket_io `
   } else if (transactionType === TRANSACTION_TYPES.BUY) {
     tweetText = `Just bought ${tokenName} on @ideamarket_io`
   } else if (transactionType === TRANSACTION_TYPES.LOCK) {
@@ -40,11 +40,13 @@ export default function TradeCompleteModal({
   close,
   isSuccess,
   tokenName,
+  marketName,
   transactionType,
 }: {
   close: () => void
   isSuccess: boolean
   tokenName: string
+  marketName: string
   transactionType: TRANSACTION_TYPES
 }) {
   const tweetTemplate = getTweetTemplate(transactionType, tokenName)
@@ -64,7 +66,10 @@ export default function TradeCompleteModal({
               <div className="flex justify-center mt-10">
                 <A
                   className="twitter-share-button"
-                  href={`https://twitter.com/intent/tweet?text=${tweetTemplate}&url=https://ideamarket.io`}
+                  href={`https://twitter.com/intent/tweet?text=${tweetTemplate}&url=https://ideamarket.io/i/${marketName.toLowerCase()}/${tokenName.replace(
+                    '@',
+                    ''
+                  )}`}
                 >
                   <button className="w-32 h-10 text-base font-medium bg-white rounded-lg dark:text-gray-50 inborder-2 dark:bg-gray-500 border-brand-blue text-brand-blue hover:text-white tracking-tightest-2 font-sf-compact-medium hover:bg-brand-blue">
                     Tweet about it

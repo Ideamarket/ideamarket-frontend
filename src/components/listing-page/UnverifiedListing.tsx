@@ -14,7 +14,7 @@ export default function UnverifiedListing({
       <div className="mt-5 mb-2 text-sm md:mb-5 text-brand-blue dark:text-blue-500">
         {marketSpecifics.isVerificationEnabled() ? (
           <button
-            className="flex items-center justify-center h-12 w-64 text-center font-semibold bg-white border-2 dark:bg-gray-500 dark:text-gray-300 rounded-lg hover:bg-brand-blue hover:text-white border-brand-blue text-brand-blue"
+            className="flex items-center justify-center w-64 h-12 font-semibold text-center bg-white border-2 rounded-lg dark:bg-gray-500 dark:text-gray-300 hover:bg-brand-blue hover:text-white border-brand-blue text-brand-blue"
             onClick={() => {
               ModalService.open(VerifyModal, { market, token })
             }}

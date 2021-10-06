@@ -220,7 +220,12 @@ export default function OwnedTokenRow({
               e.stopPropagation()
               isL1
                 ? router.push('/bridge')
-                : ModalService.open(LockModal, { token, balance, refetch })
+                : ModalService.open(LockModal, {
+                    token,
+                    balance,
+                    refetch,
+                    marketName: market.name,
+                  })
             }}
             className="w-20 h-10 text-base font-medium text-white border-2 rounded-lg bg-brand-blue dark:bg-gray-600 border-brand-blue dark:text-gray-300 tracking-tightest-2 font-sf-compact-medium"
           >
@@ -231,7 +236,12 @@ export default function OwnedTokenRow({
           <button
             onClick={(e) => {
               e.stopPropagation()
-              ModalService.open(GiftModal, { token, balance, refetch })
+              ModalService.open(GiftModal, {
+                token,
+                balance,
+                refetch,
+                marketName: market.name,
+              })
             }}
             className="w-20 h-10 text-base font-medium bg-white border-2 rounded-lg text-brand-blue dark:bg-gray-600 border-brand-blue dark:text-gray-300 tracking-tightest-2 font-sf-compact-medium"
           >
