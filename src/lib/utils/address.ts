@@ -37,7 +37,7 @@ export function addNewVerifiedAddress({
 /*
  * If currently connected address is not linked to the signed-in profile, connect it
  */
-export async function checkForNewAddresses(
+export async function checkAndPostNewAddresses(
   connectedAddress: string,
   session,
   refetchSession

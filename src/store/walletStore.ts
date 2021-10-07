@@ -5,8 +5,7 @@ import { initContractsFromWeb3, clearContracts } from './contractStore'
 
 import ENS /*, { getEnsAddress }*/ from '@ensdomains/ensjs'
 //import { NETWORK } from 'store/networks'
-import { checkForNewAddresses } from 'lib/utils/address'
-import { useSessionStore } from './useSessionStore'
+import { checkAndPostNewAddresses } from 'lib/utils/address'
 
 type State = {
   web3: Web3
@@ -24,8 +23,6 @@ export const useWalletStore = create<State>((set) => ({
 
 async function handleWeb3Change() {
   const web3 = useWalletStore.getState().web3 as any
-  const session = useSessionStore.getState().session as any
-  const refetchSession = useSessionStore.getState().refetchSession as any
 
   if (!web3) return
 
@@ -34,12 +31,7 @@ async function handleWeb3Change() {
     web3.currentProvider.off('accountsChanged', handleWeb3Change)
   }
 
-  await setWeb3(
-    web3,
-    localStorage.getItem('WALLET_TYPE'),
-    session,
-    refetchSession
-  )
+  await setWeb3(web3, localStorage.getItem('WALLET_TYPE'), null, () => null)
 }
 
 export async function setWeb3(web3, wallet, session, refetchSession) {
@@ -65,12 +57,8 @@ export async function setWeb3(web3, wallet, session, refetchSession) {
     chainID: chainID,
     ens: undefined,
   })
-  useSessionStore.setState({
-    session,
-    refetchSession,
-  })
 
-  checkForNewAddresses(address, session, refetchSession)
+  checkAndPostNewAddresses(address, session, refetchSession)
 
   if (wallet) {
     localStorage.setItem('WALLET_TYPE', wallet.toString())
