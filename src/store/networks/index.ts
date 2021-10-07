@@ -34,6 +34,7 @@ export type INetworkSpecifics = {
   getSubgraphURL(): string
   getEtherscanTxUrl(tx: string): string
   getAddNetworkParams(): AddNetworkParams | undefined
+  getRPCURL(): string
 }
 
 const specifics: INetworkSpecifics[] = [
@@ -44,6 +45,10 @@ const specifics: INetworkSpecifics[] = [
   new TestAVML1NetworkSpecifics(),
   new TestAVML2NetworkSpecifics(),
 ]
+
+export function getNetworkSpecifics(): INetworkSpecifics[] {
+  return specifics
+}
 
 export function getNetworkSpecificsByNetworkName(
   networkName: string

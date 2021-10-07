@@ -3,31 +3,32 @@ import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
 import { WalletLinkConnector } from '@web3-react/walletlink-connector'
 import { FortmaticConnector } from '@web3-react/fortmatic-connector'
 import { PortisConnector } from '@web3-react/portis-connector'
-import { MAINNET, RINKEBY } from 'wallets/chains'
 import { AbstractConnector } from '@web3-react/abstract-connector'
-import { NETWORK } from 'store/networks'
+import { getNetworkSpecifics, NETWORK } from 'store/networks'
 
 const POLLING_INTERVAL = 12000
-const RPC_URLS: { [chainId: number]: string } = {
-  1: 'https://mainnet.infura.io/v3/3399077c10a24059be2a6c5b4fa77c03',
-  4: 'https://rinkeby.infura.io/v3/3399077c10a24059be2a6c5b4fa77c03',
-}
-const isMainnet = NETWORK.getNetworkName() === 'mainnet'
+const CHAIN_IDS = [
+  ...(new Set(getNetworkSpecifics().map((v) => v.getChainID())) as any),
+]
+const RPC_URLS: { [chainId: number]: string } = getNetworkSpecifics().reduce(
+  (a, v) => ({ ...a, [v.getChainID()]: v.getRPCURL() }),
+  {}
+)
 
 export const injected = new InjectedConnector({
-  supportedChainIds: [1, 3, 4, 5, 42, 42161, 421611],
+  supportedChainIds: CHAIN_IDS,
 })
 
 export const walletconnect = new WalletConnectConnector({
-  rpc: { 1: RPC_URLS[1], 4: RPC_URLS[4] },
+  rpc: RPC_URLS,
   bridge: 'https://bridge.walletconnect.org',
   qrcode: true,
   pollingInterval: POLLING_INTERVAL,
-  chainId: isMainnet ? MAINNET : RINKEBY,
+  chainId: NETWORK.getChainID(),
 })
 
 export const walletlink = new WalletLinkConnector({
-  url: RPC_URLS[1],
+  url: NETWORK.getRPCURL(),
   appName: 'Ideamarket',
 })
 
@@ -56,13 +57,16 @@ export async function disconnectWalletConnector(connector: AbstractConnector) {
 }
 
 export const fortmatic = new FortmaticConnector({
-  apiKey: isMainnet ? 'pk_live_B3A1A25FBF96DCB5' : 'pk_test_4F838B34CAE38BC8',
-  chainId: isMainnet ? MAINNET : RINKEBY,
+  apiKey:
+    NETWORK.getNetworkName() === 'avm' || NETWORK.getNetworkName() === 'mainnet'
+      ? 'pk_live_B3A1A25FBF96DCB5'
+      : 'pk_test_4F838B34CAE38BC8',
+  chainId: NETWORK.getChainID(),
 })
 
 export const portis = new PortisConnector({
   dAppId: 'bbff3259-d19c-4791-9695-5a61f3146e51',
-  networks: [1, 100],
+  networks: CHAIN_IDS,
 })
 
 export enum ConnectorIds {

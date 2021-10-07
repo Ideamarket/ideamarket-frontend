@@ -57,4 +57,8 @@ export default class KovanAVMNetworkSpecifics implements INetworkSpecifics {
       blockExplorerUrls: ['https://rinkeby-explorer.arbitrum.io/#/'],
     }
   }
+
+  getRPCURL(): string {
+    return 'https://arbitrum-rinkeby.infura.io/v3/98ca28d50f234e618a22a8b0d83c40b2'
+  }
 }

@@ -57,4 +57,8 @@ export default class AVMNetworkSpecifics implements INetworkSpecifics {
       blockExplorerUrls: ['https://arbiscan.io/'],
     }
   }
+
+  getRPCURL(): string {
+    return 'https://arbitrum-mainnet.infura.io/v3/98ca28d50f234e618a22a8b0d83c40b2'
+  }
 }
