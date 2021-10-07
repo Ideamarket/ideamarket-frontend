@@ -100,7 +100,7 @@ export default function VerifyWalletModal({ close, submitWallet }: Props) {
         <div className="p-5 text-brand-gray-2 dark:text-gray-300">
           {verificationState === STATE.OWNER_ADDRESS && (
             <>
-              <p className="text-sm text-center mb-5">
+              <p className="mb-5 text-sm text-center">
                 In order to display connected address publicly, you need to
                 verify ownership.
               </p>

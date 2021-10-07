@@ -149,7 +149,8 @@ const Account = () => {
         displayBio: visibilityOptions?.bio,
       })
     }
-  }, [session, reset])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session])
 
   if (loading) {
     return <p>loading...</p>

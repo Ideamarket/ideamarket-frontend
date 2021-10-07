@@ -49,14 +49,13 @@ const infiniteQueryConfig = {
 }
 
 export default function ProfileWallet() {
-  const web3 = useWalletStore((state) => state.web3)
+  const web3 = useWalletStore((state) => state)
+  const address = useWalletStore((state) => state.address)
 
   const [selectedMarket, setSelectedMarket] = useState(undefined)
   const [ownedTokenTotalValue, setOwnedTokensTotalValue] = useState('0.00')
   const [lockedTokenTotalValue, setLockedTokensTotalValue] = useState('0.00')
   const [purchaseTotalValue, setPurchaseTotalValue] = useState('0.00')
-
-  const address = useWalletStore((state) => state.address)
 
   const {
     data: infiniteOwnedData,
@@ -119,17 +118,11 @@ export default function ProfileWallet() {
   const [orderDirection, setOrderDirection] = useState('desc')
 
   useEffect(() => {
-    refetch()
+    if (address && web3) {
+      refetch()
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    canFetchMoreOwned,
-    canFetchMoreLocked,
-    canFetchMoreTrades,
-    selectedMarket,
-    web3,
-    orderDirection,
-    orderBy,
-  ])
+  }, [address, web3])
 
   function refetch() {
     refetchOwned()
@@ -511,6 +504,8 @@ export default function ProfileWallet() {
       setOrderBy(headerValue)
       setOrderDirection('desc')
     }
+
+    return refetch()
   }
 
   return (
@@ -567,6 +562,7 @@ export default function ProfileWallet() {
                   setTable('holdings')
                   setOrderBy('price')
                   setOrderDirection('desc')
+                  refetch()
                 }}
               >
                 Holdings
@@ -582,6 +578,7 @@ export default function ProfileWallet() {
                   setTable('listings')
                   setOrderBy('price')
                   setOrderDirection('desc')
+                  refetch()
                 }}
               >
                 Listings
@@ -599,6 +596,7 @@ export default function ProfileWallet() {
                   setTable('locked')
                   setOrderBy('lockedUntil')
                   setOrderDirection('asc')
+                  refetch()
                 }}
               >
                 Locked
@@ -614,6 +612,7 @@ export default function ProfileWallet() {
                   setTable('trades')
                   setOrderBy('date')
                   setOrderDirection('desc')
+                  refetch()
                 }}
               >
                 Trades

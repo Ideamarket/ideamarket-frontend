@@ -1,7 +1,8 @@
-import { useSession, signIn, signOut } from 'next-auth/client'
+import { signIn, signOut } from 'next-auth/client'
+import { useCustomSession } from 'utils/useCustomSession'
 
 const LoginAndLogoutButton = () => {
-  const [session] = useSession()
+  const { session } = useCustomSession()
 
   const onClickHandler = () => (session?.accessToken ? signOut() : signIn())
 

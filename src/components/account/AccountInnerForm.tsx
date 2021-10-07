@@ -56,7 +56,7 @@ const AccountInnerForm = ({
 
           <div className="p-3 border-b border-gray-100 dark:border-gray-400">
             <div className="text-xs text-blue-400">USERNAME</div>
-            <div className="text-xs font-semibold">{username ?? ''}</div>
+            <div className="font-semibold">{username ?? ''}</div>
           </div>
           {displayEmail && (
             <div className="p-3 border-b border-gray-100 dark:border-gray-400">
@@ -100,7 +100,7 @@ const AccountInnerForm = ({
           )}
           {displayBio && (
             <div>
-              <div className="p-3 text-xs text-blue-400">BIO</div>
+              <div className="mr-2 text-xs text-blue-400">BIO</div>
               <div className="leading-5">{bio || ''}</div>
             </div>
           )}
