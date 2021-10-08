@@ -88,7 +88,7 @@ export class PortisConnector extends AbstractConnector {
     )) as any
 
     // Portis does not natively support Arbitrum, so have to pass custom node info
-    const nodeInfo = {
+    const customNodeOptions = {
       nodeUrl:
         router.pathname === '/bridge'
           ? L1_NETWORK.getRPCURL()
@@ -99,7 +99,7 @@ export class PortisConnector extends AbstractConnector {
           : chainIdToNetwork[NETWORK.getChainID()],
     }
 
-    this.portis = new Portis(this.dAppId, nodeInfo, this.config)
+    this.portis = new Portis(this.dAppId, customNodeOptions, this.config)
 
     this.portis.onLogout(this.handleOnLogout)
     this.portis.onActiveWalletChanged(this.handleOnActiveWalletChanged)

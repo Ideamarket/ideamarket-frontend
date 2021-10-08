@@ -1,6 +1,8 @@
 import { ConnectorUpdate } from '@web3-react/types'
 import { AbstractConnector } from '@web3-react/abstract-connector'
 import invariant from 'tiny-invariant'
+import { L1_NETWORK, NETWORK } from 'store/networks'
+import router from 'next/router'
 
 const chainIdToNetwork: { [network: number]: string } = {
   1: 'mainnet',
@@ -34,17 +36,22 @@ export class FortmaticConnector extends AbstractConnector {
   }
 
   public async activate(): Promise<ConnectorUpdate> {
-    if (!this.fortmatic) {
-      const Fortmatic = (await import('fortmatic').then(
-        (m) => m?.default ?? m
-      )) as any
-      this.fortmatic = new Fortmatic(
-        this.apiKey,
-        this.chainId === 1 || this.chainId === 4
-          ? undefined
-          : chainIdToNetwork[this.chainId]
-      )
+    const Fortmatic = (await import('fortmatic').then(
+      (m) => m?.default ?? m
+    )) as any
+
+    const customNodeOptions = {
+      rpcUrl:
+        router.pathname === '/bridge'
+          ? L1_NETWORK.getRPCURL()
+          : NETWORK.getRPCURL(),
+      chainId:
+        router.pathname === '/bridge'
+          ? L1_NETWORK.getChainID()
+          : chainIdToNetwork[NETWORK.getChainID()],
     }
+
+    this.fortmatic = new Fortmatic(this.apiKey, customNodeOptions)
 
     const account = await this.fortmatic
       .getProvider()
