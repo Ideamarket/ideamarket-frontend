@@ -5,6 +5,8 @@ import { WalletLinkConnector } from '@web3-react/walletlink-connector'
 // import { PortisConnector } from '@web3-react/portis-connector'
 import { AbstractConnector } from '@web3-react/abstract-connector'
 import { getNetworkSpecifics, NETWORK } from 'store/networks'
+import { FortmaticConnector } from './fortmatic-connector'
+import { PortisConnector } from './portis-connector'
 
 const POLLING_INTERVAL = 12000
 const CHAIN_IDS = [
@@ -57,20 +59,19 @@ export async function disconnectWalletConnector(connector: AbstractConnector) {
   }
 }
 
-// export const fortmatic = new FortmaticConnector({
-//   apiKey:
-//     NETWORK.getNetworkName() === 'avm' || NETWORK.getNetworkName() === 'mainnet'
-//       ? 'pk_live_B3A1A25FBF96DCB5'
-//       : 'pk_test_4F838B34CAE38BC8',
-//   chainId: NETWORK.getChainID(),
-// })
-export const fortmatic = {}
+export const fortmatic = new FortmaticConnector({
+  apiKey:
+    NETWORK.getNetworkName() === 'avm' || NETWORK.getNetworkName() === 'mainnet'
+      ? 'pk_live_B3A1A25FBF96DCB5'
+      : 'pk_test_4F838B34CAE38BC8',
+  chainId: NETWORK.getChainID(),
+})
+// export const fortmatic = {}
 
-// export const portis = new PortisConnector({
-//   dAppId: 'bbff3259-d19c-4791-9695-5a61f3146e51',
-//   networks: CHAIN_IDS,
-// })
-export const portis = {}
+export const portis = new PortisConnector({
+  dAppId: 'bbff3259-d19c-4791-9695-5a61f3146e51',
+  networks: CHAIN_IDS,
+})
 
 export enum ConnectorIds {
   Injected = 1,

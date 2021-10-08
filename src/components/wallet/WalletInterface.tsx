@@ -179,13 +179,11 @@ export default function WalletInterface({
           svg={<Fortmatic className="w-7 h-7" />}
           name="Fortmatic"
           wallet={ConnectorIds.Fortmatic}
-          isDisabled={true}
         />
         <WalletButton
           svg={<Portis className="w-7 h-7" />}
           name="Portis"
           wallet={ConnectorIds.Portis}
-          isDisabled={true}
         />
       </div>
       <hr className="m-4" />
