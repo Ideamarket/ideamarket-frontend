@@ -69,6 +69,7 @@
     "react-time-ago": "6.2.2",
     "sha3": "^2.1.4",
     "use-breakpoint": "2.0.0",
+    "walletlink": "^2.1.11",
     "web3": "1.3.6",
     "web3-react": "^5.0.5",
     "zustand": "3.5.1"
