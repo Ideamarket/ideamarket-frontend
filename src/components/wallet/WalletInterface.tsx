@@ -20,6 +20,7 @@ import {
   connectorsById,
   ConnectorIds,
 } from 'wallets/connectors/index'
+import { Tooltip } from 'components'
 
 export default function WalletInterface({
   onWalletConnected,
@@ -101,25 +102,36 @@ export default function WalletInterface({
     svg,
     name,
     wallet,
+    isDisabled = false,
     rightSvg,
   }: {
     svg: JSX.Element
     name: string
     wallet?: number
+    isDisabled?: boolean
     rightSvg?: JSX.Element
   }) {
     return (
       <div className="flex pl-4 pr-4 mt-4">
+        {isDisabled && (
+          <Tooltip
+            className="absolute w-full h-full right-0 cursor-not-allowed"
+            IconComponent={() => <></>}
+          >
+            Arbitrum support coming soon
+          </Tooltip>
+        )}
         <button
-          disabled={connectingWallet !== 0}
+          disabled={connectingWallet !== 0 || isDisabled}
           onClick={() => onWalletClicked(wallet)}
           className={classNames(
-            connectingWallet === 0
+            connectingWallet === 0 && !isDisabled
               ? 'hover:border-transparent hover:bg-brand-blue hover:text-brand-gray cursor-pointer'
               : 'cursor-not-allowed',
             connectingWallet === wallet &&
               'border-transparent bg-brand-blue text-brand-gray',
-            'flex-grow p-2 text-lg text-black dark:text-gray-300 dark:border-gray-500 border-2 rounded-lg border-brand-gray-1 font-sf-compact-medium'
+            'flex-grow p-2 text-lg text-black dark:text-gray-300 dark:border-gray-500 border-2 rounded-lg border-brand-gray-1 font-sf-compact-medium',
+            isDisabled && 'bg-brand-gray dark:bg-gray-500'
           )}
         >
           <div className="flex flex-row items-center">
@@ -161,16 +173,19 @@ export default function WalletInterface({
           svg={<Coinbase className="w-7 h-7" />}
           name="Coinbase"
           wallet={ConnectorIds.Coinbase}
+          isDisabled={true}
         />
         <WalletButton
           svg={<Fortmatic className="w-7 h-7" />}
           name="Fortmatic"
           wallet={ConnectorIds.Fortmatic}
+          isDisabled={true}
         />
         <WalletButton
           svg={<Portis className="w-7 h-7" />}
           name="Portis"
           wallet={ConnectorIds.Portis}
+          isDisabled={true}
         />
       </div>
       <hr className="m-4" />
