@@ -17,9 +17,11 @@ export function useEagerConnect() {
       // If connected before, connect back
       if (walletStr) {
         const previousConnector = connectorsById[parseInt(walletStr)]
+        // If connector needs to check auth first, then check
         if (
-          previousConnector.isAuthorized &&
-          (await previousConnector.isAuthorized())
+          (previousConnector.isAuthorized &&
+            (await previousConnector.isAuthorized())) ||
+          !previousConnector.isAuthorized
         ) {
           if (isCancelled) {
             return
