@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import A from 'components/A'
-import { AccountContext } from 'pages/account'
+import { AccountContext } from 'pages/user-account'
 import { useContext } from 'react'
 import { accountTabs } from './constants'
 

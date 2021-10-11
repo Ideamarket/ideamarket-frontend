@@ -4,7 +4,7 @@ import TabSwitcher from './TabSwitcher'
 import SettingsTab from './SettingsTab'
 import { Footer } from 'components'
 import { accountTabs } from './constants'
-import { AccountContext } from 'pages/account'
+import { AccountContext } from 'pages/user-account'
 import ProfileWallet from './ProfileWallet'
 import copy from 'copy-to-clipboard'
 import { MinusCircleIcon } from '@heroicons/react/outline'
@@ -66,14 +66,14 @@ const AccountInnerForm = ({
           )}
           {displayEthAddresses && (
             <div className="p-3 border-b border-gray-100 dark:border-gray-400">
-              <div className="flex justify-center items-center">
-                <div className="text-xs text-blue-400 mr-2">ETH ADDRESS</div>
+              <div className="flex items-center justify-center">
+                <div className="mr-2 text-xs text-blue-400">ETH ADDRESS</div>
               </div>
               <div className="cursor-pointer">
                 {ethAddresses?.map((ethAddress, index) => (
                   <div className="flex items-center" key={index}>
                     {ethAddress.verified ? (
-                      <BadgeCheckIcon className="w-5 h-5 flex-shrink-0" />
+                      <BadgeCheckIcon className="flex-shrink-0 w-5 h-5" />
                     ) : (
                       <div className="w-5 h-5"></div>
                     )}
@@ -91,7 +91,7 @@ const AccountInnerForm = ({
                     </p>
                     <MinusCircleIcon
                       onClick={() => removeAddress(ethAddress.address)}
-                      className="w-5 h-5 cursor-pointer ml-auto flex-shrink-0"
+                      className="flex-shrink-0 w-5 h-5 ml-auto cursor-pointer"
                     />
                   </div>
                 ))}

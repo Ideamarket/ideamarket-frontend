@@ -1,8 +1,15 @@
 import classNames from 'classnames'
-import { useCallback, useRef, MutableRefObject } from 'react'
+import { useEffect, useState } from 'react'
 import { LockedIdeaTokenMarketPair } from 'store/ideaMarketsStore'
+import {
+  bigNumberTenPow18,
+  calculateCurrentPriceBN,
+  web3BNToFloatString,
+} from 'utils'
 import LockedTokenRowSkeleton from './LockedTokenRowSkeleton'
 import LockedTokenRow from './LockedTokenRow'
+import TablePagination from './TablePagination'
+import { sortNumberByOrder, sortStringByOrder } from './utils'
 
 type Header = {
   title: string
@@ -48,103 +55,198 @@ const headers: Header[] = [
   },
 ]
 
-type LockedTokenTableProps = {
-  rawPairs: LockedIdeaTokenMarketPair[]
-  isPairsDataLoading: boolean
-  canFetchMore: boolean
-  orderDirection: string
-  orderBy: string
-  fetchMore: () => any
-  headerClicked: (value: string) => void
-}
-
 export default function LockedTokenTable({
   rawPairs,
   isPairsDataLoading,
-  canFetchMore,
-  orderDirection,
-  orderBy,
-  fetchMore,
-  headerClicked,
-}: LockedTokenTableProps) {
-  const TOKENS_PER_PAGE = 10
+  currentPage,
+  setCurrentPage,
+}: {
+  rawPairs: LockedIdeaTokenMarketPair[]
+  isPairsDataLoading: boolean
+  currentPage: number
+  setCurrentPage: (p: number) => void
+}) {
+  const TOKENS_PER_PAGE = 6
 
-  const observer: MutableRefObject<any> = useRef()
-  const lastElementRef = useCallback(
-    (node) => {
-      if (observer.current) observer.current.disconnect()
+  const [currentHeader, setCurrentHeader] = useState('lockedUntil')
+  const [orderBy, setOrderBy] = useState('lockedUntil')
+  const [orderDirection, setOrderDirection] = useState('asc')
 
-      observer.current = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting && canFetchMore) {
-          fetchMore()
-        }
+  const [pairs, setPairs]: [LockedIdeaTokenMarketPair[], any] = useState([])
+
+  useEffect(() => {
+    if (!rawPairs) {
+      setPairs([])
+      return
+    }
+
+    let sorted
+    const strCmpFunc = sortStringByOrder(orderDirection)
+    const numCmpFunc = sortNumberByOrder(orderDirection)
+
+    if (orderBy === 'name') {
+      sorted = rawPairs.sort((lhs, rhs) => {
+        return strCmpFunc(lhs.token.name, rhs.token.name)
       })
+    } else if (orderBy === 'market') {
+      sorted = rawPairs.sort((lhs, rhs) => {
+        return strCmpFunc(lhs.market.name, rhs.market.name)
+      })
+    } else if (orderBy === 'price') {
+      sorted = rawPairs.sort((lhs, rhs) => {
+        return numCmpFunc(
+          parseFloat(lhs.token.supply),
+          parseFloat(rhs.token.supply)
+        )
+      })
+    } else if (orderBy === 'lockedUntil') {
+      sorted = rawPairs.sort((lhs, rhs) => {
+        return numCmpFunc(lhs.lockedUntil, rhs.lockedUntil)
+      })
+    } else if (orderBy === 'balance') {
+      sorted = rawPairs.sort((lhs, rhs) => {
+        return numCmpFunc(parseFloat(lhs.balance), parseFloat(rhs.balance))
+      })
+    } else if (orderBy === 'value') {
+      sorted = rawPairs.sort((lhs, rhs) => {
+        const lhsValue =
+          parseFloat(
+            web3BNToFloatString(
+              calculateCurrentPriceBN(
+                lhs.token.rawSupply,
+                lhs.market.rawBaseCost,
+                lhs.market.rawPriceRise,
+                lhs.market.rawHatchTokens
+              ),
+              bigNumberTenPow18,
+              2
+            )
+          ) * parseFloat(lhs.balance)
 
-      if (node) observer.current.observe(node)
-    },
-    [canFetchMore, fetchMore]
-  )
+        const rhsValue =
+          parseFloat(
+            web3BNToFloatString(
+              calculateCurrentPriceBN(
+                rhs.token.rawSupply,
+                rhs.market.rawBaseCost,
+                rhs.market.rawPriceRise,
+                rhs.market.rawHatchTokens
+              ),
+              bigNumberTenPow18,
+              2
+            )
+          ) * parseFloat(rhs.balance)
+
+        return numCmpFunc(lhsValue, rhsValue)
+      })
+    } else {
+      sorted = rawPairs
+    }
+
+    const sliced = sorted.slice(
+      currentPage * TOKENS_PER_PAGE,
+      currentPage * TOKENS_PER_PAGE + TOKENS_PER_PAGE
+    )
+    setPairs(sliced)
+  }, [rawPairs, orderBy, orderDirection, currentPage, TOKENS_PER_PAGE])
+
+  function headerClicked(headerValue: string) {
+    setCurrentPage(0)
+    if (currentHeader === headerValue) {
+      if (orderDirection === 'asc') {
+        setOrderDirection('desc')
+      } else {
+        setOrderDirection('asc')
+      }
+    } else {
+      setCurrentHeader(headerValue)
+      setOrderBy(headerValue)
+      setOrderDirection('desc')
+    }
+  }
 
   return (
-    <div className="flex flex-col">
-      <div className="-my-2 overflow-x-auto">
-        <div className="inline-block min-w-full py-2 align-middle">
-          <div className="overflow-hidden dark:border-gray-500">
-            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-500">
-              <thead className="hidden md:table-header-group">
-                <tr>
-                  {headers.map((header) => (
-                    <th
-                      className={classNames(
-                        'px-5 py-4 text-sm font-semibold leading-4 tracking-wider text-left text-brand-gray-4 bg-gray-100 dark:bg-gray-600 dark:text-gray-300 bg-gray-50',
-                        header.sortable && 'cursor-pointer'
-                      )}
-                      key={header.value}
-                      onClick={() => {
-                        if (header.sortable) {
-                          headerClicked(header.value)
-                        }
-                      }}
-                    >
-                      {header.sortable && (
-                        <>
-                          {orderBy === header.value &&
-                            orderDirection === 'asc' && <span>&#x25B2;</span>}
-                          {orderBy === header.value &&
-                            orderDirection === 'desc' && <span>&#x25bc;</span>}
-                          &nbsp;
-                        </>
-                      )}
-                      {header.title}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-700">
-                {rawPairs.map((pair, index) => (
-                  <LockedTokenRow
-                    key={index}
-                    token={pair.token}
-                    market={pair.market}
-                    balance={pair.balance}
-                    balanceBN={pair.rawBalance}
-                    lockedUntil={pair.lockedUntil}
-                    isL1={pair.token.isL1}
-                    lastElementRef={
-                      rawPairs.length === index + 1 ? lastElementRef : null
-                    }
-                  />
-                ))}
-                {isPairsDataLoading
-                  ? Array.from(Array(TOKENS_PER_PAGE).keys()).map((token) => (
+    <>
+      <div className="flex flex-col">
+        <div className="-my-2 overflow-x-auto">
+          <div className="inline-block min-w-full py-2 align-middle">
+            <div className="overflow-hidden dark:border-gray-500">
+              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-500">
+                <thead className="hidden md:table-header-group">
+                  <tr>
+                    {headers.map((header) => (
+                      <th
+                        className={classNames(
+                          'px-5 py-4 text-sm font-semibold leading-4 tracking-wider text-left text-brand-gray-4 bg-gray-100 dark:bg-gray-600 dark:text-gray-300 bg-gray-50',
+                          header.sortable && 'cursor-pointer'
+                        )}
+                        key={header.value}
+                        onClick={() => {
+                          if (header.sortable) {
+                            headerClicked(header.value)
+                          }
+                        }}
+                      >
+                        {header.sortable && (
+                          <>
+                            {currentHeader === header.value &&
+                              orderDirection === 'asc' && <span>&#x25B2;</span>}
+                            {currentHeader === header.value &&
+                              orderDirection === 'desc' && (
+                                <span>&#x25bc;</span>
+                              )}
+                            &nbsp;
+                          </>
+                        )}
+                        {header.title}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-700">
+                  {isPairsDataLoading ? (
+                    Array.from(Array(TOKENS_PER_PAGE).keys()).map((token) => (
                       <LockedTokenRowSkeleton key={token} />
                     ))
-                  : null}
-              </tbody>
-            </table>
+                  ) : (
+                    <>
+                      {pairs.map((pair, i) => (
+                        <LockedTokenRow
+                          key={i}
+                          token={pair.token}
+                          market={pair.market}
+                          balance={pair.balance}
+                          balanceBN={pair.rawBalance}
+                          lockedUntil={pair.lockedUntil}
+                          isL1={pair.token.isL1}
+                        />
+                      ))}
+
+                      {Array.from(
+                        Array(
+                          TOKENS_PER_PAGE - (pairs?.length ?? 0) >= 0
+                            ? TOKENS_PER_PAGE - (pairs?.length ?? 0)
+                            : 0
+                        )
+                      ).map((a, b) => (
+                        <tr
+                          key={`${'filler-' + b.toString()}`}
+                          className="hidden h-16 md:table-row"
+                        ></tr>
+                      ))}
+                    </>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+      <TablePagination
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        pairs={pairs}
+      />
+    </>
   )
 }

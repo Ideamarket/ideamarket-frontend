@@ -5,10 +5,11 @@ import { useState, useEffect } from 'react'
 import { useInfiniteQuery } from 'react-query'
 import {
   MarketSelect,
-  OwnedTokenTable,
-  MyTokenTable,
-  LockedTokenTable,
+  OwnedTokenTableNew,
+  MyTokenTableNew,
+  LockedTokenTableNew,
   WalletModal,
+  MyTradesTableNew,
 } from '../../components'
 import { useWalletStore } from '../../store/walletStore'
 import {
@@ -28,7 +29,6 @@ import {
   LockedIdeaTokenMarketPair,
 } from 'store/ideaMarketsStore'
 import ModalService from 'components/modals/ModalService'
-import MyTradesTable from 'components/tokens/MyTradesTable/MyTradesTable'
 import { sortNumberByOrder, sortStringByOrder } from 'components/tokens/utils'
 
 const TOKENS_PER_PAGE = 10
@@ -648,7 +648,7 @@ export default function ProfileWallet() {
             </div>
           )}
           {table === 'holdings' && web3 !== undefined && (
-            <OwnedTokenTable
+            <OwnedTokenTableNew
               rawPairs={ownedPairs}
               isPairsDataLoading={isOwnedPairsDataLoading}
               refetch={refetch}
@@ -660,7 +660,7 @@ export default function ProfileWallet() {
             />
           )}
           {table === 'listings' && web3 !== undefined && (
-            <MyTokenTable
+            <MyTokenTableNew
               rawPairs={listingPairs}
               isPairsDataLoading={isListingsPairsDataLoading}
               canFetchMore={canFetchMoreListings}
@@ -672,7 +672,7 @@ export default function ProfileWallet() {
           )}
 
           {table === 'locked' && web3 !== undefined && (
-            <LockedTokenTable
+            <LockedTokenTableNew
               rawPairs={lockedPairs}
               isPairsDataLoading={isLockedPairsDataLoading}
               canFetchMore={canFetchMoreLocked}
@@ -683,7 +683,7 @@ export default function ProfileWallet() {
             />
           )}
           {table === 'trades' && web3 !== undefined && (
-            <MyTradesTable
+            <MyTradesTableNew
               rawPairs={myTrades}
               isPairsDataLoading={isTradesPairsDataLoading}
               canFetchMore={canFetchMoreTrades}

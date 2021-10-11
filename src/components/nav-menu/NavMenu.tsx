@@ -11,6 +11,7 @@ import MobileNavItems from './MobileNavItems'
 import NavItem from './NavItem'
 import NavThemeButton from './NavThemeButton'
 import LoginAndLogoutButton from './LoginAndLogoutButton'
+import IS_ACCOUNT_ENABLED from 'utils/isAccountEnabled'
 
 const NavMenu = () => {
   const router = useRouter()
@@ -62,13 +63,13 @@ const NavMenu = () => {
           <div className="hidden md:flex">
             <NavThemeButton />
             <WalletStatus openModal={() => ModalService.open(WalletModal)} />
-            <LoginAndLogoutButton />
+            {IS_ACCOUNT_ENABLED && <LoginAndLogoutButton />}
           </div>
           {/* Desktop END */}
 
           {/* Mobile START */}
           <div className="flex ml-auto md:hidden">
-            <LoginAndLogoutButton />
+            {IS_ACCOUNT_ENABLED && <LoginAndLogoutButton />}
 
             <button
               onClick={() => setMobileNavOpen(!isMobileNavOpen)}

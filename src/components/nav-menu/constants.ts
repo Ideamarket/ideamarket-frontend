@@ -1,4 +1,5 @@
 import router from 'next/router'
+import IS_ACCOUNT_ENABLED from 'utils/isAccountEnabled'
 
 export const navbarConfig: any = {
   menu: [
@@ -79,8 +80,9 @@ export const navbarConfig: any = {
       onClick: () => router.push('/bridge'),
     },
     {
-      name: 'Account',
-      onClick: () => router.push('/account'),
+      name: IS_ACCOUNT_ENABLED ? 'Account' : 'Wallet',
+      onClick: () =>
+        router.push(IS_ACCOUNT_ENABLED ? '/user-account' : '/account'),
     },
   ],
 }

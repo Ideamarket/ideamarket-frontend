@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { AccountContext } from 'pages/account'
+import { AccountContext } from 'pages/user-account'
 import { VisibilityOptions } from '.'
 
 const SettingsTab = () => {
