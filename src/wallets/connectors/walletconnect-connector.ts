@@ -1,127 +1,133 @@
-import { ConnectorUpdate } from '@web3-react/types'
-import { AbstractConnector } from '@web3-react/abstract-connector'
-import { IWCEthRpcConnectionOptions } from '@walletconnect/types'
+import type { EventEmitter } from 'events'
+import type WalletConnectProvider from '@walletconnect/ethereum-provider'
+import type { IWCEthRpcConnectionOptions } from '@walletconnect/types'
+import type { State, StoreApi } from 'zustand/vanilla'
 
-export const URI_AVAILABLE = 'URI_AVAILABLE'
-
-export interface WalletConnectConnectorArguments
-  extends IWCEthRpcConnectionOptions {
-  supportedChainIds?: number[]
+export interface Web3ReactState extends State {
+  chainId: number | undefined
+  accounts: string[] | undefined
+  activating: boolean
+  error: Error | undefined
 }
 
-export class UserRejectedRequestError extends Error {
-  public constructor() {
-    super()
-    this.name = this.constructor.name
-    this.message = 'The user rejected the request.'
-  }
+export type Web3ReactStore = StoreApi<Web3ReactState>
+
+export interface Actions {
+  startActivation: () => void
+  update: (state: Partial<Pick<Web3ReactState, 'chainId' | 'accounts'>>) => void
+  reportError: (error: Error) => void
 }
 
-function getSupportedChains({
-  supportedChainIds,
-  rpc,
-}: WalletConnectConnectorArguments): number[] | undefined {
-  if (supportedChainIds) {
-    return supportedChainIds
-  }
-
-  return rpc ? Object.keys(rpc).map((k) => Number(k)) : undefined
+// per EIP-1193
+export interface RequestArguments {
+  readonly method: string
+  readonly params?: readonly unknown[] | object
 }
 
-export class WalletConnectConnector extends AbstractConnector {
-  private readonly config: WalletConnectConnectorArguments
+// per EIP-1193
+export interface Provider extends EventEmitter {
+  request(args: RequestArguments): Promise<unknown>
+}
 
-  public walletConnectProvider?: any
+export abstract class Connector {
+  protected readonly actions: Actions
+  public provider: Provider | undefined
+  public deactivate?(): Promise<void>
 
-  constructor(config: WalletConnectConnectorArguments) {
-    super({ supportedChainIds: getSupportedChains(config) })
-
-    this.config = config
-
-    this.handleChainChanged = this.handleChainChanged.bind(this)
-    this.handleAccountsChanged = this.handleAccountsChanged.bind(this)
-    this.handleDisconnect = this.handleDisconnect.bind(this)
+  constructor(actions: Actions) {
+    this.actions = actions
   }
 
-  private handleChainChanged(chainId: number | string): void {
-    // if (__DEV__) {
-    //   console.log("Handling 'chainChanged' event with payload", chainId)
-    // }
-    this.emitUpdate({ chainId })
-  }
+  public abstract activate(): Promise<void>
+}
 
-  private handleAccountsChanged(accounts: string[]): void {
-    // if (__DEV__) {
-    //   console.log("Handling 'accountsChanged' event with payload", accounts)
-    // }
-    this.emitUpdate({ account: accounts[0] })
-  }
+interface MockWalletConnectProvider
+  extends Omit<WalletConnectProvider, 'on' | 'off' | 'once' | 'removeListener'>,
+    EventEmitter {}
 
-  private handleDisconnect(): void {
-    // if (__DEV__) {
-    //   console.log("Handling 'disconnect' event")
-    // }
-    this.emitDeactivate()
-  }
+export class WalletConnect extends Connector {
+  private readonly options?: IWCEthRpcConnectionOptions
+  private providerPromise?: Promise<void>
 
-  public async activate(): Promise<ConnectorUpdate> {
-    const WalletConnectProvider = (await import(
-      '@walletconnect/ethereum-provider'
-    ).then((m) => m?.default ?? m)) as any
-    this.walletConnectProvider = new WalletConnectProvider(this.config)
+  public provider: MockWalletConnectProvider | undefined
 
-    this.walletConnectProvider.on('chainChanged', this.handleChainChanged)
-    this.walletConnectProvider.on('accountsChanged', this.handleAccountsChanged)
-    this.walletConnectProvider.on('disconnect', this.handleDisconnect)
+  constructor(
+    actions: Actions,
+    options?: IWCEthRpcConnectionOptions,
+    connectEagerly = true
+  ) {
+    super(actions)
+    this.options = options
 
-    const account = await this.walletConnectProvider
-      .enable()
-      .then((accounts: string[]): string => accounts[0])
-      .catch((error: Error): void => {
-        // TODO ideally this would be a better check
-        if (error.message === 'User closed modal') {
-          throw new UserRejectedRequestError()
-        }
-
-        throw error
-      })
-
-    return { provider: this.walletConnectProvider, account }
-  }
-
-  public async getProvider(): Promise<any> {
-    return this.walletConnectProvider
-  }
-
-  public async getChainId(): Promise<number | string> {
-    return Promise.resolve(this.walletConnectProvider.chainId)
-  }
-
-  public async getAccount(): Promise<null | string> {
-    return Promise.resolve(this.walletConnectProvider.accounts).then(
-      (accounts: string[]): string => accounts[0]
-    )
-  }
-
-  public deactivate() {
-    if (this.walletConnectProvider) {
-      this.walletConnectProvider.removeListener(
-        'disconnect',
-        this.handleDisconnect
-      )
-      this.walletConnectProvider.removeListener(
-        'chainChanged',
-        this.handleChainChanged
-      )
-      this.walletConnectProvider.removeListener(
-        'accountsChanged',
-        this.handleAccountsChanged
-      )
-      this.walletConnectProvider.disconnect()
+    if (connectEagerly) {
+      this.providerPromise = this.startListening(connectEagerly)
     }
   }
 
-  public async close() {
-    this.emitDeactivate()
+  private async startListening(connectEagerly: boolean): Promise<void> {
+    const WalletConnectProvider = (await import(
+      '@walletconnect/ethereum-provider'
+    ).then((m) => m?.default ?? m)) as any
+
+    this.provider = new WalletConnectProvider(
+      this.options
+    ) as unknown as MockWalletConnectProvider
+
+    this.provider.on('disconnect', (error: Error): void => {
+      this.actions.reportError(error)
+    })
+    this.provider.on('chainChanged', (chainId: number): void => {
+      this.actions.update({ chainId })
+    })
+    this.provider.on('accountsChanged', (accounts: string[]): void => {
+      this.actions.update({ accounts })
+    })
+
+    // silently attempt to eagerly connect
+    if (connectEagerly && this.provider.connected) {
+      Promise.all([
+        this.provider.request({ method: 'eth_chainId' }) as Promise<number>,
+        this.provider.request({ method: 'eth_accounts' }) as Promise<string[]>,
+      ])
+        .then(([chainId, accounts]) => {
+          if (accounts.length > 0) {
+            this.actions.update({ chainId, accounts })
+          }
+        })
+        .catch((error) => {
+          console.debug('Could not connect eagerly', error)
+        })
+    }
+  }
+
+  public async activate(): Promise<void> {
+    this.actions.startActivation()
+
+    if (!this.providerPromise) {
+      this.providerPromise = this.startListening(false)
+    }
+    await this.providerPromise
+    // this.provider guaranteed to be defined now
+
+    await Promise.all([
+      (this.provider as Provider).request({
+        method: 'eth_chainId',
+      }) as Promise<number>,
+      (this.provider as Provider).request({
+        method: 'eth_requestAccounts',
+      }) as Promise<string[]>,
+    ])
+      .then(([chainId, accounts]) => {
+        this.actions.update({ chainId, accounts })
+      })
+      .catch((error) => {
+        this.actions.reportError(error)
+      })
+  }
+
+  public async deactivate(): Promise<void> {
+    if (this.provider) {
+      await this.provider.disconnect()
+    }
   }
 }
