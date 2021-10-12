@@ -9,7 +9,6 @@ import usePrevious from 'utils/usePrevious'
 export function useEagerConnect() {
   const { activate, active, library, account } = useWeb3React()
   const { session, loading, refetchSession } = useCustomSession()
-  // console.log({ account })
 
   const [tried, setTried] = useState(false)
 
@@ -55,7 +54,7 @@ export function useEagerConnect() {
       setTried(true)
     }
 
-    if (prevAccount !== account) {
+    if (library && prevAccount !== account) {
       setWeb3(library, undefined, session, refetchSession)
     }
   }, [
