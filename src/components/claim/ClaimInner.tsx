@@ -57,13 +57,6 @@ const ClaimInner = () => {
       <div className="flex flex-col items-start justify-center p-8 bg-white rounded-lg md:p-16 md:pb-32 md:flex-row dark:bg-gray-500">
         <div className="md:grid md:grid-cols-2 md:gap-8">
           <div className="mb-8 md:mb-0">
-            <div className="flex-row hidden max-w-md font-extrabold md:flex">
-              <div>1. Claim</div>
-              <span className="inline-block w-2 ml-2 mr-2">
-                <Image src="/arrow-dark.svg" height={12} width={8} alt="" />
-              </span>
-              <div className="opacity-50">2. Stake</div>
-            </div>
             <div className="visible mb-4 text-xl md:invisible">Claim</div>
 
             <div className="my-6 text-4xl font-extrabold">
@@ -97,16 +90,23 @@ const ClaimInner = () => {
                     <input
                       onChange={(e) => onAddressChange(e.target.value)}
                       value={address}
-                      placeholder="Wallet address or ENS name"
-                      className="w-full h-10 px-2 border border-gray-200 dark:border-gray-500 rounded-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:text-gray-300 dark:bg-gray-600 dark:placeholder-gray-200"
+                      placeholder="Wallet address"
+                      className="w-full h-10 px-2 border border-gray-200 rounded-md dark:border-gray-500 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:text-gray-300 dark:bg-gray-600 dark:placeholder-gray-200"
                     />
+                    {claimableIMO === 0 && address.length > 0 && (
+                      <div className="pt-2 text-sm text-red-500">
+                        {claimableIMO === 0
+                          ? 'No tokens available'
+                          : 'Invalid address'}
+                      </div>
+                    )}
                   </div>
                   {txManager.isPending && (
                     <>
                       <div className="mt-2 text-xs text-center text-gray-500">
                         Confirm transaction in wallet to complete.
                       </div>
-                      <div className="grid grid-cols-3 my-5 text-sm text-brand-new-dark font-semibold">
+                      <div className="grid grid-cols-3 my-5 text-sm font-semibold text-brand-new-dark">
                         <div className="font-bold justify-self-center">
                           {txManager.name}
                         </div>
@@ -170,7 +170,7 @@ const ClaimInner = () => {
                 )}
               </>
             ) : (
-              <div className="flex h-full justify-center items-center">
+              <div className="flex items-center justify-center h-full">
                 <button
                   onClick={() => {
                     ModalService.open(WalletModal)
