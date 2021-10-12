@@ -20,6 +20,7 @@
   "twitterHandleNameVerifier": "0x3B239f8a6fff26F30cA25F4A833BcC123063DEC2",
   "substackNameVerifier": "0x51953AD6b19e96A1c124861eC58201D081300996",
   "ideaTokenLogic": "0x38BE12e4FD027604123F3d4eb09E35Cd4dd8272f",
+  "merkleDistributor": "0x460e6a71E9E8146C83f96126Ee3DA675a90eBCe9",
   "mirrorNameVerifier": "0x6Dc191EBDf11B4f3DD3054874782f0BEA2279CA6",
   "youtubeNameVerifier": "0x0c9b3541aF60e2933796f19D1Fc575f64BcbB64A",
   "showtimeNameVerifier": "0x08AeC1a863141FC34c8726a896FC0Efd88d0eEfE",
