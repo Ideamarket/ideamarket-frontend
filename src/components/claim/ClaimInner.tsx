@@ -70,11 +70,9 @@ const ClaimInner = () => {
               Lorem ipsum dolor sit amet, consectetur
             </div>
             <div className="text-base leading-8">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vel
-              congue nibh scelerisque cursus enim. Lectus dui interdum neque
-              libero et arcu, scelerisque libero. Diam ut turpis enim amet, quis
-              fermentum risus egestas dui. Viverra elementum pharetra risus elit
-              montes, nisl venenatis arcu.
+              You can view the claimable amount of an address by entering it in
+              the input box below. For the claim button to become enabled you
+              need to have connected the corresponding wallet.
             </div>
           </div>
           <div>
@@ -92,7 +90,7 @@ const ClaimInner = () => {
                   </div>
                   <div className="px-6 py-4 leading-8">
                     Enter an address to trigger a IMO claim. If the address has
-                    any claimable UNI it will be sent to them on submission
+                    any claimable IMO it will be sent to them on submission.
                   </div>
                   <div className="px-6 py-4 font-extrabold">
                     <div className="pb-1 font-extrabold">Recipient</div>
