@@ -17,13 +17,6 @@ const RPC_URLS: { [chainId: number]: string } = getNetworkSpecifics().reduce(
   {}
 )
 
-export function getRPCUrl() {
-  if (isMainnet) {
-    return RPC_URLS[1]
-  }
-  return RPC_URLS[4]
-}
-
 export const injected = new InjectedConnector({
   supportedChainIds: CHAIN_IDS,
 })

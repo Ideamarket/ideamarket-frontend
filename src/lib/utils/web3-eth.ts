@@ -1,7 +1,7 @@
-import { getRPCUrl } from 'wallets/connectors'
+import { NETWORK } from 'store/networks'
 import Web3 from 'web3'
 
-const web3 = new Web3(getRPCUrl())
+const web3 = new Web3(NETWORK.getRPCURL())
 
 /**
  * Recovers the address from signature
