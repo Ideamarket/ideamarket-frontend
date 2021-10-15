@@ -61,10 +61,13 @@ export function getNetworkSpecificsByNetworkName(
 }
 
 export function getL1Network(l2Network: INetworkSpecifics) {
+  // Sometimes network passed in is L1Network
   switch (l2Network.getNetworkName()) {
     case 'avm':
+    case 'mainnet':
       return getNetworkSpecificsByNetworkName('mainnet')
     case 'test-avm-l2':
+    case 'test-avm-l1':
       return getNetworkSpecificsByNetworkName('test-avm-l1')
     default:
       throw Error('getL1Network: missing')
@@ -77,8 +80,9 @@ if (!process.env.NEXT_PUBLIC_NETWORK) {
 
 const networkName = process.env.NEXT_PUBLIC_NETWORK
   ? process.env.NEXT_PUBLIC_NETWORK
-  : 'rinkeby'
+  : 'test-avm-l2'
 
+// Gets network based on NEXT_PUBLIC_NETWORK environment variable
 export const NETWORK = getNetworkSpecificsByNetworkName(networkName)
 export const L1_NETWORK = getL1Network(NETWORK)
 
