@@ -128,7 +128,9 @@ const AccountInnerForm = ({
           )}
         </div>
         {cardTab === accountTabs.SETTINGS && <SettingsTab />}
-        {cardTab === accountTabs.PROFILE && <ProfileWallet />}
+        {cardTab === accountTabs.PROFILE && (
+          <ProfileWallet walletState="signedIn" userData={getValues()} />
+        )}
       </div>
       <Footer />
     </div>

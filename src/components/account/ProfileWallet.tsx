@@ -48,9 +48,19 @@ const infiniteQueryConfig = {
   enabled: false,
 }
 
-export default function ProfileWallet() {
+type Props = {
+  walletState: string // This stores whether wallet is on public page, signed-in account page, or non-signed-in account page
+  userData?: any
+}
+
+export default function ProfileWallet({ walletState, userData }: Props) {
   const web3 = useWalletStore((state) => state)
   const address = useWalletStore((state) => state.address)
+  const verifiedAddresses = userData?.ethAddresses?.filter(
+    (item) => item?.verified
+  )
+  // Addresses that will be displayed in the tables
+  const finalAddresses = getFinalAddresses()
 
   const [selectedMarket, setSelectedMarket] = useState(undefined)
   const [ownedTokenTotalValue, setOwnedTokensTotalValue] = useState('0.00')
@@ -122,7 +132,7 @@ export default function ProfileWallet() {
       refetch()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [address, web3])
+  }, [address, web3, orderBy, orderDirection])
 
   function refetch() {
     refetchOwned()
@@ -136,11 +146,16 @@ export default function ProfileWallet() {
     numTokens: number,
     skip: number = 0
   ) {
-    const result = await queryOwnedTokensMaybeMarket(
-      key,
-      selectedMarket,
-      address
-    )
+    let result = []
+    for (let i = 0; i < finalAddresses?.length; i++) {
+      const queryResult = await queryOwnedTokensMaybeMarket(
+        key,
+        selectedMarket,
+        finalAddresses[i]?.address
+      )
+      result = result.concat(queryResult)
+    }
+
     sortOwned(result)
 
     // Calculate the total value of non-locked tokens
@@ -169,7 +184,15 @@ export default function ProfileWallet() {
     numTokens: number,
     skip: number = 0
   ) {
-    const result = await queryMyTokensMaybeMarket(key, selectedMarket, address)
+    let result = []
+    for (let i = 0; i < finalAddresses?.length; i++) {
+      const queryResult = await queryMyTokensMaybeMarket(
+        key,
+        selectedMarket,
+        finalAddresses[i]?.address
+      )
+      result = result.concat(queryResult)
+    }
     sortListings(result)
 
     const lastIndex =
@@ -183,7 +206,15 @@ export default function ProfileWallet() {
     numTokens: number,
     skip: number = 0
   ) {
-    const result = await queryLockedTokens(key, selectedMarket, address)
+    let result = []
+    for (let i = 0; i < finalAddresses?.length; i++) {
+      const queryResult = await queryLockedTokens(
+        key,
+        selectedMarket,
+        finalAddresses[i]?.address
+      )
+      result = result.concat(queryResult)
+    }
     sortLocked(result)
 
     // Calculate the total value of locked tokens
@@ -212,7 +243,15 @@ export default function ProfileWallet() {
     numTokens: number,
     skip: number = 0
   ) {
-    const result = await queryMyTrades(key, selectedMarket, address)
+    let result = []
+    for (let i = 0; i < finalAddresses?.length; i++) {
+      const queryResult = await queryMyTrades(
+        key,
+        selectedMarket,
+        finalAddresses[i]?.address
+      )
+      result = result.concat(queryResult)
+    }
     sortTrades(result)
     // Calculate the total purchase value
     let purchaseTotal = new BN('0')
@@ -493,6 +532,17 @@ export default function ProfileWallet() {
     }
   }
 
+  function getFinalAddresses() {
+    switch (walletState) {
+      case 'public':
+        return verifiedAddresses
+      case 'signedIn':
+        return userData?.ethAddresses
+      case 'signedOut':
+        return [{ address, verified: false }]
+    }
+  }
+
   function headerClicked(headerValue: string) {
     if (orderBy === headerValue) {
       if (orderDirection === 'asc') {
@@ -504,8 +554,6 @@ export default function ProfileWallet() {
       setOrderBy(headerValue)
       setOrderDirection('desc')
     }
-
-    return refetch()
   }
 
   return (
@@ -562,7 +610,6 @@ export default function ProfileWallet() {
                   setTable('holdings')
                   setOrderBy('price')
                   setOrderDirection('desc')
-                  refetch()
                 }}
               >
                 Holdings
@@ -578,7 +625,6 @@ export default function ProfileWallet() {
                   setTable('listings')
                   setOrderBy('price')
                   setOrderDirection('desc')
-                  refetch()
                 }}
               >
                 Listings
@@ -596,7 +642,6 @@ export default function ProfileWallet() {
                   setTable('locked')
                   setOrderBy('lockedUntil')
                   setOrderDirection('asc')
-                  refetch()
                 }}
               >
                 Locked
@@ -612,7 +657,6 @@ export default function ProfileWallet() {
                   setTable('trades')
                   setOrderBy('date')
                   setOrderDirection('desc')
-                  refetch()
                 }}
               >
                 Trades

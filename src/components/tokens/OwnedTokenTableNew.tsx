@@ -139,7 +139,7 @@ export default function OwnedTokenTable({
               <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-700 dark:divide-gray-500">
                 {rawPairs.map((pair, index) => (
                   <OwnedTokenRowNew
-                    key={pair.token.address}
+                    key={index}
                     token={pair.token}
                     market={pair.market}
                     balance={pair.balance}

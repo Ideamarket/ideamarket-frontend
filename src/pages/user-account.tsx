@@ -181,7 +181,7 @@ const Account = () => {
                   </div>
                   <LoginAndLogoutButton />
                 </div>
-                <ProfileWallet />
+                <ProfileWallet walletState="signedOut" />
               </div>
             </div>
           </div>
