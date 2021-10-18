@@ -1,11 +1,14 @@
-import { Footer } from 'components'
+import { Footer, WalletModal } from 'components'
 import Image from 'next/image'
 import { useState } from 'react'
 import classNames from 'classnames'
 import StakePriceItem from './StakePriceItem'
+import { useWeb3React } from '@web3-react/core'
+import ModalService from 'components/modals/ModalService'
 
 const StakeInner = () => {
   const [isStakeSelected, setIsStakeSelected] = useState(true)
+  const { account } = useWeb3React()
 
   const toggleIsStake = () => setIsStakeSelected(!isStakeSelected)
 
@@ -13,7 +16,7 @@ const StakeInner = () => {
     <div className="w-11/12 max-w-5xl mx-auto my-0 md:pt-24 font-inter w-90">
       <div className="flex flex-col items-end mx-4">
         <div className="invisible mb-4 text-4xl italic text-white md:visible">
-          Claim
+          Stake
         </div>
         <div className="flex justify-between w-full mb-2 md:justify-end"></div>
       </div>
@@ -55,7 +58,7 @@ const StakeInner = () => {
                   <div>
                     <div className="text-3xl font-extrabold">4.91%</div>
                     <div className="mt-2 font-extrabold text-sx">
-                      Yesteday's APR
+                      Yesterday's APR
                     </div>
                   </div>
                 </div>
@@ -117,16 +120,27 @@ const StakeInner = () => {
               </div>
 
               <div className="px-6 py-4">
-                <button
-                  className={classNames(
-                    'w-full py-2 text-white rounded-lg',
-                    true
-                      ? 'text-gray-500 dark:text-gray-300 bg-brand-gray dark:bg-gray-500 cursor-default border-brand-gray'
-                      : 'bg-brand-blue hover:bg-blue-800 cursor-pointer'
-                  )}
-                >
-                  Stake
-                </button>
+                {account ? (
+                  <button
+                    className={classNames(
+                      'w-full py-2 text-white rounded-lg',
+                      true
+                        ? 'text-gray-500 dark:text-gray-300 bg-brand-gray dark:bg-gray-500 cursor-default border-brand-gray'
+                        : 'bg-brand-blue hover:bg-blue-800 cursor-pointer'
+                    )}
+                  >
+                    Stake
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => {
+                      ModalService.open(WalletModal)
+                    }}
+                    className="w-full py-2 text-white border-2 rounded-lg border-brand-blue bg-brand-blue"
+                  >
+                    Connect wallet
+                  </button>
+                )}
               </div>
             </div>
             <div className="justify-between block p-8 mt-8 border-2 rounded-lg md:hidden radius sm:flex">
