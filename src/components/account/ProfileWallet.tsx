@@ -67,6 +67,23 @@ export default function ProfileWallet({ walletState, userData }: Props) {
   const [lockedTokenTotalValue, setLockedTokensTotalValue] = useState('0.00')
   const [purchaseTotalValue, setPurchaseTotalValue] = useState('0.00')
 
+  /*
+   * @return list of tokens from all ETH addresses
+   */
+  const queryIterator = async (key, queryFunction) => {
+    let result = []
+    for (let i = 0; i < finalAddresses?.length; i++) {
+      const queryResult = await queryFunction(
+        key,
+        selectedMarket,
+        finalAddresses[i]?.address
+      )
+      result = result.concat(queryResult)
+    }
+
+    return result
+  }
+
   const {
     data: infiniteOwnedData,
     isFetching: isOwnedPairsDataLoading,
@@ -144,16 +161,7 @@ export default function ProfileWallet({ walletState, userData }: Props) {
     numTokens: number,
     skip: number = 0
   ) {
-    let result = []
-    for (let i = 0; i < finalAddresses?.length; i++) {
-      const queryResult = await queryOwnedTokensMaybeMarket(
-        key,
-        selectedMarket,
-        finalAddresses[i]?.address
-      )
-      result = result.concat(queryResult)
-    }
-
+    const result = await queryIterator(key, queryOwnedTokensMaybeMarket)
     sortOwned(result)
 
     // Calculate the total value of non-locked tokens
@@ -182,15 +190,7 @@ export default function ProfileWallet({ walletState, userData }: Props) {
     numTokens: number,
     skip: number = 0
   ) {
-    let result = []
-    for (let i = 0; i < finalAddresses?.length; i++) {
-      const queryResult = await queryMyTokensMaybeMarket(
-        key,
-        selectedMarket,
-        finalAddresses[i]?.address
-      )
-      result = result.concat(queryResult)
-    }
+    const result = await queryIterator(key, queryMyTokensMaybeMarket)
     sortListings(result)
 
     const lastIndex =
@@ -204,15 +204,7 @@ export default function ProfileWallet({ walletState, userData }: Props) {
     numTokens: number,
     skip: number = 0
   ) {
-    let result = []
-    for (let i = 0; i < finalAddresses?.length; i++) {
-      const queryResult = await queryLockedTokens(
-        key,
-        selectedMarket,
-        finalAddresses[i]?.address
-      )
-      result = result.concat(queryResult)
-    }
+    const result = await queryIterator(key, queryLockedTokens)
     sortLocked(result)
 
     // Calculate the total value of locked tokens
@@ -241,15 +233,7 @@ export default function ProfileWallet({ walletState, userData }: Props) {
     numTokens: number,
     skip: number = 0
   ) {
-    let result = []
-    for (let i = 0; i < finalAddresses?.length; i++) {
-      const queryResult = await queryMyTrades(
-        key,
-        selectedMarket,
-        finalAddresses[i]?.address
-      )
-      result = result.concat(queryResult)
-    }
+    const result = await queryIterator(key, queryMyTrades)
     sortTrades(result)
     // Calculate the total purchase value
     let purchaseTotal = new BN('0')
