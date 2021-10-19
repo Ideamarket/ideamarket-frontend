@@ -59,8 +59,6 @@ export default function ProfileWallet({ walletState, userData }: Props) {
   const verifiedAddresses = userData?.ethAddresses?.filter(
     (item) => item?.verified
   )
-  // Addresses that will be displayed in the tables
-  const finalAddresses = getFinalAddresses()
 
   const [selectedMarket, setSelectedMarket] = useState(undefined)
   const [ownedTokenTotalValue, setOwnedTokensTotalValue] = useState('0.00')
@@ -71,6 +69,8 @@ export default function ProfileWallet({ walletState, userData }: Props) {
    * @return list of tokens from all ETH addresses
    */
   const queryIterator = async (key, queryFunction) => {
+    // Addresses that will be displayed in the tables
+    const finalAddresses = getFinalAddresses()
     let result = []
     for (let i = 0; i < finalAddresses?.length; i++) {
       const queryResult = await queryFunction(
@@ -146,8 +146,9 @@ export default function ProfileWallet({ walletState, userData }: Props) {
 
   useEffect(() => {
     refetch()
+    // Need userData?.ethAddresses in order to dynamically update tokens on switch to a newly added wallet
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [address, web3, orderBy, orderDirection])
+  }, [address, web3, orderBy, orderDirection, userData?.ethAddresses])
 
   function refetch() {
     refetchOwned()

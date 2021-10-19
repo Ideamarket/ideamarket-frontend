@@ -46,7 +46,10 @@ export async function checkAndPostNewAddresses(
   if (session?.accessToken) {
     // Is connecting address not yet added to this profile?
     const allAddresses = session?.user?.ethAddresses
-    if (!allAddresses.some((a) => a.address === connectedAddress)) {
+    if (
+      allAddresses.length < 9 &&
+      !allAddresses.some((a) => a.address === connectedAddress)
+    ) {
       await postData<Partial<ApiResponseData>>({
         url: '/api/ethAddress',
         data: {
