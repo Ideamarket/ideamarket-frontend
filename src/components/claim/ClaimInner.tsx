@@ -7,6 +7,7 @@ import { isAddressInMerkleRoot } from 'utils/merkleRoot'
 import claimIMO from 'actions/claimIMO'
 import {
   formatNumberWithCommasAsThousandsSerperator,
+  isAddress,
   useTransactionManager,
 } from 'utils'
 import { NETWORK } from 'store/networks'
@@ -22,6 +23,8 @@ const ClaimInner = () => {
   const finalAddress = isENSAddressValid ? (hexAddress as string) : address
   const claimableIMO = useClaimable(finalAddress)
   const [isClaimed, setIsClaimed] = useState(false)
+
+  const isValidAddress = !isENSAddressValid ? isAddress(finalAddress) : true
 
   const isClaimDisabled =
     !claimableIMO ||
@@ -44,6 +47,22 @@ const ClaimInner = () => {
         console.log(error)
       }
     }
+  }
+
+  const getErrorMessage = () => {
+    if (!isValidAddress) {
+      return 'Invalid address'
+    }
+
+    if (claimableIMO === 0) {
+      return 'No tokens available'
+    }
+
+    if (account && account.toLowerCase() !== finalAddress.toLowerCase()) {
+      return 'Address is not the connected address'
+    }
+
+    return 'No tokens available'
   }
 
   return (
@@ -93,11 +112,10 @@ const ClaimInner = () => {
                       placeholder="Wallet address"
                       className="w-full h-10 px-2 border border-gray-200 rounded-md dark:border-gray-500 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:text-gray-300 dark:bg-gray-600 dark:placeholder-gray-200"
                     />
-                    {claimableIMO === 0 && address.length > 0 && (
+
+                    {address.length > 0 && isClaimDisabled && (
                       <div className="pt-2 text-sm text-red-500">
-                        {claimableIMO === 0
-                          ? 'No tokens available'
-                          : 'Invalid address'}
+                        {getErrorMessage()}
                       </div>
                     )}
                   </div>
@@ -184,7 +202,9 @@ const ClaimInner = () => {
           </div>
         </div>
       </div>
-      <Footer />
+      <div className="text-brand-gray-2">
+        <Footer />
+      </div>
     </div>
   )
 }
