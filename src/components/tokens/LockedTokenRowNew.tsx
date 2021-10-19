@@ -17,6 +17,8 @@ import { useTokenIconURL } from 'actions'
 import { BadgeCheckIcon } from '@heroicons/react/solid'
 import useThemeMode from 'components/useThemeMode'
 import Image from 'next/image'
+import { useContext } from 'react'
+import { AccountContext } from 'pages/user-account'
 
 export default function LockedTokenRow({
   token,
@@ -36,6 +38,14 @@ export default function LockedTokenRow({
   lastElementRef?: (node) => void
 }) {
   const router = useRouter()
+  const { getValues } = useContext(AccountContext)
+  const { ethAddresses } = getValues()
+  const isMultipleAddresses = ethAddresses && ethAddresses.length > 1
+  const addressNumber = isMultipleAddresses
+    ? ethAddresses.findIndex(
+        (addressObj) => addressObj.address === token.holder
+      ) + 1
+    : null
   const marketSpecifics = getMarketSpecificsByMarketName(market.name)
   const { tokenIconURL, isLoading: isTokenIconLoading } = useTokenIconURL({
     marketSpecifics,
@@ -78,7 +88,17 @@ export default function LockedTokenRow({
       {/* Market desktop */}
       <td className="flex items-center justify-center hidden py-4 text-sm leading-5 text-center text-gray-500 dark:text-gray-300 md:table-cell whitespace-nowrap">
         <div className="flex items-center justify-end w-full h-full">
-          <div className="w-5 h-auto">
+          {isMultipleAddresses && (
+            <div className="relative w-5 h-5 ml-1">
+              <Image
+                src={`/${addressNumber}Emoji.png`}
+                alt="address-number"
+                layout="fill"
+                objectFit="contain"
+              />
+            </div>
+          )}
+          <div className="w-5 h-auto ml-3">
             {marketSpecifics.getMarketSVGTheme(resolvedTheme)}
           </div>
         </div>

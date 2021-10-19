@@ -15,6 +15,8 @@ import useThemeMode from 'components/useThemeMode'
 import Image from 'next/image'
 import moment from 'moment'
 import { IdeaToken, IdeaMarket } from 'store/ideaMarketsStore'
+import { useContext } from 'react'
+import { AccountContext } from 'pages/user-account'
 
 const tenPow18 = new BigNumber('10').pow(new BigNumber('18'))
 
@@ -37,6 +39,14 @@ const MyTradesRow = ({
 }) => {
   const router = useRouter()
   const { resolvedTheme } = useThemeMode()
+  const { getValues } = useContext(AccountContext)
+  const { ethAddresses } = getValues()
+  const isMultipleAddresses = ethAddresses && ethAddresses.length > 1
+  const addressNumber = isMultipleAddresses
+    ? ethAddresses.findIndex(
+        (addressObj) => addressObj.address === token.holder
+      ) + 1
+    : null
   const marketSpecifics = getMarketSpecificsByMarketName(market.name)
 
   const { tokenIconURL, isLoading: isTokenIconLoading } = useTokenIconURL({
@@ -77,7 +87,17 @@ const MyTradesRow = ({
       {/* Market desktop */}
       <td className="flex items-center justify-center hidden py-4 text-sm leading-5 text-center text-gray-500 dark:text-gray-300 md:table-cell whitespace-nowrap">
         <div className="flex items-center justify-end w-full h-full">
-          <div className="w-5 h-auto">
+          {isMultipleAddresses && (
+            <div className="relative w-5 h-5 ml-1">
+              <Image
+                src={`/${addressNumber}Emoji.png`}
+                alt="address-number"
+                layout="fill"
+                objectFit="contain"
+              />
+            </div>
+          )}
+          <div className="w-5 h-auto ml-3">
             {marketSpecifics.getMarketSVGTheme(resolvedTheme)}
           </div>
         </div>

@@ -201,8 +201,8 @@ const Account = () => {
   )
 }
 
-export default Account
-
 Account.layoutProps = {
   Layout: DefaultLayout,
 }
+
+export default Account

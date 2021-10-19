@@ -77,6 +77,16 @@ const AccountInnerForm = ({
                     ) : (
                       <div className="w-5 h-5"></div>
                     )}
+                    {ethAddresses.length > 1 && (
+                      <div className="relative w-4 h-4 ml-2">
+                        <Image
+                          src={`/${index + 1}Emoji.png`}
+                          alt="address-number"
+                          layout="fill"
+                          objectFit="contain"
+                        />
+                      </div>
+                    )}
                     <p
                       key={`${ethAddress.address}-${index}`}
                       onClick={() => copy(ethAddress.address)}

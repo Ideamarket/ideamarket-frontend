@@ -88,6 +88,7 @@ export type IdeaToken = {
   rawLockedAmount: BN
   lockedPercentage: string
   isL1: boolean
+  holder: string
 }
 
 export type IdeaTokenMarketPair = {
@@ -191,7 +192,12 @@ export async function queryOwnedTokensMaybeMarket(
   const L1IdeaTokenMarketPairs = L1Result.ideaTokenBalances.map(
     (balance) =>
       ({
-        token: apiResponseToIdeaToken(balance.token, balance.market, true),
+        token: apiResponseToIdeaToken(
+          balance.token,
+          balance.market,
+          owner,
+          true
+        ),
         market: apiResponseToIdeaMarket(balance.market),
         rawBalance: balance.amount ? new BN(balance.amount) : undefined,
         balance: balance.amount
@@ -203,7 +209,12 @@ export async function queryOwnedTokensMaybeMarket(
   const L2IdeaTokenMarketPairs = L2Result.ideaTokenBalances.map(
     (balance) =>
       ({
-        token: apiResponseToIdeaToken(balance.token, balance.market, false),
+        token: apiResponseToIdeaToken(
+          balance.token,
+          balance.market,
+          owner,
+          false
+        ),
         market: apiResponseToIdeaMarket(balance.market),
         rawBalance: balance.amount ? new BN(balance.amount) : undefined,
         balance: balance.amount
@@ -232,7 +243,7 @@ export async function queryMyTokensMaybeMarket(
   return result.ideaTokens.map(
     (token) =>
       ({
-        token: apiResponseToIdeaToken(token, token.market),
+        token: apiResponseToIdeaToken(token, token.market, owner),
         market: apiResponseToIdeaMarket(token.market),
       } as IdeaTokenMarketPair)
   )
@@ -774,19 +785,23 @@ export async function queryLockedTokens(
   if (marketID) {
     const L1Pairs = L1TokenAmounts.filter(
       (locked) => locked?.token?.market?.marketID === marketID
-    ).map((locked) => apiResponseToLockedIdeaTokenMarketPair(locked, true))
+    ).map((locked) =>
+      apiResponseToLockedIdeaTokenMarketPair(locked, ownerAddress, true)
+    )
     const L2Pairs = L2TokenAmounts.filter(
       (locked) => locked?.token?.market?.marketID === marketID
-    ).map((locked) => apiResponseToLockedIdeaTokenMarketPair(locked, false))
+    ).map((locked) =>
+      apiResponseToLockedIdeaTokenMarketPair(locked, ownerAddress, false)
+    )
 
     return L1Pairs.concat(L2Pairs)
   }
 
   const L1Pairs = L1TokenAmounts.map((locked) =>
-    apiResponseToLockedIdeaTokenMarketPair(locked, true)
+    apiResponseToLockedIdeaTokenMarketPair(locked, ownerAddress, true)
   )
   const L2Pairs = L2TokenAmounts.map((locked) =>
-    apiResponseToLockedIdeaTokenMarketPair(locked, false)
+    apiResponseToLockedIdeaTokenMarketPair(locked, ownerAddress, false)
   )
 
   return L1Pairs.concat(L2Pairs)
@@ -837,7 +852,8 @@ export async function queryMyTrades(
     page += 1
   }
 
-  const mapTradeResponse = (trade) => apiResponseToIdeaTokenTrade(trade)
+  const mapTradeResponse = (trade) =>
+    apiResponseToIdeaTokenTrade(trade, ownerAddress)
 
   // Filter by market if user chooses market option in the select box
   if (marketID) {
@@ -869,6 +885,7 @@ export function setIsWatching(token: IdeaToken, watching: boolean): void {
 function apiResponseToIdeaToken(
   apiResponse,
   marketApiResponse?,
+  holder?,
   isL1?
 ): IdeaToken {
   let market
@@ -951,6 +968,7 @@ function apiResponseToIdeaToken(
       ? parseFloat(apiResponse.lockedPercentage).toFixed(2)
       : '',
     isL1,
+    holder,
   } as IdeaToken
 
   return ret
@@ -1050,12 +1068,14 @@ function apiResponseToLockedAmount(apiResponse): LockedAmount {
 
 function apiResponseToLockedIdeaTokenMarketPair(
   apiResponse,
+  holder,
   isL1
 ): LockedIdeaTokenMarketPair {
   const ret = {
     token: apiResponseToIdeaToken(
       apiResponse.token,
       apiResponse.token.market,
+      holder,
       isL1
     ),
     market: apiResponseToIdeaMarket(apiResponse.token.market),
@@ -1069,7 +1089,7 @@ function apiResponseToLockedIdeaTokenMarketPair(
   return ret
 }
 
-function apiResponseToIdeaTokenTrade(apiResponse) {
+function apiResponseToIdeaTokenTrade(apiResponse, ownerAddress) {
   return {
     isBuy: apiResponse.isBuy,
     timestamp: Number(apiResponse.timestamp),
@@ -1087,7 +1107,11 @@ function apiResponseToIdeaTokenTrade(apiResponse) {
     ),
     token: {
       ...apiResponse.token,
-      ...apiResponseToIdeaToken(apiResponse.token, apiResponse.token.market),
+      ...apiResponseToIdeaToken(
+        apiResponse.token,
+        apiResponse.token.market,
+        ownerAddress
+      ),
     },
     market: apiResponseToIdeaMarket(apiResponse.token.market),
   } as IdeaTokenTrade

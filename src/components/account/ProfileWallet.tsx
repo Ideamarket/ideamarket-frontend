@@ -128,9 +128,7 @@ export default function ProfileWallet({ walletState, userData }: Props) {
   const [orderDirection, setOrderDirection] = useState('desc')
 
   useEffect(() => {
-    if (address && web3) {
-      refetch()
-    }
+    refetch()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [address, web3, orderBy, orderDirection])
 
