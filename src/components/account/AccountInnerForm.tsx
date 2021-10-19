@@ -130,7 +130,9 @@ const AccountInnerForm = ({
         {cardTab === accountTabs.SETTINGS && <SettingsTab />}
         {cardTab === accountTabs.PROFILE && <ProfileWallet />}
       </div>
-      <Footer />
+      <div className="text-brand-gray-2">
+        <Footer />
+      </div>
     </div>
   )
 }
