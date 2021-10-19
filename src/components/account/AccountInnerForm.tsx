@@ -142,7 +142,9 @@ const AccountInnerForm = ({
           <ProfileWallet walletState="signedIn" userData={getValues()} />
         )}
       </div>
-      <Footer />
+      <div className="text-brand-gray-2">
+        <Footer />
+      </div>
     </div>
   )
 }
