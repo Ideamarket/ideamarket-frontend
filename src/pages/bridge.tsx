@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import { NextSeo } from 'next-seo'
-import { useEffect, useState, useContext } from 'react'
+import { useEffect, useState, useContext, ReactElement } from 'react'
 import { IdeaTokenMarketPair } from 'store/ideaMarketsStore'
 import { useWalletStore } from 'store/walletStore'
 import { IMarketSpecifics, getMarketSpecificsByMarketName } from 'store/markets'
@@ -254,6 +254,4 @@ export default function Bridge() {
   )
 }
 
-Bridge.layoutProps = {
-  Layout: DefaultLayout,
-}
+Bridge.getLayout = (page: ReactElement) => <DefaultLayout>{page}</DefaultLayout>

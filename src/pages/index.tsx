@@ -1,5 +1,5 @@
 import { DefaultLayout } from 'components'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { ReactElement, useContext, useEffect, useState } from 'react'
 import { IdeaMarket, IdeaToken } from 'store/ideaMarketsStore'
 import { Table, TradeModal, WalletModal } from 'components'
 import ModalService from 'components/modals/ModalService'
@@ -155,6 +155,4 @@ const Home = ({ urlMarkets }: Props) => {
 
 export default Home
 
-Home.layoutProps = {
-  Layout: DefaultLayout,
-}
+Home.getLayout = (page: ReactElement) => <DefaultLayout>{page}</DefaultLayout>

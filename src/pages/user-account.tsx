@@ -1,5 +1,5 @@
 import { DefaultLayout } from 'components'
-import { createContext, useEffect, useState } from 'react'
+import { createContext, ReactElement, useEffect, useState } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
 import { useMutation } from 'react-query'
 import {
@@ -166,41 +166,43 @@ const Account = () => {
   }
 
   return (
-    <DefaultLayout>
-      <AccountContext.Provider value={contextProps}>
-        <div className="min-h-screen bg-top-desktop-new">
-          {!loading && !session ? (
-            <div className="pt-16">
-              <div className="w-11/12 mx-auto my-0 bg-white rounded-lg max-w-7xl font-inter w-90">
-                <div className="flex flex-col items-start justify-center px-6 py-5 bg-white rounded-lg md:flex-row dark:bg-gray-500">
-                  <div className="relative flex flex-col w-full mt-2 text-center md:mr-8 md:w-1/4">
-                    <div className="p-3 border-b border-gray-100 dark:border-gray-400">
-                      <div className="pb-4 text-3xl text-blue-400">Account</div>
-                      <div className="text-base font-semibold">
-                        Click here to log in
-                      </div>
+    <AccountContext.Provider value={contextProps}>
+      <div className="min-h-screen bg-top-desktop-new">
+        {!loading && !session ? (
+          <div className="pt-16">
+            <div className="w-11/12 mx-auto my-0 bg-white rounded-lg max-w-7xl font-inter w-90">
+              <div className="flex flex-col items-start justify-center px-6 py-5 bg-white rounded-lg md:flex-row dark:bg-gray-500">
+                <div className="relative flex flex-col w-full mt-2 text-center md:mr-8 md:w-1/4">
+                  <div className="p-3 border-b border-gray-100 dark:border-gray-400">
+                    <div className="pb-4 text-3xl text-blue-400">Account</div>
+                    <div className="text-base font-semibold">
+                      Click here to log in
                     </div>
-                    <LoginAndLogoutButton />
                   </div>
-                  <ProfileWallet walletState="signedOut" />
+                  <LoginAndLogoutButton />
                 </div>
+                <ProfileWallet walletState="signedOut" />
               </div>
             </div>
-          ) : (
-            <>
-              <Toaster />
-              <form onSubmit={handleSubmit(onSubmit)}>
-                <AccountInnerForm
-                  submitWallet={submitWallet}
-                  removeAddress={removeAddress}
-                />
-              </form>
-            </>
-          )}
-        </div>
-      </AccountContext.Provider>
-    </DefaultLayout>
+          </div>
+        ) : (
+          <>
+            <Toaster />
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <AccountInnerForm
+                submitWallet={submitWallet}
+                removeAddress={removeAddress}
+              />
+            </form>
+          </>
+        )}
+      </div>
+    </AccountContext.Provider>
   )
 }
 
 export default Account
+
+Account.getLayout = (page: ReactElement) => (
+  <DefaultLayout>{page}</DefaultLayout>
+)

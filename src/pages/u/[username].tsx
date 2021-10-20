@@ -2,7 +2,7 @@ import { DefaultLayout, Footer } from 'components'
 import { ProfileWallet } from 'components/account'
 import PublicInfoColumn from 'components/account/PublicInfoColumn'
 import router from 'next/router'
-import { useEffect, useState } from 'react'
+import { ReactElement, useEffect, useState } from 'react'
 import getSsrBaseUrl from 'utils/getSsrBaseUrl'
 import IS_ACCOUNT_ENABLED from 'utils/isAccountEnabled'
 import { useCustomSession } from 'utils/useCustomSession'
@@ -90,6 +90,6 @@ export const getServerSideProps = async (context) => {
   }
 }
 
-PublicProfile.layoutProps = {
-  Layout: DefaultLayout,
-}
+PublicProfile.getLayout = (page: ReactElement) => (
+  <DefaultLayout>{page}</DefaultLayout>
+)

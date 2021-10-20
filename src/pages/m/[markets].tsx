@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { ReactElement } from 'react'
 import { DefaultLayout } from 'components'
 import {
   getMarketSpecificsByMarketNameInURLRepresentation,
@@ -45,6 +45,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   return { props: { marketsList } }
 }
 
-MarketsHome.layoutProps = {
-  Layout: DefaultLayout,
-}
+MarketsHome.getLayout = (page: ReactElement) => (
+  <DefaultLayout>{page}</DefaultLayout>
+)

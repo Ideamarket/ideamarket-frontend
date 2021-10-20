@@ -2,7 +2,7 @@ import { DefaultLayout } from '../components'
 import Select from 'react-select'
 import CopyIcon from '../assets/copy-check.svg'
 import CopyCheck from '../assets/copy-icon.svg'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, ReactElement } from 'react'
 import { getMarketSpecificsByMarketName } from 'store/markets'
 import { useQuery } from 'react-query'
 import { queryMarkets } from 'store/ideaMarketsStore'
@@ -167,6 +167,4 @@ export default function Embed() {
   )
 }
 
-Embed.layoutProps = {
-  Layout: DefaultLayout,
-}
+Embed.getLayout = (page: ReactElement) => <DefaultLayout>{page}</DefaultLayout>

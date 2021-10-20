@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import BN from 'bn.js'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, ReactElement } from 'react'
 import { useQuery } from 'react-query'
 import {
   MarketSelect,
@@ -310,6 +310,6 @@ export default function MyTokens() {
   )
 }
 
-MyTokens.layoutProps = {
-  Layout: DefaultLayout,
-}
+MyTokens.getLayout = (page: ReactElement) => (
+  <DefaultLayout>{page}</DefaultLayout>
+)

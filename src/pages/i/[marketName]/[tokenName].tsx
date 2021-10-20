@@ -24,7 +24,7 @@ import TradeCompleteModal, {
   TRANSACTION_TYPES,
 } from 'components/trade/TradeCompleteModal'
 import { bnToFloatString, bigNumberTenPow18 } from 'utils'
-import { useEffect } from 'react'
+import { ReactElement, useEffect } from 'react'
 import DesktopRelatedInfo from 'components/listing-page/DesktopRelatedInfo'
 import MobileRelatedInfo from 'components/listing-page/MobileRelatedInfo'
 
@@ -200,6 +200,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 }
 
-TokenDetails.layoutProps = {
-  Layout: DefaultLayout,
-}
+TokenDetails.getLayout = (page: ReactElement) => (
+  <DefaultLayout>{page}</DefaultLayout>
+)

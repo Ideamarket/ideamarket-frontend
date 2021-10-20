@@ -6,7 +6,7 @@ import '../styles/fonts/inter/style.css'
 import '../styles/nprogress.css'
 import { ThemeProvider } from 'next-themes'
 
-import { createContext, Fragment, ReactNode, useEffect, useState } from 'react'
+import { createContext, ReactElement, useEffect, useState } from 'react'
 import type { AppProps } from 'next/app'
 import { DefaultSeo } from 'next-seo'
 import {
@@ -31,6 +31,7 @@ import { NETWORK, INetworkSpecifics } from 'store/networks'
 //import ModalService from 'components/modals/ModalService'
 //import MigrationDoneModal from 'components/MigrationDoneModal'
 import { Provider } from 'next-auth/client'
+import { NextPage } from 'next'
 
 export const GlobalContext = createContext({
   onWalletConnectedCallback: () => {},
@@ -45,15 +46,16 @@ function getLibrary(provider: any): Web3 {
   return new Web3(provider)
 }
 
-function MyApp({ Component, pageProps }: AppProps) {
-  const Layout =
-    (
-      Component as typeof Component & {
-        layoutProps: {
-          Layout: (props: { children: ReactNode } & unknown) => JSX.Element
-        }
-      }
-    ).layoutProps?.Layout || Fragment
+type NextPageWithLayout = NextPage & {
+  getLayout?: (page: ReactElement) => ReactElement<any, any>
+}
+
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout
+}
+
+function MyApp({ Component, pageProps }: AppPropsWithLayout) {
+  const getLayout = Component.getLayout ?? ((page) => page)
 
   const [isEmailFooterActive, setIsEmailFooterActive] = useState(false)
   useEffect(() => {
@@ -125,9 +127,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           <ThemeProvider attribute="class" defaultTheme="light">
             <Web3ReactProvider getLibrary={getLibrary}>
               <Web3ReactManager>
-                <Layout>
-                  <Component {...pageProps} />
-                </Layout>
+                {getLayout(<Component {...pageProps} />)}
               </Web3ReactManager>
               <WrongNetworkOverlay />
               <ModalRoot />
