@@ -8,7 +8,7 @@ import BN from 'bn.js'
 export default function useBalance(
   address: string,
   decimals: number,
-  tradeToggle: boolean
+  refreshToggle?: boolean // Used to refresh balance whenever needed
 ) {
   const [isLoading, setIsLoading] = useState(true)
   const [balanceBN, setBalanceBN] = useState(undefined)
@@ -68,7 +68,7 @@ export default function useBalance(
     return () => {
       isCancelled = true
     }
-  }, [address, web3, tradeToggle, decimals])
+  }, [address, web3, refreshToggle, decimals])
 
   return [isLoading, balanceBN, balance]
 }

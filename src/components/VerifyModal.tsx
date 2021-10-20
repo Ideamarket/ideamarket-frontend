@@ -33,7 +33,7 @@ export default function VerifyModal({
   market: IdeaMarket
   token: IdeaToken
 }) {
-  const PAGES = {
+  const STATE = {
     TOS: 0,
     OWNER_ADDRESS: 1,
     SHOW_SHA: 2,
@@ -43,7 +43,7 @@ export default function VerifyModal({
     ERROR: 6,
   }
 
-  const [page, setPage] = useState(PAGES.TOS)
+  const [verificationState, setVerificationState] = useState(STATE.TOS)
 
   const connectedAddress = useWalletStore((state) => state.address)
   const [ownerAddress, setOwnerAddress] = useState('')
@@ -87,10 +87,10 @@ export default function VerifyModal({
     setIsLoading(true)
     try {
       setUUID(await requestVerification(token, ownerAddress))
-      setPage(PAGES.SHOW_SHA)
+      setVerificationState(STATE.SHOW_SHA)
     } catch (ex) {
       setErrorMessage(ex)
-      setPage(PAGES.ERROR)
+      setVerificationState(STATE.ERROR)
     }
 
     setIsLoading(false)
@@ -108,16 +108,16 @@ export default function VerifyModal({
       response = await submitVerification(uuid)
     } catch (ex) {
       setErrorMessage(ex)
-      setPage(PAGES.ERROR)
+      setVerificationState(STATE.ERROR)
     }
 
     if (response.wantFee) {
       setWeiFee(response.weiFee)
       setFeeTo(response.to)
-      setPage(PAGES.SHOW_FEE_TX)
+      setVerificationState(STATE.SHOW_FEE_TX)
     } else {
       setTx(response.tx)
-      setPage(PAGES.SUCCESS)
+      setVerificationState(STATE.SUCCESS)
     }
 
     setIsLoading(false)
@@ -133,7 +133,7 @@ export default function VerifyModal({
         {
           onHash: (h: string) => {
             hash = h
-            setPage(PAGES.AWAIT_FEE_TX)
+            setVerificationState(STATE.AWAIT_FEE_TX)
           },
         },
         feeTo,
@@ -142,24 +142,24 @@ export default function VerifyModal({
       )
     } catch (ex) {
       setErrorMessage('The verification fee transaction failed.')
-      setPage(PAGES.ERROR)
+      setVerificationState(STATE.ERROR)
       setIsLoading(false)
       return
     }
 
     try {
       setTx(await submitVerificationFeeHash(uuid, hash))
-      setPage(PAGES.SUCCESS)
+      setVerificationState(STATE.SUCCESS)
     } catch (ex) {
       setErrorMessage(ex)
-      setPage(PAGES.ERROR)
+      setVerificationState(STATE.ERROR)
     }
 
     setIsLoading(false)
   }
 
   useEffect(() => {
-    setPage(PAGES.TOS)
+    setVerificationState(STATE.TOS)
     setOwnerAddress('')
     setUUID('')
     setTOSCheckboxChecked(false)
@@ -167,7 +167,7 @@ export default function VerifyModal({
     setTx('')
     setIsLoading(false)
     setErrorMessage('')
-  }, [PAGES.TOS])
+  }, [STATE.TOS])
 
   return (
     <Modal close={close}>
@@ -178,7 +178,7 @@ export default function VerifyModal({
           </p>
         </div>
         <div className="p-5 text-brand-gray-2 dark:text-gray-300">
-          {page === PAGES.TOS && (
+          {verificationState === STATE.TOS && (
             <>
               <p className="mt-5 text-xl font-bold text-center">
                 Terms of Service
@@ -263,7 +263,7 @@ export default function VerifyModal({
                       : 'bg-white dark:bg-gray-500 dark:text-gray-300  border-brand-gray-2 text-brand-gray-2 cursor-not-allowed'
                   )}
                   onClick={() => {
-                    setPage(PAGES.OWNER_ADDRESS)
+                    setVerificationState(STATE.OWNER_ADDRESS)
                   }}
                 >
                   I understand
@@ -271,7 +271,7 @@ export default function VerifyModal({
               </div>
             </>
           )}
-          {page === PAGES.OWNER_ADDRESS && (
+          {verificationState === STATE.OWNER_ADDRESS && (
             <>
               <p className="text-sm">
                 Verify ownership of this listing to withdraw the accumulated
@@ -337,7 +337,7 @@ export default function VerifyModal({
               </div>
             </>
           )}
-          {page === PAGES.SHOW_SHA && (
+          {verificationState === STATE.SHOW_SHA && (
             <>
               <p>{shaPromptExplanation}</p>
               <div className="mt-7.5 p-5 border border-brand-gray-2 bg-gray-200 rounded text-black">
@@ -380,7 +380,7 @@ export default function VerifyModal({
               </div>
             </>
           )}
-          {page === PAGES.SHOW_FEE_TX && (
+          {verificationState === STATE.SHOW_FEE_TX && (
             <>
               <div className="text-xl text-center">
                 <strong>Verification fee</strong>
@@ -423,7 +423,7 @@ export default function VerifyModal({
               </div>
             </>
           )}
-          {page === PAGES.AWAIT_FEE_TX && (
+          {verificationState === STATE.AWAIT_FEE_TX && (
             <>
               <div className="text-xl text-center">
                 <strong>Transaction is pending</strong>
@@ -444,7 +444,7 @@ export default function VerifyModal({
               </div>
             </>
           )}
-          {page === PAGES.SUCCESS && (
+          {verificationState === STATE.SUCCESS && (
             <>
               <div className="text-2xl text-center text-brand-green">
                 <strong>Verification successful</strong>
@@ -472,7 +472,7 @@ export default function VerifyModal({
               </div>
             </>
           )}
-          {page === PAGES.ERROR && (
+          {verificationState === STATE.ERROR && (
             <>
               <div className="text-2xl text-center text-brand-red">
                 <strong>Something went wrong</strong>

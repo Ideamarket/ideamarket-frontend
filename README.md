@@ -16,7 +16,7 @@ You can start editing the page by modifying `pages/index.js`. The page auto-upda
 
 ## Network Modes
 
-You can control in which mode the app runs (testnet or mainnet) by creating a `.env.local` file with the content `NEXT_PUBLIC_NETWORK=mainnet` or `NEXT_PUBLIC_NETWORK=test`
+You can control in which mode the app runs (testnet or mainnet) by creating a `.env.local` file with the content `NEXT_PUBLIC_NETWORK=avm` or `NEXT_PUBLIC_NETWORK=test-avm-l2`
 
 ## Learn More
 

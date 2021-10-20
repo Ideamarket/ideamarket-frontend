@@ -7,7 +7,6 @@ import { useWalletStore } from './walletStore'
 import { getL1Network, NETWORK } from 'store/networks'
 
 type State = {
-  daiContract: any
   factoryContract: any
   exchangeContract: any
   exchangeContractL1: any
@@ -17,7 +16,6 @@ type State = {
 }
 
 export const useContractStore = create<State>((set) => ({
-  daiContract: undefined,
   factoryContract: undefined,
   exchangeContract: undefined,
   exchangeContractL1: undefined,
@@ -28,7 +26,6 @@ export const useContractStore = create<State>((set) => ({
 
 export function clearContracts() {
   useContractStore.setState({
-    daiContract: undefined,
     factoryContract: undefined,
     exchangeContract: undefined,
     exchangeContractL1: undefined,
@@ -45,14 +42,6 @@ export function initContractsFromWeb3(web3: Web3) {
 
   const deployedAddresses = NETWORK.getDeployedAddresses()
   const abis = NETWORK.getDeployedABIs()
-
-  const daiContract = new web3.eth.Contract(
-    ERC20ABI as any,
-    NETWORK.getExternalAddresses().dai,
-    {
-      from: web3.eth.defaultAccount,
-    }
-  )
 
   const factoryContract = new web3.eth.Contract(
     abis.ideaTokenFactory as any,
@@ -91,7 +80,6 @@ export function initContractsFromWeb3(web3: Web3) {
   )
 
   useContractStore.setState({
-    daiContract: daiContract,
     factoryContract: factoryContract,
     exchangeContract: exchangeContract,
     exchangeContractL1: exchangeContractL1,

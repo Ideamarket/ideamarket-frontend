@@ -13,7 +13,8 @@ class MyDocument extends Document {
   }
 
   static GA_TRACKING_ID =
-    process.env.NEXT_PUBLIC_NETWORK === 'mainnet'
+    process.env.NEXT_PUBLIC_NETWORK === 'mainnet' ||
+    process.env.NEXT_PUBLIC_NETWORK === 'avm'
       ? 'UA-185970351-3'
       : 'UA-185970351-2'
 
