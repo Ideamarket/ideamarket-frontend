@@ -162,7 +162,7 @@ export default function MyTokens() {
                   </div>
                   <div
                     className="text-2xl mb-2.5 font-semibold uppercase"
-                    title={'$' + +ownedTokenTotalValue + +lockedTokenTotalValue}
+                    title={`$${+ownedTokenTotalValue + +lockedTokenTotalValue}`}
                   >
                     $
                     {formatNumberWithCommasAsThousandsSerperator(
