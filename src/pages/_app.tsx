@@ -6,7 +6,7 @@ import '../styles/fonts/inter/style.css'
 import '../styles/nprogress.css'
 import { ThemeProvider } from 'next-themes'
 
-import { createContext, ReactElement, useEffect, useState } from 'react'
+import React, { createContext, ReactElement, useEffect, useState } from 'react'
 import type { AppProps } from 'next/app'
 import { DefaultSeo } from 'next-seo'
 import {

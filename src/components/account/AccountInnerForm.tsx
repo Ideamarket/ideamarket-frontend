@@ -32,6 +32,8 @@ const AccountInnerForm = ({
     displayBio,
   } = getValues()
 
+  console.log('AccountInnerForm')
+
   return (
     <div className="w-11/12 mx-auto my-0 max-w-7xl md:pt-24 font-inter w-90">
       <div className="flex flex-col items-end mx-4">
@@ -139,7 +141,7 @@ const AccountInnerForm = ({
         </div>
         {cardTab === accountTabs.SETTINGS && <SettingsTab />}
         {cardTab === accountTabs.PROFILE && (
-          <ProfileWallet walletState="signedIn" userData={getValues()} />
+          <ProfileWallet walletState="signedIn" ethAddresses={ethAddresses} />
         )}
       </div>
       <Footer />
