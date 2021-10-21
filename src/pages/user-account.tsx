@@ -24,7 +24,7 @@ const Account = () => {
     }
   }, [])
 
-  const [cardTab, setCardTab] = useState(accountTabs.SETTINGS)
+  const [cardTab, setCardTab] = useState(accountTabs.PROFILE)
   const { session, loading, refetchSession } = useCustomSession()
 
   const [updateUserSettings, { isLoading: isUpdateLoading }] = useMutation<{

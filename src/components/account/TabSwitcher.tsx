@@ -8,7 +8,7 @@ const TabSwitcher = ({ hasSpaceBetween }) => {
   const { cardTab, setCardTab } = useContext(AccountContext)
 
   return (
-    <>
+    <div>
       <A
         className={classNames(
           'italic cursor-pointer',
@@ -27,7 +27,7 @@ const TabSwitcher = ({ hasSpaceBetween }) => {
       >
         Profile
       </A>
-    </>
+    </div>
   )
 }
 

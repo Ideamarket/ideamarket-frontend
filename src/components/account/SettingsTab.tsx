@@ -8,7 +8,7 @@ const SettingsTab = () => {
   const { username } = getValues()
 
   return (
-    <div className="w-full h-full lg:w-3/4">
+    <div className="w-full h-full">
       <div className="p-3 text-3xl font-semibold border-b border-gray-100 dark:border-gray-400">
         Profile
       </div>
@@ -80,20 +80,6 @@ const SettingsTab = () => {
                 {...register('bio')}
                 disabled={isUpdateLoading}
                 className="w-full border-gray-300 rounded-md lg:w-60 dark:border-gray-500 dark:bg-gray-600"
-              />
-            </div>
-
-            <div className="flex flex-col items-center justify-end lg:flex-row">
-              <span className="w-full text-left lg:w-40 lg:mr-4 lg:text-right">
-                Profile Photo
-              </span>
-              <input
-                {...register('imageFile')}
-                onChange={async (e) => setValue('imageFile', e.target.files)}
-                type="file"
-                accept="image/png, image/jpeg"
-                disabled={isUpdateLoading}
-                className="w-full lg:w-60"
               />
             </div>
           </div>

@@ -20,7 +20,9 @@ const AccountInnerForm = ({
   submitWallet: (signedAddress: SignedAddress) => void
   removeAddress: (address: string) => void
 }) => {
-  const { getValues, isUpdateLoading, cardTab } = useContext(AccountContext)
+  const { getValues, isUpdateLoading, cardTab, register, setValue } =
+    useContext(AccountContext)
+
   const {
     username,
     email,
@@ -32,19 +34,25 @@ const AccountInnerForm = ({
     displayBio,
   } = getValues()
 
+  console.log(getValues())
+
   return (
     <div className="w-11/12 mx-auto my-0 max-w-7xl md:pt-24 font-inter w-90">
       <div className="flex flex-col items-end mx-4">
         <div className="invisible mb-4 text-4xl italic text-white md:visible">
           My Account
         </div>
-        <div className="flex justify-between w-full mb-2 md:justify-end">
+        <div className="flex justify-between w-full mb-2">
+          <div className="flex">
+            <div className="flex mr-48 text-white">twitter</div>
+            <div className="text-xl font-bold text-white">@{username}</div>
+          </div>
           <TabSwitcher hasSpaceBetween />
         </div>
       </div>
-      <div className="flex flex-col items-start justify-center px-6 py-5 bg-white rounded-lg md:flex-row dark:bg-gray-500">
-        <div className="relative flex flex-col w-full mt-16 text-center md:mr-8 md:w-1/4">
-          <div className="absolute transform -translate-x-1/2 -translate-y-1/2 rounded-full -top-24 left-1/2 w-28 h-28 sm:w-36 sm:h-36">
+      <div className="px-6 py-5 bg-white rounded-lg md:flex-row dark:bg-gray-500">
+        <div className="relative flex flex-col w-full text-center">
+          <div className="absolute rounded-full left-16 -top-24 w-28 h-28 sm:w-36 sm:h-36">
             <Image
               src={profilePhoto || '/gray.svg'}
               alt="token"
@@ -54,88 +62,111 @@ const AccountInnerForm = ({
             />
           </div>
 
-          <div className="p-3 border-b border-gray-100 dark:border-gray-400">
-            <div className="text-xs text-blue-400">USERNAME</div>
-            <div className="font-semibold">{username ?? ''}</div>
-          </div>
-          {displayEmail && (
-            <div className="p-3 border-b border-gray-100 dark:border-gray-400">
-              <div className="text-xs text-blue-400">EMAIL ADDRESS</div>
-              <div>{email}</div>
-            </div>
-          )}
-          {displayEthAddresses && (
-            <div className="p-3 border-b border-gray-100 dark:border-gray-400">
-              <div className="flex items-center justify-center">
-                <div className="mr-2 text-xs text-blue-400">ETH ADDRESS</div>
-              </div>
-              <div className="cursor-pointer">
-                {ethAddresses?.map((ethAddress, index) => (
-                  <div className="flex items-center" key={index}>
-                    {ethAddress.verified ? (
-                      <BadgeCheckIcon className="flex-shrink-0 w-5 h-5" />
-                    ) : (
-                      <div className="w-5 h-5"></div>
-                    )}
-                    {ethAddresses.length > 1 && (
-                      <div className="relative w-4 h-4 ml-2">
-                        <Image
-                          src={`/${index + 1}Emoji.png`}
-                          alt="address-number"
-                          layout="fill"
-                          objectFit="contain"
-                        />
-                      </div>
-                    )}
-                    <p
-                      key={`${ethAddress.address}-${index}`}
-                      onClick={() => copy(ethAddress.address)}
-                      className="ml-2"
-                    >
-                      {ethAddress.address?.substr(
-                        0,
-                        ethAddress.address?.length > 16
-                          ? 16
-                          : ethAddress.address?.length
-                      ) + (ethAddress.address?.length > 16 ? '...' : '')}
-                    </p>
-                    {cardTab === accountTabs.SETTINGS && (
-                      <MinusCircleIcon
-                        onClick={() => removeAddress(ethAddress.address)}
-                        className="flex-shrink-0 w-5 h-5 ml-auto cursor-pointer"
-                      />
-                    )}
+          <div className="flex">
+            <div className="w-full">
+              <div className="flex">
+                <div className="relative w-8 h-8 mr-48 rounded-full">
+                  <label>
+                    <Image
+                      src="/profile-upload-img.png"
+                      alt="token"
+                      layout="fill"
+                      objectFit="contain"
+                      className="cursor-pointer"
+                    />
+                    <input
+                      {...register('imageFile')}
+                      onChange={async (e) =>
+                        setValue('imageFile', e.target.files)
+                      }
+                      type="file"
+                      accept="image/png, image/jpeg"
+                      disabled={isUpdateLoading}
+                      className="hidden w-full lg:w-60"
+                    />
+                  </label>
+                </div>
+                {displayEmail && (
+                  <div className="p-3">
+                    <div className="mb-2 text-xs text-blue-400">
+                      EMAIL ADDRESS
+                    </div>
+                    <div>{email}</div>
                   </div>
-                ))}
+                )}
+                {displayEthAddresses && (
+                  <div className="p-3 ">
+                    <div className="flex items-center justify-center mb-2">
+                      <div className="mr-2 text-xs text-blue-400">
+                        ETH ADDRESS
+                      </div>
+                    </div>
+                    <div className="cursor-pointer">
+                      {ethAddresses?.map((ethAddress, index) => (
+                        <div className="flex items-center" key={index}>
+                          {ethAddress.verified ? (
+                            <BadgeCheckIcon className="flex-shrink-0 w-5 h-5" />
+                          ) : (
+                            <div className="w-5 h-5"></div>
+                          )}
+                          {ethAddresses.length > 1 && (
+                            <div className="relative w-4 h-4 ml-2">
+                              <Image
+                                src={`/${index + 1}Emoji.png`}
+                                alt="address-number"
+                                layout="fill"
+                                objectFit="contain"
+                              />
+                            </div>
+                          )}
+                          <p
+                            key={`${ethAddress.address}-${index}`}
+                            onClick={() => copy(ethAddress.address)}
+                            className="ml-2"
+                          >
+                            {ethAddress.address?.substr(
+                              0,
+                              ethAddress.address?.length > 16
+                                ? 16
+                                : ethAddress.address?.length
+                            ) + (ethAddress.address?.length > 16 ? '...' : '')}
+                          </p>
+                          <MinusCircleIcon
+                            onClick={() => removeAddress(ethAddress.address)}
+                            className="flex-shrink-0 w-5 h-5 ml-auto cursor-pointer"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
-            </div>
-          )}
-          {displayBio && (
-            <div>
-              <div className="mr-2 text-xs text-blue-400">BIO</div>
-              <div className="leading-5">{bio || ''}</div>
-            </div>
-          )}
 
-          {cardTab === accountTabs.SETTINGS && (
-            <>
+              {displayBio && (
+                <div className="text-left">
+                  <div className="mb-2 mr-2 text-xs text-blue-400">BIO</div>
+                  <div className="leading-5">{bio || ''}</div>
+                </div>
+              )}
+            </div>
+            <div className="w-64">
               <button
-                onClick={() =>
-                  ModalService.open(VerifyWalletModal, { submitWallet })
-                }
-                className="py-2 m-3 text-white rounded-lg bg-brand-blue hover:bg-blue-800"
-                type="button"
-              >
-                <p>Verify Wallet</p>
-              </button>
-              <button
-                className="py-2 m-3 text-white rounded-lg bg-brand-blue hover:bg-blue-800"
+                className="w-full py-2 m-3 text-white rounded-lg bg-brand-blue hover:bg-blue-800"
                 type="submit"
               >
                 {isUpdateLoading ? <p>Saving...</p> : <p> Save Profile</p>}
               </button>
-            </>
-          )}
+              <button
+                onClick={() =>
+                  ModalService.open(VerifyWalletModal, { submitWallet })
+                }
+                className="w-full py-2 m-3 text-white rounded-lg bg-brand-blue hover:bg-blue-800"
+                type="button"
+              >
+                <p>Verify Wallet</p>
+              </button>
+            </div>
+          </div>
         </div>
         {cardTab === accountTabs.SETTINGS && <SettingsTab />}
         {cardTab === accountTabs.PROFILE && (
