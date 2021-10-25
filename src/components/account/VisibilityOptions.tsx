@@ -6,7 +6,7 @@ const VisibilityOptions = () => {
   return (
     <div className="w-full">
       <div className="p-3 font-bold">Visibility Options</div>
-      <div className="flex flex-col w-full px-3 py-2 space-y-6 rounded-lg bg-blue-50 dark:bg-gray-600">
+      <div className="flex flex-col w-full p-4 space-y-6 rounded-lg bg-blue-50 dark:bg-gray-600">
         <div className="flex items-center justify-between">
           <span>Email address</span>
           <input

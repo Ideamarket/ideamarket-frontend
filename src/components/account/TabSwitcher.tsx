@@ -8,7 +8,7 @@ const TabSwitcher = ({ hasSpaceBetween }) => {
   const { cardTab, setCardTab } = useContext(AccountContext)
 
   return (
-    <div>
+    <div className="flex justify-between w-full md:w-auto space-between md:block">
       <A
         className={classNames(
           'italic cursor-pointer',

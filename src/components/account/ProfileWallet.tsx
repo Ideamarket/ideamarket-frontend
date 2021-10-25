@@ -542,7 +542,7 @@ export default function ProfileWallet({ walletState, userData }: Props) {
   return (
     <div className="w-full h-full mt-8">
       <div className="flex flex-col justify-between sm:flex-row">
-        <div className="hidden p-3 text-3xl font-semibold border-gray-100 sm:block sm:border-b dark:border-gray-400">
+        <div className="hidden py-3 text-3xl font-semibold border-gray-100 sm:block sm:border-b dark:border-gray-400">
           Wallet
         </div>
         <div className="flex justify-between">

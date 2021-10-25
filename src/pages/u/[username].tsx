@@ -41,7 +41,7 @@ export default function PublicProfile({ username, userDataSsr }: Props) {
   return (
     <div className="min-h-screen pt-18 md:pt-16 bg-top-desktop-new">
       <div className="w-11/12 mx-auto my-0 max-w-7xl md:pt-24 font-inter w-90">
-        <div className="flex flex-col items-start justify-center px-6 py-5 bg-white rounded-lg md:flex-row dark:bg-gray-500">
+        <div className="flex flex-col items-start justify-center p-8 bg-white rounded-lg md:flex-row dark:bg-gray-500">
           <PublicInfoColumn userData={userData} />
           <ProfileWallet walletState="public" userData={userData} />
         </div>

@@ -9,21 +9,20 @@ const SettingsTab = () => {
 
   return (
     <div className="w-full h-full">
-      <div className="p-3 text-3xl font-semibold border-b border-gray-100 dark:border-gray-400">
-        Profile
+      <div className="py-3 text-3xl font-semibold border-b border-gray-100 dark:border-gray-400">
+        Settings
       </div>
-      <div className="flex flex-col lg:flex-row lg:space-x-2">
+      <div className="flex flex-col lg:flex-row lg:space-x-4">
         <div className="w-full">
           <div className="flex">
-            <div className="lg:w-44" />
+            <div className="lg:w-80" />
             <div className="p-3 font-bold">Account Information</div>
           </div>
-          <div className="flex flex-col w-full px-3 py-2 space-y-2 rounded-lg bg-blue-50 dark:bg-gray-600">
+          <div className="flex flex-col w-full p-4 space-y-4 rounded-lg bg-blue-50 dark:bg-gray-600">
             <div className="flex flex-col items-center justify-end lg:flex-row">
               <span className="w-full text-left lg:w-40 lg:mr-4 lg:text-right">
                 Username
               </span>
-
               <input
                 type="text"
                 className="block w-full h-8 border-gray-300 rounded-md shadow-sm lg:w-60 lg:text-sm focus:outline-none dark:text-gray-300 dark:bg-gray-600 dark:placeholder-gray-200 dark:border-gray-500 focus:ring-brand-blue focus:border-brand-blue"

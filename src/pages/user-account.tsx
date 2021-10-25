@@ -24,7 +24,7 @@ const Account = () => {
     }
   }, [])
 
-  const [cardTab, setCardTab] = useState(accountTabs.PROFILE)
+  const [cardTab, setCardTab] = useState(accountTabs.SETTINGS)
   const { session, loading, refetchSession } = useCustomSession()
 
   const [updateUserSettings, { isLoading: isUpdateLoading }] = useMutation<{
@@ -171,7 +171,7 @@ const Account = () => {
         {!loading && !session ? (
           <div className="pt-16">
             <div className="w-11/12 mx-auto my-0 bg-white rounded-lg max-w-7xl font-inter w-90">
-              <div className="flex flex-col items-start justify-center px-6 py-5 bg-white rounded-lg md:flex-row dark:bg-gray-500">
+              <div className="flex flex-col items-start justify-center p-8 bg-white rounded-lg md:flex-row dark:bg-gray-500">
                 <div className="relative flex flex-col w-full mt-2 text-center md:mr-8 md:w-1/4">
                   <div className="p-3 border-b border-gray-100 dark:border-gray-400">
                     <div className="pb-4 text-3xl text-blue-400">Account</div>
