@@ -94,6 +94,20 @@ export const getNavbarConfig = (mixPanel: any) => ({
         },
       ],
     },
+
+    {
+      name: 'IMO',
+      subMenu: [
+        {
+          name: 'Stake',
+          onClick: () => router.push('/stake'),
+        },
+        {
+          name: 'Claim',
+          onClick: () => router.push('/claim'),
+        },
+      ],
+    },
     {
       name: 'IMO',
       subMenu: [
