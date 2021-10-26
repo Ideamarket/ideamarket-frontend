@@ -75,9 +75,23 @@ export const navbarConfig: any = {
         },
       ],
     },
+
     {
       name: 'Bridge',
       onClick: () => router.push('/bridge'),
+    },
+    {
+      name: 'IMO',
+      subMenu: [
+        {
+          name: 'Stake',
+          onClick: () => router.push('/stake'),
+        },
+        {
+          name: 'Claim',
+          onClick: () => router.push('/claim'),
+        },
+      ],
     },
     {
       name: IS_ACCOUNT_ENABLED ? 'Account' : 'Wallet',
