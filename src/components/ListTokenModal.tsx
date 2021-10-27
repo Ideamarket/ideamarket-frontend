@@ -21,6 +21,7 @@ import TradeCompleteModal, {
   TRANSACTION_TYPES,
 } from './trade/TradeCompleteModal'
 import Image from 'next/image'
+import { debounce } from 'utils/lodash'
 
 export default function ListTokenModal({ close }: { close: () => void }) {
   const { account } = useWeb3React()
@@ -239,10 +240,10 @@ export default function ListTokenModal({ close }: { close: () => void }) {
                 ? 'border-brand-red focus:border-brand-red'
                 : 'border-gray-200 focus:border-brand-blue'
             )}
-            onChange={(e) => {
-              tokenNameInputChanged(e.target.value)
-            }}
-            value={tokenName}
+            onChange={debounce(
+              (e) => tokenNameInputChanged(e.target.value),
+              500
+            )}
           />
         </div>
         <div
