@@ -1,20 +1,20 @@
 import { useState, useEffect } from 'react'
-import { TokenAmount, Trade, TradeType } from '@uniswap/sdk'
 import { bigNumberTenPow18, web3BNToFloatString } from '../utils'
 import { useWalletStore } from 'store/walletStore'
 import { useContractStore } from 'store/contractStore'
-import { ZERO_ADDRESS, getUniswapPath } from '../utils'
+import { ZERO_ADDRESS } from '../utils'
 import { NETWORK } from 'store/networks'
 import { IdeaToken, IdeaMarket } from '../store/ideaMarketsStore'
 
 import BigNumber from 'bignumber.js'
 import BN from 'bn.js'
+import { getInputForOutput, getOutputForInput } from 'utils/uniswap'
 
 export default function useOutputAmount(
   ideaToken: IdeaToken,
   market: IdeaMarket,
-  tokenAddress: string,
-  amount: string,
+  selectedTokenAddress: string,
+  ideaTokenAmount: string,
   decimals: number,
   tradeType: string
 ) {
@@ -28,14 +28,15 @@ export default function useOutputAmount(
     async function calculateBuyCost() {
       if (
         !useWalletStore.getState().web3 ||
-        !tokenAddress ||
-        (!ideaToken && !market)
+        !selectedTokenAddress ||
+        (!ideaToken && !market) ||
+        parseFloat(ideaTokenAmount) <= 0.0
       ) {
         return new BN('0')
       }
 
-      const amountBN = new BN(
-        new BigNumber(amount).multipliedBy(bigNumberTenPow18).toFixed()
+      const ideaTokenAmountBN = new BN(
+        new BigNumber(ideaTokenAmount).multipliedBy(bigNumberTenPow18).toFixed()
       )
 
       const exchangeContract = useContractStore.getState().exchangeContract
@@ -53,63 +54,55 @@ export default function useOutputAmount(
               .getCostsForBuyingTokens(
                 marketDetails,
                 new BN('0'),
-                amountBN,
+                ideaTokenAmountBN,
                 false
               )
               .call()
           ).total
         )
       } else {
+        // How much DAI is required to buy this amount of Idea Tokens
         requiredDaiAmount = new BN(
           await exchangeContract.methods
-            .getCostForBuyingTokens(ideaToken.address, amountBN)
+            .getCostForBuyingTokens(ideaToken.address, ideaTokenAmountBN)
             .call()
         )
       }
 
-      if (tokenAddress === NETWORK.getExternalAddresses().dai) {
+      if (selectedTokenAddress === NETWORK.getExternalAddresses().dai) {
         return requiredDaiAmount
       }
 
+      // Selected ERC20 token
       const inputTokenAddress =
-        tokenAddress === ZERO_ADDRESS
+        selectedTokenAddress === ZERO_ADDRESS
           ? NETWORK.getExternalAddresses().weth
-          : tokenAddress
+          : selectedTokenAddress
       const outputTokenAddress = NETWORK.getExternalAddresses().dai
-      const path = await getUniswapPath(inputTokenAddress, outputTokenAddress)
-
-      if (!path) {
-        throw Error('No Uniswap path exists')
-      }
 
       try {
-        const trade = new Trade(
-          path.route,
-          new TokenAmount(path.outToken, requiredDaiAmount.toString()),
-          TradeType.EXACT_OUTPUT
+        // BUY: ERC20 -> WETH -> DAI (we want amount for ERC20)
+        return await getInputForOutput(
+          inputTokenAddress,
+          outputTokenAddress,
+          requiredDaiAmount
         )
-        const requiredInputBN = new BN(
-          new BigNumber(trade.inputAmount.toExact())
-            .multipliedBy(new BigNumber('10').exponentiatedBy(decimals))
-            .toFixed()
-        )
-
-        return requiredInputBN
       } catch (ex) {
+        console.error('Exception during quote process for BUY:', ex)
         return new BN('0')
       }
     }
 
     async function calculateSellPrice() {
-      const amountBN = new BN(
-        new BigNumber(amount).multipliedBy(bigNumberTenPow18).toFixed()
+      const ideaTokenAmountBN = new BN(
+        new BigNumber(ideaTokenAmount).multipliedBy(bigNumberTenPow18).toFixed()
       )
 
       if (
         !useWalletStore.getState().web3 ||
         !ideaToken ||
-        !tokenAddress ||
-        amountBN.eq(new BN('0'))
+        !selectedTokenAddress ||
+        parseFloat(ideaTokenAmount) <= 0.0
       ) {
         return new BN('0')
       }
@@ -119,48 +112,37 @@ export default function useOutputAmount(
       try {
         daiOutputAmount = new BN(
           await exchangeContract.methods
-            .getPriceForSellingTokens(ideaToken.address, amountBN)
+            .getPriceForSellingTokens(ideaToken.address, ideaTokenAmountBN)
             .call()
         )
       } catch (ex) {
         return new BN('0')
       }
 
-      if (tokenAddress === NETWORK.getExternalAddresses().dai) {
+      if (selectedTokenAddress === NETWORK.getExternalAddresses().dai) {
         return daiOutputAmount
       }
 
       const inputTokenAddress = NETWORK.getExternalAddresses().dai
       const outputTokenAddress =
-        tokenAddress === ZERO_ADDRESS
+        selectedTokenAddress === ZERO_ADDRESS
           ? NETWORK.getExternalAddresses().weth
-          : tokenAddress
-      const path = await getUniswapPath(inputTokenAddress, outputTokenAddress)
-
-      if (!path) {
-        throw Error('No Uniswap path exists')
-      }
+          : selectedTokenAddress
 
       try {
-        const trade = new Trade(
-          path.route,
-          new TokenAmount(path.inToken, daiOutputAmount.toString()),
-          TradeType.EXACT_INPUT
+        // SELL: DAI -> WETH -> ERC20 (we want amount for ERC20)
+        return await getOutputForInput(
+          inputTokenAddress,
+          outputTokenAddress,
+          daiOutputAmount
         )
-        const outputBN = new BN(
-          new BigNumber(trade.outputAmount.toExact())
-            .multipliedBy(new BigNumber('10').exponentiatedBy(decimals))
-            .toFixed()
-        )
-
-        return outputBN
       } catch (ex) {
         return new BN('0')
       }
     }
 
     async function run(fn) {
-      if (!amount || amount === '') {
+      if (!ideaTokenAmount || ideaTokenAmount === '') {
         setOutputBN(new BigNumber('0'))
         setOutput('0.0000')
         setIsLoading(false)
@@ -186,7 +168,14 @@ export default function useOutputAmount(
     return () => {
       isCancelled = true
     }
-  }, [ideaToken, tokenAddress, amount, tradeType, decimals, market])
+  }, [
+    ideaToken,
+    selectedTokenAddress,
+    ideaTokenAmount,
+    tradeType,
+    decimals,
+    market,
+  ])
 
   return [isLoading, outputBN, output]
 }

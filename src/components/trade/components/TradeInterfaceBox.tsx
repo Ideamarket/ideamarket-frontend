@@ -32,7 +32,7 @@ const TradeInterfaceBox: React.FC<TradeInterfaceBoxProps> = ({
   label,
   setIdeaTokenAmount,
   setSelectedTokenAmount,
-  inputTokenAmount = '',
+  inputTokenAmount = '', // This is the amount of tokens for box being typed in (selected token OR idea token)
   isTokenBalanceLoading,
   tokenBalance,
   maxButtonClicked,
@@ -84,6 +84,9 @@ const TradeInterfaceBox: React.FC<TradeInterfaceBoxProps> = ({
   function onInputChanged(event) {
     const oldValue = inputValue
     const newValue = event.target.value
+
+    if (newValue === oldValue) return
+
     const setValue = /^\d*\.?\d*$/.test(newValue) ? newValue : oldValue
 
     setInputValue(setValue)

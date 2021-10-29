@@ -3,7 +3,7 @@ import DeployedAddressesTestAVML2 from '../../assets/deployed-test-avm-l2.json'
 import DeployedABIsTestAVML2 from '../../assets/abis-test-avm-l2.json'
 import TokenListTestAVML2 from '../../assets/token-list-test-avm-l2.json'
 
-export default class KovanAVMNetworkSpecifics implements INetworkSpecifics {
+export default class TestAVML2NetworkSpecifics implements INetworkSpecifics {
   getNetworkName(): string {
     return 'test-avm-l2'
   }
@@ -28,7 +28,7 @@ export default class KovanAVMNetworkSpecifics implements INetworkSpecifics {
     return {
       dai: '0x5364Dc963c402aAF150700f38a8ef52C1D7D7F14',
       cDai: '0x0000000000000000000000000000000000000001',
-      weth: '0x0000000000000000000000000000000000000001',
+      weth: '0xb47e6a5f8b33b3f17603c83a0535a9dcd7e32681',
     }
   }
 

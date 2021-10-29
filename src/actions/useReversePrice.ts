@@ -1,26 +1,25 @@
 import { useEffect, useState } from 'react'
-import { TokenAmount, Trade, TradeType } from '@uniswap/sdk'
 import { IdeaMarket, IdeaToken } from 'store/ideaMarketsStore'
 import { useWalletStore } from 'store/walletStore'
 import {
   calculateIdeaTokensInputForDaiOutput,
   calculateMaxIdeaTokensBuyable,
   ZERO_ADDRESS,
-  getUniswapPath,
   web3BNToFloatString,
 } from 'utils'
 import { NETWORK } from 'store/networks'
 
 import BigNumber from 'bignumber.js'
 import BN from 'bn.js'
+import { getInputForOutput, getOutputForInput } from 'utils/uniswap'
 
 const nullTokenBalance = new BN('0')
 
 export default function useReversePrice(
   ideaToken: IdeaToken,
   market: IdeaMarket,
-  tokenAddress: string,
-  amount: string,
+  selectedTokenAddress: string,
+  selectedTokenAmount: string, // selected token amount
   decimals: number,
   tradeType: string,
   tokenBalanceBN = nullTokenBalance
@@ -34,46 +33,38 @@ export default function useReversePrice(
 
     async function calculateBuyCost() {
       if (
-        !tokenAddress ||
+        !selectedTokenAddress ||
         (!ideaToken && !market) ||
         !tokenBalanceBN ||
-        parseFloat(amount) <= 0.0
+        parseFloat(selectedTokenAmount) <= 0.0
       ) {
         return new BN('0')
       }
 
-      const amountBN = new BN(
-        new BigNumber(amount)
+      const selectedTokenAmountBN = new BN(
+        new BigNumber(selectedTokenAmount)
           .multipliedBy(new BigNumber('10').exponentiatedBy(decimals))
           .toFixed(0, BigNumber.ROUND_DOWN)
       )
 
-      let daiAmountBN = amountBN
-      if (tokenAddress !== NETWORK.getExternalAddresses().dai) {
+      let daiAmountBN = selectedTokenAmountBN
+      if (selectedTokenAddress !== NETWORK.getExternalAddresses().dai) {
+        // Selected ERC20 token
         const inputTokenAddress =
-          tokenAddress === ZERO_ADDRESS
+          selectedTokenAddress === ZERO_ADDRESS
             ? NETWORK.getExternalAddresses().weth
-            : tokenAddress
+            : selectedTokenAddress
         const outputTokenAddress = NETWORK.getExternalAddresses().dai
-        const path = await getUniswapPath(inputTokenAddress, outputTokenAddress)
-
-        if (!path) {
-          throw Error('No Uniswap path exists')
-        }
 
         try {
-          const trade = new Trade(
-            path.route,
-            new TokenAmount(path.inToken, amountBN.toString()),
-            TradeType.EXACT_INPUT
-          )
-
-          daiAmountBN = new BN(
-            new BigNumber(trade.outputAmount.toExact())
-              .multipliedBy(new BigNumber('10').exponentiatedBy('18'))
-              .toFixed(0, BigNumber.ROUND_DOWN)
+          // BUY: ERC20 -> WETH -> DAI (we want amount for DAI)
+          daiAmountBN = await getOutputForInput(
+            inputTokenAddress,
+            outputTokenAddress,
+            selectedTokenAmountBN
           )
         } catch (ex) {
+          console.error('Exception during quote process for BUY:', ex)
           return new BN('0')
         }
       }
@@ -90,8 +81,8 @@ export default function useReversePrice(
     }
 
     async function calculateSellPrice() {
-      const amountBN = new BN(
-        new BigNumber(amount)
+      const selectedTokenAmountBN = new BN(
+        new BigNumber(selectedTokenAmount)
           .multipliedBy(
             new BigNumber('10').exponentiatedBy(decimals.toString())
           )
@@ -101,40 +92,29 @@ export default function useReversePrice(
       if (
         !useWalletStore.getState().web3 ||
         !ideaToken ||
-        !tokenAddress ||
-        amountBN.eq(new BN('0'))
+        !selectedTokenAddress ||
+        parseFloat(selectedTokenAmount) <= 0.0
       ) {
         return new BN('0')
       }
 
-      let requiredDaiAmountBN = amountBN
-      if (tokenAddress !== NETWORK.getExternalAddresses().dai) {
+      let requiredDaiAmountBN = selectedTokenAmountBN
+      if (selectedTokenAddress !== NETWORK.getExternalAddresses().dai) {
         // The user wants to receive a different currency than Dai
-        // -> perform an Uniswap trade
+        // -> perform a Uniswap trade
 
         const inputTokenAddress = NETWORK.getExternalAddresses().dai
         const outputTokenAddress =
-          tokenAddress === ZERO_ADDRESS
+          selectedTokenAddress === ZERO_ADDRESS
             ? NETWORK.getExternalAddresses().weth
-            : tokenAddress
-
-        const path = await getUniswapPath(inputTokenAddress, outputTokenAddress)
-
-        if (!path) {
-          throw Error('No Uniswap path exists')
-        }
+            : selectedTokenAddress
 
         try {
-          const trade = new Trade(
-            path.route,
-            new TokenAmount(path.outToken, amountBN.toString()),
-            TradeType.EXACT_OUTPUT
-          )
-
-          requiredDaiAmountBN = new BN(
-            new BigNumber(trade.inputAmount.toExact())
-              .multipliedBy(new BigNumber('10').exponentiatedBy('18'))
-              .toFixed(0, BigNumber.ROUND_UP)
+          // SELL: DAI -> WETH -> ERC20 (we want amount for DAI)
+          requiredDaiAmountBN = await getInputForOutput(
+            inputTokenAddress,
+            outputTokenAddress,
+            selectedTokenAmountBN
           )
         } catch (ex) {
           return new BN('0')
@@ -153,7 +133,7 @@ export default function useReversePrice(
     }
 
     async function run(fn) {
-      if (!amount || amount === '') {
+      if (!selectedTokenAmount || selectedTokenAmount === '') {
         setOutputBN(new BN('0'))
         setOutput('0.0000')
         setIsLoading(false)
@@ -181,8 +161,8 @@ export default function useReversePrice(
     }
   }, [
     ideaToken,
-    tokenAddress,
-    amount,
+    selectedTokenAddress,
+    selectedTokenAmount,
     tradeType,
     tokenBalanceBN,
     decimals,

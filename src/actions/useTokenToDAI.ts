@@ -4,7 +4,7 @@ import { useWalletStore } from 'store/walletStore'
 import { TokenListEntry } from '../store/tokenListStore'
 import BigNumber from 'bignumber.js'
 import BN from 'bn.js'
-import { getExchangeRate } from 'utils/uniswap'
+import { getExchangeRateProduct } from 'utils/uniswap'
 
 export default function useTokenToDAI(
   token: TokenListEntry,
@@ -40,17 +40,7 @@ export default function useTokenToDAI(
       }
 
       try {
-        const exchangeRate = await getExchangeRate(token.address)
-        // Caclulate the worth of the input tokens by finding this product
-        const product = parseFloat(amount) * parseFloat(exchangeRate)
-        const productBN = new BN(
-          new BigNumber(product)
-            .multipliedBy(
-              new BigNumber('10').exponentiatedBy(decimals.toString())
-            )
-            .toFixed()
-        )
-        return productBN
+        return await getExchangeRateProduct(token.address, amountBN)
       } catch (ex) {
         return new BN('0')
       }

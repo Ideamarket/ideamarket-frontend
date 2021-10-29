@@ -22,6 +22,7 @@ const moduleExports = withPWA({
       'ideamarket.io',
       'raw.githubusercontent.com',
       'd37wda20o7ykez.cloudfront.net',
+      'zapper.fi',
     ],
   },
   async redirects() {

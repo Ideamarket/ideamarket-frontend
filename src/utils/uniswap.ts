@@ -1,220 +1,214 @@
 import BN from 'bn.js'
-import BigNumber from 'bignumber.js'
-import { Token, TokenAmount, Pair, Route, TradeType, Trade } from '@uniswap/sdk'
-import {
-  getERC20Contract,
-  getUniswapPairContract,
-  useContractStore,
-} from 'store/contractStore'
+import { useContractStore } from 'store/contractStore'
 import { ZERO_ADDRESS } from './index'
 import { NETWORK } from 'store/networks'
 
 export type UniswapPairDetails = {
-  exists: boolean
-  route?: Route
-  inToken?: Token
-  outToken?: Token
+  path: Array<string>
+  fees: Array<number>
 }
 
+export const LOW_POOL_FEE = 500
+export const MEDIUM_POOL_FEE = 3000
+export const HIGH_POOL_FEE = 10000
+
+/**
+ * @param inputTokenAddress The input token address
+ * @param outputTokenAddress The output token address
+ * @param outputAmountBN The desired output amount
+ *
+ * @return The required input to get a `outputAmount` from an Uniswap swap
+ */
+export async function getInputForOutput(
+  inputTokenAddress: string,
+  outputTokenAddress: string,
+  outputAmountBN: BN
+) {
+  const quoterContract = useContractStore.getState().quoterContract
+  const { path, fees } = await getUniswapPath(
+    inputTokenAddress,
+    outputTokenAddress
+  )
+  if (path.length === 2 && fees.length === 1) {
+    return new BN(
+      await quoterContract.methods
+        .quoteExactOutputSingle(path[0], path[1], fees[0], outputAmountBN, 0)
+        .call()
+    )
+  } else {
+    // Exact Output Multihop Swap requires path to be encoded in reverse
+    const encodedPath = encodePath(
+      [path[2], path[1], path[0]],
+      [fees[1], fees[0]]
+    )
+    return new BN(
+      await quoterContract.methods
+        .quoteExactOutput(encodedPath, outputAmountBN)
+        .call()
+    )
+  }
+}
+
+/**
+ * @param inputTokenAddress The input token address
+ * @param outputTokenAddress The output token address
+ * @param inputAmountBN The desired input amount
+ *
+ * @return The output for `inputAmount` for a Uniswap swap
+ */
+export async function getOutputForInput(
+  inputTokenAddress: string,
+  outputTokenAddress: string,
+  inputAmountBN: BN
+) {
+  const quoterContract = useContractStore.getState().quoterContract
+  const { path, fees } = await getUniswapPath(
+    inputTokenAddress,
+    outputTokenAddress
+  )
+  if (path.length === 2 && fees.length === 1) {
+    return new BN(
+      await quoterContract.methods
+        .quoteExactInputSingle(path[0], path[1], fees[0], inputAmountBN, 0)
+        .call()
+    )
+  } else {
+    const encodedPath = encodePath(
+      [path[0], path[1], path[2]],
+      [fees[0], fees[1]]
+    )
+    return new BN(
+      await quoterContract.methods
+        .quoteExactInput(encodedPath, inputAmountBN)
+        .call()
+    )
+  }
+}
+
+/**
+ * @param inputTokenAddress The input token address
+ * @param outputTokenAddress The output token address
+ *
+ * @return The Uniswap path from `inputTokenAddress` to `outputTokenAddress`
+ */
 export async function getUniswapPath(
   inputTokenAddress: string,
   outputTokenAddress: string
 ): Promise<UniswapPairDetails> {
-  // TODO: CACHE!
+  const wethAddress = NETWORK.getExternalAddresses().weth
+  const updatedInputAddress =
+    inputTokenAddress === ZERO_ADDRESS ? wethAddress : inputTokenAddress
+  const updatedOutputAddress =
+    outputTokenAddress === ZERO_ADDRESS ? wethAddress : outputTokenAddress
 
   const uniswapFactoryContract =
     useContractStore.getState().uniswapFactoryContract
-  const directPairAddress = await uniswapFactoryContract.methods
-    .getPair(inputTokenAddress, outputTokenAddress)
+
+  const LOW_FEE_ADDRESS = await uniswapFactoryContract.methods
+    .getPool(updatedInputAddress, updatedOutputAddress, LOW_POOL_FEE)
     .call()
+  if (LOW_FEE_ADDRESS !== ZERO_ADDRESS) {
+    const path = [updatedInputAddress, updatedOutputAddress]
+    const fees = [LOW_POOL_FEE]
+    return { path, fees }
+  }
 
-  const chainID = NETWORK.getChainID()
+  const MEDIUM_FEE_ADDRESS = await uniswapFactoryContract.methods
+    .getPool(updatedInputAddress, updatedOutputAddress, MEDIUM_POOL_FEE)
+    .call()
+  if (MEDIUM_FEE_ADDRESS !== ZERO_ADDRESS) {
+    const path = [updatedInputAddress, updatedOutputAddress]
+    const fees = [MEDIUM_POOL_FEE]
+    return { path, fees }
+  }
 
-  const inputTokenContract = getERC20Contract(inputTokenAddress)
-  const outputTokenContract = getERC20Contract(outputTokenAddress)
+  const HIGH_FEE_ADDRESS = await uniswapFactoryContract.methods
+    .getPool(updatedInputAddress, updatedOutputAddress, HIGH_POOL_FEE)
+    .call()
+  if (HIGH_FEE_ADDRESS !== ZERO_ADDRESS) {
+    const path = [updatedInputAddress, updatedOutputAddress]
+    const fees = [HIGH_POOL_FEE]
+    return { path, fees }
+  }
 
-  let inputTokenDecimals, outputTokenDecimals
-  await Promise.all([
-    (async () => {
-      inputTokenDecimals = parseInt(
-        (await inputTokenContract.methods.decimals().call()).toString()
-      )
-    })(),
-    (async () => {
-      outputTokenDecimals = parseInt(
-        (await outputTokenContract.methods.decimals().call()).toString()
-      )
-    })(),
-  ])
+  // Direct path does not exist if we make it here
+  // Check for 3-hop path: input -> weth -> output
 
-  const inputToken = new Token(
-    chainID,
-    inputTokenAddress,
-    inputTokenDecimals,
-    inputTokenAddress,
-    inputTokenAddress
-  )
-  const wethToken = new Token(
-    chainID,
-    NETWORK.getExternalAddresses().weth,
-    18,
-    NETWORK.getExternalAddresses().weth,
-    NETWORK.getExternalAddresses().weth
-  )
-  const outputToken = new Token(
-    chainID,
-    outputTokenAddress,
-    outputTokenDecimals,
-    outputTokenAddress,
-    outputTokenAddress
-  )
-
-  if (directPairAddress !== ZERO_ADDRESS) {
-    // The direct pair exists
-
-    const directPairContract = getUniswapPairContract(directPairAddress)
-    const directPair = await getPair(
-      directPairContract,
-      inputToken,
-      outputToken
-    )
-
-    return {
-      exists: true,
-      route: new Route([directPair], inputToken, outputToken),
-      inToken: inputToken,
-      outToken: outputToken,
-    }
+  let fees = []
+  const LOW_FEE_INPUT_WETH_ADDRESS = await uniswapFactoryContract.methods
+    .getPool(updatedInputAddress, wethAddress, LOW_POOL_FEE)
+    .call()
+  const MEDIUM_FEE_INPUT_WETH_ADDRESS = await uniswapFactoryContract.methods
+    .getPool(updatedInputAddress, wethAddress, MEDIUM_POOL_FEE)
+    .call()
+  const HIGH_FEE_INPUT_WETH_ADDRESS = await uniswapFactoryContract.methods
+    .getPool(updatedInputAddress, wethAddress, HIGH_POOL_FEE)
+    .call()
+  if (LOW_FEE_INPUT_WETH_ADDRESS !== ZERO_ADDRESS) {
+    fees.push(LOW_POOL_FEE)
+  } else if (MEDIUM_FEE_INPUT_WETH_ADDRESS !== ZERO_ADDRESS) {
+    fees.push(MEDIUM_POOL_FEE)
+  } else if (HIGH_FEE_INPUT_WETH_ADDRESS !== ZERO_ADDRESS) {
+    fees.push(HIGH_POOL_FEE)
   } else {
-    // The direct pair does not exist, check for input -> WETH -> output
-
-    let inputWETHPairAddress
-    let outputWETHPairAddress
-
-    await Promise.all([
-      (async () => {
-        inputWETHPairAddress = await uniswapFactoryContract.methods
-          .getPair(inputTokenAddress, NETWORK.getExternalAddresses().weth)
-          .call()
-      })(),
-      (async () => {
-        outputWETHPairAddress = await uniswapFactoryContract.methods
-          .getPair(outputTokenAddress, NETWORK.getExternalAddresses().weth)
-          .call()
-      })(),
-    ])
-
-    if (
-      inputTokenAddress === ZERO_ADDRESS ||
-      outputTokenAddress === ZERO_ADDRESS
-    ) {
-      // That path also does not exist
-      return {
-        exists: false,
-      }
-    }
-
-    // The path exists, find the route
-    const firstPairContract = getUniswapPairContract(inputWETHPairAddress)
-    const secondPairContract = getUniswapPairContract(outputWETHPairAddress)
-    let firstPair, secondPair
-
-    await Promise.all([
-      (async () => {
-        firstPair = await getPair(firstPairContract, inputToken, wethToken)
-      })(),
-      (async () => {
-        secondPair = await getPair(secondPairContract, outputToken, wethToken)
-      })(),
-    ])
-
-    return {
-      exists: true,
-      route: new Route([firstPair, secondPair], inputToken, outputToken),
-      inToken: inputToken,
-      outToken: outputToken,
-    }
-  }
-}
-
-export async function getUniswapDaiOutputSwap(
-  inputAddress: string,
-  inputAmount: BN
-) {
-  const inputTokenAddress =
-    inputAddress === ZERO_ADDRESS
-      ? NETWORK.getExternalAddresses().weth
-      : inputAddress
-  const outputTokenAddress = NETWORK.getExternalAddresses().dai
-  const path = await getUniswapPath(inputTokenAddress, outputTokenAddress)
-
-  if (!path) {
-    throw Error('No Uniswap path exists')
+    throw new Error('No input-weth path')
   }
 
-  const trade = new Trade(
-    path.route,
-    new TokenAmount(path.inToken, inputAmount.toString()),
-    TradeType.EXACT_INPUT
-  )
+  const LOW_FEE_WETH_OUTPUT_ADDRESS = await uniswapFactoryContract.methods
+    .getPool(wethAddress, updatedOutputAddress, LOW_POOL_FEE)
+    .call()
+  const MEDIUM_FEE_WETH_OUTPUT_ADDRESS = await uniswapFactoryContract.methods
+    .getPool(wethAddress, updatedOutputAddress, MEDIUM_POOL_FEE)
+    .call()
+  const HIGH_FEE_WETH_OUTPUT_ADDRESS = await uniswapFactoryContract.methods
+    .getPool(wethAddress, updatedOutputAddress, HIGH_POOL_FEE)
+    .call()
+  if (LOW_FEE_WETH_OUTPUT_ADDRESS !== ZERO_ADDRESS) {
+    fees.push(LOW_POOL_FEE)
+  } else if (MEDIUM_FEE_WETH_OUTPUT_ADDRESS !== ZERO_ADDRESS) {
+    fees.push(MEDIUM_POOL_FEE)
+  } else if (HIGH_FEE_WETH_OUTPUT_ADDRESS !== ZERO_ADDRESS) {
+    fees.push(HIGH_POOL_FEE)
+  } else {
+    throw new Error('No weth-output path')
+  }
 
-  const outputBN = new BN(
-    new BigNumber(trade.outputAmount.toExact())
-      .multipliedBy(new BigNumber('10').exponentiatedBy(18))
-      .toFixed()
-  )
-
-  return outputBN
+  const path = [updatedInputAddress, wethAddress, updatedOutputAddress]
+  return { path, fees }
 }
 
 /**
  *  @param address The address to get the exchange rate of when paired with DAI
+ *  @param amountBN The amount of the selected token desired
  *
- * @return string that represents the exchange rate of a pair of tokens
+ * @return string that represents the exchange rate of a pair of tokens multiplied by the amount desired
  */
-export async function getExchangeRate(address: string) {
-  // For now, hard code DAI to $1
-  if (address === NETWORK.getExternalAddresses().dai) {
-    return '1'
-  }
-  const inputTokenAddress =
-    address === ZERO_ADDRESS ? NETWORK.getExternalAddresses().weth : address
-  const outputTokenAddress = NETWORK.getExternalAddresses().dai
-  const path = await getUniswapPath(inputTokenAddress, outputTokenAddress)
-
-  // Uniswap references the exchange rate by the variable midPrice
-  return path.route.midPrice.toFixed(18)
+export async function getExchangeRateProduct(address: string, amountBN: BN) {
+  // We need to get the INPUT here because we want to know the DAI amount BEFORE the swap happens
+  return await getInputForOutput(
+    NETWORK.getExternalAddresses().dai,
+    address,
+    amountBN
+  )
 }
 
-async function getPair(
-  pairContract,
-  tokenA: Token,
-  tokenB: Token
-): Promise<Pair> {
-  let token0: string
-  let token1: string
-  let reserves
+// Encode a UniV3 path. Note that pools (and therefore paths) change when you use different fees.
+export const encodePath = (path, fees) => {
+  const FEE_SIZE = 3
 
-  await Promise.all([
-    (async () => {
-      token0 = await pairContract.methods.token0().call()
-    })(),
-    (async () => {
-      token1 = await pairContract.methods.token1().call()
-    })(),
-    (async () => {
-      reserves = await pairContract.methods.getReserves().call()
-    })(),
-  ])
+  if (path.length !== fees.length + 1) {
+    throw new Error('path/fee lengths do not match')
+  }
 
-  return new Pair(
-    new TokenAmount(
-      token0 === tokenA.address ? tokenA : tokenB,
-      reserves._reserve0
-    ),
-    new TokenAmount(
-      token1 === tokenA.address ? tokenA : tokenB,
-      reserves._reserve1
-    )
-  )
+  let encoded = '0x'
+  for (let i = 0; i < fees.length; i++) {
+    // 20 byte encoding of the address
+    encoded += path[i].slice(2)
+    // 3 byte encoding of the fee
+    encoded += fees[i].toString(16).padStart(2 * FEE_SIZE, '0')
+  }
+  // encode the final token
+  encoded += path[path.length - 1].slice(2)
+
+  return encoded.toLowerCase()
 }

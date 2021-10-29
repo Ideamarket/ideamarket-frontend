@@ -28,7 +28,7 @@ export default class AVMNetworkSpecifics implements INetworkSpecifics {
     return {
       dai: '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1',
       cDai: '0x0000000000000000000000000000000000000001',
-      weth: '0x0000000000000000000000000000000000000001',
+      weth: '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1',
     }
   }
 
