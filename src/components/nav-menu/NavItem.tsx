@@ -17,7 +17,7 @@ const NavItem = ({ menuItem }) => {
   return (
     <div>
       <div
-        className="inline-flex px-4 py-2 text-lg leading-5 text-white transition duration-150 ease-in-out bg-transparent rounded-md shadow-sm md:justify-center hover:text-gray-500 active:text-gray-800 cursor-pointer"
+        className="inline-flex px-4 py-2 text-lg leading-5 text-white transition duration-150 ease-in-out bg-transparent rounded-md shadow-sm cursor-pointer md:justify-center hover:text-gray-500 active:text-gray-800"
         onClick={onMenuItemClick}
       >
         <span>{menuItem.name}</span>
@@ -31,7 +31,7 @@ const NavItem = ({ menuItem }) => {
             isOpen ? 'visible' : 'invisible'
           )}
         >
-          <div className="absolute left-0 w-48 origin-top-right bg-white border border-gray-200 divide-y divide-gray-100 rounded-md shadow-lg outline-none">
+          <div className="absolute left-0 w-48 origin-top-right bg-white border border-gray-200 divide-y divide-gray-100 rounded-md shadow-lg outline-none dark:divide-gray-600 dark:border-gray-700">
             {menuItem.subMenu.map(({ name, onClick }) => (
               <A
                 key={name}
@@ -39,7 +39,7 @@ const NavItem = ({ menuItem }) => {
                   onClick()
                   setIsOpen(false)
                 }}
-                className="flex flex-row items-center w-full px-2 py-4 space-x-2 leading-5 transition-colors transform hover:bg-gray-100 hover:cursor-pointer"
+                className="flex flex-row items-center w-full px-2 py-4 space-x-2 leading-5 transition-colors transform hover:bg-gray-100 hover:cursor-pointer dark:text-gray-200 dark:bg-gray-800"
               >
                 {name}
               </A>
