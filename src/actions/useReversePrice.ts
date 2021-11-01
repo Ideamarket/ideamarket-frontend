@@ -19,7 +19,7 @@ export default function useReversePrice(
   ideaToken: IdeaToken,
   market: IdeaMarket,
   selectedTokenAddress: string,
-  selectedTokenAmount: string, // selected token amount
+  selectedTokenAmount: string,
   decimals: number,
   tradeType: string,
   tokenBalanceBN = nullTokenBalance

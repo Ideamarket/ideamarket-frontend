@@ -1,11 +1,38 @@
 import BN from 'bn.js'
-import { useContractStore } from 'store/contractStore'
+import {
+  getERC20Contract,
+  getUniswapPairContract,
+  useContractStore,
+} from 'store/contractStore'
 import { ZERO_ADDRESS } from './index'
 import { NETWORK } from 'store/networks'
+import { Token } from '@uniswap/sdk-core'
+import { Route, Pool } from '@uniswap/v3-sdk'
+import BigNumber from 'bignumber.js'
 
 export type UniswapPairDetails = {
   path: Array<string>
   fees: Array<number>
+}
+
+interface Immutables {
+  factory: string
+  token0: string
+  token1: string
+  fee: number
+  tickSpacing: number
+  maxLiquidityPerTick: BigNumber
+}
+
+interface State {
+  liquidity: BigNumber
+  sqrtPriceX96: BigNumber
+  tick: number
+  observationIndex: number
+  observationCardinality: number
+  observationCardinalityNext: number
+  feeProtocol: number
+  unlocked: boolean
 }
 
 export const LOW_POOL_FEE = 500
@@ -83,6 +110,48 @@ export async function getOutputForInput(
         .call()
     )
   }
+}
+
+async function getPoolImmutables(poolContract) {
+  const [factory, token0, token1, fee, tickSpacing, maxLiquidityPerTick] =
+    await Promise.all([
+      poolContract.methods.factory().call(),
+      poolContract.methods.token0().call(),
+      poolContract.methods.token1().call(),
+      poolContract.methods.fee().call(),
+      poolContract.methods.tickSpacing().call(),
+      poolContract.methods.maxLiquidityPerTick().call(),
+    ])
+
+  const immutables: Immutables = {
+    factory,
+    token0,
+    token1,
+    fee,
+    tickSpacing,
+    maxLiquidityPerTick,
+  }
+  return immutables
+}
+
+async function getPoolState(poolContract) {
+  const [liquidity, slot] = await Promise.all([
+    poolContract.methods.liquidity().call(),
+    poolContract.methods.slot0().call(),
+  ])
+
+  const PoolState: State = {
+    liquidity,
+    sqrtPriceX96: slot[0],
+    tick: slot[1],
+    observationIndex: slot[2],
+    observationCardinality: slot[3],
+    observationCardinalityNext: slot[4],
+    feeProtocol: slot[5],
+    unlocked: slot[6],
+  }
+
+  return PoolState
 }
 
 /**
@@ -177,19 +246,177 @@ export async function getUniswapPath(
   return { path, fees }
 }
 
+async function getPool(
+  pairContract,
+  tokenA: Token,
+  tokenB: Token
+): Promise<Pool> {
+  const [immutables, state] = await Promise.all([
+    getPoolImmutables(pairContract),
+    getPoolState(pairContract),
+  ])
+
+  return new Pool(
+    tokenA,
+    tokenB,
+    parseInt(immutables.fee as any),
+    state.sqrtPriceX96.toString(),
+    state.liquidity.toString(),
+    parseInt(state.tick as any)
+  )
+}
+
+async function getRoute(inputTokenAddress: string) {
+  const outputTokenAddress = NETWORK.getExternalAddresses().dai
+  const uniswapFactoryContract =
+    useContractStore.getState().uniswapFactoryContract
+
+  const wethAddress = NETWORK.getExternalAddresses().weth
+  const updatedInputAddress =
+    inputTokenAddress === ZERO_ADDRESS ? wethAddress : inputTokenAddress
+  const updatedOutputAddress =
+    outputTokenAddress === ZERO_ADDRESS ? wethAddress : outputTokenAddress
+
+  let directPoolAddress
+  const HIGH_FEE_ADDRESS = await uniswapFactoryContract.methods
+    .getPool(updatedInputAddress, updatedOutputAddress, HIGH_POOL_FEE)
+    .call()
+  if (HIGH_FEE_ADDRESS !== ZERO_ADDRESS) {
+    directPoolAddress = HIGH_FEE_ADDRESS
+  }
+
+  const MEDIUM_FEE_ADDRESS = await uniswapFactoryContract.methods
+    .getPool(updatedInputAddress, updatedOutputAddress, MEDIUM_POOL_FEE)
+    .call()
+  if (MEDIUM_FEE_ADDRESS !== ZERO_ADDRESS) {
+    directPoolAddress = MEDIUM_FEE_ADDRESS
+  }
+
+  const LOW_FEE_ADDRESS = await uniswapFactoryContract.methods
+    .getPool(updatedInputAddress, updatedOutputAddress, LOW_POOL_FEE)
+    .call()
+  if (LOW_FEE_ADDRESS !== ZERO_ADDRESS) {
+    directPoolAddress = LOW_FEE_ADDRESS
+  }
+
+  const chainID = NETWORK.getChainID()
+
+  const inputTokenContract = getERC20Contract(updatedInputAddress)
+  const outputTokenContract = getERC20Contract(updatedOutputAddress)
+
+  let inputTokenDecimals, outputTokenDecimals
+  await Promise.all([
+    (async () => {
+      inputTokenDecimals = parseInt(
+        (await inputTokenContract.methods.decimals().call()).toString()
+      )
+    })(),
+    (async () => {
+      outputTokenDecimals = parseInt(
+        (await outputTokenContract.methods.decimals().call()).toString()
+      )
+    })(),
+  ])
+
+  const inputToken = new Token(
+    chainID,
+    updatedInputAddress,
+    inputTokenDecimals,
+    updatedInputAddress,
+    updatedInputAddress
+  )
+  const wethToken = new Token(
+    chainID,
+    NETWORK.getExternalAddresses().weth,
+    18,
+    NETWORK.getExternalAddresses().weth,
+    NETWORK.getExternalAddresses().weth
+  )
+  const outputToken = new Token(
+    chainID,
+    updatedOutputAddress,
+    outputTokenDecimals,
+    updatedOutputAddress,
+    updatedOutputAddress
+  )
+
+  if (directPoolAddress && directPoolAddress !== ZERO_ADDRESS) {
+    // The direct pair exists
+
+    const directPairContract = getUniswapPairContract(directPoolAddress)
+    const directPair = await getPool(
+      directPairContract,
+      inputToken,
+      outputToken
+    )
+
+    return new Route([directPair], inputToken, outputToken)
+  } else {
+    // The direct pair does not exist, check for input -> WETH -> output
+
+    const LOW_FEE_INPUT_WETH_ADDRESS = await uniswapFactoryContract.methods
+      .getPool(updatedInputAddress, wethAddress, LOW_POOL_FEE)
+      .call()
+    const MEDIUM_FEE_INPUT_WETH_ADDRESS = await uniswapFactoryContract.methods
+      .getPool(updatedInputAddress, wethAddress, MEDIUM_POOL_FEE)
+      .call()
+    const HIGH_FEE_INPUT_WETH_ADDRESS = await uniswapFactoryContract.methods
+      .getPool(updatedInputAddress, wethAddress, HIGH_POOL_FEE)
+      .call()
+
+    const LOW_FEE_WETH_OUTPUT_ADDRESS = await uniswapFactoryContract.methods
+      .getPool(wethAddress, updatedOutputAddress, LOW_POOL_FEE)
+      .call()
+    const MEDIUM_FEE_WETH_OUTPUT_ADDRESS = await uniswapFactoryContract.methods
+      .getPool(wethAddress, updatedOutputAddress, MEDIUM_POOL_FEE)
+      .call()
+    const HIGH_FEE_WETH_OUTPUT_ADDRESS = await uniswapFactoryContract.methods
+      .getPool(wethAddress, updatedOutputAddress, HIGH_POOL_FEE)
+      .call()
+
+    let inputWETHPoolAddress
+    let outputWETHPoolAddress
+
+    if (LOW_FEE_INPUT_WETH_ADDRESS !== ZERO_ADDRESS)
+      inputWETHPoolAddress = LOW_FEE_INPUT_WETH_ADDRESS
+    else if (MEDIUM_FEE_INPUT_WETH_ADDRESS !== ZERO_ADDRESS)
+      inputWETHPoolAddress = MEDIUM_FEE_INPUT_WETH_ADDRESS
+    else if (HIGH_FEE_INPUT_WETH_ADDRESS !== ZERO_ADDRESS)
+      inputWETHPoolAddress = HIGH_FEE_INPUT_WETH_ADDRESS
+
+    if (LOW_FEE_WETH_OUTPUT_ADDRESS !== ZERO_ADDRESS)
+      outputWETHPoolAddress = LOW_FEE_WETH_OUTPUT_ADDRESS
+    else if (MEDIUM_FEE_WETH_OUTPUT_ADDRESS !== ZERO_ADDRESS)
+      outputWETHPoolAddress = MEDIUM_FEE_WETH_OUTPUT_ADDRESS
+    else if (HIGH_FEE_WETH_OUTPUT_ADDRESS !== ZERO_ADDRESS)
+      outputWETHPoolAddress = HIGH_FEE_WETH_OUTPUT_ADDRESS
+
+    // The path exists, find the route
+    const firstPairContract = getUniswapPairContract(inputWETHPoolAddress)
+    const secondPairContract = getUniswapPairContract(outputWETHPoolAddress)
+    let firstPool, secondPool
+
+    await Promise.all([
+      (async () => {
+        firstPool = await getPool(firstPairContract, inputToken, wethToken)
+      })(),
+      (async () => {
+        secondPool = await getPool(secondPairContract, outputToken, wethToken)
+      })(),
+    ])
+
+    return new Route([firstPool, secondPool], inputToken, outputToken)
+  }
+}
+
 /**
  *  @param address The address to get the exchange rate of when paired with DAI
- *  @param amountBN The amount of the selected token desired
  *
- * @return string that represents the exchange rate of a pair of tokens multiplied by the amount desired
+ * @return string that represents the exchange rate of a pair of tokens. Ex: 1 ETH = $4315
  */
-export async function getExchangeRateProduct(address: string, amountBN: BN) {
-  // We need to get the INPUT here because we want to know the DAI amount BEFORE the swap happens
-  return await getInputForOutput(
-    NETWORK.getExternalAddresses().dai,
-    address,
-    amountBN
-  )
+export async function getExchangeRate(address: string) {
+  // Uniswap references the exchange rate by the variable midPrice
+  return (await getRoute(address)).midPrice.toFixed(18)
 }
 
 // Encode a UniV3 path. Note that pools (and therefore paths) change when you use different fees.
