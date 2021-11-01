@@ -33,6 +33,8 @@ import { NETWORK, INetworkSpecifics } from 'store/networks'
 import { Provider } from 'next-auth/client'
 import { NextPage } from 'next'
 
+import MixPanelProvider from 'utils/mixPanel'
+
 export const GlobalContext = createContext({
   onWalletConnectedCallback: () => {},
   setOnWalletConnectedCallback: (f: () => void) => {},
@@ -127,7 +129,9 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
           <ThemeProvider attribute="class" defaultTheme="light">
             <Web3ReactProvider getLibrary={getLibrary}>
               <Web3ReactManager>
-                {getLayout(<Component {...pageProps} />)}
+                <MixPanelProvider>
+                  {getLayout(<Component {...pageProps} />)}
+                </MixPanelProvider>
               </Web3ReactManager>
               <WrongNetworkOverlay />
               <ModalRoot />

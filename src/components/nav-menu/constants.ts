@@ -1,30 +1,37 @@
 import router from 'next/router'
 import IS_ACCOUNT_ENABLED from 'utils/isAccountEnabled'
 
-export const navbarConfig: any = {
+export const getNavbarConfig = (mixPanel: any) => ({
   menu: [
     {
       name: 'Start',
       subMenu: [
         {
           name: 'What is Ideamarket?',
-          onClick: () =>
+          onClick: () => {
             window.open(
               'https://medium.com/@harmonylion1/decentralizing-the-search-for-truth-using-financial-markets-648bf4408b5c#:~:text=Media%20corporations%20are%20the%20central,media%20corporations%20say%20they%20are',
               '_blank'
-            ),
+            )
+            mixPanel.track('LINK_WHAT')
+          },
         },
         {
           name: 'User Tutorial',
-          onClick: () =>
+          onClick: () => {
             window.open(
               'https://docs.ideamarket.io/user-guide/tutorial',
               '_blank'
-            ),
+            )
+            mixPanel.track('LINK_TUTORIAL')
+          },
         },
         {
           name: 'Whitepaper',
-          onClick: () => window.open('https://docs.ideamarket.io/', '_blank'),
+          onClick: () => {
+            window.open('https://docs.ideamarket.io/', '_blank')
+            mixPanel.track('LINK_WHITEPAPER')
+          },
         },
       ],
     },
@@ -70,19 +77,28 @@ export const navbarConfig: any = {
         },
         {
           name: 'Shop',
-          onClick: () =>
-            window.open('https://ideamarket-io.myshopify.com', '_blank'),
+          onClick: () => {
+            window.open('https://ideamarket-io.myshopify.com', '_blank')
+            mixPanel.track('LINK_SHOW')
+          },
         },
       ],
     },
     {
       name: 'Bridge',
-      onClick: () => router.push('/bridge'),
+      onClick: () => {
+        router.push('/bridge')
+        mixPanel.track('BRIDGE')
+      },
     },
     {
       name: IS_ACCOUNT_ENABLED ? 'Account' : 'Wallet',
-      onClick: () =>
-        router.push(IS_ACCOUNT_ENABLED ? '/user-account' : '/account'),
+      onClick: () => {
+        router.push(IS_ACCOUNT_ENABLED ? '/user-account' : '/account')
+        if (!IS_ACCOUNT_ENABLED) {
+          mixPanel.track('VIEW_WALLET')
+        }
+      },
     },
   ],
-}
+})

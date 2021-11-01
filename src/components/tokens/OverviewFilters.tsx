@@ -17,6 +17,7 @@ import {
   MainFilters,
   toggleMarketHelper,
 } from './utils/OverviewUtils'
+import { useMixPanel } from 'utils/mixPanel'
 
 type DropdownButtonProps = {
   filters: any
@@ -36,6 +37,7 @@ const DropdownButton = ({
 }: DropdownButtonProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const container = useRef(null)
+  const { mixpanel } = useMixPanel()
 
   function handleClickOutside(event) {
     const value = container.current
@@ -64,7 +66,7 @@ const DropdownButton = ({
     >
       <span className="mr-1">{name}</span>
       {name === 'Platforms' && (
-        <span className="w-8 text-center text-xs text-gray-400">
+        <span className="w-8 text-xs text-center text-gray-400">
           {
             [...selectedOptions].filter((o) => o !== 'All' && o !== 'None')
               .length
@@ -76,7 +78,7 @@ const DropdownButton = ({
       {isDropdownOpen && (
         <div
           ref={container}
-          className="absolute max-h-36 w-32 md:w-64 mt-1 p-4 shadow-xl border rounded-lg flex flex-col flex-wrap bg-white dark:bg-gray-800 cursor-default z-40"
+          className="absolute z-40 flex flex-col flex-wrap w-32 p-4 mt-1 bg-white border rounded-lg shadow-xl cursor-default max-h-36 md:w-64 dark:bg-gray-800"
           style={{ top: '100%', left: 0 }}
         >
           {filters.map((filter) => (
@@ -84,12 +86,13 @@ const DropdownButton = ({
               <input
                 type="checkbox"
                 id={`checkbox-${filter}`}
-                className="cursor-pointer border-2 border-gray-200 rounded-sm"
+                className="border-2 border-gray-200 rounded-sm cursor-pointer"
                 checked={
                   selectedOptions.has(filter) || selectedOptions.has('All')
                 }
                 onChange={(e) => {
                   toggleOption(filter)
+                  mixpanel.track('FILTER_PLATFORM', { platforms: filters })
                 }}
               />
               <label
@@ -126,10 +129,12 @@ const FiltersButton = ({
   onClick,
   setIsVerifiedFilterActive,
 }: FiltersButtonProps) => {
+  const { mixpanel } = useMixPanel()
+
   function getButtonIcon(filterId: number) {
     switch (filterId) {
       case 1:
-        return <ArrowSmUpIcon className="stroke-current w-4 h-4" />
+        return <ArrowSmUpIcon className="w-4 h-4 stroke-current" />
       case 2:
         return <FireIcon className="w-4 h-4 mr-1" />
       case 3:
@@ -163,6 +168,8 @@ const FiltersButton = ({
           setIsVerifiedFilterActive(false)
         }
         onClick(filter.id)
+
+        mixpanel.track(`FILTER_${filter.value.toUpperCase()}`)
       }}
     >
       {getButtonIcon(filter.id)}
@@ -247,7 +254,7 @@ export const OverviewFilters = ({
   }, [markets])
 
   return (
-    <div className="md:flex justify-center p-3 bg-white dark:bg-gray-700 rounded-t-lg gap-x-2 gap-y-2 md:justify-start overflow-x-scroll lg:overflow-x-visible">
+    <div className="justify-center p-3 overflow-x-scroll bg-white rounded-t-lg md:flex dark:bg-gray-700 gap-x-2 gap-y-2 md:justify-start lg:overflow-x-visible">
       <div className="flex md:gap-x-2">
         {Object.values(MainFilters).map(
           (filter: { id: number; value: string }) => (
@@ -279,10 +286,10 @@ export const OverviewFilters = ({
         toggleOption={toggleColumn}
       />
 
-      <div className="flex ml-auto mt-2 md:mt-0 w-full">
+      <div className="flex w-full mt-2 ml-auto md:mt-0">
         <OverviewSearchbar onNameSearchChanged={onNameSearchChanged} />
         <button
-          className="md:hidden flex justify-center items-center p-2 ml-2 border rounded-md text-sm font-semibold"
+          className="flex items-center justify-center p-2 ml-2 text-sm font-semibold border rounded-md md:hidden"
           onClick={() => {
             ModalService.open(OverviewFiltersModal, {
               selectedMarkets,
@@ -295,7 +302,7 @@ export const OverviewFilters = ({
         >
           <span>Filters</span>
           {numActiveFilters !== 0 && (
-            <div className="bg-gray-200 px-1 ml-2 rounded text-brand-blue">
+            <div className="px-1 ml-2 bg-gray-200 rounded text-brand-blue">
               {numActiveFilters}
             </div>
           )}

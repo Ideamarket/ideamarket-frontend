@@ -15,11 +15,13 @@ import { ListTokenModal, WalletModal } from 'components'
 import Plus from '../../assets/plus-white.svg'
 import A from 'components/A'
 import BN from 'bn.js'
+import { useMixPanel } from 'utils/mixPanel'
 
 const HomeHeader = ({
   setTradeOrListSuccessToggle,
   tradeOrListSuccessToggle,
 }: any) => {
+  const { mixpanel } = useMixPanel()
   const { setOnWalletConnectedCallback } = useContext(GlobalContext)
 
   const { interestManager: interestManagerAddress } =
@@ -34,6 +36,8 @@ const HomeHeader = ({
   )
 
   const onListTokenClicked = () => {
+    mixpanel.track('ADD_LISTING_START')
+
     const onClose = () => setTradeOrListSuccessToggle(!tradeOrListSuccessToggle)
     if (!useWalletStore.getState().web3) {
       setOnWalletConnectedCallback(() => () => {

@@ -1,5 +1,6 @@
 import ModalService from 'components/modals/ModalService'
 import VerifyModal from 'components/VerifyModal'
+import { useMixPanel } from 'utils/mixPanel'
 
 export default function UnverifiedListing({
   claimableInterest,
@@ -7,6 +8,8 @@ export default function UnverifiedListing({
   market,
   token,
 }) {
+  const { mixpanel } = useMixPanel()
+
   return (
     <div className="flex flex-col items-center text-xl">
       <span>Claimable interest</span>
@@ -18,6 +21,11 @@ export default function UnverifiedListing({
           <button
             className="flex items-center justify-center w-64 h-12 font-semibold text-center bg-white border-2 rounded-lg dark:bg-gray-500 dark:text-gray-300 hover:bg-brand-blue hover:text-white border-brand-blue text-brand-blue"
             onClick={() => {
+              mixpanel.track('CLAIM_INCOME_STREAM', {
+                token: token.name,
+                market: market.name,
+              })
+
               ModalService.open(VerifyModal, { market, token })
             }}
           >

@@ -12,8 +12,10 @@ import { GlobalContext } from './_app'
 import ModalService from 'components/modals/ModalService'
 import Wand from '../assets/wand.svg'
 import CircleSpinner from 'components/animations/CircleSpinner'
+import { useMixPanel } from 'utils/mixPanel'
 
 export default function Bridge() {
+  const { mixpanel } = useMixPanel()
   const l1Network = getL1Network(NETWORK)
   const { setRequiredNetwork } = useContext(GlobalContext)
   useEffect(() => {
@@ -69,6 +71,8 @@ export default function Bridge() {
         selectedPair.token.tokenID,
         l2Recipient
       )
+
+      mixpanel.track('BRIDGE_COMPLETED')
     } catch (ex) {
       console.log(ex)
       return

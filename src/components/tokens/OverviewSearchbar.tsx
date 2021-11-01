@@ -1,16 +1,22 @@
 import { SearchIcon } from '@heroicons/react/solid'
 import { debounce } from 'utils/lodash'
+import { useMixPanel } from 'utils/mixPanel'
 
 type Props = {
   onNameSearchChanged: (value: string) => void
 }
 
 export const OverviewSearchbar = ({ onNameSearchChanged }: Props) => {
-  const handleOnSearch = debounce(
-    ({ target }) =>
-      onNameSearchChanged(target.value.length >= 2 ? target.value : ''),
-    500
-  )
+  const { mixpanel } = useMixPanel()
+
+  const handleOnSearch = debounce(({ target }) => {
+    onNameSearchChanged(target.value.length >= 2 ? target.value : '')
+    if (target.value.length >= 2) {
+      mixpanel.track('SEARCH', {
+        searchValue: target.value,
+      })
+    }
+  }, 500)
 
   return (
     <div className="w-full h-full">

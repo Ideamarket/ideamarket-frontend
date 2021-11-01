@@ -37,6 +37,7 @@ import useTokenToDAI from 'actions/useTokenToDAI'
 import { useWeb3React } from '@web3-react/core'
 import { useENSAddress } from './hooks/useENSAddress'
 import { TRANSACTION_TYPES } from './TradeCompleteModal'
+import { useMixPanel } from 'utils/mixPanel'
 
 type NewIdeaToken = {
   symbol: string
@@ -92,6 +93,7 @@ export default function TradeInterface({
   const [tradeType, setTradeType] = useState('buy')
   const [recipientAddress, setRecipientAddress] = useState('')
   const [isENSAddressValid, hexAddress] = useENSAddress(recipientAddress)
+  const { mixpanel } = useMixPanel()
 
   const [isLockChecked, setIsLockChecked] = useState(false)
   const [isGiftChecked, setIsGiftChecked] = useState(false)
@@ -424,6 +426,10 @@ export default function TradeInterface({
     setApproveButtonKey(approveButtonKey + 1)
     setTradeToggle(!tradeToggle)
     onTradeComplete(true, ideaToken?.name, transactionType)
+
+    mixpanel.track(`${tradeType.toUpperCase()}_COMPLETED`, {
+      tokenName: ideaToken.name,
+    })
   }
 
   // Did user type a valid ENS address or hex-address?

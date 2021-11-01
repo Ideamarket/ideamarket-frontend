@@ -22,6 +22,10 @@ import TradeCompleteModal, {
 } from './trade/TradeCompleteModal'
 import Image from 'next/image'
 import { debounce } from 'utils/lodash'
+import mixpanel from 'mixpanel-browser'
+
+// Workaround since modal is not wrapped by the mixPanel interface
+mixpanel.init('bdc8707c5ca435eebe1eb76c4a9d85d5', { debug: true })
 
 export default function ListTokenModal({ close }: { close: () => void }) {
   const { account } = useWeb3React()
@@ -150,6 +154,7 @@ export default function ListTokenModal({ close }: { close: () => void }) {
     const finalTokenName = getMarketSpecificsByMarketName(
       selectedMarket.name
     ).convertUserInputToTokenName(tokenName)
+    mixpanel.track(`ADD_LISTING_${selectedMarket.name.toUpperCase()}`)
 
     if (isWantBuyChecked) {
       const giftAddress = isENSAddressValid ? hexAddress : recipientAddress
@@ -174,6 +179,9 @@ export default function ListTokenModal({ close }: { close: () => void }) {
 
       close()
       onTradeComplete(true, finalTokenName, TRANSACTION_TYPES.BUY)
+      mixpanel.track(
+        `ADD_LISTING_${selectedMarket.name.toUpperCase()}_COMPLETED`
+      )
     } else {
       try {
         await txManager.executeTx(
@@ -189,6 +197,9 @@ export default function ListTokenModal({ close }: { close: () => void }) {
       }
       close()
       onTradeComplete(true, finalTokenName, TRANSACTION_TYPES.LIST)
+      mixpanel.track(
+        `ADD_LISTING_${selectedMarket.name.toUpperCase()}_COMPLETED`
+      )
     }
   }
 

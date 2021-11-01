@@ -1,8 +1,9 @@
 import { Transition } from '@headlessui/react'
 import { WalletStatus } from 'components'
 import ModalService from 'components/modals/ModalService'
+import { useMixPanel } from 'utils/mixPanel'
 import WalletModal from '../wallet/WalletModal'
-import { navbarConfig } from './constants'
+import { getNavbarConfig } from './constants'
 import NavItem from './NavItem'
 import NavThemeButton from './NavThemeButton'
 
@@ -11,6 +12,10 @@ type Props = {
 }
 
 const MobileNavItems = ({ isMobileNavOpen }: Props) => {
+  const { mixpanel } = useMixPanel()
+
+  const navbarConfig = getNavbarConfig(mixpanel)
+
   return (
     <Transition
       show={isMobileNavOpen}

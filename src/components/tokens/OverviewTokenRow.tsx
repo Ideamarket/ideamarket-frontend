@@ -24,6 +24,7 @@ import { BadgeCheckIcon, ArrowSmUpIcon } from '@heroicons/react/solid'
 import useThemeMode from 'components/useThemeMode'
 import Image from 'next/image'
 import BigNumber from 'bignumber.js'
+import { useMixPanel } from 'utils/mixPanel'
 
 type Props = {
   token: IdeaToken
@@ -45,6 +46,7 @@ export default function TokenRow({
   lastElementRef,
 }: Props) {
   const router = useRouter()
+  const { mixpanel } = useMixPanel()
   const marketSpecifics = getMarketSpecificsByMarketName(market.name)
   const { tokenIconURL, isLoading: isTokenIconLoading } = useTokenIconURL({
     marketSpecifics,
@@ -100,6 +102,11 @@ export default function TokenRow({
             token.name
           )}`
         )
+
+        mixpanel.track('VIEW_LISTING', {
+          market: marketSpecifics.getMarketNameURLRepresentation(),
+          tokenName: marketSpecifics.getTokenNameURLRepresentation(token.name),
+        })
       }}
     >
       {/* Rank */}
@@ -276,6 +283,9 @@ export default function TokenRow({
           onClick={(e) => {
             e.stopPropagation()
             onTradeClicked(token, market)
+            mixpanel.track('BUY_START', {
+              tokenName: token.name,
+            })
           }}
           className="w-24 h-10 text-base font-medium text-white border-2 rounded-lg bg-brand-blue dark:bg-gray-600 md:table-cell border-brand-blue dark:text-gray-300 tracking-tightest-2 font-sf-compact-medium"
         >

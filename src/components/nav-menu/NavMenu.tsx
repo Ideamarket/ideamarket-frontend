@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import NProgress from 'nprogress'
-import { navbarConfig } from './constants'
+import { getNavbarConfig } from './constants'
 import { Router, useRouter } from 'next/dist/client/router'
 import { MenuIcon, XIcon } from '@heroicons/react/solid'
 import { WalletStatus } from 'components'
@@ -12,10 +12,14 @@ import NavItem from './NavItem'
 import NavThemeButton from './NavThemeButton'
 import LoginAndLogoutButton from './LoginAndLogoutButton'
 import IS_ACCOUNT_ENABLED from 'utils/isAccountEnabled'
+import { useMixPanel } from 'utils/mixPanel'
 
 const NavMenu = () => {
   const router = useRouter()
   const [isMobileNavOpen, setMobileNavOpen] = useState(false)
+  const { mixpanel } = useMixPanel()
+
+  const navbarConfig = getNavbarConfig(mixpanel)
 
   useEffect(() => {
     NProgress.configure({ trickleSpeed: 100 })
@@ -62,7 +66,12 @@ const NavMenu = () => {
           </div>
           <div className="hidden md:flex">
             <NavThemeButton />
-            <WalletStatus openModal={() => ModalService.open(WalletModal)} />
+            <WalletStatus
+              openModal={() => {
+                mixpanel.track('ADD_WALLET_START')
+                ModalService.open(WalletModal)
+              }}
+            />
             {IS_ACCOUNT_ENABLED && <LoginAndLogoutButton />}
           </div>
           {/* Desktop END */}
