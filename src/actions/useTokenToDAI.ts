@@ -45,9 +45,7 @@ export default function useTokenToDAI(
         const product = parseFloat(amount) * parseFloat(exchangeRate)
         const productBN = new BN(
           new BigNumber(product)
-            .multipliedBy(
-              new BigNumber('10').exponentiatedBy(decimals.toString())
-            )
+            .multipliedBy(new BigNumber('10').exponentiatedBy(18))
             .toFixed()
         )
         return productBN

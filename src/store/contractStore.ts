@@ -109,10 +109,10 @@ export function getERC20Contract(address: string) {
     : null
 }
 
-export function getUniswapPairContract(pairAddress: string) {
+export function getUniswapPoolContract(poolAddress: string) {
   const web3 = useWalletStore.getState().web3
   return web3
-    ? new web3.eth.Contract(IUniswapV3Pool.abi as any, pairAddress, {
+    ? new web3.eth.Contract(IUniswapV3Pool.abi as any, poolAddress, {
         from: web3.eth.defaultAccount,
       })
     : null

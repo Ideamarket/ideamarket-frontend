@@ -8,7 +8,7 @@ import { IdeaMarket } from 'store/ideaMarketsStore'
 export { default as TransactionManager } from './TransactionManager'
 export { default as useTransactionManager } from './useTransactionManager'
 export { getUniswapPath } from './uniswap'
-export type { UniswapPairDetails } from './uniswap'
+export type { UniswapPoolDetails } from './uniswap'
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
