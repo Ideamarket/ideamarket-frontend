@@ -1,5 +1,7 @@
 import { gql } from 'graphql-request'
 
+const ONE_WEEK_IN_UNIX_TIME = 604800
+
 export default function getQueryMyTokensMaybeMarket(
   marketID: number,
   owner: string
@@ -12,6 +14,9 @@ export default function getQueryMyTokensMaybeMarket(
   } else {
     where = `where:{tokenOwner:"${owner.toLowerCase()}"}`
   }
+
+  const currentTs = Math.floor(Date.now() / 1000)
+  const weekBack = currentTs - ONE_WEEK_IN_UNIX_TIME
 
   return gql`
     {
@@ -39,6 +44,10 @@ export default function getQueryMyTokensMaybeMarket(
           invested
           listedAt
           dayChange
+          pricePoints(where:{timestamp_gt:${weekBack}} orderBy:timestamp) {
+            oldPrice
+            price
+          }
         }
     }`
 }

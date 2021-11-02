@@ -132,6 +132,15 @@ export const OverviewColumns = ({
             Change
           </>
         )
+
+      case '7d-change':
+        return (
+          <>
+            7D
+            <br />
+            Change
+          </>
+        )
       default:
         return column.content
     }

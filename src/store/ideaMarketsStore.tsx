@@ -82,6 +82,7 @@ export type IdeaToken = {
   latestPricePoint: IdeaTokenPricePoint
   earliestPricePoint: IdeaTokenPricePoint
   dayChange: string
+  weeklyChange: any
   dayVolume: string
   listedAt: number
   lockedAmount: string
@@ -882,6 +883,21 @@ export function setIsWatching(token: IdeaToken, watching: boolean): void {
   )
 }
 
+function getWeeklyChange(weeklyPricePoints) {
+  let weeklyChange = '0'
+  if (weeklyPricePoints.length > 0) {
+    const yearlyCurrentPrice = Number(
+      weeklyPricePoints[weeklyPricePoints.length - 1].price
+    )
+
+    const yearlyOldPrice = Number(weeklyPricePoints[0].oldPrice)
+    weeklyChange = Number(
+      ((yearlyCurrentPrice - yearlyOldPrice) * 100) / yearlyOldPrice
+    ).toFixed(2)
+  }
+  return weeklyChange
+}
+
 function apiResponseToIdeaToken(
   apiResponse,
   marketApiResponse?,
@@ -950,6 +966,7 @@ function apiResponseToIdeaToken(
     dayChange: apiResponse.dayChange
       ? (parseFloat(apiResponse.dayChange) * 100).toFixed(2)
       : undefined,
+    weeklyChange: getWeeklyChange(apiResponse?.pricePoints) || '0.00',
     dayVolume: apiResponse.dayVolume
       ? parseFloat(apiResponse.dayVolume).toFixed(2)
       : undefined,

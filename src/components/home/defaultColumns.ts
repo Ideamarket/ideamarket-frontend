@@ -45,6 +45,15 @@ const defaultColumns = [
     isSelectedAtStart: false,
   },
   {
+    id: 11,
+    name: '7D Change',
+    content: '7D Change',
+    value: '7d-change',
+    sortable: true,
+    isOptional: true,
+    isSelectedAtStart: false,
+  },
+  {
     id: 6,
     name: 'Deposits',
     content: 'Deposits',

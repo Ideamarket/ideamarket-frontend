@@ -1,6 +1,8 @@
 import { gql } from 'graphql-request'
 import { ZERO_ADDRESS } from 'utils'
 
+const ONE_WEEK_IN_UNIX_TIME = 604800
+
 export default function getQueryTokenNameTextSearch(
   marketIds: number[],
   skip: number,
@@ -14,6 +16,9 @@ export default function getQueryTokenNameTextSearch(
 ): string {
   const hexMarketIds = marketIds.map((id) => '0x' + id.toString(16))
   let inMarkets = hexMarketIds.map((id) => `"${id}"`).join(',')
+
+  const currentTs = Math.floor(Date.now() / 1000)
+  const weekBack = currentTs - ONE_WEEK_IN_UNIX_TIME
 
   let filterTokensQuery = ''
   if (filterTokens) {
@@ -74,6 +79,10 @@ export default function getQueryTokenNameTextSearch(
           }
           dayVolume
           dayChange
+          pricePoints(where:{timestamp_gt:${weekBack}} orderBy:timestamp) {
+            oldPrice
+            price
+          }
         }
     }`
 }

@@ -162,7 +162,6 @@ export default function TokenRow({
           </div>
         </div>
       </td>
-
       {/* Price */}
       <td className="hidden py-4 pl-6 md:table-cell whitespace-nowrap">
         <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-300">
@@ -175,7 +174,6 @@ export default function TokenRow({
           ${formatNumber(tokenPrice)}
         </p>
       </td>
-
       {/* 24H Change */}
       {getColumn('24H Change') && (
         <td className="hidden py-4 pl-6 md:table-cell whitespace-nowrap">
@@ -199,7 +197,29 @@ export default function TokenRow({
           </p>
         </td>
       )}
-
+      {/* 7D Change */}
+      {getColumn('7D Change') && (
+        <td className="hidden py-4 pl-6 md:table-cell whitespace-nowrap">
+          <p
+            className={classNames(
+              'text-base font-medium leading-4 tracking-tightest-2 uppercase',
+              parseFloat(token.weeklyChange) >= 0.0
+                ? 'text-brand-green'
+                : 'text-brand-red'
+            )}
+            title={`${
+              parseFloat(token.weeklyChange) >= 0.0
+                ? `+ ${parseInt(token.weeklyChange)}`
+                : `- ${parseInt(token.weeklyChange.slice(1))}`
+            }%`}
+          >
+            {parseFloat(token.weeklyChange) >= 0.0
+              ? `+ ${parseInt(token.weeklyChange)}`
+              : `- ${parseInt(token.weeklyChange.slice(1))}`}
+            %
+          </p>
+        </td>
+      )}
       {/* Deposits */}
       {getColumn('Deposits') && (
         <td className="hidden py-4 pl-6 md:table-cell whitespace-nowrap">
@@ -221,7 +241,6 @@ export default function TokenRow({
           </p>
         </td>
       )}
-
       {/* %Locked */}
       {getColumn('% Locked') && (
         <td className="hidden py-4 pl-6 md:table-cell whitespace-nowrap">
@@ -240,7 +259,6 @@ export default function TokenRow({
           </p>
         </td>
       )}
-
       {/* Year Income */}
       {getColumn('1YR Income') && (
         <td className="hidden py-4 pl-6 md:table-cell whitespace-nowrap">
@@ -252,7 +270,6 @@ export default function TokenRow({
           </p>
         </td>
       )}
-
       {/* Claimable Income */}
       {getColumn('Claimable Income') ? (
         <td className="hidden py-4 pl-6 md:table-cell whitespace-nowrap">
@@ -269,7 +286,6 @@ export default function TokenRow({
       ) : (
         <></>
       )}
-
       {/* Buy Button */}
       <td className="hidden py-4 text-center md:table-cell whitespace-nowrap">
         <button
@@ -297,7 +313,6 @@ export default function TokenRow({
           ${formatNumber(tokenPrice)}
         </button>
       </td>
-
       {/* Star desktop */}
       <td className="hidden px-3 py-4 text-sm leading-5 text-gray-500 md:table-cell dark:text-gray-300 md:pl-3 md:pr-6 whitespace-nowrap">
         <div className="flex items-center justify-center h-full">
