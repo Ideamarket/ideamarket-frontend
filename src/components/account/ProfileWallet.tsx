@@ -683,6 +683,7 @@ export default function ProfileWallet({ walletState, userData }: Props) {
               orderBy={orderBy}
               fetchMore={fetchMoreOwned}
               headerClicked={headerClicked}
+              userData={userData}
             />
           )}
           {table === 'listings' && web3 !== undefined && (
@@ -694,6 +695,7 @@ export default function ProfileWallet({ walletState, userData }: Props) {
               orderBy={orderBy}
               fetchMore={fetchMoreListings}
               headerClicked={headerClicked}
+              userData={userData}
             />
           )}
 
@@ -706,6 +708,7 @@ export default function ProfileWallet({ walletState, userData }: Props) {
               orderBy={orderBy}
               fetchMore={fetchMoreLocked}
               headerClicked={headerClicked}
+              userData={userData}
             />
           )}
           {table === 'trades' && web3 !== undefined && (
@@ -717,6 +720,7 @@ export default function ProfileWallet({ walletState, userData }: Props) {
               orderBy={orderBy}
               fetchMore={fetchMoreTrades}
               headerClicked={headerClicked}
+              userData={userData}
             />
           )}
         </div>

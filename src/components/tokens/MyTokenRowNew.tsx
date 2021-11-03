@@ -14,26 +14,26 @@ import { useTokenIconURL } from 'actions'
 import { BadgeCheckIcon } from '@heroicons/react/solid'
 import useThemeMode from 'components/useThemeMode'
 import Image from 'next/image'
-import { useContext } from 'react'
-import { AccountContext } from 'pages/user-account'
 
 const tenPow18 = new BigNumber('10').pow(new BigNumber('18'))
 
-export default function MyTokenRow({
+export default function MyTokenRowNew({
   token,
   market,
   compoundSupplyRate,
   lastElementRef,
+  userData,
 }: {
   token: IdeaToken
   market: IdeaMarket
   compoundSupplyRate: number
   lastElementRef?: (node) => void
+  userData: any
 }) {
   const router = useRouter()
-  const { getValues } = useContext(AccountContext)
-  const { ethAddresses } = getValues()
-  const isMultipleAddresses = ethAddresses && ethAddresses.length > 1
+  const ethAddresses = userData?.ethAddresses
+
+  const isMultipleAddresses = ethAddresses && ethAddresses?.length > 1
   const addressNumber = isMultipleAddresses
     ? ethAddresses.findIndex(
         (addressObj) => addressObj.address === token.holder

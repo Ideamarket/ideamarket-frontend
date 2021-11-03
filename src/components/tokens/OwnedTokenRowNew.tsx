@@ -20,8 +20,6 @@ import LockModal from 'components/trade/LockModal'
 import useThemeMode from 'components/useThemeMode'
 import Image from 'next/image'
 import GiftModal from 'components/trade/GiftModal'
-import { useContext } from 'react'
-import { AccountContext } from 'pages/user-account'
 
 export default function OwnedTokenRow({
   token,
@@ -31,6 +29,7 @@ export default function OwnedTokenRow({
   isL1,
   refetch,
   lastElementRef,
+  userData,
 }: {
   token: IdeaToken
   market: IdeaMarket
@@ -39,10 +38,10 @@ export default function OwnedTokenRow({
   isL1: boolean
   refetch: () => void
   lastElementRef?: (node) => void
+  userData: any
 }) {
   const router = useRouter()
-  const { getValues } = useContext(AccountContext)
-  const { ethAddresses } = getValues()
+  const ethAddresses = userData?.ethAddresses
   const isMultipleAddresses = ethAddresses && ethAddresses.length > 1
   const addressNumber = isMultipleAddresses
     ? ethAddresses.findIndex(

@@ -56,9 +56,10 @@ type LockedTokenTableProps = {
   orderBy: string
   fetchMore: () => any
   headerClicked: (value: string) => void
+  userData: any
 }
 
-export default function LockedTokenTable({
+export default function LockedTokenTableNew({
   rawPairs,
   isPairsDataLoading,
   canFetchMore,
@@ -66,6 +67,7 @@ export default function LockedTokenTable({
   orderBy,
   fetchMore,
   headerClicked,
+  userData,
 }: LockedTokenTableProps) {
   const TOKENS_PER_PAGE = 10
 
@@ -130,6 +132,7 @@ export default function LockedTokenTable({
                     balanceBN={pair.rawBalance}
                     lockedUntil={pair.lockedUntil}
                     isL1={pair.token.isL1}
+                    userData={userData}
                     lastElementRef={
                       rawPairs.length === index + 1 ? lastElementRef : null
                     }

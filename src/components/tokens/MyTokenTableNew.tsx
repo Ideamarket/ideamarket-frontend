@@ -48,9 +48,10 @@ type MyTokenTableProps = {
   orderBy: string
   fetchMore: () => any
   headerClicked: (value: string) => void
+  userData: any
 }
 
-export default function MyTokenTable({
+export default function MyTokenTableNew({
   rawPairs,
   isPairsDataLoading,
   canFetchMore,
@@ -58,6 +59,7 @@ export default function MyTokenTable({
   orderBy,
   fetchMore,
   headerClicked,
+  userData,
 }: MyTokenTableProps) {
   const TOKENS_PER_PAGE = 10
 
@@ -128,6 +130,7 @@ export default function MyTokenTable({
                     token={pair.token}
                     market={pair.market}
                     compoundSupplyRate={compoundSupplyRate}
+                    userData={userData}
                     lastElementRef={
                       rawPairs.length === index + 1 ? lastElementRef : null
                     }

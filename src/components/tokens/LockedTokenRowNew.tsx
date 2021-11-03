@@ -17,10 +17,8 @@ import { useTokenIconURL } from 'actions'
 import { BadgeCheckIcon } from '@heroicons/react/solid'
 import useThemeMode from 'components/useThemeMode'
 import Image from 'next/image'
-import { useContext } from 'react'
-import { AccountContext } from 'pages/user-account'
 
-export default function LockedTokenRow({
+export default function LockedTokenRowNew({
   token,
   market,
   balance,
@@ -28,6 +26,7 @@ export default function LockedTokenRow({
   lockedUntil,
   isL1,
   lastElementRef,
+  userData,
 }: {
   token: IdeaToken
   market: IdeaMarket
@@ -36,10 +35,10 @@ export default function LockedTokenRow({
   lockedUntil: number
   isL1: boolean
   lastElementRef?: (node) => void
+  userData
 }) {
   const router = useRouter()
-  const { getValues } = useContext(AccountContext)
-  const { ethAddresses } = getValues()
+  const ethAddresses = userData?.ethAddresses
   const isMultipleAddresses = ethAddresses && ethAddresses.length > 1
   const addressNumber = isMultipleAddresses
     ? ethAddresses.findIndex(

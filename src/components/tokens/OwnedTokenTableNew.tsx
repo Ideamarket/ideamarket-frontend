@@ -67,9 +67,10 @@ type OwnedTokenTableProps = {
   orderBy: string
   fetchMore: () => any
   headerClicked: (value: string) => void
+  userData: any
 }
 
-export default function OwnedTokenTable({
+export default function OwnedTokenTableNew({
   rawPairs,
   isPairsDataLoading,
   refetch,
@@ -78,6 +79,7 @@ export default function OwnedTokenTable({
   orderBy,
   fetchMore,
   headerClicked,
+  userData,
 }: OwnedTokenTableProps) {
   const TOKENS_PER_PAGE = 10
 
@@ -146,6 +148,7 @@ export default function OwnedTokenTable({
                     balanceBN={pair.rawBalance}
                     isL1={pair.token.isL1}
                     refetch={refetch}
+                    userData={userData}
                     lastElementRef={
                       rawPairs.length === index + 1 ? lastElementRef : null
                     }

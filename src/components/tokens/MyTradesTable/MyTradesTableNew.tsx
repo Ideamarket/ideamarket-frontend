@@ -12,9 +12,10 @@ type MyTradesTableProps = {
   orderBy: string
   fetchMore: () => any
   headerClicked: (value: string) => void
+  userData: any
 }
 
-export default function MyTradesTable({
+export default function MyTradesTableNew({
   rawPairs,
   isPairsDataLoading,
   canFetchMore,
@@ -22,6 +23,7 @@ export default function MyTradesTable({
   orderBy,
   fetchMore,
   headerClicked,
+  userData,
 }: MyTradesTableProps) {
   const TOKENS_PER_PAGE = 10
 
@@ -91,6 +93,7 @@ export default function MyTradesTable({
                     isBuy={pair.isBuy}
                     timestamp={pair.timestamp}
                     rawIdeaTokenAmount={pair.rawIdeaTokenAmount}
+                    userData={userData}
                     lastElementRef={
                       rawPairs.length === index + 1 ? lastElementRef : null
                     }

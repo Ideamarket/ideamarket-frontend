@@ -15,12 +15,10 @@ import useThemeMode from 'components/useThemeMode'
 import Image from 'next/image'
 import moment from 'moment'
 import { IdeaToken, IdeaMarket } from 'store/ideaMarketsStore'
-import { useContext } from 'react'
-import { AccountContext } from 'pages/user-account'
 
 const tenPow18 = new BigNumber('10').pow(new BigNumber('18'))
 
-const MyTradesRow = ({
+const MyTradesRowNew = ({
   token,
   market,
   isBuy,
@@ -28,6 +26,7 @@ const MyTradesRow = ({
   rawIdeaTokenAmount,
   rawDaiAmount,
   lastElementRef,
+  userData,
 }: {
   token: IdeaToken
   market: IdeaMarket
@@ -36,11 +35,12 @@ const MyTradesRow = ({
   rawIdeaTokenAmount: BN
   rawDaiAmount: BN
   lastElementRef?: (node) => void
+  userData: any
 }) => {
   const router = useRouter()
   const { resolvedTheme } = useThemeMode()
-  const { getValues } = useContext(AccountContext)
-  const { ethAddresses } = getValues()
+  const ethAddresses = userData?.ethAddresses
+
   const isMultipleAddresses = ethAddresses && ethAddresses.length > 1
   const addressNumber = isMultipleAddresses
     ? ethAddresses.findIndex(
@@ -233,4 +233,4 @@ const MyTradesRow = ({
   )
 }
 
-export default MyTradesRow
+export default MyTradesRowNew
