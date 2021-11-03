@@ -2,7 +2,6 @@ import { useState, useContext, useEffect } from 'react'
 import { setWeb3, unsetWeb3 } from 'store/walletStore'
 import { GlobalContext } from 'pages/_app'
 import mixpanel from 'mixpanel-browser'
-
 import CircleSpinner from '../animations/CircleSpinner'
 import Metamask from '../../assets/metamask.svg'
 import WalletConnect from '../../assets/walletconnect.svg'
@@ -23,9 +22,13 @@ import {
 } from 'wallets/connectors/index'
 import { Tooltip } from 'components'
 import { useCustomSession } from 'utils/useCustomSession'
+import getConfig from 'next/config'
+
+const { publicRuntimeConfig } = getConfig()
+const { MIX_PANEL_KEY } = publicRuntimeConfig
 
 // Workaround since modal is not wrapped by the mixPanel interface
-mixpanel.init('bdc8707c5ca435eebe1eb76c4a9d85d5', { debug: true })
+mixpanel.init(MIX_PANEL_KEY)
 
 export default function WalletInterface({
   onWalletConnected,
@@ -87,8 +90,6 @@ export default function WalletInterface({
 
     try {
       await activate(currentConnector)
-
-      console.log()
     } catch (ex) {
       console.log(ex)
       return

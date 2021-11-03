@@ -24,8 +24,13 @@ import Image from 'next/image'
 import { debounce } from 'utils/lodash'
 import mixpanel from 'mixpanel-browser'
 
+import getConfig from 'next/config'
+
+const { publicRuntimeConfig } = getConfig()
+const { MIX_PANEL_KEY } = publicRuntimeConfig
+
 // Workaround since modal is not wrapped by the mixPanel interface
-mixpanel.init('bdc8707c5ca435eebe1eb76c4a9d85d5', { debug: true })
+mixpanel.init(MIX_PANEL_KEY)
 
 export default function ListTokenModal({ close }: { close: () => void }) {
   const { account } = useWeb3React()

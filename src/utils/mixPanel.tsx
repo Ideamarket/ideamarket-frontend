@@ -9,6 +9,10 @@ import {
 } from 'react'
 import mixpanel, { Mixpanel } from 'mixpanel-browser'
 import { useWeb3React } from '@web3-react/core'
+import getConfig from 'next/config'
+
+const { publicRuntimeConfig } = getConfig()
+const { MIX_PANEL_KEY } = publicRuntimeConfig
 
 interface WithMixPanel {
   mixpanel: Mixpanel
@@ -27,7 +31,7 @@ function withMixpanel<T>(
 const MixPanelProvider = ({ children }: { children: ReactNode }) => {
   const { account } = useWeb3React()
 
-  mixpanel.init('bdc8707c5ca435eebe1eb76c4a9d85d5', { debug: true })
+  mixpanel.init(MIX_PANEL_KEY)
 
   const mixpanelWithWallet = {
     ...mixpanel,

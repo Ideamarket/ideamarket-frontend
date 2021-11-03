@@ -6,6 +6,9 @@ const SentryWebpackPluginOptions = {
 }
 
 const moduleExports = withPWA({
+  publicRuntimeConfig: {
+    MIX_PANEL_KEY: process.env.MIX_PANEL_KEY,
+  },
   pwa: {
     dest: 'public',
     disable: process.env.NODE_ENV === 'development',
