@@ -37,7 +37,14 @@ import useTokenToDAI from 'actions/useTokenToDAI'
 import { useWeb3React } from '@web3-react/core'
 import { useENSAddress } from './hooks/useENSAddress'
 import { TRANSACTION_TYPES } from './TradeCompleteModal'
-import { useMixPanel } from 'utils/mixPanel'
+import mixpanel from 'mixpanel-browser'
+import getConfig from 'next/config'
+
+const { publicRuntimeConfig } = getConfig()
+const { MIX_PANEL_KEY } = publicRuntimeConfig
+
+// Workaround since modal is not wrapped by the mixPanel interface
+mixpanel.init(MIX_PANEL_KEY)
 
 type NewIdeaToken = {
   symbol: string
@@ -93,7 +100,6 @@ export default function TradeInterface({
   const [tradeType, setTradeType] = useState('buy')
   const [recipientAddress, setRecipientAddress] = useState('')
   const [isENSAddressValid, hexAddress] = useENSAddress(recipientAddress)
-  const { mixpanel } = useMixPanel()
 
   const [isLockChecked, setIsLockChecked] = useState(false)
   const [isGiftChecked, setIsGiftChecked] = useState(false)
