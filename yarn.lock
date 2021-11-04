@@ -8594,6 +8594,11 @@ goober@^2.0.15:
   resolved "https://registry.yarnpkg.com/goober/-/goober-2.0.37.tgz#5598c41f4c19bc1fca2c926e876a58a685faffb8"
   integrity sha512-wgj5C7IJX2+MyHZ4TgOA+hLL1mCDW+jGorQ5KCMLF1ofE9gQkfbo1s8txIrzIsAX65XRTm0qaipolId2KMYUkw==
 
+google-trends-api@4.9.2:
+  version "4.9.2"
+  resolved "https://registry.yarnpkg.com/google-trends-api/-/google-trends-api-4.9.2.tgz#77941d5632b58e50f1e34e63923757bf5b81d17b"
+  integrity sha512-gjVSHCM8B7LyAAUpXb4B0/TfnmpwQ2z1w/mQ2bL0AKpr2j3gLS1j2YOnifpfsGJRxAGXB/NoC+nGwC5qSnZIiA==
+
 got@9.6.0:
   version "9.6.0"
   resolved "https://registry.yarnpkg.com/got/-/got-9.6.0.tgz#edf45e7d67f99545705de1f7bbeeeb121765ed85"
