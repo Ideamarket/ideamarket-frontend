@@ -885,7 +885,7 @@ export function setIsWatching(token: IdeaToken, watching: boolean): void {
 
 function getWeeklyChange(weeklyPricePoints) {
   let weeklyChange = '0'
-  if (weeklyPricePoints.length > 0) {
+  if (weeklyPricePoints?.length > 0) {
     const yearlyCurrentPrice = Number(
       weeklyPricePoints[weeklyPricePoints.length - 1].price
     )
@@ -966,7 +966,9 @@ function apiResponseToIdeaToken(
     dayChange: apiResponse.dayChange
       ? (parseFloat(apiResponse.dayChange) * 100).toFixed(2)
       : undefined,
-    weeklyChange: getWeeklyChange(apiResponse?.pricePoints) || '0.00',
+    weeklyChange:
+      (apiResponse?.pricePoints && getWeeklyChange(apiResponse?.pricePoints)) ||
+      '0',
     dayVolume: apiResponse.dayVolume
       ? parseFloat(apiResponse.dayVolume).toFixed(2)
       : undefined,
