@@ -205,27 +205,34 @@ export async function getUniswapPath(
       : await getPoolState(highFeeContract)
 
   let maxLiquidity = new BN(0) // Helps determine which pool has the highest liquidity. That is the pool to use.
-  if (lowFeeLiquidity.gt(mediumFeeLiquidity)) {
-    maxLiquidity = lowFeeLiquidity
-  } else {
-    maxLiquidity = mediumFeeLiquidity
-  }
-  if (highFeeLiquidity.gt(maxLiquidity)) {
-    maxLiquidity = highFeeLiquidity
-  }
+  const isDirectPath =
+    LOW_FEE_ADDRESS !== ZERO_ADDRESS ||
+    MEDIUM_FEE_ADDRESS !== ZERO_ADDRESS ||
+    HIGH_FEE_ADDRESS !== ZERO_ADDRESS
 
-  if (maxLiquidity.eq(lowFeeLiquidity)) {
-    const path = [updatedInputAddress, updatedOutputAddress]
-    const fees = [FeeAmount.LOW]
-    return { path, fees }
-  } else if (maxLiquidity.eq(mediumFeeLiquidity)) {
-    const path = [updatedInputAddress, updatedOutputAddress]
-    const fees = [FeeAmount.MEDIUM]
-    return { path, fees }
-  } else if (maxLiquidity.eq(highFeeLiquidity)) {
-    const path = [updatedInputAddress, updatedOutputAddress]
-    const fees = [FeeAmount.HIGH]
-    return { path, fees }
+  if (isDirectPath) {
+    if (lowFeeLiquidity.gt(mediumFeeLiquidity)) {
+      maxLiquidity = lowFeeLiquidity
+    } else {
+      maxLiquidity = mediumFeeLiquidity
+    }
+    if (highFeeLiquidity.gt(maxLiquidity)) {
+      maxLiquidity = highFeeLiquidity
+    }
+
+    if (maxLiquidity.eq(lowFeeLiquidity)) {
+      const path = [updatedInputAddress, updatedOutputAddress]
+      const fees = [FeeAmount.LOW]
+      return { path, fees }
+    } else if (maxLiquidity.eq(mediumFeeLiquidity)) {
+      const path = [updatedInputAddress, updatedOutputAddress]
+      const fees = [FeeAmount.MEDIUM]
+      return { path, fees }
+    } else if (maxLiquidity.eq(highFeeLiquidity)) {
+      const path = [updatedInputAddress, updatedOutputAddress]
+      const fees = [FeeAmount.HIGH]
+      return { path, fees }
+    }
   }
 
   // Direct path does not exist if we make it here
