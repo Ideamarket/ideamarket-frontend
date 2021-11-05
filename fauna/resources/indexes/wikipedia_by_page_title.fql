@@ -1,0 +1,10 @@
+CreateIndex({
+  name: 'wikipedia_by_page_title',
+  source: Collection('wikipedia'),
+  unique: true,
+  terms: [
+    { 
+      field: ['data', 'pageTitle'] 
+    },
+  ],
+})
