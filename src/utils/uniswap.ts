@@ -108,56 +108,6 @@ export async function getOutputForInput(
   }
 }
 
-async function getPoolImmutables(poolContract) {
-  const [factory, token0, token1, fee, tickSpacing, maxLiquidityPerTick] =
-    await Promise.all([
-      poolContract.methods.factory().call(),
-      poolContract.methods.token0().call(),
-      poolContract.methods.token1().call(),
-      poolContract.methods.fee().call(),
-      poolContract.methods.tickSpacing().call(),
-      poolContract.methods.maxLiquidityPerTick().call(),
-    ])
-
-  const immutables: Immutables = {
-    factory,
-    token0,
-    token1,
-    fee,
-    tickSpacing,
-    maxLiquidityPerTick,
-  }
-  return immutables
-}
-
-async function getPoolState(poolContract) {
-  try {
-    const [liquidity, slot] = await Promise.all([
-      poolContract.methods.liquidity().call(),
-      poolContract.methods.slot0().call(),
-    ])
-
-    const liquidityBN = new BN(
-      new BigNumber(liquidity).multipliedBy(bigNumberTenPow18).toFixed()
-    )
-
-    const PoolState: State = {
-      liquidity: liquidityBN,
-      sqrtPriceX96: slot[0],
-      tick: slot[1],
-      observationIndex: slot[2],
-      observationCardinality: slot[3],
-      observationCardinalityNext: slot[4],
-      feeProtocol: slot[5],
-      unlocked: slot[6],
-    }
-
-    return PoolState
-  } catch (error) {
-    console.error('Failed getting pool state', error)
-  }
-}
-
 /**
  * @param inputTokenAddress The input token address
  * @param outputTokenAddress The output token address
@@ -174,61 +124,23 @@ export async function getUniswapPath(
   const updatedOutputAddress =
     outputTokenAddress === ZERO_ADDRESS ? wethAddress : outputTokenAddress
 
-  const uniswapFactoryContract =
-    useContractStore.getState().uniswapFactoryContract
+  // POOL = input token - output token
+  const { fee: feeInputOutput } = await getHighestLiquidityPool(
+    updatedInputAddress,
+    updatedOutputAddress
+  )
 
-  const LOW_FEE_ADDRESS = await uniswapFactoryContract.methods
-    .getPool(updatedInputAddress, updatedOutputAddress, FeeAmount.LOW)
-    .call()
-  const lowFeeContract = getUniswapPoolContract(LOW_FEE_ADDRESS)
-  const { liquidity: lowFeeLiquidity } =
-    LOW_FEE_ADDRESS === ZERO_ADDRESS
-      ? { liquidity: new BN(0) }
-      : await getPoolState(lowFeeContract)
-
-  const MEDIUM_FEE_ADDRESS = await uniswapFactoryContract.methods
-    .getPool(updatedInputAddress, updatedOutputAddress, FeeAmount.MEDIUM)
-    .call()
-  const mediumFeeContract = getUniswapPoolContract(MEDIUM_FEE_ADDRESS)
-  const { liquidity: mediumFeeLiquidity } =
-    MEDIUM_FEE_ADDRESS === ZERO_ADDRESS
-      ? { liquidity: new BN(0) }
-      : await getPoolState(mediumFeeContract)
-
-  const HIGH_FEE_ADDRESS = await uniswapFactoryContract.methods
-    .getPool(updatedInputAddress, updatedOutputAddress, FeeAmount.HIGH)
-    .call()
-  const highFeeContract = getUniswapPoolContract(HIGH_FEE_ADDRESS)
-  const { liquidity: highFeeLiquidity } =
-    HIGH_FEE_ADDRESS === ZERO_ADDRESS
-      ? { liquidity: new BN(0) }
-      : await getPoolState(highFeeContract)
-
-  let maxLiquidity = new BN(0) // Helps determine which pool has the highest liquidity. That is the pool to use.
-  const isDirectPath =
-    LOW_FEE_ADDRESS !== ZERO_ADDRESS ||
-    MEDIUM_FEE_ADDRESS !== ZERO_ADDRESS ||
-    HIGH_FEE_ADDRESS !== ZERO_ADDRESS
-
-  if (isDirectPath) {
-    if (lowFeeLiquidity.gt(mediumFeeLiquidity)) {
-      maxLiquidity = lowFeeLiquidity
-    } else {
-      maxLiquidity = mediumFeeLiquidity
-    }
-    if (highFeeLiquidity.gt(maxLiquidity)) {
-      maxLiquidity = highFeeLiquidity
-    }
-
-    if (maxLiquidity.eq(lowFeeLiquidity)) {
+  // -1 means no direct path found
+  if (feeInputOutput !== -1) {
+    if (feeInputOutput === FeeAmount.LOW) {
       const path = [updatedInputAddress, updatedOutputAddress]
       const fees = [FeeAmount.LOW]
       return { path, fees }
-    } else if (maxLiquidity.eq(mediumFeeLiquidity)) {
+    } else if (feeInputOutput === FeeAmount.MEDIUM) {
       const path = [updatedInputAddress, updatedOutputAddress]
       const fees = [FeeAmount.MEDIUM]
       return { path, fees }
-    } else if (maxLiquidity.eq(highFeeLiquidity)) {
+    } else if (feeInputOutput === FeeAmount.HIGH) {
       const path = [updatedInputAddress, updatedOutputAddress]
       const fees = [FeeAmount.HIGH]
       return { path, fees }
@@ -239,101 +151,32 @@ export async function getUniswapPath(
   // Check for 3-hop path: input -> weth -> output
 
   let fees = []
-  const LOW_FEE_INPUT_WETH_ADDRESS = await uniswapFactoryContract.methods
-    .getPool(updatedInputAddress, wethAddress, FeeAmount.LOW)
-    .call()
-  const lowFeeInputWethContract = getUniswapPoolContract(
-    LOW_FEE_INPUT_WETH_ADDRESS
-  )
-  const { liquidity: lowFeeInputWethLiquidity } =
-    LOW_FEE_INPUT_WETH_ADDRESS === ZERO_ADDRESS
-      ? { liquidity: new BN(0) }
-      : await getPoolState(lowFeeInputWethContract)
-  const MEDIUM_FEE_INPUT_WETH_ADDRESS = await uniswapFactoryContract.methods
-    .getPool(updatedInputAddress, wethAddress, FeeAmount.MEDIUM)
-    .call()
-  const mediumFeeInputWethContract = getUniswapPoolContract(
-    MEDIUM_FEE_INPUT_WETH_ADDRESS
-  )
-  const { liquidity: mediumFeeInputWethLiquidity } =
-    MEDIUM_FEE_INPUT_WETH_ADDRESS === ZERO_ADDRESS
-      ? { liquidity: new BN(0) }
-      : await getPoolState(mediumFeeInputWethContract)
-  const HIGH_FEE_INPUT_WETH_ADDRESS = await uniswapFactoryContract.methods
-    .getPool(updatedInputAddress, wethAddress, FeeAmount.HIGH)
-    .call()
-  const highFeeInputWethContract = getUniswapPoolContract(
-    HIGH_FEE_INPUT_WETH_ADDRESS
-  )
-  const { liquidity: highFeeInputWethLiquidity } =
-    HIGH_FEE_INPUT_WETH_ADDRESS === ZERO_ADDRESS
-      ? { liquidity: new BN(0) }
-      : await getPoolState(highFeeInputWethContract)
 
-  maxLiquidity = new BN(0) // Helps determine which pool has the highest liquidity. That is the pool to use.
-  if (lowFeeInputWethLiquidity.gt(mediumFeeInputWethLiquidity)) {
-    maxLiquidity = lowFeeInputWethLiquidity
-  } else {
-    maxLiquidity = mediumFeeInputWethLiquidity
-  }
-  if (highFeeInputWethLiquidity.gt(maxLiquidity)) {
-    maxLiquidity = highFeeInputWethLiquidity
-  }
+  // POOL = input token - WETH
+  const { fee: feeInputWeth } = await getHighestLiquidityPool(
+    updatedInputAddress,
+    wethAddress
+  )
 
-  if (maxLiquidity.eq(lowFeeInputWethLiquidity)) {
+  if (feeInputWeth === FeeAmount.LOW) {
     fees.push(FeeAmount.LOW)
-  } else if (maxLiquidity.eq(mediumFeeInputWethLiquidity)) {
+  } else if (feeInputWeth === FeeAmount.MEDIUM) {
     fees.push(FeeAmount.MEDIUM)
-  } else if (maxLiquidity.eq(highFeeInputWethLiquidity)) {
+  } else if (feeInputWeth === FeeAmount.HIGH) {
     fees.push(FeeAmount.HIGH)
   }
 
-  const LOW_FEE_WETH_OUTPUT_ADDRESS = await uniswapFactoryContract.methods
-    .getPool(wethAddress, updatedOutputAddress, FeeAmount.LOW)
-    .call()
-  const lowFeeWethOutputContract = getUniswapPoolContract(
-    LOW_FEE_WETH_OUTPUT_ADDRESS
+  // POOL = WETH - output token
+  const { fee: feeWethOutput } = await getHighestLiquidityPool(
+    wethAddress,
+    updatedOutputAddress
   )
-  const { liquidity: lowFeeWethOutputLiquidity } =
-    LOW_FEE_WETH_OUTPUT_ADDRESS === ZERO_ADDRESS
-      ? { liquidity: new BN(0) }
-      : await getPoolState(lowFeeWethOutputContract)
-  const MEDIUM_FEE_WETH_OUTPUT_ADDRESS = await uniswapFactoryContract.methods
-    .getPool(wethAddress, updatedOutputAddress, FeeAmount.MEDIUM)
-    .call()
-  const mediumFeeWethOutputContract = getUniswapPoolContract(
-    MEDIUM_FEE_WETH_OUTPUT_ADDRESS
-  )
-  const { liquidity: mediumFeeWethOutputLiquidity } =
-    MEDIUM_FEE_WETH_OUTPUT_ADDRESS === ZERO_ADDRESS
-      ? { liquidity: new BN(0) }
-      : await getPoolState(mediumFeeWethOutputContract)
-  const HIGH_FEE_WETH_OUTPUT_ADDRESS = await uniswapFactoryContract.methods
-    .getPool(wethAddress, updatedOutputAddress, FeeAmount.HIGH)
-    .call()
-  const highFeeWethOutputContract = getUniswapPoolContract(
-    HIGH_FEE_WETH_OUTPUT_ADDRESS
-  )
-  const { liquidity: highFeeWethOutputLiquidity } =
-    HIGH_FEE_WETH_OUTPUT_ADDRESS === ZERO_ADDRESS
-      ? { liquidity: new BN(0) }
-      : await getPoolState(highFeeWethOutputContract)
 
-  maxLiquidity = new BN(0) // Helps determine which pool has the highest liquidity. That is the pool to use.
-  if (lowFeeWethOutputLiquidity.gt(mediumFeeWethOutputLiquidity)) {
-    maxLiquidity = lowFeeWethOutputLiquidity
-  } else {
-    maxLiquidity = mediumFeeWethOutputLiquidity
-  }
-  if (highFeeWethOutputLiquidity.gt(maxLiquidity)) {
-    maxLiquidity = highFeeWethOutputLiquidity
-  }
-
-  if (maxLiquidity.eq(lowFeeWethOutputLiquidity)) {
+  if (feeWethOutput === FeeAmount.LOW) {
     fees.push(FeeAmount.LOW)
-  } else if (maxLiquidity.eq(mediumFeeWethOutputLiquidity)) {
+  } else if (feeWethOutput === FeeAmount.MEDIUM) {
     fees.push(FeeAmount.MEDIUM)
-  } else if (maxLiquidity.eq(highFeeWethOutputLiquidity)) {
+  } else if (feeWethOutput === FeeAmount.HIGH) {
     fees.push(FeeAmount.HIGH)
   }
 
@@ -341,34 +184,8 @@ export async function getUniswapPath(
   return { path, fees }
 }
 
-async function getPool(
-  poolContract,
-  tokenA: Token,
-  tokenB: Token
-): Promise<Pool> {
-  try {
-    const [immutables, state] = await Promise.all([
-      getPoolImmutables(poolContract),
-      getPoolState(poolContract),
-    ])
-
-    return new Pool(
-      tokenA,
-      tokenB,
-      parseInt(immutables.fee as any),
-      state.sqrtPriceX96.toString(),
-      state.liquidity.toString(),
-      parseInt(state.tick as any)
-    )
-  } catch (error) {
-    console.error('Failed getting Pool object', error)
-  }
-}
-
 async function getRoute(inputTokenAddress: string) {
   const outputTokenAddress = NETWORK.getExternalAddresses().dai
-  const uniswapFactoryContract =
-    useContractStore.getState().uniswapFactoryContract
 
   const wethAddress = NETWORK.getExternalAddresses().weth
   const updatedInputAddress =
@@ -376,52 +193,11 @@ async function getRoute(inputTokenAddress: string) {
   const updatedOutputAddress =
     outputTokenAddress === ZERO_ADDRESS ? wethAddress : outputTokenAddress
 
-  let directPoolAddress
-
-  const LOW_FEE_ADDRESS = await uniswapFactoryContract.methods
-    .getPool(updatedInputAddress, updatedOutputAddress, FeeAmount.LOW)
-    .call()
-  const lowFeeContract = getUniswapPoolContract(LOW_FEE_ADDRESS)
-  const { liquidity: lowFeeLiquidity } =
-    LOW_FEE_ADDRESS === ZERO_ADDRESS
-      ? { liquidity: new BN(0) }
-      : await getPoolState(lowFeeContract)
-
-  const MEDIUM_FEE_ADDRESS = await uniswapFactoryContract.methods
-    .getPool(updatedInputAddress, updatedOutputAddress, FeeAmount.MEDIUM)
-    .call()
-  const mediumFeeContract = getUniswapPoolContract(MEDIUM_FEE_ADDRESS)
-  const { liquidity: mediumFeeLiquidity } =
-    MEDIUM_FEE_ADDRESS === ZERO_ADDRESS
-      ? { liquidity: new BN(0) }
-      : await getPoolState(mediumFeeContract)
-
-  const HIGH_FEE_ADDRESS = await uniswapFactoryContract.methods
-    .getPool(updatedInputAddress, updatedOutputAddress, FeeAmount.HIGH)
-    .call()
-  const highFeeContract = getUniswapPoolContract(HIGH_FEE_ADDRESS)
-  const { liquidity: highFeeLiquidity } =
-    HIGH_FEE_ADDRESS === ZERO_ADDRESS
-      ? { liquidity: new BN(0) }
-      : await getPoolState(highFeeContract)
-
-  let maxLiquidity = new BN(0) // Helps determine which pool has the highest liquidity. That is the pool to use.
-  if (lowFeeLiquidity.gt(mediumFeeLiquidity)) {
-    maxLiquidity = lowFeeLiquidity
-  } else {
-    maxLiquidity = mediumFeeLiquidity
-  }
-  if (highFeeLiquidity.gt(maxLiquidity)) {
-    maxLiquidity = highFeeLiquidity
-  }
-
-  if (maxLiquidity.eq(lowFeeLiquidity)) {
-    directPoolAddress = LOW_FEE_ADDRESS
-  } else if (maxLiquidity.eq(mediumFeeLiquidity)) {
-    directPoolAddress = MEDIUM_FEE_ADDRESS
-  } else if (maxLiquidity.eq(highFeeLiquidity)) {
-    directPoolAddress = HIGH_FEE_ADDRESS
-  }
+  // POOL = input token - output token
+  const { poolAddress: directPoolAddress } = await getHighestLiquidityPool(
+    updatedInputAddress,
+    updatedOutputAddress
+  )
 
   const chainID = NETWORK.getChainID()
 
@@ -464,7 +240,7 @@ async function getRoute(inputTokenAddress: string) {
     updatedOutputAddress
   )
 
-  if (directPoolAddress && directPoolAddress !== ZERO_ADDRESS) {
+  if (directPoolAddress) {
     // The direct pool exists
 
     const directPoolContract = getUniswapPoolContract(directPoolAddress)
@@ -478,106 +254,14 @@ async function getRoute(inputTokenAddress: string) {
   } else {
     // The direct pool does not exist, check for input -> WETH -> output
 
-    const LOW_FEE_INPUT_WETH_ADDRESS = await uniswapFactoryContract.methods
-      .getPool(updatedInputAddress, wethAddress, FeeAmount.LOW)
-      .call()
-    const lowFeeInputWethContract = getUniswapPoolContract(
-      LOW_FEE_INPUT_WETH_ADDRESS
+    // POOL = input token - WETH
+    const { poolAddress: inputWETHPoolAddress } = await getHighestLiquidityPool(
+      updatedInputAddress,
+      wethAddress
     )
-    const { liquidity: lowFeeInputWethLiquidity } =
-      LOW_FEE_INPUT_WETH_ADDRESS === ZERO_ADDRESS
-        ? { liquidity: new BN(0) }
-        : await getPoolState(lowFeeInputWethContract)
-    const MEDIUM_FEE_INPUT_WETH_ADDRESS = await uniswapFactoryContract.methods
-      .getPool(updatedInputAddress, wethAddress, FeeAmount.MEDIUM)
-      .call()
-    const mediumFeeInputWethContract = getUniswapPoolContract(
-      MEDIUM_FEE_INPUT_WETH_ADDRESS
-    )
-    const { liquidity: mediumFeeInputWethLiquidity } =
-      MEDIUM_FEE_INPUT_WETH_ADDRESS === ZERO_ADDRESS
-        ? { liquidity: new BN(0) }
-        : await getPoolState(mediumFeeInputWethContract)
-    const HIGH_FEE_INPUT_WETH_ADDRESS = await uniswapFactoryContract.methods
-      .getPool(updatedInputAddress, wethAddress, FeeAmount.HIGH)
-      .call()
-    const highFeeInputWethContract = getUniswapPoolContract(
-      HIGH_FEE_INPUT_WETH_ADDRESS
-    )
-    const { liquidity: highFeeInputWethLiquidity } =
-      HIGH_FEE_INPUT_WETH_ADDRESS === ZERO_ADDRESS
-        ? { liquidity: new BN(0) }
-        : await getPoolState(highFeeInputWethContract)
-
-    const LOW_FEE_WETH_OUTPUT_ADDRESS = await uniswapFactoryContract.methods
-      .getPool(wethAddress, updatedOutputAddress, FeeAmount.LOW)
-      .call()
-    const lowFeeWethOutputContract = getUniswapPoolContract(
-      LOW_FEE_WETH_OUTPUT_ADDRESS
-    )
-    const { liquidity: lowFeeWethOutputLiquidity } =
-      LOW_FEE_WETH_OUTPUT_ADDRESS === ZERO_ADDRESS
-        ? { liquidity: new BN(0) }
-        : await getPoolState(lowFeeWethOutputContract)
-    const MEDIUM_FEE_WETH_OUTPUT_ADDRESS = await uniswapFactoryContract.methods
-      .getPool(wethAddress, updatedOutputAddress, FeeAmount.MEDIUM)
-      .call()
-    const mediumFeeWethOutputContract = getUniswapPoolContract(
-      MEDIUM_FEE_WETH_OUTPUT_ADDRESS
-    )
-    const { liquidity: mediumFeeWethOutputLiquidity } =
-      MEDIUM_FEE_WETH_OUTPUT_ADDRESS === ZERO_ADDRESS
-        ? { liquidity: new BN(0) }
-        : await getPoolState(mediumFeeWethOutputContract)
-    const HIGH_FEE_WETH_OUTPUT_ADDRESS = await uniswapFactoryContract.methods
-      .getPool(wethAddress, updatedOutputAddress, FeeAmount.HIGH)
-      .call()
-    const highFeeWethOutputContract = getUniswapPoolContract(
-      HIGH_FEE_WETH_OUTPUT_ADDRESS
-    )
-    const { liquidity: highFeeWethOutputLiquidity } =
-      HIGH_FEE_WETH_OUTPUT_ADDRESS === ZERO_ADDRESS
-        ? { liquidity: new BN(0) }
-        : await getPoolState(highFeeWethOutputContract)
-
-    let inputWETHPoolAddress
-    let outputWETHPoolAddress
-
-    maxLiquidity = new BN(0) // Helps determine which pool has the highest liquidity. That is the pool to use.
-    if (lowFeeInputWethLiquidity.gt(mediumFeeInputWethLiquidity)) {
-      maxLiquidity = lowFeeInputWethLiquidity
-    } else {
-      maxLiquidity = mediumFeeInputWethLiquidity
-    }
-    if (highFeeInputWethLiquidity.gt(maxLiquidity)) {
-      maxLiquidity = highFeeInputWethLiquidity
-    }
-
-    if (maxLiquidity.eq(lowFeeInputWethLiquidity)) {
-      inputWETHPoolAddress = LOW_FEE_INPUT_WETH_ADDRESS
-    } else if (maxLiquidity.eq(mediumFeeInputWethLiquidity)) {
-      inputWETHPoolAddress = MEDIUM_FEE_INPUT_WETH_ADDRESS
-    } else if (maxLiquidity.eq(highFeeInputWethLiquidity)) {
-      inputWETHPoolAddress = HIGH_FEE_INPUT_WETH_ADDRESS
-    }
-
-    maxLiquidity = new BN(0) // Helps determine which pool has the highest liquidity. That is the pool to use.
-    if (lowFeeWethOutputLiquidity.gt(mediumFeeWethOutputLiquidity)) {
-      maxLiquidity = lowFeeWethOutputLiquidity
-    } else {
-      maxLiquidity = mediumFeeWethOutputLiquidity
-    }
-    if (highFeeWethOutputLiquidity.gt(maxLiquidity)) {
-      maxLiquidity = highFeeWethOutputLiquidity
-    }
-
-    if (maxLiquidity.eq(lowFeeWethOutputLiquidity)) {
-      outputWETHPoolAddress = LOW_FEE_WETH_OUTPUT_ADDRESS
-    } else if (maxLiquidity.eq(mediumFeeWethOutputLiquidity)) {
-      outputWETHPoolAddress = MEDIUM_FEE_WETH_OUTPUT_ADDRESS
-    } else if (maxLiquidity.eq(highFeeWethOutputLiquidity)) {
-      outputWETHPoolAddress = HIGH_FEE_WETH_OUTPUT_ADDRESS
-    }
+    // POOL = WETH - output token
+    const { poolAddress: outputWETHPoolAddress } =
+      await getHighestLiquidityPool(wethAddress, updatedOutputAddress)
 
     // The path exists, find the route
     const firstPoolContract = getUniswapPoolContract(inputWETHPoolAddress)
@@ -626,4 +310,155 @@ export const encodePath = (path, fees) => {
   encoded += path[path.length - 1].slice(2)
 
   return encoded.toLowerCase()
+}
+
+async function getPool(
+  poolContract,
+  tokenA: Token,
+  tokenB: Token
+): Promise<Pool> {
+  try {
+    const [immutables, state] = await Promise.all([
+      getPoolImmutables(poolContract),
+      getPoolState(poolContract),
+    ])
+
+    return new Pool(
+      tokenA,
+      tokenB,
+      parseInt(immutables.fee as any),
+      state.sqrtPriceX96.toString(),
+      state.liquidity.toString(),
+      parseInt(state.tick as any)
+    )
+  } catch (error) {
+    console.error('Failed getting Pool object', error)
+  }
+}
+
+async function getPoolImmutables(poolContract) {
+  try {
+    const [factory, token0, token1, fee, tickSpacing, maxLiquidityPerTick] =
+      await Promise.all([
+        poolContract.methods.factory().call(),
+        poolContract.methods.token0().call(),
+        poolContract.methods.token1().call(),
+        poolContract.methods.fee().call(),
+        poolContract.methods.tickSpacing().call(),
+        poolContract.methods.maxLiquidityPerTick().call(),
+      ])
+
+    const immutables: Immutables = {
+      factory,
+      token0,
+      token1,
+      fee,
+      tickSpacing,
+      maxLiquidityPerTick,
+    }
+    return immutables
+  } catch (error) {
+    console.error('Failed getting pool immutables', error)
+  }
+}
+
+async function getPoolState(poolContract) {
+  try {
+    const [liquidity, slot] = await Promise.all([
+      poolContract.methods.liquidity().call(),
+      poolContract.methods.slot0().call(),
+    ])
+
+    const liquidityBN = new BN(
+      new BigNumber(liquidity).multipliedBy(bigNumberTenPow18).toFixed()
+    )
+
+    const PoolState: State = {
+      liquidity: liquidityBN,
+      sqrtPriceX96: slot[0],
+      tick: slot[1],
+      observationIndex: slot[2],
+      observationCardinality: slot[3],
+      observationCardinalityNext: slot[4],
+      feeProtocol: slot[5],
+      unlocked: slot[6],
+    }
+
+    return PoolState
+  } catch (error) {
+    console.error('Failed getting pool state', error)
+  }
+}
+
+type BestPoolInfo = {
+  fee: number
+  poolAddress: string
+}
+
+/**
+ * This is useful because we always want to use the pool with most liquidity.
+ *
+ * @return the fee from the pool that has the highest liquidity or -1 if no pools available
+ */
+async function getHighestLiquidityPool(
+  inputTokenAddress: string,
+  outputTokenAddress: string
+): Promise<BestPoolInfo> {
+  const uniswapFactoryContract =
+    useContractStore.getState().uniswapFactoryContract
+
+  const LOW_FEE_ADDRESS = await uniswapFactoryContract.methods
+    .getPool(inputTokenAddress, outputTokenAddress, FeeAmount.LOW)
+    .call()
+  const lowFeeContract = getUniswapPoolContract(LOW_FEE_ADDRESS)
+  const { liquidity: lowFeeLiquidity } =
+    LOW_FEE_ADDRESS === ZERO_ADDRESS
+      ? { liquidity: new BN(0) }
+      : await getPoolState(lowFeeContract)
+
+  const MEDIUM_FEE_ADDRESS = await uniswapFactoryContract.methods
+    .getPool(inputTokenAddress, outputTokenAddress, FeeAmount.MEDIUM)
+    .call()
+  const mediumFeeContract = getUniswapPoolContract(MEDIUM_FEE_ADDRESS)
+  const { liquidity: mediumFeeLiquidity } =
+    MEDIUM_FEE_ADDRESS === ZERO_ADDRESS
+      ? { liquidity: new BN(0) }
+      : await getPoolState(mediumFeeContract)
+
+  const HIGH_FEE_ADDRESS = await uniswapFactoryContract.methods
+    .getPool(inputTokenAddress, outputTokenAddress, FeeAmount.HIGH)
+    .call()
+  const highFeeContract = getUniswapPoolContract(HIGH_FEE_ADDRESS)
+  const { liquidity: highFeeLiquidity } =
+    HIGH_FEE_ADDRESS === ZERO_ADDRESS
+      ? { liquidity: new BN(0) }
+      : await getPoolState(highFeeContract)
+
+  const isDirectPath =
+    LOW_FEE_ADDRESS !== ZERO_ADDRESS ||
+    MEDIUM_FEE_ADDRESS !== ZERO_ADDRESS ||
+    HIGH_FEE_ADDRESS !== ZERO_ADDRESS
+
+  if (!isDirectPath) return { fee: -1, poolAddress: null }
+
+  let maxLiquidity = new BN(0) // Helps determine which pool has the highest liquidity. That is the pool to use.
+
+  if (lowFeeLiquidity.gt(mediumFeeLiquidity)) {
+    maxLiquidity = lowFeeLiquidity
+  } else {
+    maxLiquidity = mediumFeeLiquidity
+  }
+  if (highFeeLiquidity.gt(maxLiquidity)) {
+    maxLiquidity = highFeeLiquidity
+  }
+
+  if (maxLiquidity.eq(lowFeeLiquidity)) {
+    return { fee: FeeAmount.LOW, poolAddress: LOW_FEE_ADDRESS }
+  } else if (maxLiquidity.eq(mediumFeeLiquidity)) {
+    return { fee: FeeAmount.MEDIUM, poolAddress: MEDIUM_FEE_ADDRESS }
+  } else if (maxLiquidity.eq(highFeeLiquidity)) {
+    return { fee: FeeAmount.HIGH, poolAddress: HIGH_FEE_ADDRESS }
+  }
+
+  return { fee: -1, poolAddress: null } // Should never reach here, but just in case return -1
 }
