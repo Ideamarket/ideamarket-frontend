@@ -1,4 +1,3 @@
-import { SnapshotType, WikipediaSnapshot } from './../../../../types/wikipedia'
 import type { Handlers } from 'lib/utils/createHandlers'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { ApiResponseData, createHandlers } from 'lib/utils/createHandlers'
@@ -8,15 +7,19 @@ import {
   updateWikipediaData,
 } from 'lib/models/wikipediaModel'
 import { q } from 'lib/faunaDb'
-import { triggerUpdateLatestSnapshotApi } from 'lib/utils/wikipedia/updateSnapshot'
-import updateWikipediaSnapshot from 'lib/utils/wikipedia/updateSnapshot'
+import {
+  generateAndUploadLatestSnapshot,
+  triggerUpdateLatestSnapshotApi,
+} from 'lib/utils/wikipedia/snapshotUtil'
+import { SnapshotType, WikipediaSnapshot } from 'types/wikipedia'
+import { deleteObjectFromS3 } from 'lib/utils/mediaHandlerS3'
 
 // Constants
 const WIKIPEDIA_MOBILE_URL = 'https://en.m.wikipedia.org/wiki'
 export const WIKIPEDIA_SNAPSHOTS_FOLDER = 'wikipedia/_TITLE_/snapshots'
 
 // Environment variables
-export const s3Bucket = process.env.MARKETS_S3_BUCKET ?? ''
+const s3Bucket = process.env.MARKETS_S3_BUCKET ?? ''
 const marketsCloudfrontDomain = process.env.MARKETS_CLOUDFRONT_DOMAIN ?? ''
 const cacheValidity = process.env.WIKIPEDIA_SNAPSHOT_CACHE_VALIDITY ?? '86400'
 
@@ -28,7 +31,7 @@ const localSnapshotUrl = `${marketsCloudfrontDomain}/${WIKIPEDIA_SNAPSHOTS_FOLDE
  * GET : Returns the snapshot details of a wikipedia page
  *
  * POST : Updates the snapshot of a wikipedia page
- *   - Upload the latest snapshot to S3
+ *   - Calls API to generate and upload the latest snapshot to S3
  *   - Delete the old snapshot(if present) from S3
  *   - Update fauna db with latest snapshot details
  */
@@ -112,12 +115,17 @@ const handlers: Handlers<Partial<ApiResponseData>> = {
       }
 
       // Generate latest snapshot, upload snapshot to S3, update fauna db
-      let uploadedSnapshotFileName = null
+      let latestSnapshotFileName = null
       try {
-        uploadedSnapshotFileName = await updateWikipediaSnapshot({
-          title,
-          currentSnapshotFileName: wikipediaData.snapshot?.fileName,
-        })
+        latestSnapshotFileName = await generateAndUploadLatestSnapshot(title)
+        if (wikipediaData.snapshot?.fileName) {
+          // Delete old snapshot from S3
+          await deleteObjectFromS3({
+            s3Bucket,
+            s3FolderPath: WIKIPEDIA_SNAPSHOTS_FOLDER.replace('_TITLE_', title),
+            fileName: wikipediaData.snapshot.fileName,
+          })
+        }
       } catch (error) {
         console.error(
           'Error occurred while generating and uploading latest snapshot in S3 - ',
@@ -138,7 +146,7 @@ const handlers: Handlers<Partial<ApiResponseData>> = {
         wikipediaId: wikipediaData.id,
         wikipediaData: {
           snapshot: {
-            fileName: uploadedSnapshotFileName,
+            fileName: latestSnapshotFileName,
             updateInProgress: false,
             // @ts-expect-error
             lastUpdated: q.Now(),

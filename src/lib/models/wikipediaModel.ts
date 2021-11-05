@@ -21,17 +21,7 @@ export async function fetchWikipediaData(
       id: wikipediaData.ref.id,
       ...wikipediaData.data,
     }
-
-    if (wikipediaPage.snapshot?.lastUpdated) {
-      wikipediaPage.snapshot = {
-        ...wikipediaPage.snapshot,
-        lastUpdated: new Date(
-          (wikipediaPage.snapshot.lastUpdated as any).value
-        ),
-      }
-    }
-
-    return wikipediaPage
+    return formatWikipediaData(wikipediaPage)
   } catch (error) {
     console.error(error)
   }
@@ -54,17 +44,7 @@ export async function createWikipediaData({
       id: response.ref.id,
       ...response.data,
     }
-
-    if (wikipediaPage.snapshot?.lastUpdated) {
-      wikipediaPage.snapshot = {
-        ...wikipediaPage.snapshot,
-        lastUpdated: new Date(
-          (wikipediaPage.snapshot.lastUpdated as any).value
-        ),
-      }
-    }
-
-    return wikipediaPage
+    return formatWikipediaData(wikipediaPage)
   } catch (error) {
     console.error(error)
   }
@@ -91,18 +71,29 @@ export async function updateWikipediaData({
       id: response.ref.id,
       ...response.data,
     }
-
-    if (wikipediaPage.snapshot?.lastUpdated) {
-      wikipediaPage.snapshot = {
-        ...wikipediaPage.snapshot,
-        lastUpdated: new Date(
-          (wikipediaPage.snapshot.lastUpdated as any).value
-        ),
-      }
-    }
-
-    return wikipediaPage
+    return formatWikipediaData(wikipediaPage)
   } catch (error) {
     console.error(error)
   }
+}
+
+/**
+ * This function does all required formatting of the data from DB
+ */
+function formatWikipediaData(data: WikipediaPage): WikipediaPage {
+  if (data.snapshot?.lastUpdated) {
+    data.snapshot = {
+      ...data.snapshot,
+      lastUpdated: new Date((data.snapshot.lastUpdated as any).value),
+    }
+  }
+
+  if (data.pageViews?.lastUpdated) {
+    data.pageViews = {
+      ...data.pageViews,
+      lastUpdated: new Date((data.pageViews.lastUpdated as any).value),
+    }
+  }
+
+  return data
 }

@@ -28,9 +28,10 @@ export type Snapshot = {
 }
 
 export type PageViews = {
-  start: string
-  end: string
+  from: string
+  to: string
   views: Views[]
+  lastUpdated: Date
 }
 
 export type Views = {
