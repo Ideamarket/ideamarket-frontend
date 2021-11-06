@@ -27,6 +27,7 @@ import { bnToFloatString, bigNumberTenPow18 } from 'utils'
 import { ReactElement, useEffect } from 'react'
 import DesktopRelatedInfo from 'components/listing-page/DesktopRelatedInfo'
 import MobileRelatedInfo from 'components/listing-page/MobileRelatedInfo'
+import InvestmentCalculator from 'components/investment-calculator/InvestmentCalculator'
 
 export default function TokenDetails({
   rawMarketName,
@@ -149,16 +150,20 @@ export default function TokenDetails({
                 {isLoading ? (
                   <div className="h-full p-18 md:p-0">loading</div>
                 ) : web3 ? (
-                  <TradeInterface
+                  // <TradeInterface
+                  //   ideaToken={token}
+                  //   market={market}
+                  //   onTradeComplete={onTradeComplete}
+                  //   onValuesChanged={() => {}}
+                  //   resetOn={false}
+                  //   centerTypeSelection={false}
+                  //   showTypeSelection={true}
+                  //   showTradeButton={true}
+                  //   disabled={false}
+                  // />
+                  <InvestmentCalculator
                     ideaToken={token}
                     market={market}
-                    onTradeComplete={onTradeComplete}
-                    onValuesChanged={() => {}}
-                    resetOn={false}
-                    centerTypeSelection={false}
-                    showTypeSelection={true}
-                    showTradeButton={true}
-                    disabled={false}
                   />
                 ) : (
                   <div className="flex justify-center p-18 md:p-0 md:mt-20">

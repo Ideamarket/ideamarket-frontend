@@ -14,6 +14,8 @@ import { NETWORK } from 'store/networks'
 import BigNumber from 'bignumber.js'
 import BN from 'bn.js'
 
+const nullTokenBalance = new BN('0')
+
 export default function useReversePrice(
   ideaToken: IdeaToken,
   market: IdeaMarket,
@@ -21,7 +23,7 @@ export default function useReversePrice(
   amount: string,
   decimals: number,
   tradeType: string,
-  tokenBalanceBN: any
+  tokenBalanceBN = nullTokenBalance,
 ) {
   const [isLoading, setIsLoading] = useState(true)
   const [outputBN, setOutputBN] = useState(undefined)
