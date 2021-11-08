@@ -23,7 +23,10 @@ export async function fetchWikipediaData(
     }
     return formatWikipediaData(wikipediaPage)
   } catch (error) {
-    console.error(error)
+    console.error(
+      'Error occurred while fetching wikipedia details from DB',
+      error
+    )
   }
 }
 
@@ -46,7 +49,10 @@ export async function createWikipediaData({
     }
     return formatWikipediaData(wikipediaPage)
   } catch (error) {
-    console.error(error)
+    console.error(
+      'Error occurred while creating wikipedia details from DB',
+      error
+    )
   }
 }
 
@@ -73,7 +79,47 @@ export async function updateWikipediaData({
     }
     return formatWikipediaData(wikipediaPage)
   } catch (error) {
-    console.error(error)
+    console.error(
+      'Error occurred while updating wikipedia details from DB',
+      error
+    )
+  }
+}
+
+/**
+ * This function will either create or update the wikipedia data of a wikipedia
+ * page in the fauna db based on whether the record is already present or not
+ */
+export async function upsertWikipediaData({
+  wikipediaData,
+}: {
+  wikipediaData: Partial<WikipediaPage>
+}) {
+  try {
+    const wikipediaRef = q.Match(
+      q.Index('wikipedia_by_page_title'),
+      wikipediaData.pageTitle
+    )
+    const response: any = await getClient().query(
+      q.If(
+        q.Exists(wikipediaRef),
+        q.Update(q.Select(['ref'], q.Get(wikipediaRef)), {
+          data: wikipediaData,
+        }),
+        q.Create(q.Collection('wikipedia'), { data: wikipediaData })
+      )
+    )
+
+    const wikipediaPage: WikipediaPage = {
+      id: response.ref.id,
+      ...response.data,
+    }
+    return formatWikipediaData(wikipediaPage)
+  } catch (error) {
+    console.error(
+      'Error occurred while upserting wikipedia details from DB',
+      error
+    )
   }
 }
 
