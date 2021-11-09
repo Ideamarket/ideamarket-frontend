@@ -3,12 +3,16 @@ import { MutualTokensList } from 'components'
 import { useState } from 'react'
 
 type Props = {
-  rawTokenName: string
   tokenName: string
   marketName: string
+  wikiSnapshot: any
 }
 
-const MobileRelatedInfo = ({ rawTokenName, tokenName, marketName }: Props) => {
+const WikiMobileRelatedInfo = ({
+  tokenName,
+  marketName,
+  wikiSnapshot,
+}: Props) => {
   const [relatedOrTweets, setRelatedOrTweets] = useState('related')
 
   return (
@@ -30,7 +34,7 @@ const MobileRelatedInfo = ({ rawTokenName, tokenName, marketName }: Props) => {
             'px-6 py-3 text-lg font-semibold text-black border border-gray-400 rounded-lg w-36'
           )}
         >
-          Tweets
+          Wiki Page
         </button>
       </div>
       <div className="flex md:hidden">
@@ -41,14 +45,23 @@ const MobileRelatedInfo = ({ rawTokenName, tokenName, marketName }: Props) => {
           )}
         >
           <div className="pb-5 mb-12 border-b border-gray-200">
-            <h3 className="text-2xl font-medium leading-6">Latest tweets</h3>
+            <h3 className="text-2xl font-medium leading-6">Wiki Page</h3>
           </div>
-          <a
-            className="twitter-timeline"
-            href={`https://twitter.com/${rawTokenName}`}
-          >
-            No tweets found for {tokenName}
-          </a>
+          {wikiSnapshot?.type === 'wikipedia' && (
+            <div
+              dangerouslySetInnerHTML={{
+                __html: `<iframe id='wiki-iframe' src='${wikiSnapshot.url}' />`,
+              }}
+            />
+          )}
+
+          {wikiSnapshot?.type === 'local' && (
+            <embed
+              id="wiki-iframe"
+              src={wikiSnapshot.url}
+              type="application/pdf"
+            />
+          )}
         </div>
         <div
           className={classNames(
@@ -63,4 +76,4 @@ const MobileRelatedInfo = ({ rawTokenName, tokenName, marketName }: Props) => {
   )
 }
 
-export default MobileRelatedInfo
+export default WikiMobileRelatedInfo

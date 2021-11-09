@@ -5,6 +5,7 @@ import SubstackMarketSpecifics from './substack'
 import ShowtimeMarketSpecifics from './showtime'
 import TwitchMarketSpecifics from './twitch'
 import MindsMarketSpecifics from './minds'
+import WikipediaMarketSpecifics from './wikipedia'
 import { queryMarkets } from 'store/ideaMarketsStore'
 import { find } from 'utils/lodash'
 
@@ -49,6 +50,7 @@ const specifics: IMarketSpecifics[] = [
   new ShowtimeMarketSpecifics(),
   new TwitchMarketSpecifics(),
   new MindsMarketSpecifics(),
+  new WikipediaMarketSpecifics(),
 ]
 
 export function getMarketSpecifics() {

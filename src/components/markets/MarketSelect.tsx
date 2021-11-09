@@ -16,7 +16,7 @@ export default function MarketSelect({
   const markets = useMarketStore((state) => state.markets)
 
   const selectMarketFormat = (entry) => (
-    <div className="flex items-center dark:text-gray-300 text-gray-500 ">
+    <div className="flex items-center text-gray-500 dark:text-gray-300 ">
       <div className="w-4">
         {entry?.market?.name
           ? theme === 'dark'
@@ -41,7 +41,7 @@ export default function MarketSelect({
       options={markets}
       formatOptionLabel={selectMarketFormat}
       defaultValue={undefined}
-      className="border-2 border-gray-200  dark:border-gray-500  dark:placeholder-gray-300 rounded-md text-brand-gray-4 dark:text-gray-200 market-select"
+      className="border-2 border-gray-200 rounded-md dark:border-gray-500 dark:placeholder-gray-300 text-brand-gray-4 dark:text-gray-200 market-select"
       name=""
     />
   )

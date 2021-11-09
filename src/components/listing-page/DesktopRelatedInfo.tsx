@@ -10,7 +10,7 @@ const DesktopRelatedInfo = ({ rawTokenName, tokenName, marketName }: Props) => {
   return (
     <div className="hidden md:flex">
       <div className="w-1/2 mr-5">
-        <div className="h-20 pb-5 mb-12 border-b border-gray-200 flex items-end justify-between">
+        <div className="flex items-end justify-between h-20 pb-5 mb-12 border-b border-gray-200">
           <h3 className="text-2xl font-medium leading-6">Latest tweets</h3>
         </div>
         <a

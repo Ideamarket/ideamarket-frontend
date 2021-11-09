@@ -73,3 +73,8 @@ select:-webkit-autofill:focus {
   position: absolute;
   top: -7px;
 }
+
+#wiki-iframe {
+  width: 100%;
+  height: 800px;
+}
