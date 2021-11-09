@@ -1,13 +1,13 @@
-import { GoogleTrends } from '../../../../types/wikipedia'
 import googleTrendsApi from 'google-trends-api'
-
 import type { Handlers } from 'lib/utils/createHandlers'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { ApiResponseData, createHandlers } from 'lib/utils/createHandlers'
+import { DAY_SECONDS } from 'utils'
+import { GoogleTrends } from 'types/wikipedia'
 
 // Cache Validity
 const cacheValidity =
-  process.env.WIKIPEDIA_GOOGLE_TRENDS_CACHE_VALIDITY ?? '86400'
+  process.env.WIKIPEDIA_GOOGLE_TRENDS_CACHE_VALIDITY ?? DAY_SECONDS
 
 /**
  * GET : Returns the data from google-trends-api

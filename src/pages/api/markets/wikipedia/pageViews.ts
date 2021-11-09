@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { ApiResponseData, createHandlers } from 'lib/utils/createHandlers'
 import {
   getPageViewsFromWikipediaApi,
-  triggerUpdatePageViewsApi,
+  updatePageViews,
 } from 'lib/utils/wikipedia/pageViewsUtil'
 import {
   fetchWikipediaData,
@@ -12,14 +12,16 @@ import {
 import { PageViews } from 'types/wikipedia'
 import { getLeastDate, getGreatestDate } from 'lib/utils/dateUtil'
 import { q } from 'lib/faunaDb'
+import { DAY_SECONDS, HOUR_SECONDS } from 'utils'
 
 // Constants
 const WIKIPEDIA_PAGE_VIEWS_DURATION = 90 // 90 days
 
 // Env Variables
-const cacheValidity = process.env.WIKIPEDIA_PAGE_VIEWS_CACHE_VALIDITY ?? '86400'
+const cacheValidity =
+  process.env.WIKIPEDIA_PAGE_VIEWS_CACHE_VALIDITY ?? DAY_SECONDS
 const tempCacheValidity =
-  process.env.WIKIPEDIA_PAGE_VIEWS_TEMP_CACHE_VALIDITY ?? '14400'
+  process.env.WIKIPEDIA_PAGE_VIEWS_TEMP_CACHE_VALIDITY ?? 4 * HOUR_SECONDS
 
 /**
  * GET : Returns the page views data of a wikipedia page for last 90 days
@@ -71,7 +73,7 @@ const handlers: Handlers<Partial<ApiResponseData>> = {
           fromDate === availableFromDate && toDate === availableToDate
         if (!requiredPageViewsAvailableInDB) {
           // Update the page views data
-          triggerUpdatePageViewsApi({ title, fromDate, toDate })
+          await updatePageViews({ title, fromDate, toDate })
         }
 
         // Filter the page views as per required dates
@@ -136,6 +138,7 @@ const handlers: Handlers<Partial<ApiResponseData>> = {
     try {
       const title = req.query.title as string
       const { fromDate, toDate } = req.body
+
       let availableFromDate: string = null
       let availableToDate: string = null
 

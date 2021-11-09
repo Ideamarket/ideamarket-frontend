@@ -1,4 +1,5 @@
 import { Views } from 'types/wikipedia'
+import { nonWaitingRequest } from '../httpRequestUtil'
 
 // Constants
 const WIKIPEDIA_PAGE_VIEWS_API_ENDPOINT = 'api/markets/wikipedia/pageViews'
@@ -72,7 +73,7 @@ function formatPageViews(data: any): Views[] {
  *   - fromDate : From date (ISO format '2021-11-06')
  *   - toDate   : To date (ISO format '2021-11-06')
  */
-export function triggerUpdatePageViewsApi({
+export async function updatePageViews({
   title,
   fromDate,
   toDate,
@@ -81,14 +82,10 @@ export function triggerUpdatePageViewsApi({
   fromDate: string
   toDate: string
 }) {
-  fetch(
-    `${serverHostUrl}/${WIKIPEDIA_PAGE_VIEWS_API_ENDPOINT}?title=${title}`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ fromDate, toDate }),
-    }
-  )
+  return await nonWaitingRequest({
+    url: `${serverHostUrl}/${WIKIPEDIA_PAGE_VIEWS_API_ENDPOINT}?title=${title}`,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: { fromDate, toDate },
+  })
 }

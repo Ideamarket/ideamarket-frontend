@@ -2,17 +2,17 @@ import type { Handlers } from 'lib/utils/createHandlers'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { ApiResponseData, createHandlers } from 'lib/utils/createHandlers'
 import {
-  createWikipediaData,
   fetchWikipediaData,
-  updateWikipediaData,
+  upsertWikipediaData,
 } from 'lib/models/wikipediaModel'
 import { q } from 'lib/faunaDb'
 import {
   generateAndUploadLatestSnapshot,
-  triggerUpdateLatestSnapshotApi,
+  updateSnapshot,
 } from 'lib/utils/wikipedia/snapshotUtil'
 import { SnapshotType, WikipediaSnapshot } from 'types/wikipedia'
 import { deleteObjectFromS3 } from 'lib/utils/mediaHandlerS3'
+import { DAY_SECONDS } from 'utils'
 
 // Constants
 const WIKIPEDIA_MOBILE_URL = 'https://en.m.wikipedia.org/wiki'
@@ -21,7 +21,8 @@ export const WIKIPEDIA_SNAPSHOTS_FOLDER = 'wikipedia/_TITLE_/snapshots'
 // Environment variables
 const s3Bucket = process.env.MARKETS_S3_BUCKET ?? ''
 const marketsCloudfrontDomain = process.env.MARKETS_CLOUDFRONT_DOMAIN ?? ''
-const cacheValidity = process.env.WIKIPEDIA_SNAPSHOT_CACHE_VALIDITY ?? '86400'
+const cacheValidity =
+  process.env.WIKIPEDIA_SNAPSHOT_CACHE_VALIDITY ?? DAY_SECONDS
 
 // Snapshot Urls
 const wikipediaSnapshotUrl = `${WIKIPEDIA_MOBILE_URL}/_TITLE_`
@@ -55,7 +56,7 @@ const handlers: Handlers<Partial<ApiResponseData>> = {
 
       // Trigger API to update snapshot
       if (isSnapshotExpiredOrMissing) {
-        triggerUpdateLatestSnapshotApi(title)
+        await updateSnapshot(title)
       }
 
       // Snapshot details
@@ -98,21 +99,12 @@ const handlers: Handlers<Partial<ApiResponseData>> = {
       }
 
       // Set the snapshot updateInProgress flag to true
-      if (wikipediaData) {
-        await updateWikipediaData({
-          wikipediaId: wikipediaData.id,
-          wikipediaData: {
-            snapshot: { updateInProgress: true },
-          },
-        })
-      } else {
-        wikipediaData = await createWikipediaData({
-          wikipediaData: {
-            pageTitle: title,
-            snapshot: { updateInProgress: true },
-          },
-        })
-      }
+      wikipediaData = await upsertWikipediaData({
+        wikipediaData: {
+          pageTitle: title,
+          snapshot: { updateInProgress: true },
+        },
+      })
 
       // Generate latest snapshot, upload snapshot to S3, update fauna db
       let latestSnapshotFileName = null
@@ -132,9 +124,9 @@ const handlers: Handlers<Partial<ApiResponseData>> = {
           error
         )
         // Set the snapshot updateInProgress flag to false
-        await updateWikipediaData({
-          wikipediaId: wikipediaData.id,
+        await upsertWikipediaData({
           wikipediaData: {
+            pageTitle: title,
             snapshot: { updateInProgress: false },
           },
         })
@@ -142,9 +134,9 @@ const handlers: Handlers<Partial<ApiResponseData>> = {
       }
 
       // Update fauna db with latest snapshot details
-      await updateWikipediaData({
-        wikipediaId: wikipediaData.id,
+      await upsertWikipediaData({
         wikipediaData: {
+          pageTitle: title,
           snapshot: {
             fileName: latestSnapshotFileName,
             updateInProgress: false,

@@ -1,4 +1,5 @@
-import { WIKIPEDIA_SNAPSHOTS_FOLDER } from '../../../pages/api/markets/wikipedia/snapshot'
+import { WIKIPEDIA_SNAPSHOTS_FOLDER } from 'pages/api/markets/wikipedia/snapshot'
+import { nonWaitingRequest } from '../httpRequestUtil'
 
 // Constants
 const WIKIPEDIA_URL = 'https://en.wikipedia.org/wiki'
@@ -12,18 +13,16 @@ const serverHostUrl =
     ? `https://${process.env.VERCEL_URL}`
     : process.env.VERCEL_URL ?? 'http://localhost:3000'
 const generateAndUploadPdfApiHostUrl =
-  process.env.GENERATE_UPLOAD_PDF_API_HOST_URL ?? 'http://localhost:3000'
+  process.env.GENERATE_UPLOAD_PDF_API_HOST_URL ?? 'http://localhost:3001'
 
 /**
- * This function calls [POST] wikipedia snapshot API
+ * This function calls [POST] wikipedia snapshot API asynchronously
  */
-export function triggerUpdateLatestSnapshotApi(title: string) {
-  fetch(`${serverHostUrl}/${WIKIPEDIA_SNAPSHOT_API_ENDPOINT}?title=${title}`, {
+export async function updateSnapshot(title: string) {
+  await nonWaitingRequest({
+    url: `${serverHostUrl}/${WIKIPEDIA_SNAPSHOT_API_ENDPOINT}?title=${title}`,
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({}),
+    headers: { 'Content-Type': 'application/json' },
   })
 }
 
