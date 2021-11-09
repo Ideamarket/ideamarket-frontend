@@ -64,7 +64,7 @@ const AccountInnerForm = ({
           <div className="lg:flex">
             <div className="w-full">
               <div className="md:flex">
-                <div className="mr-36">
+                <div className="mr-43">
                   <div className="relative w-8 h-8 -left-2 -top-2 rounded-ful">
                     <label>
                       <Image

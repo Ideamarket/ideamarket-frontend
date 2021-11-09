@@ -6,7 +6,7 @@ const PublicInfoColumn = ({ userData }) => {
   )
 
   return (
-    <div className="relative flex flex-col w-full mt-16 text-center lg:mr-8 lg:w-1/4">
+    <div className="relative flex flex-col w-full mt-16 text-center xl:mr-8 xl:w-1/4">
       <div className="absolute transform -translate-x-1/2 -translate-y-1/2 rounded-full -top-24 left-1/2 w-28 h-28 sm:w-36 sm:h-36">
         <Image
           src={userData?.profilePhoto || '/gray.svg'}

@@ -145,7 +145,9 @@ export default function ProfileWallet({ walletState, userData }: Props) {
   const [orderDirection, setOrderDirection] = useState('desc')
 
   useEffect(() => {
-    refetch()
+    if (userData?.ethAddresses.length > 0) {
+      refetch()
+    }
     // Need userData?.ethAddresses in order to dynamically update tokens on switch to a newly added wallet
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [address, web3, orderBy, orderDirection, userData?.ethAddresses])
