@@ -9,7 +9,8 @@ const WikiRelatedInfo = ({ rawTokenName, ...other }: any) => {
   const [fetchWikiSnapshot] = useMutation<{
     message: string
     data: any
-  }>((rawTokenName) =>
+  }>(() =>
+    // sun will be replaced with rawTokenName
     fetch(`/api/markets/wikipedia/snapshot?title=sun`, {
       method: 'GET',
       headers: {
@@ -25,12 +26,11 @@ const WikiRelatedInfo = ({ rawTokenName, ...other }: any) => {
   )
 
   useEffect(() => {
-    fetchWikiSnapshot(rawTokenName).then(({ data }) => setWikiSnapshot(data))
+    fetchWikiSnapshot().then(({ data }) => setWikiSnapshot(data))
   }, [fetchWikiSnapshot, rawTokenName])
 
   const wikiProps = {
     ...other,
-
     rawTokenName,
     wikiSnapshot,
   }

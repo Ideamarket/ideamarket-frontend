@@ -1,6 +1,7 @@
 import { Chart } from 'chart.js'
 import { useEffect, useRef, useState } from 'react'
 import { useMutation } from 'react-query'
+import moment from 'moment'
 
 type Props = {
   rawTokenName: string
@@ -16,6 +17,7 @@ export default function PageViewsPanel({ rawTokenName, title }: Props) {
     message: string
     data: any
   }>(() =>
+    // sun will be replaced with rawTokenName
     fetch(`/api/markets/wikipedia/pageViews?title=Sun`, {
       method: 'GET',
       headers: {
@@ -32,8 +34,9 @@ export default function PageViewsPanel({ rawTokenName, title }: Props) {
 
   useEffect(() => {
     fetchTrends().then(({ data }) => {
-      console.log(data)
-      const dates = data.pageViews.map((item) => item.date)
+      const dates = data.pageViews.map((item) =>
+        moment.utc(item.date, 'YYYY-MM-DD').format('MMM Do, YYYY')
+      )
       const counts = data.pageViews.map((item) => item.count)
       setData({ dates, counts })
     })
@@ -79,6 +82,8 @@ export default function PageViewsPanel({ rawTokenName, title }: Props) {
                 display: true,
                 ticks: {
                   display: true,
+                  maxTicksLimit: 10,
+                  autoSkip: true,
                 },
                 gridLines: { display: false, drawBorder: false },
               },
@@ -96,7 +101,6 @@ export default function PageViewsPanel({ rawTokenName, title }: Props) {
         },
       })
     )
-    // ref.current.style.height = '100px'
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
   return (

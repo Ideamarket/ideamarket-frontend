@@ -1,6 +1,7 @@
 import { Chart } from 'chart.js'
 import { useEffect, useRef, useState } from 'react'
 import { useMutation } from 'react-query'
+import moment from 'moment'
 
 type Props = {
   rawTokenName: string
@@ -16,7 +17,7 @@ export default function GoogleTrendsPanel({ rawTokenName, title }: Props) {
     message: string
     data: any
   }>(() =>
-    fetch(`/api/markets/wikipedia/googleTrendsData?keyword=sun`, {
+    fetch(`/api/markets/wikipedia/googleTrends?keyword=sun`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -32,7 +33,9 @@ export default function GoogleTrendsPanel({ rawTokenName, title }: Props) {
 
   useEffect(() => {
     fetchTrends().then(({ data }) => {
-      const dates = data.trends.map((item) => item.date)
+      const dates = data.trends.map((item) =>
+        moment.utc(item.date, 'YYYY-MM-DD').format('MMM Do, YYYY')
+      )
       const counts = data.trends.map((item) => item.count)
       setData({ dates, counts })
     })
@@ -78,6 +81,8 @@ export default function GoogleTrendsPanel({ rawTokenName, title }: Props) {
                 display: true,
                 ticks: {
                   display: true,
+                  maxTicksLimit: 10,
+                  autoSkip: true,
                 },
                 gridLines: { display: false, drawBorder: false },
               },
@@ -95,7 +100,6 @@ export default function GoogleTrendsPanel({ rawTokenName, title }: Props) {
         },
       })
     )
-    // ref.current.style.height = '100px'
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
   return (

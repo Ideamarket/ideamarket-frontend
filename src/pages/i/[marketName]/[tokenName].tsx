@@ -202,9 +202,12 @@ export default function TokenDetails({
             </div>
             <div className="flex flex-col md:grid md:grid-cols-2">
               <div className="mb-4 md:mr-5 md:mb-0">
-                <PageViewsPanel title="Pageviews" rawTokenName="iphone" />
+                <PageViewsPanel title="Pageviews" rawTokenName={rawTokenName} />
               </div>
-              <GoogleTrendsPanel title="Google Trends" rawTokenName="iphone" />
+              <GoogleTrendsPanel
+                title="Google Trends"
+                rawTokenName={rawTokenName}
+              />
             </div>
           </div>
 

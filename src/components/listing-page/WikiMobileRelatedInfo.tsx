@@ -48,17 +48,18 @@ const WikiMobileRelatedInfo = ({
             <h3 className="text-2xl font-medium leading-6">Wiki Page</h3>
           </div>
           {wikiSnapshot?.type === 'wikipedia' && (
-            <div
-              dangerouslySetInnerHTML={{
-                __html: `<iframe id='wiki-iframe' src='${wikiSnapshot.url}' />`,
-              }}
+            <iframe
+              id="wiki-iframe"
+              src={wikiSnapshot.url}
+              key="wiki-iframe-mobile"
+              title="wiki-iframe-mobile"
             />
           )}
 
           {wikiSnapshot?.type === 'local' && (
             <embed
               id="wiki-iframe"
-              src={wikiSnapshot.url}
+              src={`${wikiSnapshot.url}#toolbar=0&navpanes=0&scrollbar=0`}
               type="application/pdf"
             />
           )}
