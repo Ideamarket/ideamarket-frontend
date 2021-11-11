@@ -409,7 +409,7 @@
       "type": "function"
     }
   ],
-  "interestManager": [
+  "interestManagerAVM": [
     {
       "anonymous": false,
       "inputs": [
