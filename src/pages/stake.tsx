@@ -1,6 +1,7 @@
 import { DefaultLayout } from 'components/layouts'
 import { NextSeo } from 'next-seo'
 import StakeInner from 'components/stake/StakeInner'
+import { ReactElement } from 'react'
 
 const Stake = () => {
   return (
@@ -15,6 +16,4 @@ const Stake = () => {
 
 export default Stake
 
-Stake.layoutProps = {
-  Layout: DefaultLayout,
-}
+Stake.getLayout = (page: ReactElement) => <DefaultLayout>{page}</DefaultLayout>

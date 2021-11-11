@@ -16,6 +16,9 @@ type State = {
   uniswapFactoryContract: any
   ideaTokenVaultContract: any
   merkleDistributorContract: any
+  imoContract: any
+  imoStakingContract: any
+  drippingIMOSourceContract: any
 }
 
 export const useContractStore = create<State>((set) => ({
@@ -27,6 +30,9 @@ export const useContractStore = create<State>((set) => ({
   uniswapFactoryContract: undefined,
   ideaTokenVaultContract: undefined,
   merkleDistributorContract: undefined,
+  imoContract: undefined,
+  imoStakingContract: undefined,
+  drippingIMOSourceContract: undefined,
 }))
 
 export function clearContracts() {
@@ -39,6 +45,9 @@ export function clearContracts() {
     uniswapFactoryContract: undefined,
     ideaTokenVaultContract: undefined,
     merkleDistributorContract: undefined,
+    imoContract: undefined,
+    imoStakingContract: undefined,
+    drippingIMOSourceContract: undefined,
   })
 }
 
@@ -98,6 +107,24 @@ export function initContractsFromWeb3(web3: Web3) {
     { from: web3.eth.defaultAccount }
   )
 
+  const imoContract = new web3.eth.Contract(
+    abis.imo as any,
+    deployedAddresses.imo,
+    { from: web3.eth.defaultAccount }
+  )
+
+  const imoStakingContract = new web3.eth.Contract(
+    abis.imoStaking as any,
+    deployedAddresses.imoStaking,
+    { from: web3.eth.defaultAccount }
+  )
+
+  const drippingIMOSourceContract = new web3.eth.Contract(
+    abis.drippingIMOSource as any,
+    deployedAddresses.drippingIMOSource,
+    { from: web3.eth.defaultAccount }
+  )
+
   useContractStore.setState({
     factoryContract: factoryContract,
     quoterContract: quoterContract,
@@ -107,6 +134,9 @@ export function initContractsFromWeb3(web3: Web3) {
     uniswapFactoryContract: uniswapFactoryContract,
     ideaTokenVaultContract: ideaTokenVaultContract,
     merkleDistributorContract: merkleDistributorContract,
+    imoContract: imoContract,
+    imoStakingContract: imoStakingContract,
+    drippingIMOSourceContract: drippingIMOSourceContract,
   })
 }
 
