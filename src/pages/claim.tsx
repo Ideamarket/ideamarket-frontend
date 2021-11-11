@@ -1,5 +1,5 @@
 import ClaimInner from 'components/claim/ClaimInner'
-import { createContext, useState } from 'react'
+import { createContext, ReactElement, useState } from 'react'
 import { DefaultLayout } from 'components/layouts'
 import { NextSeo } from 'next-seo'
 
@@ -28,6 +28,4 @@ const Claim = () => {
 
 export default Claim
 
-Claim.layoutProps = {
-  Layout: DefaultLayout,
-}
+Claim.getLayout = (page: ReactElement) => <DefaultLayout>{page}</DefaultLayout>

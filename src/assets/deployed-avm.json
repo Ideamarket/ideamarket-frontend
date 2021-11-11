@@ -17,5 +17,9 @@
   "ideaTokenVault": "0xeC4E1A014fAf0D966332E62970CD7c6553671d76",
   "ideaTokenVaultLogic": "0xd2a2830B2B381Eb2bcA5584c5d96732FDC83FFe9",
   "multiAction": "0x3bc293c23f3C8F7E391B805Ae86dE37017011347",
-  "addMarketSpell": "0x4332df6a97abb1776a4909ee283a7f04994b6b1c"
+  "addMarketSpell": "0x4332df6a97abb1776a4909ee283a7f04994b6b1c",
+  "merkleDistributor": "0xa5E8bDBE83C2E93201836A8943496E8A2978F8bd",
+  "imo": "0xC6C77506134cFc29E62cF35cEb2b964bE313FBC9",
+  "imoStaking": "0x902ed1D30212a3DaCC471FBbD8e421fa80c3d2B4",
+  "drippingIMOSource": ""
 }
