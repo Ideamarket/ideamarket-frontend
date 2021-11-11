@@ -69,7 +69,7 @@ export const fortmatic = new FortmaticConnector({
 // export const fortmatic = {}
 
 export const portis = new PortisConnector({
-  dAppId: 'bbff3259-d19c-4791-9695-5a61f3146e51',
+  dAppId: 'e1462a4c-2b93-45d2-b403-5b256dee651b', // TODO: make Ideamarket account for Portis
   networks: CHAIN_IDS,
 })
 
