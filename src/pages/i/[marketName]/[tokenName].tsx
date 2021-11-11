@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js'
 import { useQuery } from 'react-query'
 import {
-  TradeInterface,
+  // TradeInterface,
   MutualTokensList,
   DefaultLayout,
   WalletModal,
@@ -20,9 +20,9 @@ import ModalService from 'components/modals/ModalService'
 import LeftListingPanel from 'components/listing-page/LeftListingPanel'
 import ListingStats from 'components/listing-page/ListingStats'
 import ListingSEO from 'components/listing-page/ListingSEO'
-import TradeCompleteModal, {
-  TRANSACTION_TYPES,
-} from 'components/trade/TradeCompleteModal'
+// import TradeCompleteModal, {
+//   TRANSACTION_TYPES,
+// } from 'components/trade/TradeCompleteModal'
 import { bnToFloatString, bigNumberTenPow18 } from 'utils'
 import { ReactElement, useEffect } from 'react'
 import DesktopRelatedInfo from 'components/listing-page/DesktopRelatedInfo'
@@ -100,19 +100,19 @@ export default function TokenDetails({
     marketName,
   }
 
-  function onTradeComplete(
-    isSuccess: boolean,
-    tokenName: string,
-    transactionType: TRANSACTION_TYPES
-  ) {
-    refetch()
-    ModalService.open(TradeCompleteModal, {
-      isSuccess,
-      tokenName,
-      marketName,
-      transactionType,
-    })
-  }
+  // function onTradeComplete(
+  //   isSuccess: boolean,
+  //   tokenName: string,
+  //   transactionType: TRANSACTION_TYPES
+  // ) {
+  //   refetch()
+  //   ModalService.open(TradeCompleteModal, {
+  //     isSuccess,
+  //     tokenName,
+  //     marketName,
+  //     transactionType,
+  //   })
+  // }
 
   useEffect(() => {
     const timeout = setTimeout(
@@ -161,10 +161,7 @@ export default function TokenDetails({
                   //   showTradeButton={true}
                   //   disabled={false}
                   // />
-                  <InvestmentCalculator
-                    ideaToken={token}
-                    market={market}
-                  />
+                  <InvestmentCalculator ideaToken={token} market={market} />
                 ) : (
                   <div className="flex justify-center p-18 md:p-0 md:mt-20">
                     <button
