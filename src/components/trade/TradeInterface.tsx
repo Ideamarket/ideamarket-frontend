@@ -705,6 +705,7 @@ export default function TradeInterface({
               setIsMissingAllowance={setIsMissingAllowance}
               disable={isApproveButtonDisabled}
               key={approveButtonKey}
+              txType="spend"
             />
             <div className="mt-4 ">
               <button

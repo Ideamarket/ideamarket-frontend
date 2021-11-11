@@ -5,7 +5,7 @@ import { useWalletStore } from 'store/walletStore'
 export default function useTokenAllowance(
   tokenAddress: string,
   spenderAddress: string,
-  updateOn: any[]
+  updateOn?: any
 ) {
   const [isLoading, setIsLoading] = useState(true)
   const [allowance, setAllowance] = useState(undefined)

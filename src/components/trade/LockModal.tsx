@@ -142,7 +142,7 @@ export default function LockModal({
             txManager={txManager}
             setIsMissingAllowance={setIsMissingAllowance}
             disable={isApproveButtonDisabled}
-            isLock={true}
+            txType="lock"
           />
           <button
             className={classNames(

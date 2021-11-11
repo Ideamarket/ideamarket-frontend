@@ -381,6 +381,7 @@ export default function ListTokenModal({ close }: { close: () => void }) {
               txManager={txManager}
               setIsMissingAllowance={setIsMissingAllowance}
               disable={isApproveButtonDisabled}
+              txType="spend"
             />
           </div>
           <div className="mt-4 ">

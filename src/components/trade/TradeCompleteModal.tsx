@@ -8,6 +8,8 @@ export enum TRANSACTION_TYPES {
   LOCK,
   LIST,
   GIFT,
+  STAKE,
+  UNSTAKE,
 }
 
 const tweetableTypes = [

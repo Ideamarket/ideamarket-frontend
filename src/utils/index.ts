@@ -14,7 +14,16 @@ export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
 export const web3TenPow18 = new BN('10').pow(new BN('18'))
 export const web3UintMax = new BN('2').pow(new BN('256')).sub(new BN('1'))
+export const zeroBN = new BN('0')
+export const zeroBigNumber = new BigNumber('0')
 export const bigNumberTenPow18 = new BigNumber('10').pow(new BigNumber('18'))
+// The amount of IMO that will flow into staking contract in 1 year
+export const tenMillionBigNumber = new BigNumber(10000000).multipliedBy(
+  new BigNumber('10').exponentiatedBy(18)
+)
+export const oneBigNumber = new BigNumber(1).multipliedBy(
+  new BigNumber('10').exponentiatedBy(18)
+)
 
 export const HOUR_SECONDS = 3600
 export const DAY_SECONDS = 86400

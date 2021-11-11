@@ -190,7 +190,7 @@ export default function GiftModal({
               txManager={txManager}
               setIsMissingAllowance={setIsMissingAllowance}
               disable={isApproveButtonDisabled}
-              isLock={true}
+              txType="spend"
             />
           )}
 

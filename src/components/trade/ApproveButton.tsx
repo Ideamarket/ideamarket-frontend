@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import BN from 'bn.js'
 
 import { useTokenAllowance, approveToken } from '../../actions'
-import { TransactionManager, web3UintMax } from '../../utils'
+import { TransactionManager, web3UintMax, zeroBN } from '../../utils'
 import Tooltip from 'components/tooltip/Tooltip'
 import { cloneDeep } from 'utils/lodash'
 
@@ -16,7 +16,7 @@ export default function ApproveButton({
   txManager,
   disable,
   setIsMissingAllowance,
-  isLock = false,
+  txType,
 }: {
   tokenAddress: string
   tokenName: string
@@ -26,18 +26,57 @@ export default function ApproveButton({
   disable?: boolean
   txManager: TransactionManager
   setIsMissingAllowance: (b: boolean) => void
-  isLock?: boolean
+  txType: string
 }) {
-  const [allowance] = useTokenAllowance(tokenAddress, spenderAddress, [
+  const [hasAllowanceFor, setHasAllowanceFor] = useState({})
+  const [allowance] = useTokenAllowance(
     tokenAddress,
     spenderAddress,
-  ])
+    hasAllowanceFor
+  )
 
-  const [hasAllowanceFor, setHasAllowanceFor] = useState({})
+  const isMissingAllowance =
+    allowance &&
+    !allowance.lte(zeroBN) &&
+    hasAllowanceFor[tokenAddress]?.[spenderAddress]
+      ? hasAllowanceFor[tokenAddress][spenderAddress].lt(requiredAllowance)
+      : allowance !== undefined && allowance.lt(requiredAllowance)
 
-  const isMissingAllowance = hasAllowanceFor[tokenAddress]?.[spenderAddress]
-    ? hasAllowanceFor[tokenAddress][spenderAddress].lt(requiredAllowance)
-    : allowance !== undefined && allowance.lt(requiredAllowance)
+  const getValuesByTxType = (txType: string) => {
+    if (txType === 'stake') {
+      return {
+        buttonText: 'stake',
+        buttonName: 'Stake',
+        tooltipAction: 'staking',
+      }
+    }
+
+    if (txType === 'lock') {
+      return {
+        buttonText: 'lock',
+        buttonName: 'Lock',
+        tooltipAction: 'locking',
+      }
+    }
+
+    if (txType === 'spend') {
+      return {
+        buttonText: 'spend',
+        buttonName: 'Buy/Sell',
+        tooltipAction: 'spending',
+      }
+    }
+
+    if (txType === 'unstake') {
+      return {
+        buttonText: 'withdraw',
+        buttonName: 'Withdraw',
+        tooltipAction: 'withdrawing',
+      }
+    }
+  }
+
+  const { buttonText, buttonName, tooltipAction } = getValuesByTxType(txType)
 
   useEffect(() => {
     setIsMissingAllowance(isMissingAllowance)
@@ -80,15 +119,14 @@ export default function ApproveButton({
       }}
     >
       <span>
-        Allow Ideamarket to {isLock ? 'lock' : 'spend'} your {tokenName}
+        Allow Ideamarket to {buttonText} your {tokenName}
       </span>
       <Tooltip className="inline-block ml-2">
         <div className="w-32 md:w-64">
           The Ideamarket smart contract needs your approval to interact with
-          your {tokenName} balance. After you grant permission, the{' '}
-          {isLock ? 'Lock' : 'Buy/Sell'} button will be enabled. Select 'allow
-          permanent' in Settings (⚙️) to permanently enable {tokenName}{' '}
-          {isLock ? 'locking' : 'spending'} from this wallet.
+          your {tokenName} balance. After you grant permission, the {buttonName}{' '}
+          button will be enabled. Select 'allow permanent' in Settings (⚙️) to
+          permanently enable {tokenName} {tooltipAction} from this wallet.
         </div>
       </Tooltip>
     </div>
