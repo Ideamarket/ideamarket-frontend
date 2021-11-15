@@ -11,6 +11,7 @@ export enum TRANSACTION_TYPES {
   LOCK,
   LIST,
   GIFT,
+  CLAIM,
   STAKE,
   UNSTAKE,
 }
@@ -20,25 +21,57 @@ const tweetableTypes = [
   TRANSACTION_TYPES.BUY,
   TRANSACTION_TYPES.LOCK,
   TRANSACTION_TYPES.GIFT,
+  TRANSACTION_TYPES.CLAIM,
+  TRANSACTION_TYPES.STAKE,
 ]
 
-function getTweetTemplate(
+const getTweetTemplate = (
   transactionType: TRANSACTION_TYPES,
   tokenName: string
-) {
+) => {
   let tweetText = ''
 
   if (transactionType === TRANSACTION_TYPES.LIST) {
-    tweetText = `Just listed ${tokenName} on @ideamarket_io `
+    tweetText = `Just listed ${tokenName} on @ideamarket_io, the literal marketplace of ideas!`
   } else if (transactionType === TRANSACTION_TYPES.BUY) {
-    tweetText = `Just bought ${tokenName} on @ideamarket_io`
+    tweetText = `Just bought ${tokenName} on @ideamarket_io, the literal marketplace of ideas!`
   } else if (transactionType === TRANSACTION_TYPES.LOCK) {
-    tweetText = `Just locked ${tokenName} for 1 year on @ideamarket_io`
+    tweetText = `Just locked ${tokenName} for 1 year on @ideamarket_io, the literal marketplace of ideas!`
   } else if (transactionType === TRANSACTION_TYPES.GIFT) {
-    tweetText = `Just gifted ${tokenName} on @ideamarket_io`
+    tweetText = `Just gifted ${tokenName} on @ideamarket_io, the literal marketplace of ideas!`
+  } else if (transactionType === TRANSACTION_TYPES.CLAIM) {
+    tweetText = `Just claimed $IMO token airdrop on @ideamarket_io, the literal marketplace of ideas!`
+  } else if (transactionType === TRANSACTION_TYPES.STAKE) {
+    tweetText = `Just staked $IMO tokens on @ideamarket_io, the literal marketplace of ideas!`
   }
 
   return encodeURIComponent(tweetText)
+}
+
+const getTweetUrl = (
+  transactionType: TRANSACTION_TYPES,
+  tokenName: string,
+  marketName: string
+) => {
+  let tweetUrl = 'https://ideamarket.io'
+
+  if (
+    transactionType === TRANSACTION_TYPES.LIST ||
+    transactionType === TRANSACTION_TYPES.BUY ||
+    transactionType === TRANSACTION_TYPES.LOCK ||
+    transactionType === TRANSACTION_TYPES.GIFT
+  ) {
+    tweetUrl = `https://ideamarket.io/i/${marketName.toLowerCase()}/${tokenName.replace(
+      '@',
+      ''
+    )}`
+  } else if (transactionType === TRANSACTION_TYPES.CLAIM) {
+    tweetUrl = `https://ideamarket.io/claim`
+  } else if (transactionType === TRANSACTION_TYPES.STAKE) {
+    tweetUrl = `https://ideamarket.io/stake`
+  }
+
+  return tweetUrl
 }
 
 export default function TradeCompleteModal({
@@ -55,6 +88,7 @@ export default function TradeCompleteModal({
   transactionType: TRANSACTION_TYPES
 }) {
   const tweetTemplate = getTweetTemplate(transactionType, tokenName)
+  const tweetUrl = getTweetUrl(transactionType, tokenName, marketName)
 
   const canTweet = tweetableTypes.includes(transactionType)
 
@@ -81,10 +115,7 @@ export default function TradeCompleteModal({
               <div className="flex justify-center mt-10">
                 <A
                   className="twitter-share-button"
-                  href={`https://twitter.com/intent/tweet?text=${tweetTemplate}&url=https://ideamarket.io/i/${marketName.toLowerCase()}/${tokenName.replace(
-                    '@',
-                    ''
-                  )}`}
+                  href={`https://twitter.com/intent/tweet?text=${tweetTemplate}&url=${tweetUrl}`}
                 >
                   <button
                     className="w-32 h-10 text-white rounded-2xl flex justify-center items-center"
