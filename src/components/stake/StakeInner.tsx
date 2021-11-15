@@ -344,6 +344,7 @@ const StakeInner = () => {
                       setIsMissingAllowance={setIsMissingAllowance}
                       disable={isApproveButtonDisabled}
                       txType={isStakeSelected ? 'stake' : 'unstake'}
+                      key={+balanceToggle} // This resets validity of this button, Get issues without it
                     />
                     <button
                       onClick={

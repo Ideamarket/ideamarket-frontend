@@ -14,6 +14,10 @@ import { NETWORK } from 'store/networks'
 import { useWeb3React } from '@web3-react/core'
 import useClaimable from 'actions/useClaimable'
 import ModalService from 'components/modals/ModalService'
+import TradeCompleteModal, {
+  TRANSACTION_TYPES,
+} from 'components/trade/TradeCompleteModal'
+import router from 'next/router'
 
 const ClaimInner = () => {
   const txManager = useTransactionManager()
@@ -37,6 +41,20 @@ const ClaimInner = () => {
     setIsClaimed(false)
   }
 
+  const onTradeComplete = (
+    isSuccess: boolean,
+    tokenName: string,
+    transactionType: TRANSACTION_TYPES,
+    marketName: string
+  ) => {
+    ModalService.open(TradeCompleteModal, {
+      isSuccess,
+      tokenName,
+      transactionType,
+      marketName,
+    })
+  }
+
   const onClaimButtonClick = async () => {
     if (finalAddress) {
       try {
@@ -45,7 +63,11 @@ const ClaimInner = () => {
         setAddress('')
       } catch (error) {
         console.log(error)
+        onTradeComplete(false, 'IMO', TRANSACTION_TYPES.NONE, 'no-market')
+        return
       }
+
+      onTradeComplete(true, 'IMO', TRANSACTION_TYPES.CLAIM, 'no-market')
     }
   }
 
@@ -172,7 +194,10 @@ const ClaimInner = () => {
                       <span className="text-2xl">✓</span> IMO token Claimed!
                     </div>
                     <div className="text-right">
-                      <button className="w-32 py-2 text-white rounded-lg bg-brand-blue hover:bg-blue-800">
+                      <button
+                        onClick={() => router.push('/stake')}
+                        className="w-32 py-2 text-white rounded-lg bg-brand-blue hover:bg-blue-800"
+                      >
                         Stake
                         <span className="inline-block w-2 ml-2 mr-2">
                           <Image
