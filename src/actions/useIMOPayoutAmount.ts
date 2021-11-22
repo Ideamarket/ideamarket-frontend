@@ -44,6 +44,7 @@ export default function useIMOPayoutAmount(
         const stakingContractIMOBalanceBigNumber = new BigNumber(
           stakingContractIMOBalance.toString()
         )
+
         const imoPayoutBigNumber = xIMOAmountBigNumber
           .multipliedBy(
             stakingContractIMOBalanceBigNumber.plus(pendingIMOBigNumber)
