@@ -22,7 +22,16 @@ export default function useStakingAPR(
     let isCancelled = false
 
     const getApr = async () => {
-      if (!web3 || !xIMOTotalSupply || xIMOTotalSupply.lte(new BN('0'))) {
+      const xIMOTotalSupplyBigNumber = new BigNumber(
+        xIMOTotalSupply ? xIMOTotalSupply.toString() : '0'
+      )
+
+      // If total xIMO supply is < 1, just show zero or else some crazy numbers are shown
+      if (
+        !web3 ||
+        !xIMOTotalSupply ||
+        xIMOTotalSupplyBigNumber.isLessThan(oneBigNumber)
+      ) {
         return 0
       }
 
@@ -31,9 +40,6 @@ export default function useStakingAPR(
         const ratioImoAmountBigNumber = new BigNumber(ratioImoAmount.toString())
         const stakingContractIMOBalanceBigNumber = new BigNumber(
           stakingContractIMOBalance.toString()
-        )
-        const xIMOTotalSupplyBigNumber = new BigNumber(
-          xIMOTotalSupply.toString()
         )
         const xIMOAmount = oneBigNumber.dividedBy(ratioImoAmountBigNumber) // This gives the xIMO amount that equals 1 IMO
         const payoutAfterYearBigNumber = xIMOAmount

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { web3BNToFloatString } from '../utils'
+import { oneBigNumber, web3BNToFloatString } from '../utils'
 import { useWalletStore } from 'store/walletStore'
 import BigNumber from 'bignumber.js'
 import BN from 'bn.js'
@@ -22,7 +22,15 @@ export default function useIMOPayoutAmount(
     let isCancelled = false
 
     const getIMOPayout = async () => {
-      if (!web3 || !xIMOTotalSupply || xIMOTotalSupply.lte(new BN('0'))) {
+      const xIMOTotalSupplyBigNumber = new BigNumber(
+        xIMOTotalSupply ? xIMOTotalSupply.toString() : '0'
+      )
+      // If total xIMO supply is < 1, just show zero or else some crazy numbers are shown
+      if (
+        !web3 ||
+        !xIMOTotalSupply ||
+        xIMOTotalSupplyBigNumber.isLessThan(oneBigNumber)
+      ) {
         return new BN('0')
       }
 
@@ -36,9 +44,7 @@ export default function useIMOPayoutAmount(
         const stakingContractIMOBalanceBigNumber = new BigNumber(
           stakingContractIMOBalance.toString()
         )
-        const xIMOTotalSupplyBigNumber = new BigNumber(
-          xIMOTotalSupply.toString()
-        )
+
         const imoPayoutBigNumber = xIMOAmountBigNumber
           .multipliedBy(
             stakingContractIMOBalanceBigNumber.plus(pendingIMOBigNumber)
