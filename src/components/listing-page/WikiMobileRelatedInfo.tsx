@@ -53,6 +53,7 @@ const WikiMobileRelatedInfo = ({
               src={wikiSnapshot.url}
               key="wiki-iframe-mobile"
               title="wiki-iframe-mobile"
+              className="w-full"
             />
           )}
 
@@ -61,6 +62,7 @@ const WikiMobileRelatedInfo = ({
               id="wiki-iframe"
               src={`${wikiSnapshot.url}#toolbar=0&navpanes=0&scrollbar=0`}
               type="application/pdf"
+              className="w-full"
             />
           )}
         </div>

@@ -2946,32 +2946,75 @@
           "name": "ideaTokenVault",
           "type": "address"
         },
-        { "internalType": "address", "name": "dai", "type": "address" },
         {
           "internalType": "address",
-          "name": "uniswapV2Router02",
+          "name": "dai",
           "type": "address"
         },
-        { "internalType": "address", "name": "weth", "type": "address" }
+        {
+          "internalType": "address",
+          "name": "swapRouter",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "quoter",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "weth",
+          "type": "address"
+        }
       ],
       "stateMutability": "nonpayable",
       "type": "constructor"
     },
     {
       "inputs": [],
-      "name": "_dai",
+      "name": "HIGH_POOL_FEE",
       "outputs": [
-        { "internalType": "contract IERC20", "name": "", "type": "address" }
+        {
+          "internalType": "uint24",
+          "name": "",
+          "type": "uint24"
+        }
       ],
       "stateMutability": "view",
       "type": "function"
     },
     {
       "inputs": [],
-      "name": "_uniswapV2Factory",
+      "name": "LOW_POOL_FEE",
       "outputs": [
         {
-          "internalType": "contract IUniswapV2Factory",
+          "internalType": "uint24",
+          "name": "",
+          "type": "uint24"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "MEDIUM_POOL_FEE",
+      "outputs": [
+        {
+          "internalType": "uint24",
+          "name": "",
+          "type": "uint24"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "_dai",
+      "outputs": [
+        {
+          "internalType": "contract IERC20",
           "name": "",
           "type": "address"
         }
@@ -2981,10 +3024,36 @@
     },
     {
       "inputs": [],
-      "name": "_uniswapV2Router02",
+      "name": "_uniswapV3Factory",
       "outputs": [
         {
-          "internalType": "contract IUniswapV2Router02",
+          "internalType": "contract IUniswapV3Factory",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "_uniswapV3Quoter",
+      "outputs": [
+        {
+          "internalType": "contract IQuoter",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "_uniswapV3SwapRouter",
+      "outputs": [
+        {
+          "internalType": "contract ISwapRouter",
           "name": "",
           "type": "address"
         }
@@ -2996,22 +3065,42 @@
       "inputs": [],
       "name": "_weth",
       "outputs": [
-        { "internalType": "contract IWETH", "name": "", "type": "address" }
+        {
+          "internalType": "contract IWETH",
+          "name": "",
+          "type": "address"
+        }
       ],
       "stateMutability": "view",
       "type": "function"
     },
     {
       "inputs": [
-        { "internalType": "string", "name": "tokenName", "type": "string" },
-        { "internalType": "uint256", "name": "marketID", "type": "uint256" },
-        { "internalType": "uint256", "name": "amount", "type": "uint256" },
+        {
+          "internalType": "string",
+          "name": "tokenName",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "marketID",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
         {
           "internalType": "uint256",
           "name": "lockDuration",
           "type": "uint256"
         },
-        { "internalType": "address", "name": "recipient", "type": "address" }
+        {
+          "internalType": "address",
+          "name": "recipient",
+          "type": "address"
+        }
       ],
       "name": "addAndBuy",
       "outputs": [],
@@ -3020,20 +3109,36 @@
     },
     {
       "inputs": [
-        { "internalType": "address", "name": "ideaToken", "type": "address" },
-        { "internalType": "uint256", "name": "amount", "type": "uint256" },
+        {
+          "internalType": "address",
+          "name": "ideaToken",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
         {
           "internalType": "uint256",
           "name": "fallbackAmount",
           "type": "uint256"
         },
-        { "internalType": "uint256", "name": "cost", "type": "uint256" },
+        {
+          "internalType": "uint256",
+          "name": "cost",
+          "type": "uint256"
+        },
         {
           "internalType": "uint256",
           "name": "lockDuration",
           "type": "uint256"
         },
-        { "internalType": "address", "name": "recipient", "type": "address" }
+        {
+          "internalType": "address",
+          "name": "recipient",
+          "type": "address"
+        }
       ],
       "name": "buyAndLock",
       "outputs": [],
@@ -3042,26 +3147,46 @@
     },
     {
       "inputs": [
-        { "internalType": "string", "name": "tokenName", "type": "string" },
-        { "internalType": "uint256", "name": "marketID", "type": "uint256" },
+        {
+          "internalType": "string",
+          "name": "tokenName",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "marketID",
+          "type": "uint256"
+        },
         {
           "internalType": "address",
           "name": "inputCurrency",
           "type": "address"
         },
-        { "internalType": "uint256", "name": "amount", "type": "uint256" },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
         {
           "internalType": "uint256",
           "name": "fallbackAmount",
           "type": "uint256"
         },
-        { "internalType": "uint256", "name": "cost", "type": "uint256" },
+        {
+          "internalType": "uint256",
+          "name": "cost",
+          "type": "uint256"
+        },
         {
           "internalType": "uint256",
           "name": "lockDuration",
           "type": "uint256"
         },
-        { "internalType": "address", "name": "recipient", "type": "address" }
+        {
+          "internalType": "address",
+          "name": "recipient",
+          "type": "address"
+        }
       ],
       "name": "convertAddAndBuy",
       "outputs": [],
@@ -3075,20 +3200,36 @@
           "name": "inputCurrency",
           "type": "address"
         },
-        { "internalType": "address", "name": "ideaToken", "type": "address" },
-        { "internalType": "uint256", "name": "amount", "type": "uint256" },
+        {
+          "internalType": "address",
+          "name": "ideaToken",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
         {
           "internalType": "uint256",
           "name": "fallbackAmount",
           "type": "uint256"
         },
-        { "internalType": "uint256", "name": "cost", "type": "uint256" },
+        {
+          "internalType": "uint256",
+          "name": "cost",
+          "type": "uint256"
+        },
         {
           "internalType": "uint256",
           "name": "lockDuration",
           "type": "uint256"
         },
-        { "internalType": "address", "name": "recipient", "type": "address" }
+        {
+          "internalType": "address",
+          "name": "recipient",
+          "type": "address"
+        }
       ],
       "name": "convertAndBuy",
       "outputs": [],
@@ -3102,9 +3243,21 @@
           "name": "outputCurrency",
           "type": "address"
         },
-        { "internalType": "address", "name": "ideaToken", "type": "address" },
-        { "internalType": "uint256", "name": "amount", "type": "uint256" },
-        { "internalType": "uint256", "name": "minPrice", "type": "uint256" },
+        {
+          "internalType": "address",
+          "name": "ideaToken",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "minPrice",
+          "type": "uint256"
+        },
         {
           "internalType": "address payable",
           "name": "recipient",
@@ -3116,6 +3269,9 @@
       "stateMutability": "nonpayable",
       "type": "function"
     },
-    { "stateMutability": "payable", "type": "receive" }
+    {
+      "stateMutability": "payable",
+      "type": "receive"
+    }
   ]
   }

@@ -108,9 +108,17 @@ export default function GoogleTrendsPanel({ rawTokenName, title }: Props) {
       <div className="relative">
         <div
           className="flex-grow"
-          style={{ position: 'relative', height: '250px', width: '100%' }}
+          style={{
+            position: 'relative',
+            height: '250px',
+            width: '100%',
+            contain: 'content',
+          }}
         >
-          <canvas ref={ref}></canvas>
+          <canvas
+            ref={ref}
+            style={{ display: 'block', width: '100%' }}
+          ></canvas>
         </div>
       </div>
     </div>

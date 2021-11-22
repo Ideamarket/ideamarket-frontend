@@ -32,6 +32,7 @@ import getSsrBaseUrl from 'utils/getSsrBaseUrl'
 import GoogleTrendsPanel from 'components/listing-page/GoogleTrendsPanel'
 import WikiRelatedInfo from 'components/listing-page/WikiRelatedInfo'
 import PageViewsPanel from 'components/listing-page/PageViewsPanel'
+import WatchingStar from 'components/WatchingStar'
 
 export default function TokenDetails({
   rawMarketName,
