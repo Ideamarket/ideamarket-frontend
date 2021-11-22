@@ -11,6 +11,7 @@ import ApproveButton from 'components/trade/ApproveButton'
 import {
   floatToWeb3BN,
   formatNumberWithCommasAsThousandsSerperator,
+  oneBigNumber,
   useTransactionManager,
 } from 'utils'
 import BigNumber from 'bignumber.js'
@@ -42,8 +43,13 @@ const StakeInner = () => {
   const toggleIsStake = () => setIsStakeSelected(!isStakeSelected)
 
   const [balanceToggle, setBalanceToggle] = useState(false) // Need toggle to reload balance after stake/unstake
-  const [userIMOBalance] = useBalance(imoAddress, account, 18, balanceToggle)
-  const [userxIMOBalance] = useBalance(
+  const [userIMOBalance, userIMOBalanceBN] = useBalance(
+    imoAddress,
+    account,
+    18,
+    balanceToggle
+  )
+  const [userxIMOBalance, userxIMOBalanceBN] = useBalance(
     imoStakingAddress,
     account,
     18,
@@ -87,9 +93,19 @@ const StakeInner = () => {
     xIMOTotalSupplyBN
   )
 
-  const isInputAmountGTSupply =
-    parseFloat(inputAmount) >
-    parseFloat(isStakeSelected ? userIMOBalance : userxIMOBalance)
+  const inputAmountBigNumber = new BigNumber(inputAmount).multipliedBy(
+    new BigNumber('10').exponentiatedBy(18)
+  )
+  const userIMOBalanceBigNumber = new BigNumber(
+    userIMOBalance ? userIMOBalanceBN.toString() : '0'
+  )
+  const userxIMOBalanceBigNumber = new BigNumber(
+    userxIMOBalance ? userxIMOBalanceBN.toString() : '0'
+  )
+  // Need to use Big Numbers to check for really small decimal values
+  const isInputAmountGTSupply = inputAmountBigNumber.isGreaterThan(
+    isStakeSelected ? userIMOBalanceBigNumber : userxIMOBalanceBigNumber
+  )
 
   const isInvalid =
     txManager.isPending ||
@@ -136,7 +152,13 @@ const StakeInner = () => {
   }
 
   const withdrawxIMOClicked = async () => {
-    const amountBN = floatToWeb3BN(inputAmount, 18, BigNumber.ROUND_DOWN)
+    let amountBN = floatToWeb3BN(inputAmount, 18, BigNumber.ROUND_DOWN)
+    const amountBigNumber = new BigNumber(amountBN.toString())
+    // If the entered amount is about equal to user's total xIMO balance, then withdraw all xIMO
+    if (amountBigNumber.minus(userxIMOBalanceBN).isLessThan(oneBigNumber)) {
+      amountBN = userxIMOBalanceBN
+    }
+
     const args = [amountBN]
 
     try {
