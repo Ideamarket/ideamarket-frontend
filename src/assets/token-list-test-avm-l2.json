@@ -22,14 +22,14 @@
   },
   {
     "name": "someToken",
-    "address": "0xfe4EdedC6260f9Cf056BC6Ec83B23608b46510e3",
+    "address": "0x07Eef059B7982A537ee07FDE05C9ae7AED45aA1e",
     "symbol": "STK",
     "decimals": 18,
     "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png"
   },
   {
     "name": "someOtherToken",
-    "address": "0x4fc3F8f97d43CecE18E94201bdf4f2770b6131A0",
+    "address": "0xE3320D351c4eF49bB06d08e579d6bDe081FCB7c7",
     "symbol": "SOTK",
     "decimals": 18,
     "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x0000000000085d4780B73119b644AE5ecd22b376/logo.png"

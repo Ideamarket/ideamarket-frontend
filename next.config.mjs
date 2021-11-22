@@ -23,6 +23,8 @@ const moduleExports = withPWA({
       'raw.githubusercontent.com',
       'd37wda20o7ykez.cloudfront.net',
       'zapper.fi',
+      'etherscan.io',
+      'cryptologos.cc',
     ],
   },
   async redirects() {

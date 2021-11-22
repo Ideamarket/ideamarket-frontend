@@ -37,7 +37,7 @@ export default function useBalance(
               resolve(new BN(value))
             })
             .catch((error) => {
-              console.log(error)
+              console.error('Getting balance of ETH failed', error)
               resolve(new BN('0'))
             })
         } else {
@@ -49,7 +49,7 @@ export default function useBalance(
               resolve(new BN(value))
             })
             .catch((error) => {
-              console.log(error)
+              console.error('Getting balance of ERC20 failed', error)
               resolve(new BN('0'))
             })
         }

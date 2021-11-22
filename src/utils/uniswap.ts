@@ -45,12 +45,14 @@ interface State {
 export async function getInputForOutput(
   inputTokenAddress: string,
   outputTokenAddress: string,
-  outputAmountBN: BN
+  outputAmountBN: BN,
+  tradeType: string
 ) {
   const quoterContract = useContractStore.getState().quoterContract
   const { path, fees } = await getUniswapPath(
     inputTokenAddress,
-    outputTokenAddress
+    outputTokenAddress,
+    tradeType
   )
   if (path.length === 2 && fees.length === 1) {
     return new BN(
@@ -82,12 +84,14 @@ export async function getInputForOutput(
 export async function getOutputForInput(
   inputTokenAddress: string,
   outputTokenAddress: string,
-  inputAmountBN: BN
+  inputAmountBN: BN,
+  tradeType: string
 ) {
   const quoterContract = useContractStore.getState().quoterContract
   const { path, fees } = await getUniswapPath(
     inputTokenAddress,
-    outputTokenAddress
+    outputTokenAddress,
+    tradeType
   )
   if (path.length === 2 && fees.length === 1) {
     return new BN(
@@ -116,7 +120,8 @@ export async function getOutputForInput(
  */
 export async function getUniswapPath(
   inputTokenAddress: string,
-  outputTokenAddress: string
+  outputTokenAddress: string,
+  tradeType: string
 ): Promise<UniswapPoolDetails> {
   const wethAddress = NETWORK.getExternalAddresses().weth
   const updatedInputAddress =
@@ -125,62 +130,69 @@ export async function getUniswapPath(
     outputTokenAddress === ZERO_ADDRESS ? wethAddress : outputTokenAddress
 
   // POOL = input token - output token
-  const { fee: feeInputOutput } = await getHighestLiquidityPool(
-    updatedInputAddress,
-    updatedOutputAddress
-  )
+  const { fee: feeInputOutput, liquidity: liquidityInputOutput } =
+    await getHighestLiquidityPool(updatedInputAddress, updatedOutputAddress)
+
+  let directPath = []
+  let directFees = []
 
   // -1 means no direct path found
   if (feeInputOutput !== -1) {
     if (feeInputOutput === FeeAmount.LOW) {
-      const path = [updatedInputAddress, updatedOutputAddress]
-      const fees = [FeeAmount.LOW]
-      return { path, fees }
+      directPath = [updatedInputAddress, updatedOutputAddress]
+      directFees = [FeeAmount.LOW]
+      // return { path: directPath, fees: directFees }
     } else if (feeInputOutput === FeeAmount.MEDIUM) {
-      const path = [updatedInputAddress, updatedOutputAddress]
-      const fees = [FeeAmount.MEDIUM]
-      return { path, fees }
+      directPath = [updatedInputAddress, updatedOutputAddress]
+      directFees = [FeeAmount.MEDIUM]
+      // return { path: directPath, fees: directFees }
     } else if (feeInputOutput === FeeAmount.HIGH) {
-      const path = [updatedInputAddress, updatedOutputAddress]
-      const fees = [FeeAmount.HIGH]
-      return { path, fees }
+      directPath = [updatedInputAddress, updatedOutputAddress]
+      directFees = [FeeAmount.HIGH]
+      // return { path: directPath, fees: directFees }
     }
   }
 
-  // Direct path does not exist if we make it here
   // Check for 3-hop path: input -> weth -> output
 
-  let fees = []
+  let threeHopFees = []
 
   // POOL = input token - WETH
-  const { fee: feeInputWeth } = await getHighestLiquidityPool(
-    updatedInputAddress,
-    wethAddress
-  )
+  const { fee: feeInputWeth, liquidity: liquidityInputWeth } =
+    await getHighestLiquidityPool(updatedInputAddress, wethAddress)
 
   if (feeInputWeth === FeeAmount.LOW) {
-    fees.push(FeeAmount.LOW)
+    threeHopFees.push(FeeAmount.LOW)
   } else if (feeInputWeth === FeeAmount.MEDIUM) {
-    fees.push(FeeAmount.MEDIUM)
+    threeHopFees.push(FeeAmount.MEDIUM)
   } else if (feeInputWeth === FeeAmount.HIGH) {
-    fees.push(FeeAmount.HIGH)
+    threeHopFees.push(FeeAmount.HIGH)
   }
 
   // POOL = WETH - output token
-  const { fee: feeWethOutput } = await getHighestLiquidityPool(
-    wethAddress,
-    updatedOutputAddress
-  )
+  const { fee: feeWethOutput, liquidity: liquidityWethOutput } =
+    await getHighestLiquidityPool(wethAddress, updatedOutputAddress)
 
   if (feeWethOutput === FeeAmount.LOW) {
-    fees.push(FeeAmount.LOW)
+    threeHopFees.push(FeeAmount.LOW)
   } else if (feeWethOutput === FeeAmount.MEDIUM) {
-    fees.push(FeeAmount.MEDIUM)
+    threeHopFees.push(FeeAmount.MEDIUM)
   } else if (feeWethOutput === FeeAmount.HIGH) {
-    fees.push(FeeAmount.HIGH)
+    threeHopFees.push(FeeAmount.HIGH)
   }
 
-  const path = [updatedInputAddress, wethAddress, updatedOutputAddress]
+  const threeHopPath = [updatedInputAddress, wethAddress, updatedOutputAddress]
+
+  // Liquidity of selected token - WETH pool
+  const threeHopLiquidity =
+    tradeType === 'buy' ? liquidityInputWeth : liquidityWethOutput
+  const path = liquidityInputOutput.gte(threeHopLiquidity)
+    ? directPath
+    : threeHopPath
+  const fees = liquidityInputOutput.gte(threeHopLiquidity)
+    ? directFees
+    : threeHopFees
+
   return { path, fees }
 }
 
@@ -194,10 +206,8 @@ async function getRoute(inputTokenAddress: string) {
     outputTokenAddress === ZERO_ADDRESS ? wethAddress : outputTokenAddress
 
   // POOL = input token - output token
-  const { poolAddress: directPoolAddress } = await getHighestLiquidityPool(
-    updatedInputAddress,
-    updatedOutputAddress
-  )
+  const { poolAddress: directPoolAddress, liquidity: liquidityInputOutput } =
+    await getHighestLiquidityPool(updatedInputAddress, updatedOutputAddress)
 
   const chainID = NETWORK.getChainID()
 
@@ -240,6 +250,8 @@ async function getRoute(inputTokenAddress: string) {
     updatedOutputAddress
   )
 
+  let directRoute = null
+
   if (directPoolAddress) {
     // The direct pool exists
 
@@ -250,35 +262,53 @@ async function getRoute(inputTokenAddress: string) {
       outputToken
     )
 
-    return new Route([directPool], inputToken, outputToken)
-  } else {
-    // The direct pool does not exist, check for input -> WETH -> output
-
-    // POOL = input token - WETH
-    const { poolAddress: inputWETHPoolAddress } = await getHighestLiquidityPool(
-      updatedInputAddress,
-      wethAddress
-    )
-    // POOL = WETH - output token
-    const { poolAddress: outputWETHPoolAddress } =
-      await getHighestLiquidityPool(wethAddress, updatedOutputAddress)
-
-    // The path exists, find the route
-    const firstPoolContract = getUniswapPoolContract(inputWETHPoolAddress)
-    const secondPoolContract = getUniswapPoolContract(outputWETHPoolAddress)
-    let firstPool, secondPool
-
-    await Promise.all([
-      (async () => {
-        firstPool = await getPool(firstPoolContract, inputToken, wethToken)
-      })(),
-      (async () => {
-        secondPool = await getPool(secondPoolContract, outputToken, wethToken)
-      })(),
-    ])
-
-    return new Route([firstPool, secondPool], inputToken, outputToken)
+    directRoute = new Route([directPool], inputToken, outputToken)
+    // return directRoute
   }
+
+  // Check for input -> WETH -> output
+
+  // POOL = input token - WETH
+  const {
+    fee: feeInputWeth,
+    poolAddress: inputWETHPoolAddress,
+    liquidity: liquidityInputWeth,
+  } = await getHighestLiquidityPool(updatedInputAddress, wethAddress)
+
+  // If no three hop pool, then use direct route
+  if (feeInputWeth === -1) {
+    return directRoute
+  }
+
+  // POOL = WETH - output token
+  const { poolAddress: outputWETHPoolAddress } = await getHighestLiquidityPool(
+    wethAddress,
+    updatedOutputAddress
+  )
+
+  // The path exists, find the route
+  const firstPoolContract = getUniswapPoolContract(inputWETHPoolAddress)
+  const secondPoolContract = getUniswapPoolContract(outputWETHPoolAddress)
+  let firstPool, secondPool
+
+  await Promise.all([
+    (async () => {
+      firstPool = await getPool(firstPoolContract, inputToken, wethToken)
+    })(),
+    (async () => {
+      secondPool = await getPool(secondPoolContract, outputToken, wethToken)
+    })(),
+  ])
+
+  // If you pass null pool into Route, it will cause error that does not show up in console
+  const threeHopRoute =
+    !firstPool || !secondPool
+      ? null
+      : new Route([firstPool, secondPool], inputToken, outputToken)
+
+  return liquidityInputOutput.gte(liquidityInputWeth)
+    ? directRoute
+    : threeHopRoute
 }
 
 /**
@@ -317,6 +347,8 @@ async function getPool(
   tokenA: Token,
   tokenB: Token
 ): Promise<Pool> {
+  if (!poolContract || !poolContract?.options.address) return null
+
   try {
     const [immutables, state] = await Promise.all([
       getPoolImmutables(poolContract),
@@ -393,6 +425,7 @@ async function getPoolState(poolContract) {
 type BestPoolInfo = {
   fee: number
   poolAddress: string
+  liquidity: BN
 }
 
 /**
@@ -439,7 +472,8 @@ async function getHighestLiquidityPool(
     MEDIUM_FEE_ADDRESS !== ZERO_ADDRESS ||
     HIGH_FEE_ADDRESS !== ZERO_ADDRESS
 
-  if (!isDirectPath) return { fee: -1, poolAddress: null }
+  if (!isDirectPath)
+    return { fee: -1, poolAddress: null, liquidity: new BN('0') }
 
   let maxLiquidity = new BN(0) // Helps determine which pool has the highest liquidity. That is the pool to use.
 
@@ -453,12 +487,24 @@ async function getHighestLiquidityPool(
   }
 
   if (maxLiquidity.eq(lowFeeLiquidity)) {
-    return { fee: FeeAmount.LOW, poolAddress: LOW_FEE_ADDRESS }
+    return {
+      fee: FeeAmount.LOW,
+      poolAddress: LOW_FEE_ADDRESS,
+      liquidity: lowFeeLiquidity,
+    }
   } else if (maxLiquidity.eq(mediumFeeLiquidity)) {
-    return { fee: FeeAmount.MEDIUM, poolAddress: MEDIUM_FEE_ADDRESS }
+    return {
+      fee: FeeAmount.MEDIUM,
+      poolAddress: MEDIUM_FEE_ADDRESS,
+      liquidity: mediumFeeLiquidity,
+    }
   } else if (maxLiquidity.eq(highFeeLiquidity)) {
-    return { fee: FeeAmount.HIGH, poolAddress: HIGH_FEE_ADDRESS }
+    return {
+      fee: FeeAmount.HIGH,
+      poolAddress: HIGH_FEE_ADDRESS,
+      liquidity: highFeeLiquidity,
+    }
   }
 
-  return { fee: -1, poolAddress: null } // Should never reach here, but just in case return -1
+  return { fee: -1, poolAddress: null, liquidity: new BN('0') } // Should never reach here, but just in case return -1
 }

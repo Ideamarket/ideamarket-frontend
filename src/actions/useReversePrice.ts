@@ -36,6 +36,7 @@ export default function useReversePrice(
         !selectedTokenAddress ||
         (!ideaToken && !market) ||
         !tokenBalanceBN ||
+        isNaN(parseFloat(selectedTokenAmount)) ||
         parseFloat(selectedTokenAmount) <= 0.0
       ) {
         return new BN('0')
@@ -61,7 +62,8 @@ export default function useReversePrice(
           daiAmountBN = await getOutputForInput(
             inputTokenAddress,
             outputTokenAddress,
-            selectedTokenAmountBN
+            selectedTokenAmountBN,
+            tradeType
           )
         } catch (ex) {
           console.error('Exception during quote process for BUY:', ex)
@@ -93,6 +95,7 @@ export default function useReversePrice(
         !useWalletStore.getState().web3 ||
         !ideaToken ||
         !selectedTokenAddress ||
+        isNaN(parseFloat(selectedTokenAmount)) ||
         parseFloat(selectedTokenAmount) <= 0.0
       ) {
         return new BN('0')
@@ -114,7 +117,8 @@ export default function useReversePrice(
           requiredDaiAmountBN = await getInputForOutput(
             inputTokenAddress,
             outputTokenAddress,
-            selectedTokenAmountBN
+            selectedTokenAmountBN,
+            tradeType
           )
         } catch (ex) {
           return new BN('0')

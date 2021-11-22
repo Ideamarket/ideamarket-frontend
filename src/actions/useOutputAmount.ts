@@ -30,6 +30,7 @@ export default function useOutputAmount(
         !useWalletStore.getState().web3 ||
         !selectedTokenAddress ||
         (!ideaToken && !market) ||
+        isNaN(parseFloat(ideaTokenAmount)) ||
         parseFloat(ideaTokenAmount) <= 0.0
       ) {
         return new BN('0')
@@ -85,7 +86,8 @@ export default function useOutputAmount(
         return await getInputForOutput(
           inputTokenAddress,
           outputTokenAddress,
-          requiredDaiAmount
+          requiredDaiAmount,
+          tradeType
         )
       } catch (ex) {
         console.error('Exception during quote process for BUY:', ex)
@@ -102,6 +104,7 @@ export default function useOutputAmount(
         !useWalletStore.getState().web3 ||
         !ideaToken ||
         !selectedTokenAddress ||
+        isNaN(parseFloat(ideaTokenAmount)) ||
         parseFloat(ideaTokenAmount) <= 0.0
       ) {
         return new BN('0')
@@ -134,7 +137,8 @@ export default function useOutputAmount(
         return await getOutputForInput(
           inputTokenAddress,
           outputTokenAddress,
-          daiOutputAmount
+          daiOutputAmount,
+          tradeType
         )
       } catch (ex) {
         return new BN('0')
