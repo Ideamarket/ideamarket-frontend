@@ -1,9 +1,11 @@
 import { gql } from 'graphql-request'
 
 export default function getQueryMarkets(marketNames: string[]): string {
-  const inMarkets = marketNames.map((name) => `"${name}"`).join(',')
+  // TODO: remove once Wikipedia is needed
+  const filteredMarketNames = marketNames.filter(name => name !== 'Wikipedia')
+  const inMarkets = filteredMarketNames.map((name) => `"${name}"`).join(',')
   const where =
-    marketNames.length === 0 ? '' : `(where:{name_in:[${inMarkets}]})`
+    filteredMarketNames.length === 0 ? '' : `(where:{name_in:[${inMarkets}]})`
   return gql`
     {
       ideaMarkets${where} {

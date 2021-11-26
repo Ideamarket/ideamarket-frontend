@@ -44,14 +44,14 @@ export function initContractsFromWeb3(web3: Web3) {
   const abis = NETWORK.getDeployedABIs()
 
   const factoryContract = new web3.eth.Contract(
-    abis.ideaTokenFactory as any,
-    deployedAddresses.ideaTokenFactory,
+    abis.ideaTokenFactoryAVM as any,
+    deployedAddresses.ideaTokenFactoryAVM,
     { from: web3.eth.defaultAccount }
   )
 
   const exchangeContract = new web3.eth.Contract(
-    abis.ideaTokenExchange as any,
-    deployedAddresses.ideaTokenExchange,
+    abis.ideaTokenExchangeAVM as any,
+    deployedAddresses.ideaTokenExchangeAVM,
     { from: web3.eth.defaultAccount }
   )
 

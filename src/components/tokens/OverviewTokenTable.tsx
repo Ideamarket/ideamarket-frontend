@@ -229,7 +229,8 @@ export default function Table({
               <tbody className="w-full bg-white divide-y divide-gray-200 dark:bg-gray-700 dark:divide-gray-500">
                 {(tokenData as IdeaToken[]).map((token, index) => {
                   // Only load the rows if a market is found
-                  if (marketsMap[token.marketID]) {
+                  // TODO: remove the 2nd condition once Wikipedia is available
+                  if (marketsMap[token.marketID] && marketsMap[token.marketID].name !== 'Wikipedia') {
                     return (
                       <TokenRow
                         key={token.marketID + '-' + token.tokenID}
