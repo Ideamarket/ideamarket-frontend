@@ -1,17 +1,19 @@
-const withPWA = require('next-pwa')
-const { withSentryConfig } = require('@sentry/nextjs')
+import withPWA from 'next-pwa'
+import { withSentryConfig } from '@sentry/nextjs'
 
 const SentryWebpackPluginOptions = {
   silent: true, // Suppresses all logs
 }
 
 const moduleExports = withPWA({
+  outputFileTracing: false,
   publicRuntimeConfig: {
     MIX_PANEL_KEY: process.env.MIX_PANEL_KEY,
   },
   pwa: {
     dest: 'public',
     disable: process.env.NODE_ENV === 'development',
+    buildExcludes: [/middleware-manifest.json$/]
   },
   images: {
     domains: [
@@ -62,4 +64,4 @@ const moduleExports = withPWA({
 
 // Make sure adding Sentry options is the last code to run before exporting, to
 // ensure that your source maps include changes from all other Webpack plugins
-module.exports = withSentryConfig(moduleExports, SentryWebpackPluginOptions)
+export default withSentryConfig(moduleExports, SentryWebpackPluginOptions)
