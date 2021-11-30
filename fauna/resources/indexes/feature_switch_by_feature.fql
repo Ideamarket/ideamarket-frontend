@@ -1,0 +1,6 @@
+CreateIndex({
+  name: 'feature_switch_by_feature',
+  source: Collection('feature_switches'),
+  unique: true,
+  terms: [{ field: ['data', 'feature'] }],
+})
