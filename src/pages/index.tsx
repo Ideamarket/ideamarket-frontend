@@ -28,6 +28,7 @@ const Home = ({ urlMarkets }: Props) => {
     useState(false)
   const [selectedFilterId, setSelectedFilterId] = useState(MainFilters.TOP.id)
   const [isVerifiedFilterActive, setIsVerifiedFilterActive] = useState(false)
+  const [isStarredFilterActive, setIsStarredFilterActive] = useState(false)
   const [selectedMarkets, setSelectedMarkets] = useState(new Set([]))
   const [selectedColumns, setSelectedColumns] = useState(new Set([]))
   const [nameSearch, setNameSearch] = useState('')
@@ -67,12 +68,6 @@ const Home = ({ urlMarkets }: Props) => {
   }
 
   const onOrderByChanged = (orderBy: string, direction: string) => {
-    if (
-      selectedFilterId === MainFilters.STARRED.id ||
-      selectedFilterId === MainFilters.VERIFIED.id
-    ) {
-      return
-    }
     if (orderBy === 'dayChange' && direction === 'desc') {
       setSelectedFilterId(MainFilters.HOT.id)
     } else if (orderBy === 'listedAt' && direction === 'desc') {
@@ -115,11 +110,13 @@ const Home = ({ urlMarkets }: Props) => {
     selectedMarkets,
     selectedColumns,
     isVerifiedFilterActive,
+    isStarredFilterActive,
     onMarketChanged,
     setSelectedFilterId,
     onColumnChanged,
     onNameSearchChanged,
     setIsVerifiedFilterActive,
+    setIsStarredFilterActive,
   }
 
   const tableProps = {
@@ -127,6 +124,7 @@ const Home = ({ urlMarkets }: Props) => {
     selectedMarkets,
     selectedFilterId,
     isVerifiedFilterActive,
+    isStarredFilterActive,
     columnData: visibleColumns,
     getColumn: (column) => selectedColumns.has(column),
     onOrderByChanged,

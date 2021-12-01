@@ -1,11 +1,7 @@
 import classNames from 'classnames'
 import { useState } from 'react'
 import Modal from '../modals/Modal'
-import {
-  CheckboxFilters,
-  MainFilters,
-  toggleMarketHelper,
-} from './utils/OverviewUtils'
+import { CheckboxFilters, toggleMarketHelper } from './utils/OverviewUtils'
 
 export default function OverviewFiltersModal({
   close,
@@ -72,13 +68,10 @@ export default function OverviewFiltersModal({
         </div>
         <div className="p-4">
           <div>
-            <span
-              className="mr-4 py-1 flex items-center"
-              key={MainFilters.VERIFIED.id}
-            >
+            <span className="mr-4 py-1 flex items-center">
               <input
                 type="checkbox"
-                id={`checkbox-${MainFilters.VERIFIED.value}`}
+                id={`checkbox-verified`}
                 className="cursor-pointer border-2 border-gray-200 rounded-sm"
                 checked={localIsVerifiedFilterActive}
                 onChange={(e) => {
@@ -86,7 +79,7 @@ export default function OverviewFiltersModal({
                 }}
               />
               <label
-                htmlFor={`checkbox-${MainFilters.VERIFIED.value}`}
+                htmlFor={`checkbox-verified`}
                 className={classNames(
                   'ml-2 cursor-pointer font-medium',
                   localIsVerifiedFilterActive
@@ -94,7 +87,7 @@ export default function OverviewFiltersModal({
                     : 'text-brand-black'
                 )}
               >
-                {MainFilters.VERIFIED.name}
+                Verified Only
               </label>
             </span>
           </div>

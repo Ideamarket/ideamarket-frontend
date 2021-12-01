@@ -1,12 +1,16 @@
 import classNames from 'classnames'
-import { useMarketStore } from 'store/markets'
-import { ChevronDownIcon, BadgeCheckIcon } from '@heroicons/react/solid'
+import { getMarketSpecificsByMarketName, useMarketStore } from 'store/markets'
 import {
+  ChevronDownIcon,
+  BadgeCheckIcon,
   StarIcon,
+} from '@heroicons/react/solid'
+import {
   SparklesIcon,
   FireIcon,
   ArrowSmUpIcon,
   QuestionMarkCircleIcon,
+  ViewBoardsIcon,
 } from '@heroicons/react/outline'
 import React, { useEffect, useRef, useState } from 'react'
 import { OverviewSearchbar } from './OverviewSearchbar'
@@ -18,13 +22,20 @@ import {
   toggleMarketHelper,
 } from './utils/OverviewUtils'
 import { useMixPanel } from 'utils/mixPanel'
+import useThemeMode from 'components/useThemeMode'
+import DropdownButtons from 'components/dropdowns/DropdownButtons'
+import DropdownCheckbox from 'components/dropdowns/DropdownCheckbox'
+import WikipediaOutlineWhite from '../../assets/wikipedia-outline-white.svg'
+import WikipediaOutlineBlack from '../../assets/wikipedia-outline-black.svg'
 
 type DropdownButtonProps = {
   filters: any
-  name: string
+  name: any
   selectedOptions: any
-  toggleOption: (marketValue: string) => void
+  toggleOption: (value: any) => void
   className?: string
+  dropdownType?: string
+  selectedFilterId?: number
 }
 
 // filters = options to appear in the dropdown
@@ -34,10 +45,35 @@ const DropdownButton = ({
   selectedOptions,
   toggleOption,
   className,
+  dropdownType = 'checkbox',
+  selectedFilterId,
 }: DropdownButtonProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const container = useRef(null)
-  const { mixpanel } = useMixPanel()
+
+  const DropdownProps = {
+    container,
+    filters,
+    selectedOptions,
+    toggleOption,
+  }
+
+  const getButtonIcon = (filterId: number) => {
+    switch (filterId) {
+      case 1:
+        return <ArrowSmUpIcon className="w-4 h-4 stroke-current" />
+      case 2:
+        return <FireIcon className="w-4 h-4 mr-1" />
+      case 3:
+        return <SparklesIcon className="w-4 h-4 mr-1" />
+      case 4:
+        return <BadgeCheckIcon className="w-5 h-5 mr-1" />
+      case 5:
+        return <StarIcon className="w-4 h-4 mr-1" />
+      default:
+        return <QuestionMarkCircleIcon className="w-4 h-4 mr-1" />
+    }
+  }
 
   function handleClickOutside(event) {
     const value = container.current
@@ -58,103 +94,54 @@ const DropdownButton = ({
     <div
       className={classNames(
         className,
-        `relative flex items-center p-1 border rounded-md pl-3 pr-1 font-semibold text-sm text-brand-black dark:text-gray-50 cursor-pointer z-40`
+        dropdownType !== 'columns' ? 'pl-3' : 'pl-2',
+        `relative flex items-center p-1 border rounded-md pr-1 font-semibold text-sm text-brand-black dark:text-gray-50 cursor-pointer z-40`
       )}
-      onClick={() => {
+      onMouseOver={() => {
         setIsDropdownOpen(true)
       }}
+      onMouseLeave={() => {
+        setIsDropdownOpen(false)
+      }}
     >
-      <span className="mr-1">{name}</span>
-      {name === 'Platforms' && (
-        <span className="w-8 text-xs text-center text-gray-400">
-          {
-            [...selectedOptions].filter((o) => o !== 'All' && o !== 'None')
-              .length
-          }{' '}
-          / {filters.length - 1}
-        </span>
-      )}
-      <ChevronDownIcon className="h-5" />
-      {isDropdownOpen && (
-        <div
-          ref={container}
-          className="absolute z-40 flex flex-col flex-wrap w-32 p-4 mt-1 bg-white border rounded-lg shadow-xl cursor-default max-h-36 md:w-64 dark:bg-gray-800"
-          style={{ top: '100%', left: 0 }}
-        >
-          {filters.map((filter) => (
-            <span key={filter}>
-              <input
-                type="checkbox"
-                id={`checkbox-${filter}`}
-                className="border-2 border-gray-200 rounded-sm cursor-pointer"
-                checked={
-                  selectedOptions.has(filter) || selectedOptions.has('All')
-                }
-                onChange={(e) => {
-                  toggleOption(filter)
-                  mixpanel.track('FILTER_PLATFORM', { platforms: filters })
-                }}
-              />
-              <label
-                htmlFor={`checkbox-${filter}`}
-                className={classNames(
-                  'ml-2 cursor-pointer font-medium',
-                  selectedOptions.has(filter) || selectedOptions.has('All')
-                    ? 'text-brand-blue dark:text-blue-400'
-                    : 'text-brand-black'
-                )}
-              >
-                {filter}
-              </label>
-            </span>
-          ))}
+      {dropdownType === 'buttons' && (
+        <div className="flex">
+          <span className="mr-1 text-xs text-gray-500 whitespace-nowrap">
+            Sort by:
+          </span>
+          {getButtonIcon(selectedFilterId)}
         </div>
+      )}
+      <span className="mr-1">{name}</span>
+      {dropdownType !== 'columns' && <ChevronDownIcon className="h-5" />}
+      {isDropdownOpen && dropdownType === 'buttons' && (
+        <DropdownButtons {...DropdownProps} />
+      )}
+      {isDropdownOpen && dropdownType !== 'buttons' && (
+        <DropdownCheckbox {...DropdownProps} />
       )}
     </div>
   )
 }
 
 type FiltersButtonProps = {
-  filter: any
   isSelected: boolean
-  isVerifiedFilterActive: boolean
-  onClick: (filterId: number) => void
-  setIsVerifiedFilterActive: (isActive: boolean) => void
+  onClick: (value: any) => void
+  label: any
+  className?: string
 }
 
 const FiltersButton = ({
-  filter,
   isSelected,
-  isVerifiedFilterActive,
   onClick,
-  setIsVerifiedFilterActive,
+  label,
+  className,
 }: FiltersButtonProps) => {
-  const { mixpanel } = useMixPanel()
-
-  function getButtonIcon(filterId: number) {
-    switch (filterId) {
-      case 1:
-        return <ArrowSmUpIcon className="w-4 h-4 stroke-current" />
-      case 2:
-        return <FireIcon className="w-4 h-4 mr-1" />
-      case 3:
-        return <SparklesIcon className="w-4 h-4 mr-1" />
-      case 4:
-        return <BadgeCheckIcon className="w-5 h-5 mr-1" />
-      case 5:
-        return <StarIcon className="w-4 h-4 mr-1" />
-      default:
-        return <QuestionMarkCircleIcon className="w-4 h-4 mr-1" />
-    }
-  }
-
   return (
     <button
       className={classNames(
+        className,
         'flex flex-grow md:flex-auto justify-center items-center md:px-3 p-2 border md:rounded-md text-sm font-semibold',
-        filter.value === 'Verified' && 'hidden md:flex',
-        filter.value === 'Top' && 'rounded-l-md',
-        filter.value === 'Starred' && 'rounded-r-md',
         {
           'text-brand-blue dark:text-white bg-gray-100 dark:bg-very-dark-blue':
             isSelected,
@@ -162,18 +149,49 @@ const FiltersButton = ({
         { 'text-brand-black dark:text-gray-50': !isSelected }
       )}
       onClick={() => {
-        if (filter.value === 'Verified') {
-          setIsVerifiedFilterActive(true)
-        } else if (isVerifiedFilterActive) {
-          setIsVerifiedFilterActive(false)
-        }
-        onClick(filter.id)
-
-        mixpanel.track(`FILTER_${filter.value.toUpperCase()}`)
+        onClick(!isSelected)
       }}
     >
-      {getButtonIcon(filter.id)}
-      <span>{filter.value}</span>
+      <span>{label}</span>
+    </button>
+  )
+}
+
+type PlatformButtonProps = {
+  platform: any
+  isSelected: boolean
+  onClick: (platform: string) => void
+}
+
+const PlatformButton = ({
+  platform,
+  isSelected,
+  onClick,
+}: PlatformButtonProps) => {
+  const marketSpecifics = getMarketSpecificsByMarketName(platform)
+  const { resolvedTheme } = useThemeMode()
+
+  return (
+    <button
+      className={classNames(
+        'flex flex-grow md:flex-auto justify-center items-center px-3 border md:rounded-md text-sm font-semibold',
+        platform === 'All' && 'rounded-l-md',
+        {
+          'text-brand-blue dark:text-white bg-gray-100 dark:bg-very-dark-blue':
+            isSelected,
+        },
+        { 'text-brand-black dark:text-gray-50': !isSelected }
+      )}
+      onClick={() => {
+        onClick(platform)
+      }}
+    >
+      {platform !== 'All' && (
+        <span className="w-4 h-auto mr-1">
+          {marketSpecifics.getMarketSVGTheme(resolvedTheme)}
+        </span>
+      )}
+      <span>{platform}</span>
     </button>
   )
 }
@@ -183,11 +201,13 @@ type OverviewFiltersProps = {
   selectedMarkets: Set<string>
   selectedColumns: Set<string>
   isVerifiedFilterActive: boolean
+  isStarredFilterActive: boolean
   onMarketChanged: (set: Set<string>) => void
   setSelectedFilterId: (filterId: number) => void
   onColumnChanged: (set: Set<string>) => void
   onNameSearchChanged: (value: string) => void
   setIsVerifiedFilterActive: (isActive: boolean) => void
+  setIsStarredFilterActive: (isActive: boolean) => void
 }
 
 export const OverviewFilters = ({
@@ -195,15 +215,21 @@ export const OverviewFilters = ({
   selectedMarkets,
   selectedColumns,
   isVerifiedFilterActive,
+  isStarredFilterActive,
   onMarketChanged,
   setSelectedFilterId,
   onColumnChanged,
   onNameSearchChanged,
   setIsVerifiedFilterActive,
+  setIsStarredFilterActive,
 }: OverviewFiltersProps) => {
+  const { mixpanel } = useMixPanel()
+  const { resolvedTheme } = useThemeMode()
+
   const toggleMarket = (marketName: string) => {
     const newSet = toggleMarketHelper(marketName, selectedMarkets)
     onMarketChanged(newSet)
+    mixpanel.track('FILTER_PLATFORM', { platforms: marketName })
   }
 
   const toggleColumn = (columnName: string) => {
@@ -256,34 +282,66 @@ export const OverviewFilters = ({
   return (
     <div className="justify-center p-3 overflow-x-scroll bg-white rounded-t-lg md:flex dark:bg-gray-700 gap-x-2 gap-y-2 md:justify-start lg:overflow-x-visible">
       <div className="flex md:gap-x-2">
-        {Object.values(MainFilters).map(
-          (filter: { id: number; value: string }) => (
-            <FiltersButton
-              key={filter.id}
-              filter={filter}
-              isVerifiedFilterActive={isVerifiedFilterActive}
-              onClick={onFilterChanged}
-              setIsVerifiedFilterActive={setIsVerifiedFilterActive}
-              isSelected={filter.id === selectedFilterId}
-            />
-          )
-        )}
+        {CheckboxFilters.PLATFORMS.values.map((platform: string) => (
+          <PlatformButton
+            key={platform}
+            platform={platform}
+            isSelected={selectedMarkets ? selectedMarkets.has(platform) : false}
+            onClick={toggleMarket}
+          />
+        ))}
+        <button className="flex flex-col md:flex-auto justify-center items-center border rounded-r-md md:rounded-md text-sm font-semibold">
+          <div className="flex justify-center items-center md:px-3">
+            <span className="w-4 h-auto mr-2">
+              {resolvedTheme === 'dark' ? (
+                <WikipediaOutlineWhite className="w-5 h-5" />
+              ) : (
+                <WikipediaOutlineBlack className="w-5 h-5" />
+              )}
+            </span>
+            <span>Wikipedia</span>
+          </div>
+          <div className="text-xs text-gray-500 whitespace-nowrap w-full bg-gray-200">
+            COMING SOON
+          </div>
+        </button>
       </div>
 
       <DropdownButton
         className="hidden md:flex"
-        filters={CheckboxFilters.PLATFORMS.values}
-        name={CheckboxFilters.PLATFORMS.name}
-        selectedOptions={selectedMarkets}
-        toggleOption={toggleMarket}
+        filters={Object.values(MainFilters)}
+        name={
+          Object.values(MainFilters).find(
+            (filter) => filter.id === selectedFilterId
+          )?.value
+        }
+        selectedOptions={new Set([selectedFilterId])}
+        toggleOption={onFilterChanged}
+        dropdownType="buttons"
+        selectedFilterId={selectedFilterId}
+      />
+
+      <FiltersButton
+        className="hidden md:flex"
+        onClick={setIsVerifiedFilterActive}
+        isSelected={isVerifiedFilterActive}
+        label={<BadgeCheckIcon className="w-5 h-5" />}
+      />
+
+      <FiltersButton
+        className="hidden md:flex"
+        onClick={setIsStarredFilterActive}
+        isSelected={isStarredFilterActive}
+        label={<StarIcon className="w-5 h-5" />}
       />
 
       <DropdownButton
         className="hidden md:flex"
         filters={CheckboxFilters.COLUMNS.values}
-        name={CheckboxFilters.COLUMNS.name}
+        name={<ViewBoardsIcon className="w-5 h-5" />}
         selectedOptions={selectedColumns}
         toggleOption={toggleColumn}
+        dropdownType="columns"
       />
 
       <div className="flex w-full mt-2 ml-auto md:mt-0">

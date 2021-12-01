@@ -11,15 +11,15 @@ export const MainFilters = {
     id: 3,
     value: 'New',
   },
-  VERIFIED: {
-    id: 4,
-    name: 'Verified Only',
-    value: 'Verified',
-  },
-  STARRED: {
-    id: 5,
-    value: 'Starred',
-  },
+  // VERIFIED: {
+  //   id: 4,
+  //   name: 'Verified Only',
+  //   value: 'Verified',
+  // },
+  // STARRED: {
+  //   id: 5,
+  //   value: 'Starred',
+  // },
 }
 
 export const CheckboxFilters = {

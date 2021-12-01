@@ -26,6 +26,7 @@ type Props = {
   selectedMarkets: Set<string>
   selectedFilterId: number
   isVerifiedFilterActive: boolean
+  isStarredFilterActive: boolean
   nameSearch: string
   columnData: Array<any>
   getColumn: (column: string) => boolean
@@ -38,6 +39,7 @@ export default function Table({
   selectedMarkets,
   selectedFilterId,
   isVerifiedFilterActive,
+  isStarredFilterActive,
   nameSearch,
   columnData,
   getColumn,
@@ -62,8 +64,7 @@ export default function Table({
     useIdeaMarketsStore((store) => store.watching)
   )
 
-  const filterTokens =
-    selectedFilterId === MainFilters.STARRED.id ? watchingTokens : undefined
+  const filterTokens = isStarredFilterActive ? watchingTokens : undefined
 
   const { data: compoundSupplyRate, isFetching: isCompoundSupplyRateLoading } =
     useQuery('compound-supply-rate', querySupplyRate, {
@@ -156,6 +157,7 @@ export default function Table({
     markets,
     selectedFilterId,
     isVerifiedFilterActive,
+    isStarredFilterActive,
     orderBy,
     orderDirection,
     nameSearch,
@@ -230,7 +232,10 @@ export default function Table({
                 {(tokenData as IdeaToken[]).map((token, index) => {
                   // Only load the rows if a market is found
                   // TODO: remove the 2nd condition once Wikipedia is available
-                  if (marketsMap[token.marketID] && marketsMap[token.marketID].name !== 'Wikipedia') {
+                  if (
+                    marketsMap[token.marketID] &&
+                    marketsMap[token.marketID].name !== 'Wikipedia'
+                  ) {
                     return (
                       <TokenRow
                         key={token.marketID + '-' + token.tokenID}
