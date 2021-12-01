@@ -10,7 +10,7 @@ const DropdownCheckbox = ({
   const { mixpanel } = useMixPanel()
 
   return (
-    // Needed wrapper div so hover-over container doesn't disappear when moving from button to container. Used random height, this can change if needed
+    // Needed wrapper div so hover-over container doesn't disappear when moving cursor from button to container. Used random height, this can change if needed
     <div className="absolute top-full left-0 w-full h-36">
       <div
         ref={container}

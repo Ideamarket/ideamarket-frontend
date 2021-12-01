@@ -1,143 +1,133 @@
 import classNames from 'classnames'
 import { useState } from 'react'
 import Modal from '../modals/Modal'
-import { CheckboxFilters, toggleMarketHelper } from './utils/OverviewUtils'
+import { MainFilters } from './utils/OverviewUtils'
+import { BadgeCheckIcon, StarIcon } from '@heroicons/react/solid'
+import {
+  SparklesIcon,
+  FireIcon,
+  ArrowSmUpIcon,
+  QuestionMarkCircleIcon,
+} from '@heroicons/react/outline'
+import mixpanel from 'mixpanel-browser'
+import getConfig from 'next/config'
+
+const { publicRuntimeConfig } = getConfig()
+const { MIX_PANEL_KEY } = publicRuntimeConfig
+
+// Workaround since modal is not wrapped by the mixPanel interface
+mixpanel.init(MIX_PANEL_KEY)
 
 export default function OverviewFiltersModal({
   close,
-  selectedMarkets,
   isVerifiedFilterActive,
-  onMarketChanged,
+  isStarredFilterActive,
+  selectedFilterId,
   setIsVerifiedFilterActive,
-  setNumActiveFilters,
+  setIsStarredFilterActive,
+  setSelectedFilterId,
 }: {
   close: () => void
-  selectedMarkets: Set<string>
   isVerifiedFilterActive: boolean
-  onMarketChanged: (set: Set<string>) => void
+  isStarredFilterActive: boolean
+  selectedFilterId: number
   setIsVerifiedFilterActive: (isActive: boolean) => void
-  setNumActiveFilters: (amount: number) => void
+  setIsStarredFilterActive: (isActive: boolean) => void
+  setSelectedFilterId: (id: number) => void
 }) {
-  const [localSelectedMarkets, setLocalSelectedMarkets] =
-    useState(selectedMarkets)
+  // You need local values because props can never be updated in open modals
   const [localIsVerifiedFilterActive, setLocalIsVerifiedFilterActive] =
     useState(isVerifiedFilterActive)
+  const [localIsStarredFilterActive, setLocalIsStarredFilterActive] = useState(
+    isStarredFilterActive
+  )
+  const [localSelectedFilterId, setLocalSelectedFilterId] =
+    useState(selectedFilterId)
 
-  const calculateActiveFilters = () => {
-    let numberOfActiveFilters = 0
-
-    const areFiltersSelectedAndNonDefault =
-      !localSelectedMarkets.has('All') && !localSelectedMarkets.has('None')
-    if (areFiltersSelectedAndNonDefault)
-      numberOfActiveFilters += Array.from(localSelectedMarkets).filter(
-        (o) => o !== 'All' && o !== 'None'
-      ).length
-    if (localIsVerifiedFilterActive) numberOfActiveFilters += 1
-
-    return numberOfActiveFilters
-  }
-
-  const save = () => {
-    onMarketChanged(localSelectedMarkets)
-    setIsVerifiedFilterActive(localIsVerifiedFilterActive)
-    setNumActiveFilters(calculateActiveFilters())
-    close()
-  }
-
-  const clearAll = () => {
-    setLocalIsVerifiedFilterActive(false)
-    setLocalSelectedMarkets(new Set<string>(['None']))
-  }
-
-  const localToggleMarket = (marketName: string) => {
-    const newSet = toggleMarketHelper(marketName, localSelectedMarkets)
-    setLocalSelectedMarkets(newSet)
+  const getButtonIcon = (filterId: number) => {
+    switch (filterId) {
+      case 1:
+        return <ArrowSmUpIcon className="w-4 h-4 stroke-current" />
+      case 2:
+        return <FireIcon className="w-4 h-4 mr-1" />
+      case 3:
+        return <SparklesIcon className="w-4 h-4 mr-1" />
+      default:
+        return <QuestionMarkCircleIcon className="w-4 h-4 mr-1" />
+    }
   }
 
   return (
-    <Modal className="w-full" isCloseActive={false} close={close}>
+    <Modal className="w-full" close={close}>
       <div className="font-semibold">
-        <div className="flex items-center justify-between p-4 border-b">
-          <span className="text-xl">Market filters</span>
-          <button
-            onClick={clearAll}
-            className="flex justify-center items-center px-3 py-1 border rounded-md text-sm font-semibold"
-          >
-            Clear All
-          </button>
-        </div>
         <div className="p-4">
-          <div>
-            <span className="mr-4 py-1 flex items-center">
-              <input
-                type="checkbox"
-                id={`checkbox-verified`}
-                className="cursor-pointer border-2 border-gray-200 rounded-sm"
-                checked={localIsVerifiedFilterActive}
-                onChange={(e) => {
-                  setLocalIsVerifiedFilterActive(!localIsVerifiedFilterActive)
-                }}
-              />
-              <label
-                htmlFor={`checkbox-verified`}
-                className={classNames(
-                  'ml-2 cursor-pointer font-medium',
-                  localIsVerifiedFilterActive
-                    ? 'text-brand-blue dark:text-blue-400'
-                    : 'text-brand-black'
-                )}
-              >
-                Verified Only
-              </label>
-            </span>
-          </div>
-          <div>
-            <div className="text-lg">Platforms</div>
-            <div className="flex flex-wrap">
-              {CheckboxFilters.PLATFORMS.values.map((filter) => (
-                <span className="mr-4 py-1 flex items-center" key={filter}>
-                  <input
-                    type="checkbox"
-                    id={`checkbox-${filter}`}
-                    className="cursor-pointer border-2 border-gray-200 rounded-sm"
-                    checked={
-                      localSelectedMarkets.has(filter) ||
-                      localSelectedMarkets.has('All')
-                    }
-                    onChange={(e) => {
-                      localToggleMarket(filter)
-                    }}
-                  />
-                  <label
-                    htmlFor={`checkbox-${filter}`}
-                    className={classNames(
-                      'ml-2 cursor-pointer font-medium',
-                      localSelectedMarkets.has(filter) ||
-                        localSelectedMarkets.has('All')
-                        ? 'text-brand-blue dark:text-blue-400'
-                        : 'text-brand-black'
-                    )}
-                  >
-                    {filter}
-                  </label>
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-        <div className="p-4 flex justify-between border-t">
+          <div className="text-sm text-gray-400 mb-2">FILTER BY</div>
           <button
-            onClick={close}
-            className="flex justify-center items-center px-3 py-1 border rounded-md text-sm font-semibold"
+            className={classNames(
+              'flex flex-grow justify-start items-center w-full p-2 mb-1 border rounded-md text-sm font-semibold',
+              {
+                'text-brand-blue dark:text-white bg-gray-100 dark:bg-very-dark-blue':
+                  localIsVerifiedFilterActive,
+              },
+              {
+                'text-brand-black dark:text-gray-50':
+                  !localIsVerifiedFilterActive,
+              }
+            )}
+            onClick={() => {
+              setLocalIsVerifiedFilterActive(!localIsVerifiedFilterActive)
+              setIsVerifiedFilterActive(!localIsVerifiedFilterActive)
+            }}
           >
-            Cancel
+            <BadgeCheckIcon className="w-5 h-5 mr-1" />
+            <span>Verified</span>
           </button>
           <button
-            onClick={save}
-            className="px-3 py-1 bg-blue-600 text-white rounded"
+            className={classNames(
+              'flex flex-grow justify-start items-center w-full p-2 border rounded-md text-sm font-semibold',
+              {
+                'text-brand-blue dark:text-white bg-gray-100 dark:bg-very-dark-blue':
+                  localIsStarredFilterActive,
+              },
+              {
+                'text-brand-black dark:text-gray-50':
+                  !localIsStarredFilterActive,
+              }
+            )}
+            onClick={() => {
+              setLocalIsStarredFilterActive(!localIsStarredFilterActive)
+              setIsStarredFilterActive(!localIsStarredFilterActive)
+            }}
           >
-            Save
+            <StarIcon className="w-5 h-5 mr-1" />
+            <span>Starred</span>
           </button>
+
+          <div className="text-sm text-gray-400 mb-2 mt-4">SORT BY</div>
+          {Object.values(MainFilters).map((filter) => (
+            <button
+              className={classNames(
+                'flex flex-grow justify-start items-center w-full p-2 mb-1 border rounded-md text-sm font-semibold',
+                {
+                  'text-brand-blue dark:text-white bg-gray-100 dark:bg-very-dark-blue':
+                    filter.id === localSelectedFilterId,
+                },
+                {
+                  'text-brand-black dark:text-gray-50': !(
+                    filter.id === localSelectedFilterId
+                  ),
+                }
+              )}
+              onClick={() => {
+                setLocalSelectedFilterId(filter.id)
+                setSelectedFilterId(filter.id)
+              }}
+              key={filter.id}
+            >
+              {getButtonIcon(filter.id)}
+              <span>{filter.value}</span>
+            </button>
+          ))}
         </div>
       </div>
     </Modal>

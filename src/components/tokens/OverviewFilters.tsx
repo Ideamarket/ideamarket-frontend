@@ -19,6 +19,7 @@ import { OverviewFiltersModal } from 'components'
 import {
   CheckboxFilters,
   MainFilters,
+  toggleColumnHelper,
   toggleMarketHelper,
 } from './utils/OverviewUtils'
 import { useMixPanel } from 'utils/mixPanel'
@@ -233,34 +234,7 @@ export const OverviewFilters = ({
   }
 
   const toggleColumn = (columnName: string) => {
-    const newSet = new Set(selectedColumns)
-
-    if (newSet.has(columnName)) {
-      newSet.delete(columnName)
-      if (columnName === 'All') {
-        // Remove all other options too
-        newSet.clear()
-      }
-      if (newSet.has('All') && columnName !== 'All') {
-        // Remove 'All' option if any option is removed
-        newSet.delete('All')
-      }
-    } else {
-      if (columnName === 'All') {
-        CheckboxFilters.COLUMNS.values.forEach((column) => {
-          if (!newSet.has(column)) {
-            newSet.add(column)
-          }
-        })
-      } else {
-        newSet.add(columnName)
-        // If all options selected, make sure the 'All' option is selected too
-        if (CheckboxFilters.COLUMNS.values.length - newSet.size === 1) {
-          newSet.add('All')
-        }
-      }
-    }
-
+    const newSet = toggleColumnHelper(columnName, selectedColumns)
     onColumnChanged(newSet)
   }
 
@@ -271,8 +245,6 @@ export const OverviewFilters = ({
   const markets = useMarketStore((state) =>
     state.markets.map((m) => m?.market?.name)
   )
-
-  const [numActiveFilters, setNumActiveFilters] = useState(0)
 
   useEffect(() => {
     // toggleMarket method is dependent on CheckboxFilters.PLATFORMS.values
@@ -350,20 +322,21 @@ export const OverviewFilters = ({
           className="flex items-center justify-center p-2 ml-2 text-sm font-semibold border rounded-md md:hidden"
           onClick={() => {
             ModalService.open(OverviewFiltersModal, {
-              selectedMarkets,
-              onMarketChanged,
               isVerifiedFilterActive,
+              isStarredFilterActive,
+              selectedFilterId,
               setIsVerifiedFilterActive,
-              setNumActiveFilters,
+              setIsStarredFilterActive,
+              setSelectedFilterId,
             })
           }}
         >
           <span>Filters</span>
-          {numActiveFilters !== 0 && (
+          {/* {numActiveFilters !== 0 && (
             <div className="px-1 ml-2 bg-gray-200 rounded text-brand-blue">
               {numActiveFilters}
             </div>
-          )}
+          )} */}
         </button>
       </div>
     </div>

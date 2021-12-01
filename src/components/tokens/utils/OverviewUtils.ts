@@ -87,3 +87,38 @@ export const toggleMarketHelper = (
 
   return newSet
 }
+
+export const toggleColumnHelper = (
+  columnName: string,
+  selectedColumns: Set<string>
+) => {
+  const newSet = new Set(selectedColumns)
+
+  if (newSet.has(columnName)) {
+    newSet.delete(columnName)
+    if (columnName === 'All') {
+      // Remove all other options too
+      newSet.clear()
+    }
+    if (newSet.has('All') && columnName !== 'All') {
+      // Remove 'All' option if any option is removed
+      newSet.delete('All')
+    }
+  } else {
+    if (columnName === 'All') {
+      CheckboxFilters.COLUMNS.values.forEach((column) => {
+        if (!newSet.has(column)) {
+          newSet.add(column)
+        }
+      })
+    } else {
+      newSet.add(columnName)
+      // If all options selected, make sure the 'All' option is selected too
+      if (CheckboxFilters.COLUMNS.values.length - newSet.size === 1) {
+        newSet.add('All')
+      }
+    }
+  }
+
+  return newSet
+}
