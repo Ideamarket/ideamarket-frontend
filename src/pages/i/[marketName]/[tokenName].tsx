@@ -1,4 +1,3 @@
-import BigNumber from 'bignumber.js'
 import { useQuery } from 'react-query'
 import {
   TradeInterface,
@@ -7,26 +6,27 @@ import {
   WalletModal,
 } from 'components'
 import { useWalletStore } from 'store/walletStore'
-import { queryDaiBalance } from 'store/daiStore'
-import { NETWORK } from 'store/networks'
+// import { queryDaiBalance } from 'store/daiStore'
+// import { NETWORK } from 'store/networks'
 import {
   querySingleToken,
   queryMarket,
-  queryInterestManagerTotalShares,
+  // queryInterestManagerTotalShares,
 } from 'store/ideaMarketsStore'
 import { getMarketSpecificsByMarketNameInURLRepresentation } from 'store/markets'
 import { GetServerSideProps } from 'next'
 import ModalService from 'components/modals/ModalService'
-import LeftListingPanel from 'components/listing-page/LeftListingPanel'
+// import LeftListingPanel from 'components/listing-page/LeftListingPanel'
 import ListingStats from 'components/listing-page/ListingStats'
 import ListingSEO from 'components/listing-page/ListingSEO'
 import TradeCompleteModal, {
   TRANSACTION_TYPES,
 } from 'components/trade/TradeCompleteModal'
-import { bnToFloatString, bigNumberTenPow18 } from 'utils'
+// import { bnToFloatString, bigNumberTenPow18 } from 'utils'
 import { ReactElement, useEffect } from 'react'
 import DesktopRelatedInfo from 'components/listing-page/DesktopRelatedInfo'
 import MobileRelatedInfo from 'components/listing-page/MobileRelatedInfo'
+import InvestmentCalculator from 'components/investment-calculator/InvestmentCalculator'
 
 export default function TokenDetails({
   rawMarketName,
@@ -57,43 +57,41 @@ export default function TokenDetails({
     querySingleToken
   )
 
-  const {
-    data: interestManagerTotalShares,
-    isLoading: isInterestManagerTotalSharesLoading,
-  } = useQuery('interest-manager-total-shares', queryInterestManagerTotalShares)
+  // const {
+  //   data: interestManagerTotalShares,
+  //   isLoading: isInterestManagerTotalSharesLoading,
+  // } = useQuery('interest-manager-total-shares', queryInterestManagerTotalShares)
 
-  const interestManagerAddress = NETWORK.getDeployedAddresses().interestManager
-  const {
-    data: interestManagerDaiBalance,
-    isLoading: isInterestManagerDaiBalanceLoading,
-  } = useQuery(
-    ['interest-manager-dai-balance', interestManagerAddress],
-    queryDaiBalance
-  )
+  // const interestManagerAddress = NETWORK.getDeployedAddresses().interestManager
+  // const {
+  //   data: interestManagerDaiBalance,
+  //   isLoading: isInterestManagerDaiBalanceLoading,
+  // } = useQuery(
+  //   ['interest-manager-dai-balance', interestManagerAddress],
+  //   queryDaiBalance
+  // )
 
-  const claimableIncome =
-    interestManagerTotalShares &&
-    interestManagerDaiBalance &&
-    token &&
-    token.rawInvested &&
-    token.rawDaiInToken
-      ? bnToFloatString(
-          new BigNumber(token.rawInvested.toString())
-            .dividedBy(new BigNumber(interestManagerTotalShares.toString()))
-            .multipliedBy(new BigNumber(interestManagerDaiBalance.toString()))
-            .minus(new BigNumber(token.rawDaiInToken.toString())),
-          bigNumberTenPow18,
-          2
-        )
-      : '0.00'
+  // const claimableIncome =
+  //   interestManagerTotalShares &&
+  //   interestManagerDaiBalance &&
+  //   token &&
+  //   token.rawInvested &&
+  //   token.rawDaiInToken
+  //     ? bnToFloatString(
+  //         new BigNumber(token.rawInvested.toString())
+  //           .dividedBy(new BigNumber(interestManagerTotalShares.toString()))
+  //           .multipliedBy(new BigNumber(interestManagerDaiBalance.toString()))
+  //           .minus(new BigNumber(token.rawDaiInToken.toString())),
+  //         bigNumberTenPow18,
+  //         2
+  //       )
+  //     : '0.00'
 
-  const isLoading =
-    isTokenLoading ||
-    isMarketLoading ||
+  const isLoading = isTokenLoading || isMarketLoading /*||
     isInterestManagerTotalSharesLoading ||
-    isInterestManagerDaiBalanceLoading
+    isInterestManagerDaiBalanceLoading*/
 
-  const retalatedInfoProps = {
+  const relatedInfoProps = {
     rawTokenName,
     tokenName,
     marketName,
@@ -131,11 +129,16 @@ export default function TokenDetails({
       />
       {token && (
         <div className="min-h-screen pb-20 bg-brand-gray dark:bg-gray-900">
-          <ListingStats isLoading={isLoading} market={market} token={token} />
+          <ListingStats
+            isLoading={isLoading}
+            market={market}
+            token={token}
+            refetch={refetch}
+          />
 
           <div className="px-2 pb-5 mx-auto mt-12 transform md:mt-10 -translate-y-30 md:-translate-y-28 max-w-88 md:max-w-304">
             <div className="flex flex-col md:grid md:grid-cols-2">
-              <LeftListingPanel
+              {/* <LeftListingPanel
                 isLoading={isLoading}
                 market={market}
                 token={token}
@@ -144,22 +147,31 @@ export default function TokenDetails({
                 refetch={refetch}
                 rawMarketName={rawMarketName}
                 rawTokenName={rawTokenName}
-              />
-              <div className="p-5 mb-5 bg-white border rounded-md dark:bg-gray-700 dark:border-gray-500 border-brand-border-gray">
+              /> */}
+              <div className="p-5 mb-5 md:mr-5 bg-white border rounded-md dark:bg-gray-700 dark:border-gray-500 border-brand-border-gray">
+                {/* <div className="relative">
+                  <WatchingStar
+                    className="absolute top-0 right-0"
+                    token={token}
+                  />
+                </div> */}
+
                 {isLoading ? (
                   <div className="h-full p-18 md:p-0">loading</div>
                 ) : web3 ? (
-                  <TradeInterface
-                    ideaToken={token}
-                    market={market}
-                    onTradeComplete={onTradeComplete}
-                    onValuesChanged={() => {}}
-                    resetOn={false}
-                    centerTypeSelection={false}
-                    showTypeSelection={true}
-                    showTradeButton={true}
-                    disabled={false}
-                  />
+                  <div>
+                    <TradeInterface
+                      ideaToken={token}
+                      market={market}
+                      onTradeComplete={onTradeComplete}
+                      onValuesChanged={() => {}}
+                      resetOn={false}
+                      centerTypeSelection={false}
+                      showTypeSelection={true}
+                      showTradeButton={true}
+                      disabled={false}
+                    />
+                  </div>
                 ) : (
                   <div className="flex justify-center p-18 md:p-0 md:mt-20">
                     <button
@@ -173,17 +185,27 @@ export default function TokenDetails({
                   </div>
                 )}
               </div>
+              <div className="p-5 mb-5 bg-white border rounded-md dark:bg-gray-700 dark:border-gray-500 border-brand-border-gray">
+                <InvestmentCalculator ideaToken={token} market={market} />
+              </div>
             </div>
           </div>
+
           <div className="px-2 mx-auto max-w-88 md:max-w-304 -mt-30 md:-mt-28">
-            {marketName?.toLowerCase() === 'twitter' ? (
+            {marketName?.toLowerCase() === 'twitter' && (
               <>
-                <MobileRelatedInfo {...retalatedInfoProps} />
-                <DesktopRelatedInfo {...retalatedInfoProps} />
+                <MobileRelatedInfo {...relatedInfoProps} />
+                <DesktopRelatedInfo {...relatedInfoProps} />
               </>
-            ) : (
-              <MutualTokensList tokenName={tokenName} marketName={marketName} />
             )}
+
+            {marketName?.toLowerCase() !== 'wikipedia' &&
+              marketName?.toLowerCase() !== 'twitter' && (
+                <MutualTokensList
+                  tokenName={tokenName}
+                  marketName={marketName}
+                />
+              )}
           </div>
         </div>
       )}

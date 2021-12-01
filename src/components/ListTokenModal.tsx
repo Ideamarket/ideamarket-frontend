@@ -8,12 +8,10 @@ import {
 } from 'actions'
 import { isAddress, useTransactionManager } from 'utils'
 import { getMarketSpecificsByMarketName } from 'store/markets'
-import { NETWORK } from 'store/networks'
 import { Modal, MarketSelect, TradeInterface } from './'
 import ApproveButton from './trade/ApproveButton'
 import { useContractStore } from 'store/contractStore'
 import BN from 'bn.js'
-import CircleSpinner from './animations/CircleSpinner'
 import A from './A'
 import { useWeb3React } from '@web3-react/core'
 import ModalService from './modals/ModalService'
@@ -25,6 +23,7 @@ import { debounce } from 'utils/lodash'
 import mixpanel from 'mixpanel-browser'
 
 import getConfig from 'next/config'
+import TxPending from './trade/TxPending'
 
 const { publicRuntimeConfig } = getConfig()
 const { MIX_PANEL_KEY } = publicRuntimeConfig
@@ -367,7 +366,7 @@ export default function ListTokenModal({ close }: { close: () => void }) {
         )}
       </div>
 
-      <div className="max-w-sm mx-auto mt-2">
+      <div className="max-w-sm mx-auto my-4">
         <div className="">
           <div className="">
             <ApproveButton
@@ -400,28 +399,7 @@ export default function ListTokenModal({ close }: { close: () => void }) {
           </div>
         </div>
       </div>
-      <div
-        className={classNames(
-          'grid grid-cols-3 my-5 text-sm text-brand-gray-2',
-          txManager.isPending ? '' : 'invisible'
-        )}
-      >
-        <div className="font-bold justify-self-center">{txManager.name}</div>
-        <div className="justify-self-center">
-          <A
-            className={classNames(
-              'underline',
-              txManager.hash === '' ? 'hidden' : ''
-            )}
-            href={NETWORK.getEtherscanTxUrl(txManager.hash)}
-          >
-            {txManager.hash.slice(0, 8)}...{txManager.hash.slice(-6)}
-          </A>
-        </div>
-        <div className="justify-self-center">
-          <CircleSpinner color="#0857e0" />
-        </div>
-      </div>
+      <TxPending txManager={txManager} />
     </Modal>
   )
 }

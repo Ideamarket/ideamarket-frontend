@@ -1,8 +1,7 @@
 import { withdrawTokenInterest } from 'actions'
 import classNames from 'classnames'
 import A from 'components/A'
-import CircleSpinner from 'components/animations/CircleSpinner'
-import { NETWORK } from 'store/networks'
+import TxPending from 'components/trade/TxPending'
 import { useWalletStore } from 'store/walletStore'
 import { useTransactionManager, ZERO_ADDRESS } from 'utils'
 
@@ -90,31 +89,7 @@ export default function VerifiedListing({ token, refetch, claimableInterest }) {
           Withdraw
         </button>
       </div>
-      <div
-        className={classNames(
-          'grid grid-cols-3 mt-2 text-sm text-brand-gray-2',
-          txManager.isPending ? '' : 'invisible'
-        )}
-      >
-        <div className="font-bold justify-self-center">{txManager.name}</div>
-        <div className="justify-self-center">
-          <A
-            className={classNames(
-              'underline',
-              txManager.hash === '' ? 'hidden' : ''
-            )}
-            href={NETWORK.getEtherscanTxUrl(txManager.hash)}
-            target="_blank"
-            rel="noreferrer"
-          >
-            {txManager.hash.slice(0, 8)}...
-            {txManager.hash.slice(-6)}
-          </A>
-        </div>
-        <div className="justify-self-center">
-          <CircleSpinner color="#0857e0" bgcolor="#f6f6f6" />
-        </div>
-      </div>
+      <TxPending txManager={txManager} />
     </div>
   )
 }

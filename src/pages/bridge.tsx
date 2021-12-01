@@ -7,12 +7,12 @@ import { IMarketSpecifics, getMarketSpecificsByMarketName } from 'store/markets'
 import { getL1Network, NETWORK } from 'store/networks'
 import { formatNumber, isAddress, useTransactionManager } from 'utils'
 import { useTokenIconURL, migrateTokensToArbitrum } from 'actions'
-import { L1TokenTable, Footer, DefaultLayout, WalletModal, A } from 'components'
+import { L1TokenTable, Footer, DefaultLayout, WalletModal } from 'components'
 import { GlobalContext } from './_app'
 import ModalService from 'components/modals/ModalService'
 import Wand from '../assets/wand.svg'
-import CircleSpinner from 'components/animations/CircleSpinner'
 import { useMixPanel } from 'utils/mixPanel'
+import TxPending from 'components/trade/TxPending'
 
 export default function Bridge() {
   const { mixpanel } = useMixPanel()
@@ -211,32 +211,7 @@ export default function Bridge() {
                       </button>
                     </div>
 
-                    <div
-                      className={classNames(
-                        'grid grid-cols-3 my-5 text-sm text-brand-new-dark font-semibold',
-                        txManager.isPending ? '' : 'invisible'
-                      )}
-                    >
-                      <div className="font-bold justify-self-center">
-                        {txManager.name}
-                      </div>
-                      <div className="justify-self-center">
-                        <A
-                          className={classNames(
-                            'underline',
-                            txManager.hash === '' ? 'hidden' : ''
-                          )}
-                          href={l1Network.getEtherscanTxUrl(txManager.hash)}
-                          target="_blank"
-                        >
-                          {txManager.hash.slice(0, 8)}...
-                          {txManager.hash.slice(-6)}
-                        </A>
-                      </div>
-                      <div className="justify-self-center">
-                        <CircleSpinner color="#0857e0" />
-                      </div>
-                    </div>
+                    <TxPending txManager={txManager} />
 
                     <div className="mx-5 font-black text-strong">
                       NOTE: After your transaction is confirmed it can take up

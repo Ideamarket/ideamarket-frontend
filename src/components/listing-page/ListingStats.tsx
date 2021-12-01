@@ -23,7 +23,7 @@ import {
 import { array } from 'utils/lodash'
 import ChartDurationEntry from './ChartDurationEntry'
 
-export default function ListingStats({ isLoading, market, token }) {
+export default function ListingStats({ isLoading, market, token, refetch }) {
   const router = useRouter()
   const CHART = {
     PRICE: 0,
@@ -147,6 +147,7 @@ export default function ListingStats({ isLoading, market, token }) {
             token={token}
             market={market}
             isLoading={isLoading}
+            refetch={refetch}
           />
         </div>
         <div style={{ minHeight: '80px' }} className="flex flex-col">

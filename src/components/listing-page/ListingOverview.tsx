@@ -14,6 +14,11 @@ import A from 'components/A'
 import { useTokenIconURL } from 'actions'
 import { BadgeCheckIcon } from '@heroicons/react/solid'
 import Image from 'next/image'
+import { useWeb3React } from '@web3-react/core'
+import ModalService from 'components/modals/ModalService'
+import { VerifyModal } from 'components'
+import { useMixPanel } from 'utils/mixPanel'
+import WatchingStar from 'components/WatchingStar'
 
 function DetailsSkeleton() {
   return (
@@ -50,11 +55,14 @@ export default function TokenCard({
   token,
   market,
   isLoading,
+  refetch,
 }: {
   token: IdeaToken
   market: IdeaMarket
   isLoading?: boolean
+  refetch: () => any
 }) {
+  const { account } = useWeb3React()
   const loading = isLoading || !(token && market)
   const marketSpecifics = isLoading
     ? undefined
@@ -75,6 +83,19 @@ export default function TokenCard({
         bigNumberTenPow18,
         2
       )
+
+  const { mixpanel } = useMixPanel()
+
+  const onVerifyClicked = () => {
+    mixpanel.track('CLAIM_INCOME_STREAM', {
+      token: token.name,
+      market: market.name,
+    })
+
+    const onClose = () => refetch()
+    ModalService.open(VerifyModal, { market, token }, onClose)
+  }
+
   return (
     <>
       <div className="flex flex-none mt-7">
@@ -124,8 +145,14 @@ export default function TokenCard({
               <span className="invisible">A</span>
             </div>
           ) : (
-            <div className="flex mt-1 text-sm">
-              Rank {token.rank ? token.rank : '-'}
+            <div className="flex mt-1 text-sm items-baseline md:items-start">
+              <div>Rank {token.rank ? token.rank : '-'}</div>
+              <div className="hidden md:block md:relative w-5 ml-4">
+                <WatchingStar
+                  className="absolute top-0 right-0"
+                  token={token}
+                />
+              </div>
               <span className="block md:hidden ml-2.5 mr-1 w-5 h-5">
                 {marketSpecifics.getMarketSVGWhite()}
               </span>
@@ -137,6 +164,22 @@ export default function TokenCard({
             </div>
           )}
         </div>
+      </div>
+      <div className="w-full md:w-auto text-center mt-2">
+        {account &&
+          token.tokenOwner !== ZERO_ADDRESS &&
+          token.tokenOwner.toLowerCase() === account.toLowerCase() && (
+            <span>Verified by you</span>
+          )}
+
+        {token.tokenOwner === ZERO_ADDRESS && (
+          <button
+            onClick={onVerifyClicked}
+            className="py-2 text-lg font-bold text-white border border-white rounded-lg w-44 font-sf-compact-medium hover:bg-white hover:text-brand-blue"
+          >
+            Verify ownership
+          </button>
+        )}
       </div>
       <div>
         <div className="grid grid-cols-3 p-1 mb-1 md:grid-cols-6">

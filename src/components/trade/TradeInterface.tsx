@@ -30,7 +30,6 @@ import Tooltip from '../tooltip/Tooltip'
 import A from 'components/A'
 import { getMarketSpecificsByMarketName } from 'store/markets'
 import { TradeInterfaceBox } from './components'
-import CircleSpinner from 'components/animations/CircleSpinner'
 import { CogIcon } from '@heroicons/react/outline'
 import useReversePrice from 'actions/useReversePrice'
 import useTokenToDAI from 'actions/useTokenToDAI'
@@ -39,6 +38,7 @@ import { useENSAddress } from './hooks/useENSAddress'
 import { TRANSACTION_TYPES } from './TradeCompleteModal'
 import mixpanel from 'mixpanel-browser'
 import getConfig from 'next/config'
+import TxPending from './TxPending'
 
 const { publicRuntimeConfig } = getConfig()
 const { MIX_PANEL_KEY } = publicRuntimeConfig
@@ -79,7 +79,6 @@ type TradeInterfaceProps = {
   showTypeSelection: boolean
   showTradeButton: boolean
   disabled: boolean
-  bgcolor?: string
   unlockText?: string
   newIdeaToken?: NewIdeaToken | null
 }
@@ -92,7 +91,6 @@ export default function TradeInterface({
   resetOn,
   showTradeButton,
   disabled,
-  bgcolor,
   unlockText,
   newIdeaToken,
 }: TradeInterfaceProps) {
@@ -724,31 +722,7 @@ export default function TradeInterface({
               Confirm transaction in wallet to complete.
             </div>
 
-            <div
-              className={classNames(
-                'grid grid-cols-3 my-5 text-sm text-brand-new-dark font-semibold',
-                txManager.isPending ? '' : 'invisible'
-              )}
-            >
-              <div className="font-bold justify-self-center">
-                {txManager.name}
-              </div>
-              <div className="justify-self-center">
-                <A
-                  className={classNames(
-                    'underline',
-                    txManager.hash === '' ? 'hidden' : ''
-                  )}
-                  href={NETWORK.getEtherscanTxUrl(txManager.hash)}
-                  target="_blank"
-                >
-                  {txManager.hash.slice(0, 8)}...{txManager.hash.slice(-6)}
-                </A>
-              </div>
-              <div className="justify-self-center">
-                <CircleSpinner color="#0857e0" bgcolor={bgcolor} />
-              </div>
-            </div>
+            <TxPending txManager={txManager} />
           </>
         )}
       </div>

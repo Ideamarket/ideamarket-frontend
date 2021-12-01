@@ -23,7 +23,7 @@ export default function ModalRoot() {
     <section
       className={
         modal.component
-          ? 'fixed inset-0 overflow-y-auto z-40 bg-gray-500 bg-opacity-75'
+          ? 'fixed inset-0 overflow-y-auto z-50 bg-gray-500 bg-opacity-75'
           : ''
       }
     >

@@ -10,13 +10,11 @@ import AdvancedOptions from './AdvancedOptions'
 import Tooltip from '../tooltip/Tooltip'
 import { useContractStore } from 'store/contractStore'
 import { CogIcon } from '@heroicons/react/outline'
-import CircleSpinner from 'components/animations/CircleSpinner'
-import { A } from 'components'
-import { NETWORK } from 'store/networks'
 import ModalService from 'components/modals/ModalService'
 import TradeCompleteModal, { TRANSACTION_TYPES } from './TradeCompleteModal'
 import transferToken from 'actions/transferToken'
 import { useENSAddress } from './hooks/useENSAddress'
+import TxPending from './TxPending'
 
 export default function GiftModal({
   close,
@@ -206,31 +204,7 @@ export default function GiftModal({
             <span>Gift</span>
           </button>
 
-          <div
-            className={classNames(
-              'w-full grid grid-cols-3 my-5 text-sm text-brand-new-dark font-semibold',
-              txManager.isPending ? '' : 'invisible'
-            )}
-          >
-            <div className="font-bold justify-self-center">
-              {txManager.name}
-            </div>
-            <div className="justify-self-center">
-              <A
-                className={classNames(
-                  'underline',
-                  txManager.hash === '' ? 'hidden' : ''
-                )}
-                href={NETWORK.getEtherscanTxUrl(txManager.hash)}
-                target="_blank"
-              >
-                {txManager.hash.slice(0, 8)}...{txManager.hash.slice(-6)}
-              </A>
-            </div>
-            <div className="justify-self-center">
-              <CircleSpinner color="#0857e0" />
-            </div>
-          </div>
+          <TxPending txManager={txManager} />
         </div>
       </div>
     </Modal>
