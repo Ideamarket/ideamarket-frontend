@@ -10,6 +10,7 @@ export const q = faunadb.query
  */
 export function getClient() {
   return new faunadb.Client({
+    domain: process.env.FAUNADB_DOMAIN,
     secret: process.env.FAUNADB_SECRET,
   })
 }

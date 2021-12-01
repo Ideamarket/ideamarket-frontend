@@ -15,7 +15,8 @@
     "format": "npm run prettier -- --write",
     "check-format": "npm run prettier -- --list-different",
     "validate": "npm-run-all --parallel check-types check-format lint build",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "apply-db-migrations": "yarn fauna-schema-migrate apply all"
   },
   "dependencies": {
     "@ethersproject/contracts": "^5.5.0",
