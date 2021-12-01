@@ -17,9 +17,12 @@ const handlers: Handlers<Partial<ApiResponseData>> = {
   GET: async (req, res) => {
     try {
       let enabled = true
-      const feature = req.query.feature as string
+      const value = req.query.value as string
+      if (!value) {
+        return res.status(400).json({ message: 'Bad request' })
+      }
 
-      const featureSwitch = await fetchFeatureSwitch(feature)
+      const featureSwitch = await fetchFeatureSwitch(value)
       if (featureSwitch) {
         enabled = featureSwitch.enabled
       }
@@ -29,7 +32,9 @@ const handlers: Handlers<Partial<ApiResponseData>> = {
         'Cache-Control',
         `s-maxage=${cacheValidity}, stale-while-revalidate`
       )
-      res.status(200).json({ message: 'Success', data: { feature, enabled } })
+      res
+        .status(200)
+        .json({ message: 'Success', data: { feature: value, enabled } })
     } catch (error) {
       console.error(error)
       res.status(500).json({ message: 'Something went wrong!!' })
