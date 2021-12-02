@@ -34,7 +34,6 @@ export default function useReversePrice(
 
     async function calculateBuyCost() {
       if (
-        !useWalletStore.getState().web3 ||
         !tokenAddress ||
         (!ideaToken && !market) ||
         !tokenBalanceBN ||

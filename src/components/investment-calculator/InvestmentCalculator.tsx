@@ -118,18 +118,22 @@ const InvestmentCalculator = ({ ideaToken, market }: Props) => {
     parseInt(calculatePercentChange(+usdBuyAmount, buyWorth).toString())
   )
 
-  const [isIdeaTokenBalanceLoading, , ideaTokenBalance] = useBalance(
+  const [isUserIdeaTokenBalanceLoading, userIdeaTokenBalanceBN] = useBalance(
     ideaToken?.address,
     18
   )
 
-  // Cannot lose money on buy if no holders or if you are only holder
-  const cannotLoseMoneyOnBuy =
-    isSell &&
-    (ideaToken.holders === 0 ||
-      (ideaToken.holders === 1 &&
-        !isIdeaTokenBalanceLoading &&
-        parseFloat(ideaTokenBalance) > 0))
+  const userIdeaTokenValue = web3BNToFloatString(
+    calculateIdeaTokenDaiValue(
+      ideaToken && userIdeaTokenBalanceBN
+        ? ideaToken?.rawSupply.add(userIdeaTokenBalanceBN)
+        : new BN('0'),
+      market,
+      userIdeaTokenBalanceBN
+    ),
+    bigNumberTenPow18,
+    2
+  )
 
   return (
     <div className="px-2">
@@ -169,6 +173,18 @@ const InvestmentCalculator = ({ ideaToken, market }: Props) => {
               onChange={(value) => {
                 const isNegative = value < 0
                 const updatedValue = isNegative ? value * -1 : value
+                // Can only sell up to (marketCap - yourBalance)
+                const amountThatCanBeSold =
+                  ideaToken && !isUserIdeaTokenBalanceLoading
+                    ? parseFloat(ideaToken.marketCap) -
+                      parseFloat(userIdeaTokenValue)
+                    : 0
+                if (
+                  isNegative &&
+                  amountThatCanBeSold <= sliderCurve(updatedValue)
+                ) {
+                  return
+                }
                 setOtherUsdBuyAmount(
                   (isNegative ? -1 : 1) *
                     parseInt(sliderCurve(updatedValue).toString())
@@ -215,9 +231,7 @@ const InvestmentCalculator = ({ ideaToken, market }: Props) => {
             >
               ~$
               {formatNumberWithCommasAsThousandsSerperator(
-                cannotLoseMoneyOnBuy
-                  ? parseInt(usdBuyAmount.toString())
-                  : parseInt(buyWorth.toString())
+                parseInt(buyWorth.toString())
               )}
             </span>
             , a{' '}
@@ -228,7 +242,7 @@ const InvestmentCalculator = ({ ideaToken, market }: Props) => {
               )}
             >
               {!isSell && '+'}
-              {cannotLoseMoneyOnBuy ? 0 : percentChange}%
+              {percentChange}%
             </span>{' '}
             change.
           </p>
