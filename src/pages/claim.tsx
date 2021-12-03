@@ -1,7 +1,9 @@
-import ClaimInner from 'components/claim/ClaimInner'
 import { createContext, ReactElement, useState } from 'react'
-import { DefaultLayout } from 'components/layouts'
 import { NextSeo } from 'next-seo'
+
+import ClaimInner from 'components/claim/ClaimInner'
+import { BlankLayout } from 'components/layouts'
+import FlowNavMenu from 'components/claim/flow-nav/NavMenu'
 
 const STEPPER = {
   CLAIM: 'CLAIM',
@@ -18,7 +20,8 @@ const Claim = () => {
     <>
       <NextSeo title="Claim" />
       <AccountContext.Provider value={contextProps}>
-        <div className="min-h-screen bg-top-desktop-new">
+        <FlowNavMenu currentStep={-1} />
+        <div className="min-h-screen bg-ideamarket-bg bg-no-repeat bg-right pt-16 bg-fixed">
           <ClaimInner />
         </div>
       </AccountContext.Provider>
@@ -28,4 +31,4 @@ const Claim = () => {
 
 export default Claim
 
-Claim.getLayout = (page: ReactElement) => <DefaultLayout>{page}</DefaultLayout>
+Claim.getLayout = (page: ReactElement) => <BlankLayout>{page}</BlankLayout>
