@@ -32,8 +32,12 @@ mixpanel.init(MIX_PANEL_KEY)
 
 export default function WalletInterface({
   onWalletConnected,
+  onWalletConnectFailed,
+  onWalletClickedToConnect,
 }: {
   onWalletConnected?: () => void
+  onWalletConnectFailed?: () => void
+  onWalletClickedToConnect?: () => void
 }) {
   const [connectingWallet, setConnectingWallet] = useState(0)
   const { onWalletConnectedCallback, setOnWalletConnectedCallback } =
@@ -75,6 +79,10 @@ export default function WalletInterface({
         const walletStr = localStorage.getItem('WALLET_TYPE')
         const previousConnector = connectorsById[parseInt(walletStr)]
         activate(previousConnector)
+
+        if (onWalletConnectFailed) {
+          onWalletConnectFailed()
+        }
       }
 
       setConnectingWallet(0)
@@ -84,6 +92,9 @@ export default function WalletInterface({
   }, [activatingConnector, connector, loading])
 
   async function onWalletClicked(wallet) {
+    if (onWalletClickedToConnect) {
+      onWalletClickedToConnect()
+    }
     setConnectingWallet(wallet)
     const currentConnector = connectorsById[wallet]
     setActivatingConnector(currentConnector)

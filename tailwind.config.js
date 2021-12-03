@@ -39,6 +39,7 @@ module.exports = {
         'mobile-row': '1fr minmax(160px, 1fr) 1fr',
       },
       colors: {
+        ...defaultTheme.colors,
         'brand-gray-white': '#E5E4E5',
         'brand-gray-white-2': '#868686',
         'brand-blue': '#0857e0',
@@ -60,6 +61,10 @@ module.exports = {
         'brand-border-gray-2': '#CECECE',
         'brand-purple': '#08245A',
         'brand-light-blue': defaultTheme.colors.indigo['100'],
+        'brand-blue-1': '#0E8FFF',
+        'brand-blue-2': '#2345C3',
+        'brand-yellow-green-1': '#68B700',
+        'brand-yellow-green-2': '#90FF00',
       },
       fontFamily: {
         sans: ['Inter var', ...defaultTheme.fontFamily.sans],
@@ -75,11 +80,13 @@ module.exports = {
         0: 0,
         1: '0.25rem',
         2: '0.5rem',
+        '1/2': '50%',
       },
       spacing: {
         7.5: '1.875rem',
         16: '4rem',
         18: '4.5rem',
+        25: '6.5rem',
         30: '7.5rem',
         43: '10.75rem',
         68: '14.5rem',
@@ -96,7 +103,7 @@ module.exports = {
         maintenance: "url('/MaintenanceBg.svg')",
         'top-desktop-new': "url('/topbg-new.png')",
         'top-mobile-new': "url('/topbg-new.png')",
-        'claim-imo-bg': "url('/claim-imo-bg.png')",
+        'ideamarket-bg': "url('/ideamarket.svg')",
       }),
       boxShadow: {
         home: '0 1px 5px 0 rgba(0, 0, 0, 0.05)',
@@ -122,12 +129,19 @@ module.exports = {
         304: '76rem',
       },
       textOpacity: {
+        ...defaultTheme.textOpacity,
         60: '0.6',
       },
       backgroundOpacity: ['active'],
       zIndex: {
         '-10': '-10',
         '-20': '-20',
+      },
+      gradientColorStops: {
+        ...defaultTheme.gradientColorStops,
+        'brand-blue-1': '#0E8FFF',
+        'brand-blue-2': '#2345C3',
+        'brand-sky-blue-1': '#a4b8eb',
       },
     },
   },

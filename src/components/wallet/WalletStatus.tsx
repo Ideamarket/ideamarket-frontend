@@ -4,14 +4,20 @@ import DotRed from '../../assets/dotred.svg'
 import DotGreen from '../../assets/dotgreen.svg'
 import { useWeb3React } from '@web3-react/core'
 
-export default function WalletStatus({ openModal }: { openModal: () => void }) {
+export default function WalletStatus({
+  openModal,
+}: {
+  openModal?: () => void
+}) {
   const { active, account } = useWeb3React()
 
   return (
     <React.Fragment>
       <div
         className="flex flex-row items-center px-2 cursor-pointer justify-self-end"
-        onClick={() => openModal()}
+        onClick={() => {
+          openModal && openModal()
+        }}
       >
         {!active && <DotRed className="w-4 h-4" />}
         {!active && (
