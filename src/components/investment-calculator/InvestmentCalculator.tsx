@@ -183,6 +183,7 @@ const InvestmentCalculator = ({ ideaToken, market }: Props) => {
                   isNegative &&
                   amountThatCanBeSold <= sliderCurve(updatedValue)
                 ) {
+                  setOtherUsdBuyAmount(-amountThatCanBeSold)
                   return
                 }
                 setOtherUsdBuyAmount(

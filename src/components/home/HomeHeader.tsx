@@ -24,7 +24,7 @@ const HomeHeader = ({
   const { mixpanel } = useMixPanel()
   const { setOnWalletConnectedCallback } = useContext(GlobalContext)
 
-  const { interestManager: interestManagerAddress } =
+  const { interestManagerAVM: interestManagerAddress } =
     NETWORK.getDeployedAddresses()
 
   const { data: interestManagerDaiBalance } = useQuery(

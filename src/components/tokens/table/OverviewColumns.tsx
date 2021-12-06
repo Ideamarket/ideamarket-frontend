@@ -61,7 +61,8 @@ export const OverviewColumns = ({
     queryInterestManagerTotalShares
   )
 
-  const interestManagerAddress = NETWORK.getDeployedAddresses().interestManager
+  const interestManagerAddress =
+    NETWORK.getDeployedAddresses().interestManagerAVM
   const { data: interestManagerDaiBalance } = useQuery(
     ['interest-manager-dai-balance', interestManagerAddress],
     queryDaiBalance

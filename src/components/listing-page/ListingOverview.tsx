@@ -165,22 +165,24 @@ export default function TokenCard({
           )}
         </div>
       </div>
-      <div className="w-full md:w-auto text-center mt-2">
-        {account &&
-          token.tokenOwner !== ZERO_ADDRESS &&
-          token.tokenOwner.toLowerCase() === account.toLowerCase() && (
-            <span>Verified by you</span>
-          )}
+      {market?.name !== 'Wikipedia' && (
+        <div className="w-full md:w-auto text-center mt-2">
+          {account &&
+            token.tokenOwner !== ZERO_ADDRESS &&
+            token.tokenOwner.toLowerCase() === account.toLowerCase() && (
+              <span>Verified by you</span>
+            )}
 
-        {token.tokenOwner === ZERO_ADDRESS && (
-          <button
-            onClick={onVerifyClicked}
-            className="py-2 text-lg font-bold text-white border border-white rounded-lg w-44 font-sf-compact-medium hover:bg-white hover:text-brand-blue"
-          >
-            Verify ownership
-          </button>
-        )}
-      </div>
+          {token.tokenOwner === ZERO_ADDRESS && (
+            <button
+              onClick={onVerifyClicked}
+              className="py-2 text-lg font-bold text-white border border-white rounded-lg w-44 font-sf-compact-medium hover:bg-white hover:text-brand-blue"
+            >
+              Verify ownership
+            </button>
+          )}
+        </div>
+      )}
       <div>
         <div className="grid grid-cols-3 p-1 mb-1 md:grid-cols-6">
           <DetailsOverChartEntry header="Price" contentTitle={'$' + tokenPrice}>

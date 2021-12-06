@@ -32,7 +32,6 @@ import getSsrBaseUrl from 'utils/getSsrBaseUrl'
 import GoogleTrendsPanel from 'components/listing-page/GoogleTrendsPanel'
 import WikiRelatedInfo from 'components/listing-page/WikiRelatedInfo'
 import PageViewsPanel from 'components/listing-page/PageViewsPanel'
-import WatchingStar from 'components/WatchingStar'
 
 export default function TokenDetails({
   rawMarketName,
@@ -70,7 +69,7 @@ export default function TokenDetails({
   //   isLoading: isInterestManagerTotalSharesLoading,
   // } = useQuery('interest-manager-total-shares', queryInterestManagerTotalShares)
 
-  // const interestManagerAddress = NETWORK.getDeployedAddresses().interestManager
+  // const interestManagerAddress = NETWORK.getDeployedAddresses().interestManagerAVM
   // const {
   //   data: interestManagerDaiBalance,
   //   isLoading: isInterestManagerDaiBalanceLoading,
@@ -201,30 +200,31 @@ export default function TokenDetails({
                 <InvestmentCalculator ideaToken={token} market={market} />
               </div>
             </div>
-            <div className="flex flex-col md:grid md:grid-cols-2">
-              <div className="mb-4 md:mr-5 md:mb-0">
-                <PageViewsPanel title="Pageviews" rawTokenName={rawTokenName} />
+            {marketName?.toLowerCase() === 'wikipedia' && (
+              <div className="flex flex-col md:grid md:grid-cols-2">
+                <div className="mb-4 md:mr-5 md:mb-0">
+                  <PageViewsPanel
+                    title="Pageviews"
+                    rawTokenName={rawTokenName}
+                  />
+                </div>
+                <GoogleTrendsPanel
+                  title="Google Trends"
+                  rawTokenName={rawTokenName}
+                />
               </div>
-              <GoogleTrendsPanel
-                title="Google Trends"
-                rawTokenName={rawTokenName}
-              />
-            </div>
+            )}
           </div>
 
           <div className="px-2 mx-auto max-w-88 md:max-w-304 -mt-30 md:-mt-28">
-            {/* {marketName?.toLowerCase() === 'twitter' ? (
+            {marketName?.toLowerCase() === 'twitter' && (
               <>
                 <MobileRelatedInfo {...relatedInfoProps} />
                 <DesktopRelatedInfo {...relatedInfoProps} />
               </>
-            ) : (
-              <MutualTokensList tokenName={tokenName} marketName={marketName} />
-            )} */}
-            {marketName?.toLowerCase() === 'twitter' ? (
+            )}
+            {marketName?.toLowerCase() === 'wikipedia' && (
               <WikiRelatedInfo {...relatedInfoProps} />
-            ) : (
-              <MutualTokensList tokenName={tokenName} marketName={marketName} />
             )}
 
             {marketName?.toLowerCase() !== 'wikipedia' &&

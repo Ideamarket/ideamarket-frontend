@@ -26,8 +26,6 @@ import { useMixPanel } from 'utils/mixPanel'
 import useThemeMode from 'components/useThemeMode'
 import DropdownButtons from 'components/dropdowns/DropdownButtons'
 import DropdownCheckbox from 'components/dropdowns/DropdownCheckbox'
-import WikipediaOutlineWhite from '../../assets/wikipedia-outline-white.svg'
-import WikipediaOutlineBlack from '../../assets/wikipedia-outline-black.svg'
 
 type DropdownButtonProps = {
   filters: any
@@ -225,7 +223,6 @@ export const OverviewFilters = ({
   setIsStarredFilterActive,
 }: OverviewFiltersProps) => {
   const { mixpanel } = useMixPanel()
-  const { resolvedTheme } = useThemeMode()
 
   const toggleMarket = (marketName: string) => {
     const newSet = toggleMarketHelper(marketName, selectedMarkets)
@@ -262,21 +259,6 @@ export const OverviewFilters = ({
             onClick={toggleMarket}
           />
         ))}
-        <button className="flex flex-col md:flex-auto justify-center items-center border rounded-r-md md:rounded-md text-sm font-semibold">
-          <div className="flex justify-center items-center md:px-3">
-            <span className="w-4 h-auto mr-2">
-              {resolvedTheme === 'dark' ? (
-                <WikipediaOutlineWhite className="w-5 h-5" />
-              ) : (
-                <WikipediaOutlineBlack className="w-5 h-5" />
-              )}
-            </span>
-            <span>Wikipedia</span>
-          </div>
-          <div className="text-xs text-gray-500 whitespace-nowrap w-full bg-gray-200">
-            COMING SOON
-          </div>
-        </button>
       </div>
 
       <DropdownButton

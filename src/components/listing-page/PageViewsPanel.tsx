@@ -17,8 +17,7 @@ export default function PageViewsPanel({ rawTokenName, title }: Props) {
     message: string
     data: any
   }>(() =>
-    // sun will be replaced with rawTokenName
-    fetch(`/api/markets/wikipedia/pageViews?title=Sun`, {
+    fetch(`/api/markets/wikipedia/pageViews?title=${rawTokenName}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

@@ -17,7 +17,7 @@ export default function GoogleTrendsPanel({ rawTokenName, title }: Props) {
     message: string
     data: any
   }>(() =>
-    fetch(`/api/markets/wikipedia/googleTrends?keyword=sun`, {
+    fetch(`/api/markets/wikipedia/googleTrends?keyword=${rawTokenName}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

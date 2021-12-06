@@ -19,25 +19,25 @@ export default class WikipediaMarketSpecifics implements IMarketSpecifics {
   }
 
   getMarketSVGBlack(): JSX.Element {
-    return <WikipediaOutlineBlack />
+    return <WikipediaOutlineBlack className="w-5 h-5" />
   }
 
   getMarketSVGWhite(): JSX.Element {
-    return <WikipediaOutlineWhite />
+    return <WikipediaOutlineWhite className="w-5 h-5" />
   }
 
   getMarketSVGTheme(theme?): JSX.Element {
     if (theme === 'dark') {
-      return <WikipediaOutlineWhite />
+      return <WikipediaOutlineWhite className="w-5 h-5" />
     } else {
-      return <WikipediaOutlineBlack />
+      return <WikipediaOutlineBlack className="w-5 h-5" />
     }
   }
 
   // Tokens
 
   getTokenURL(tokenName: string): string {
-    return `https://en.wikipedia.org/wiki/${tokenName.slice(1)}`
+    return `https://en.wikipedia.org/wiki/${tokenName}`
   }
 
   getTokenIconURL(tokenName: string): Promise<string> {
@@ -48,27 +48,27 @@ export default class WikipediaMarketSpecifics implements IMarketSpecifics {
   }
 
   normalizeUserInputTokenName(userInput: string): string {
-    return userInput.toLowerCase()
+    return userInput.charAt(0).toUpperCase() + userInput.slice(1).toLowerCase()
   }
 
   convertUserInputToTokenName(userInput: string): string {
-    return `@${userInput}`
+    return `${userInput}`
   }
 
   getTokenNameURLRepresentation(tokenName: string): string {
-    return tokenName.slice(1)
+    return tokenName
   }
 
   getTokenNameFromURLRepresentation(
     tokenNameInURLRepresentation: string
   ): string {
-    return `@${tokenNameInURLRepresentation}`
+    return `${tokenNameInURLRepresentation}`
   }
 
   // List Token
 
   getListTokenPrefix(): string {
-    return '@'
+    return 'wikipedia.org/wiki/'
   }
 
   getListTokenSuffix(): string {

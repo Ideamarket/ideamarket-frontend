@@ -10,8 +10,7 @@ const WikiRelatedInfo = ({ rawTokenName, ...other }: any) => {
     message: string
     data: any
   }>(() =>
-    // sun will be replaced with rawTokenName
-    fetch(`/api/markets/wikipedia/snapshot?title=sun`, {
+    fetch(`/api/markets/wikipedia/snapshot?title=${rawTokenName}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
