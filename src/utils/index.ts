@@ -374,3 +374,7 @@ export function calculateIdeaTokensInputForDaiOutput(
 
   return result
 }
+
+export const isServerSide = () => {
+  return typeof window === 'undefined'
+}

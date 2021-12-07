@@ -8,7 +8,7 @@ const WIKIPEDIA_PAGE_VIEWS_API_ENDPOINT = 'api/markets/wikipedia/pageViews'
 const serverHostUrl =
   process.env.NODE_ENV === 'production'
     ? `https://${process.env.VERCEL_URL}`
-    : process.env.VERCEL_URL ?? 'http://localhost:3000'
+    : `${process.env.VERCEL_URL}` ?? 'http://localhost:3000'
 
 /**
  * This function will call wikipedia API to fetch page views data

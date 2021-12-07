@@ -1,3 +1,5 @@
+import { isServerSide } from 'utils'
+
 export const DEFAULT_TITLE = 'The credibility layer of the internet'
 export const DEFAULT_TITLE_TEMPLATE = 'Ideamarket | %s'
 export const DEFAULT_DESCRIPTION =
@@ -10,11 +12,11 @@ export const TWITTER_CARD_TYPE = 'summary_large_image'
 export const FAVICON_LINK = '/logo.png'
 
 export const getURL = (): string => {
-  const url =
-    process?.env?.URL && process.env.URL !== ''
-      ? process.env.URL
-      : process?.env?.VERCEL_URL && process.env.VERCEL_URL !== ''
-      ? process.env.VERCEL_URL
-      : 'http://localhost:3000'
-  return url.includes('http') ? url : `https://${url}`
+  const url = isServerSide()
+    ? process.env.NODE_ENV === 'production'
+      ? `https://${process.env.VERCEL_URL}`
+      : `${process.env.VERCEL_URL}` ?? 'http://localhost:3000'
+    : ''
+
+  return url
 }

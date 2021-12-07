@@ -1,13 +1,26 @@
 import { gql } from 'graphql-request'
-import { getData } from 'lib/utils/fetch'
+import { getURL } from 'utils/seo-constants'
 
 export default async function getQueryMarkets(
   marketNames: string[]
 ): Promise<string> {
-  const { data: mindsFeature } = await getData({ url: '/api/fs?value=MINDS' })
-  const { data: wikiFeature } = await getData({
-    url: '/api/fs?value=WIKIPEDIA',
-  })
+  // Tried using getData util method, but somehow its url prop is buggy
+  const { data: mindsFeature } = await (
+    await fetch(`${getURL()}/api/fs?value=MINDS`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+  ).json()
+  const { data: wikiFeature } = await (
+    await fetch(`${getURL()}/api/fs?value=WIKIPEDIA`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+  ).json()
 
   // TODO: once feature switch is no longer needed for Minds and Wiki, comment these out until next market launch
   let filteredMarkets = marketNames.filter((market) => market !== 'All')
