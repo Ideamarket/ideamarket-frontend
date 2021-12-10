@@ -5,6 +5,9 @@ import { ApiResponseData, createHandlers } from 'lib/utils/createHandlers'
 import { DAY_SECONDS } from 'utils'
 import { GoogleTrends } from 'types/wikipedia'
 
+// Constants
+const WIKIPEDIA_GOOGLE_TRENDS_DURATION = 90 // 90 days
+
 // Cache Validity
 const cacheValidity =
   process.env.WIKIPEDIA_GOOGLE_TRENDS_CACHE_VALIDITY ?? DAY_SECONDS
@@ -15,8 +18,29 @@ const cacheValidity =
 const handlers: Handlers<Partial<ApiResponseData>> = {
   GET: async (req, res) => {
     try {
-      const keyword = req.query.keyword as string
-      const results = await googleTrendsApi.interestOverTime({ keyword })
+      const { keyword: initialKeyword, duration } = req.query
+      const keyword = initialKeyword as string
+      const googleTrendsDuration = duration
+        ? Number(duration)
+        : WIKIPEDIA_GOOGLE_TRENDS_DURATION
+
+      // Calculate required start time for the google trends data
+      let startTime = new Date()
+      startTime.setDate(startTime.getDate() - googleTrendsDuration)
+      startTime.setUTCHours(0, 0, 0, 0)
+
+      // Calculate required end time for the google trends data
+      let endTime = new Date()
+      endTime.setDate(endTime.getDate() - 1)
+      endTime.setUTCHours(23, 59, 59, 999)
+
+      // Get google trends data from google-trends api
+      const results = await googleTrendsApi.interestOverTime({
+        keyword,
+        startTime,
+        endTime,
+      })
+
       const trends: GoogleTrends[] = JSON.parse(
         results
       )?.default?.timelineData?.map((result: any) => {

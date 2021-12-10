@@ -79,8 +79,8 @@ const handlers: Handlers<Partial<ApiResponseData>> = {
         // Filter the page views as per required dates
         const filteredPageViews = wikipediaData.pageViews.views.filter(
           (views) => {
-            const minDate = new Date(fromDate)
-            const maxDate = new Date(toDate)
+            const minDate = new Date(requiredFromDate)
+            const maxDate = new Date(requiredToDate)
             const currentDate = new Date(views.date)
             return minDate <= currentDate && currentDate <= maxDate
           }
