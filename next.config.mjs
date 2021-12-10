@@ -13,11 +13,11 @@ const moduleExports = withPWA({
   pwa: {
     dest: 'public',
     disable: process.env.NODE_ENV === 'development',
-    buildExcludes: [/middleware-manifest.json$/]
+    buildExcludes: [/middleware-manifest.json$/],
   },
   images: {
     domains: [
-      'd3hjr60szea5ud.cloudfront.net',
+      'd38ccjc81jdg6l.cloudfront.net',
       'app.ideamarket.io',
       'ideamarket.io',
       'raw.githubusercontent.com',

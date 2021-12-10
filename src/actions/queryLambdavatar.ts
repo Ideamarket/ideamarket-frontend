@@ -5,16 +5,17 @@ export default async function queryLambdavatar({
   rawMarketName: string
   rawTokenName: string
 }): Promise<string> {
-  return fetch(
-    `https://lambdavatar.backend.ideamarket.io/${rawMarketName}/${rawTokenName}`
-  )
-    .then((res) => {
-      if (!res.ok) {
-        return 'https://ideamarket.io/logo.png'
-      }
-      return `https://d3hjr60szea5ud.cloudfront.net/${rawMarketName}/${rawTokenName}.png`
-    })
-    .catch((ex) => {
+  try {
+    const response = await fetch(
+      `https://lambdavatar.backend.ideamarket.io/${rawMarketName}/${rawTokenName}`
+    )
+    const lambdavatar = await response.json()
+    if (!lambdavatar.success) {
       return 'https://ideamarket.io/logo.png'
-    })
+    }
+
+    return lambdavatar.url
+  } catch (error) {
+    return 'https://ideamarket.io/logo.png'
+  }
 }
