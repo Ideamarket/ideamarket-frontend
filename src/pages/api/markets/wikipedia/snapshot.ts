@@ -13,6 +13,7 @@ import {
 import { SnapshotType, WikipediaSnapshot } from 'types/wikipedia'
 import { deleteObjectFromS3 } from 'lib/utils/mediaHandlerS3'
 import { DAY_SECONDS } from 'utils'
+import { fetchValidPageTitle } from 'lib/utils/wikipedia/findValidPageTitle'
 
 // Constants
 const WIKIPEDIA_MOBILE_URL = 'https://en.m.wikipedia.org/wiki'
@@ -39,7 +40,7 @@ const localSnapshotUrl = `${marketsCloudfrontDomain}/${WIKIPEDIA_SNAPSHOTS_FOLDE
 const handlers: Handlers<Partial<ApiResponseData>> = {
   GET: async (req, res) => {
     try {
-      const title = req.query.title as string
+      const title = await fetchValidPageTitle(req.query.title as string)
 
       // Fetch snapshot details from fauna db
       const wikipediaData = await fetchWikipediaData(title)
