@@ -19,7 +19,10 @@ const handlers: Handlers<Partial<ApiResponseData>> = {
   GET: async (req, res) => {
     try {
       const { keyword: initialKeyword, duration } = req.query
-      const keyword = initialKeyword as string
+      const keyword = (initialKeyword as string)
+        .split('_')
+        .map((word) => word.toLowerCase())
+        .join(' ')
       const googleTrendsDuration = duration
         ? Number(duration)
         : WIKIPEDIA_GOOGLE_TRENDS_DURATION
