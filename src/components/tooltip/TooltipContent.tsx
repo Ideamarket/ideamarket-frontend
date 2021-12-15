@@ -8,12 +8,14 @@ export default function TooltipContent({
   children,
   bottom,
   left,
+  className,
 }: {
   contentRef: MutableRefObject<any>
   show: boolean
   children: ReactNode
   bottom: number
   left: number
+  className?: string
 }) {
   return ReactDOM.createPortal(
     <div
@@ -24,7 +26,13 @@ export default function TooltipContent({
         left: left,
       }}
     >
-      <div className="p-3 mb-1 text-sm bg-gray-300 rounded-lg dark:bg-gray-800">
+      <div
+        className={
+          className
+            ? className
+            : 'p-3 mb-1 text-sm bg-gray-300 rounded-lg dark:bg-gray-800'
+        }
+      >
         {children}
       </div>
     </div>,

@@ -20,9 +20,11 @@ const Claim = () => {
     <>
       <NextSeo title="Claim" />
       <AccountContext.Provider value={contextProps}>
-        <FlowNavMenu currentStep={-1} />
-        <div className="min-h-screen bg-ideamarket-bg bg-no-repeat bg-right pt-16 bg-fixed">
-          <ClaimInner />
+        <div className="min-h-screen flex flex-col">
+          <FlowNavMenu currentStep={-1} />
+          <div className="bg-ideamarket-bg bg-no-repeat bg-right flex flex-grow">
+            <ClaimInner />
+          </div>
         </div>
       </AccountContext.Provider>
     </>
