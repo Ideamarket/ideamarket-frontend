@@ -1,0 +1,50 @@
+import OhnoIcon from '../../assets/ohno.svg'
+
+import React, { useCallback } from 'react'
+import { WalletStatus } from 'components'
+
+interface Props {
+  setClaimStep: (any) => void
+}
+export const NotEligible: React.FC<Props> = ({ setClaimStep }) => {
+  const onChangeWallet = useCallback(() => {
+    setClaimStep(0)
+  }, [setClaimStep])
+
+  return (
+    <>
+      <div className="flex">
+        <div className="mb-8 md:mb-0 mr-0 md:mr-4">
+          <div className="my-6 text-3xl font-extrabold font-gilroy-bold opacity-75">
+            <span>Oh No!</span>
+            <OhnoIcon className="h-full inline ml-2" />
+          </div>
+          <div className="my-6 text-5xl font-extrabold font-gilroy-bold opacity-75">
+            You are <span className="text-red-700">NOT</span> eligible for an
+            airdrop!
+          </div>
+          <div className="my-10 text-base font-light opacity-75">
+            Kindly make sure you have to correct wallet connected.
+          </div>
+          <div className="my-6 text-base font-light text-blue-500">
+            <WalletStatus />
+          </div>
+          <button
+            onClick={onChangeWallet}
+            className="hidden md:flex bg-gradient-to-r from-brand-blue-1 to-brand-blue-2 text-white font-bold rounded-xl items-center w-full max-w-xs h-18 items-center justify-center cursor-pointer uppercase"
+          >
+            Change wallet
+          </button>
+        </div>
+      </div>
+      <div className="flex flex-col items-center justify-center h-full w-full md:w-96 my-auto">
+        <button
+          onClick={onChangeWallet}
+          className="flex md:hidden bg-gradient-to-r from-brand-blue-1 to-brand-blue-2 text-white font-bold rounded-xl items-center w-full md:w-max h-18 items-center justify-center cursor-pointer uppercase my-8"
+        >
+          Change wallet
+        </button>
+      </div>
+    </>
+  )
+}

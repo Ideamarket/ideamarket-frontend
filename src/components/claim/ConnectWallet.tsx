@@ -23,16 +23,27 @@ const ConnectWallet: React.FC<Props> = ({ setClaimStep }) => {
   }, [])
 
   return (
-    <div className="flex flex-col md:flex-row flex-grow justify-between px-4 rounded-lg p-8 lg:p-16 md:pb-32 md:flex-row dark:bg-gray-500 items-center">
-      <div className="text-4xl font-extrabold m-auto p-4 opacity-75 md:w-2/4">
-        First, lets connect your wallet...
+    <div className="flex flex-col md:flex-row items-center justify-between dark:bg-gray-500 rounded-lg">
+      <div className="flex flex-col m-auto pr-0 md:pr-8 opacity-75 w-full md:w-1/2">
+        <span className="text-4xl font-extrabold">
+          First, lets connect your wallet...
+        </span>
+        <span className="font-normal text-sm w-full md:w-11/12 my-12 md:my-4">
+          Kindly make sure that you connect with the wallet you've used to trade
+          on Ideamarket.
+        </span>
       </div>
-      <div className="flex items-center justify-center h-full md:w-2/4">
-        <WalletInterface
-          onWalletConnected={onWalletConnected}
-          onWalletConnectFailed={onWalletConnectFailed}
-          onWalletClickedToConnect={onWalletClickedToConnect}
-        />
+      <div className="w-full md:w-1/2 my-8 md:my-8">
+        <div className="ml-auto mr-auto md:mr-0 w-full md:w-80 md:min-2-80 lg:min-w-100">
+          <span className="font-semibold text-sm pl-4 opacity-75">
+            Choose the one you have from below...
+          </span>
+          <WalletInterface
+            onWalletConnected={onWalletConnected}
+            onWalletConnectFailed={onWalletConnectFailed}
+            onWalletClickedToConnect={onWalletClickedToConnect}
+          />
+        </div>
       </div>
 
       {connectingModal && (

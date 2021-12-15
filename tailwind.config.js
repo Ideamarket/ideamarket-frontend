@@ -54,6 +54,7 @@ module.exports = {
         'brand-green': '#329300',
         'brand-neon-green': '#5de200',
         'brand-red': '#8f0033',
+        'brand-pink': '#DE5E5E',
         'brand-alto': '#d8d8d8',
         'brand-new-blue': '#074ef0',
         'brand-new-dark': '#1a1d3f',
@@ -64,7 +65,7 @@ module.exports = {
         'brand-blue-1': '#0E8FFF',
         'brand-blue-2': '#2345C3',
         'brand-yellow-green-1': '#68B700',
-        'brand-yellow-green-2': '#90FF00',
+        'brand-yellow-green-2': '#e6ffc4',
       },
       fontFamily: {
         sans: ['Inter var', ...defaultTheme.fontFamily.sans],
@@ -83,6 +84,7 @@ module.exports = {
         '1/2': '50%',
       },
       spacing: {
+        ...defaultTheme.spacing,
         7.5: '1.875rem',
         16: '4rem',
         18: '4.5rem',
@@ -119,10 +121,13 @@ module.exports = {
         home: '82rem',
       },
       minWidth: {
+        ...defaultTheme.minWidth,
+        70: '18rem',
         100: '25rem',
         150: '37.5rem',
       },
       maxWidth: {
+        ...defaultTheme.maxWidth,
         88: '22rem',
         100: '25rem',
         150: '37.5rem',
