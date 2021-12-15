@@ -7,6 +7,7 @@ import BN from 'bn.js'
 
 export default function useBalance(
   tokenAddress: string, // This can be token or contract address
+  userAddress: string, // This can be wallet or contract address. It's address you want to get balance of
   decimals: number,
   refreshToggle?: boolean // Used to refresh balance whenever needed
 ) {
@@ -33,7 +34,7 @@ export default function useBalance(
         try {
           if (tokenAddress === ZERO_ADDRESS) {
             web3.eth
-              .getBalance(walletAddress)
+              .getBalance(userAddress)
               .then((value) => {
                 resolve(new BN(value))
               })
@@ -44,7 +45,7 @@ export default function useBalance(
           } else {
             const contract = getERC20Contract(tokenAddress)
             contract.methods
-              .balanceOf(walletAddress)
+              .balanceOf(userAddress)
               .call()
               .then((value) => {
                 resolve(new BN(value))
@@ -76,7 +77,7 @@ export default function useBalance(
     return () => {
       isCancelled = true
     }
-  }, [tokenAddress, web3, walletAddress, refreshToggle, decimals])
+  }, [tokenAddress, web3, walletAddress, userAddress, refreshToggle, decimals])
 
   return [balance, balanceBN, isLoading]
 }
