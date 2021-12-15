@@ -13,7 +13,7 @@ import { PageViews } from 'types/wikipedia'
 import { getLeastDate, getGreatestDate } from 'lib/utils/dateUtil'
 import { q } from 'lib/faunaDb'
 import { DAY_SECONDS, HOUR_SECONDS } from 'utils'
-import { fetchValidPageTitle } from 'lib/utils/wikipedia/findValidPageTitle'
+import { fetchValidPageTitle } from 'lib/utils/wikipedia/validPageTitleUtil'
 
 // Constants
 const WIKIPEDIA_PAGE_VIEWS_DURATION = 425 // 425 days
@@ -137,7 +137,7 @@ const handlers: Handlers<Partial<ApiResponseData>> = {
   },
   POST: async (req, res) => {
     try {
-      const title = req.query.title as string
+      const title = await fetchValidPageTitle(req.query.title as string)
       const { fromDate, toDate } = req.body
 
       let availableFromDate: string = null

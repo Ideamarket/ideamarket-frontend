@@ -1,5 +1,6 @@
 // Constants
 const WIKIPEDIA_VALID_PAGE_API_ENDPOINT = 'api/markets/wikipedia/validPageTitle'
+export const WIKIPEDIA_BASE_URL = 'https://en.wikipedia.org/wiki'
 
 // Env Variables
 const serverHostUrl =
@@ -32,25 +33,32 @@ const ignoreWords = [
   'so',
 ]
 
-async function isWikiPageTitleValid(title: string) {
-  const res = await fetch(`https://en.wikipedia.org/wiki/${title}`)
-  return res.ok ? true : false
+async function getPageTitleIfValidPage(title: string) {
+  const res = await fetch(`${WIKIPEDIA_BASE_URL}/${encodeURIComponent(title)}`)
+  console.log({ title, res })
+  if (!res.ok) {
+    return null
+  }
+  const pageTitle = (res.url as string).replace(`${WIKIPEDIA_BASE_URL}/`, '')
+  return pageTitle
 }
 
 export async function findValidPageTitle(title: string) {
-  if (await isWikiPageTitleValid(title)) {
-    return title
-  }
+  console.log({ title })
+  let validPageTitle = await getPageTitleIfValidPage(title)
+  if (!validPageTitle) {
+    const allPossiblePageTitles = getAllPossiblePageTitles(title)
 
-  const allPossiblePageTitles = getAllPossiblePageTitles(title)
-  let validPageTitle: string | null = null
-  for (const pageTitle of allPossiblePageTitles) {
-    if (await isWikiPageTitleValid(pageTitle)) {
-      validPageTitle = pageTitle
-      break
+    for (const pageTitle of allPossiblePageTitles) {
+      const tempValidPageTitle = await getPageTitleIfValidPage(pageTitle)
+      if (tempValidPageTitle) {
+        validPageTitle = tempValidPageTitle
+        break
+      }
     }
   }
-  return validPageTitle
+
+  return validPageTitle ? decodeURIComponent(validPageTitle) : null
 }
 
 function getAllPossiblePageTitles(title: string) {

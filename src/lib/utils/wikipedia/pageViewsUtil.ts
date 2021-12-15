@@ -32,7 +32,9 @@ export async function getPageViewsFromWikipediaApi({
     const endDate = `${toDate.replace(/-/g, '')}00`
 
     const res = await fetch(
-      `https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia/all-access/user/${title}/daily/${startDate}/${endDate}`
+      `https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia/all-access/user/${encodeURIComponent(
+        title
+      )}/daily/${startDate}/${endDate}`
     )
 
     if (!res.ok) {
