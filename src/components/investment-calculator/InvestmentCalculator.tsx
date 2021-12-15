@@ -14,6 +14,7 @@ import 'rc-slider/assets/index.css'
 import classNames from 'classnames'
 import { useBalance } from 'actions'
 import { getMarketSpecificsByMarketName } from 'store/markets'
+import { useWeb3React } from '@web3-react/core'
 
 const sliderCurve = Math.exp
 const inverseCurve = Math.log
@@ -120,8 +121,10 @@ const InvestmentCalculator = ({ ideaToken, market }: Props) => {
     parseInt(calculatePercentChange(+usdBuyAmount, buyWorth).toString())
   )
 
+  const { account } = useWeb3React()
   const [isUserIdeaTokenBalanceLoading, userIdeaTokenBalanceBN] = useBalance(
     ideaToken?.address,
+    account,
     18
   )
 
