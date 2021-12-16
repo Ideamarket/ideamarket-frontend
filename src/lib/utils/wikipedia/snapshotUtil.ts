@@ -20,7 +20,9 @@ const generateAndUploadPdfApiHostUrl =
  */
 export async function updateSnapshot(title: string) {
   await nonWaitingRequest({
-    url: `${serverHostUrl}/${WIKIPEDIA_SNAPSHOT_API_ENDPOINT}?title=${title}`,
+    url: `${serverHostUrl}/${WIKIPEDIA_SNAPSHOT_API_ENDPOINT}?title=${encodeURIComponent(
+      title
+    )}`,
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
   })

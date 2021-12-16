@@ -40,7 +40,8 @@ const localSnapshotUrl = `${marketsCloudfrontDomain}/${WIKIPEDIA_SNAPSHOTS_FOLDE
 const handlers: Handlers<Partial<ApiResponseData>> = {
   GET: async (req, res) => {
     try {
-      const title = await fetchValidPageTitle(req.query.title as string)
+      const initialTitle = decodeURIComponent(req.query.title as string)
+      const title = await fetchValidPageTitle(initialTitle)
 
       // Fetch snapshot details from fauna db
       const wikipediaData = await fetchWikipediaData(title)
@@ -87,7 +88,8 @@ const handlers: Handlers<Partial<ApiResponseData>> = {
 
   POST: async (req, res) => {
     try {
-      const title = req.query.title as string
+      const initialTitle = decodeURIComponent(req.query.title as string)
+      const title = await fetchValidPageTitle(initialTitle)
 
       // Fetch current snapshot details from fauna db
       let wikipediaData = await fetchWikipediaData(title)

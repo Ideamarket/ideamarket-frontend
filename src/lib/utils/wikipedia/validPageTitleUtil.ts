@@ -90,9 +90,10 @@ function capitalizeFirstLetter(word: string) {
 }
 
 export async function fetchValidPageTitle(title: string) {
-  const res = await fetch(
-    `${serverHostUrl}/${WIKIPEDIA_VALID_PAGE_API_ENDPOINT}?title=${title}`
-  )
+  const url = `${serverHostUrl}/${WIKIPEDIA_VALID_PAGE_API_ENDPOINT}?title=${encodeURIComponent(
+    title
+  )}`
+  const res = await fetch(url)
   if (!res.ok) {
     return null
   }

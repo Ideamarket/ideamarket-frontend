@@ -39,8 +39,10 @@ const tempCacheValidity =
 const handlers: Handlers<Partial<ApiResponseData>> = {
   GET: async (req, res) => {
     try {
-      const { title: initialTitle, duration } = req.query
-      const title = await fetchValidPageTitle(initialTitle as string)
+      const initialTitle = decodeURIComponent(req.query.title as string)
+      const title = await fetchValidPageTitle(initialTitle)
+
+      const { duration } = req.query
       const pageViewsDuration = duration
         ? Number(duration)
         : WIKIPEDIA_PAGE_VIEWS_DURATION
@@ -137,7 +139,9 @@ const handlers: Handlers<Partial<ApiResponseData>> = {
   },
   POST: async (req, res) => {
     try {
-      const title = await fetchValidPageTitle(req.query.title as string)
+      const initialTitle = decodeURIComponent(req.query.title as string)
+      const title = await fetchValidPageTitle(initialTitle)
+
       const { fromDate, toDate } = req.body
 
       let availableFromDate: string = null

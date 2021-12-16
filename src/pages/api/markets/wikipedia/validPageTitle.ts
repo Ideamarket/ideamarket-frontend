@@ -18,7 +18,7 @@ const cacheValidity =
 const handlers: Handlers<Partial<ApiResponseData>> = {
   GET: async (req, res) => {
     try {
-      const title = req.query.title as string
+      const title = decodeURIComponent(req.query.title as string)
 
       // Fetch wikipedia data from faunadb
       const wikipediaPage = await fetchWikipediaData(title)
