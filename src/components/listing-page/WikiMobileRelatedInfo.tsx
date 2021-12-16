@@ -60,7 +60,7 @@ const WikiMobileRelatedInfo = ({
           {wikiSnapshot?.type === 'local' && (
             <iframe
               id="wiki-iframe"
-              src={`${wikiSnapshot.url}#toolbar=0&navpanes=0&scrollbar=0`}
+              src={`https://docs.google.com/gview?embedded=true&url=${wikiSnapshot.url}#toolbar=0&navpanes=0&scrollbar=0`}
               // type="application/pdf"
               title="wiki-iframe-mobile"
               className="w-full"
