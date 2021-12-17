@@ -42,12 +42,13 @@ const ConnectWallet: React.FC<Props> = ({ setClaimStep }) => {
             onWalletConnected={onWalletConnected}
             onWalletConnectFailed={onWalletConnectFailed}
             onWalletClickedToConnect={onWalletClickedToConnect}
+            walletButtonClassName="backdrop-blur-3xl"
           />
         </div>
       </div>
 
       {connectingModal && (
-        <div className="fixed inset-x-1/2 w-max bottom-2 inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:align-middle">
+        <div className="fixed inset-x-1/2 transform -translate-x-1/2 w-max bottom-2 inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:align-middle">
           <div className="bg-gray-50 px-4 py-3 sm:px-6 flex items-center">
             <div className="flex justify-center items-center mr-2">
               <CircleSpinner color="blue" />

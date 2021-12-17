@@ -1,14 +1,17 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { WalletStatus } from 'components'
+import { LoadingDots } from 'components/loading-dots'
 
 interface Props {
   setClaimStep: (any) => void
 }
 
 const CheckEligibility: React.FC<Props> = ({ setClaimStep }) => {
+  const [loading, setLoading] = useState<Boolean>(true)
   useEffect(() => {
     const timerId = setTimeout(() => {
       setClaimStep((c) => c + 1)
+      setLoading(false)
     }, 1000)
     return () => {
       clearTimeout(timerId)
@@ -27,6 +30,7 @@ const CheckEligibility: React.FC<Props> = ({ setClaimStep }) => {
         <div className="my-6 text-4xl font-extrabold opacity-75">
           Checking your Elgibility...
         </div>
+        {loading && <LoadingDots />}
       </div>
     </div>
   )

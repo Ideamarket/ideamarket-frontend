@@ -19,8 +19,8 @@ const ReceivedImo = () => {
   const claimableIMO: number = useClaimable(account)
 
   return (
-    <div className="flex flex-col md:flex-row flex-grow justify-around">
-      <div className="flex flex-grow flex-col font-gilroy-bold text-center">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-grow justify-around">
+      <div className="px-10 md:px-0 flex flex-grow flex-col font-gilroy-bold text-center m-auto">
         <div className="text-lg opacity-75 mb-8 md:mb-2">
           You have successfully claimed your tokens!
           <CelebrationIcon className="h-full inline ml-2" />
@@ -70,12 +70,7 @@ const ReceivedImo = () => {
               </div>
             </div>
           </div>
-          <div
-            className="flex absolute inset-x-1/2 -bottom-4 w-40 border border-white/10 rounded-3xl p-2 items-center shadow"
-            style={{
-              backdropFilter: 'blur(40px)',
-            }}
-          >
+          <div className="flex absolute inset-x-1/2 -bottom-3 w-40 border border-white/10 rounded-3xl p-2 items-center shadow backdrop-blur-3xl">
             <ShareIcon className="w-8 h-8" />
             <span className="px-2 text-white font-sans">Share:</span>
             <div className="flex items-center justify-center ">
@@ -93,75 +88,95 @@ const ReceivedImo = () => {
           </div>
         </div>
       </div>
-      <div
-        className="flex flex-grow  bg-ideamarket-bg bg-no-repeat bg-center bg-contain "
-        style={{ backgroundSize: 'contain' }}
-      >
-        <div className="flex flex-col flex-initial text-left md:text-right w-96 mt-24 ml-auto mr-auto md:mr-0 md:mt-auto text-white">
-          <div className="flex flex-col bg-gradient-to-r from-brand-blue-1 to-brand-blue-2 p-6 rounded-2xl shadow">
-            <span className="text-2xl font-extrabold font-gilroy-bold text-left">
+      <div className="flex flex-grow" style={{ backgroundSize: 'contain' }}>
+        <div className="flex flex-col flex-initial text-left md:text-right w-100 mt-24 ml-auto mr-auto md:mr-0 md:mt-auto text-white">
+          <div className="flex flex-col bg-gradient-to-r from-brand-blue-1 to-brand-blue-2 p-4 rounded-none md:rounded-2xl shadow">
+            <span className="text-2xl font-extrabold font-gilroy-bold text-left px-10 mt-10">
               Earn more $IMO by staking!
             </span>
-            <div className="flex items-center opacity-75">
-              <span className="mt-6 mb-3 text-base font-thin text-left font-sans">
+            <div className="flex items-center opacity-75 px-10 my-6">
+              <span className="text-base font-thin text-left font-sans">
                 Dui elit sollicitudin cursus mi scelerisque. Sit urna felis id
                 quis egestas dictum mauris.
               </span>
-              <span className="w-1/2 items-center">
+              <span className="items-center">
                 <button
-                  className="rounded-full font-bold min-w-min w-14 h-14 border-2 border-white text-white"
+                  className="rounded-full font-bold min-w-min w-16 h-16 border-2 border-white text-white"
                   onClick={() => {}}
                 >
                   <FaArrowRight className="w-5 h-5 text-white m-auto" />
                 </button>
               </span>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex flex-col border-white/20 border text-left p-1 py-3 bg-white/5 rounded-xl text-center">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-7">
+              <div className="flex flex-col border-white/20 border text-left p-1 py-5 justify-center bg-white/5 rounded-xl text-center">
                 <span className="text-base font-bold  font-sans">
                   Listing IMO Staking
                 </span>
-                <span className="text-brand-neon-green text-xl font-bold font-inter">
+                <span className="text-brand-neon-green text-2xl font-extrabold font-inter">
                   12% APY
                 </span>
               </div>
-              <div className="flex flex-col border-white/20 border text-left p-1 py-3 bg-white/5 rounded-xl  text-center">
+              <div className="flex flex-col border-white/20 border text-left p-1 py-5 justify-center bg-white/5 rounded-xl  text-center">
                 <span className="text-base font-bold  font-sans">
                   Stake IMO
                 </span>
-                <span className="text-brand-neon-green text-xl font-bold font-inter">
+                <span className="text-brand-neon-green text-2xl font-extrabold font-inter">
                   4% APY
                 </span>
               </div>
             </div>
           </div>
-          <div className="flex flex-col bg-white p-6 my-4 rounded-2xl shadow text-gray-600 text-left">
+          <div className="flex flex-col bg-gray-800 p-14 my-0 md:my-4 rounded-none md:rounded-2xl shadow text-white text-left">
             <p className="text-2xl font-extrabold font-gilroy-bold">
-              <span className="uppercase bg-gradient-to-r bg-clip-text from-brand-blue-1 to-brand-blue-2 font-black text-transparent">
-                Vote
-              </span>{' '}
-              on the future of Ideamarket
+              <span className="uppercase">Vote</span> on the future of
+              Ideamarket
             </p>
             <div className="flex">
               <div className="flex flex-col">
-                <p className="my-3 text-base font-light text-left font-sans">
-                  As an $IMO token holder, you're able to vote on issues
-                  regarding Ideamarket's future direction. We have a proposal
-                  waiting for you. Have your say!
+                <div className="flex mt-6 text-base font-light text-left font-sans opacity-70">
+                  <p className="mr-2">
+                    As an $IMO token holder, you’re able to vote on issues
+                    regarding Ideamarket’s future direction.
+                  </p>
+                  <span className="flex md:hidden items-center">
+                    <button
+                      className="rounded-full bg-transparent font-bold min-w-min w-16 h-16 border-2 border-white"
+                      onClick={() => {}}
+                    >
+                      <FaArrowRight className="w-5 h-5 text-white m-auto" />
+                    </button>
+                  </span>
+                </div>
+                <p className="my-3 text-base text-left font-sans font-medium">
+                  We have a proposal waiting for you. Have your say!
                 </p>
-                <div className="flex">
+                <ul className="my-2 text-base font-light text-left font-sans opacity-70 list-disc ml-6">
+                  <li>
+                    Mauris vitae bibendum hendrerit accumsan adipiscing duis
+                    non.
+                  </li>
+                  <li>
+                    Id at quisque tellus facilisis aliquam facilisi at nulla
+                    sem.
+                  </li>
+                  <li>
+                    In ipsum in egestas sagittis, purus amet id lobortis quam.
+                  </li>
+                </ul>
+                <div className="flex mt-3">
                   <CommonwealthIcon className="w-6 h-6" />
-                  <span className="ml-2 text-gray-900 font-inter font-bold">
+                  <span className="ml-2 font-inter font-bold">
                     Commonwealth
                   </span>
                 </div>
               </div>
-              <span className="flex w-1/2 items-center">
+              <span className="items-center hidden md:flex">
                 <button
-                  className="rounded-full bg-transparent font-bold min-w-min w-14 h-14 border-2 border-brand-blue-2 bg-gradient-to-r bg-clip-text from-brand-blue-1 to-brand-blue-2 font-black text-transparent"
+                  className="rounded-full bg-transparent font-bold min-w-min w-16 h-16 border-2 border-white"
                   onClick={() => {}}
                 >
-                  <FaArrowRight className="w-5 h-5 text-brand-blue-2 m-auto" />
+                  <FaArrowRight className="w-5 h-5 text-white m-auto" />
                 </button>
               </span>
             </div>

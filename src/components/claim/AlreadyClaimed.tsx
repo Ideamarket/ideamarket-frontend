@@ -2,19 +2,17 @@ import { AiOutlineArrowRight } from 'react-icons/ai'
 
 import React from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
+
+import { BreakdownPoint } from './EligibilityOutcome'
+
 import { WalletStatus } from 'components'
+import { BreakdownPointCard } from './BreakdownPointCard'
 
-interface Props {}
+interface Props {
+  breakdownByPoint: BreakdownPoint[]
+}
 
-const breakdownByPoint = [
-  { text: 'Listing an Account', amount: [400, 200] },
-  { text: 'Buying Tokens for an Account', amount: [100] },
-  { text: 'Locking Tokens', amount: [400, 200] },
-  { text: 'Verifying an Account', amount: [1000] },
-]
-
-export const AlreadyClaimed: React.FC<Props> = () => {
+export const AlreadyClaimed: React.FC<Props> = ({ breakdownByPoint }) => {
   return (
     <>
       <div className="flex max-w-md">
@@ -42,35 +40,11 @@ export const AlreadyClaimed: React.FC<Props> = () => {
           <span className="text-gray-400 text-left text-sm mb-4">
             Here's a breakdown of your claim...
           </span>
-          {breakdownByPoint.map((data, id) => (
-            <div
-              key={id}
-              className="bg-gray-200 border-2 bg-opacity-50 py-5 px-6 rounded-2xl flex justify-between my-2 w-full items-center"
-              role="alert"
-            >
-              <span className="w-max mr-2 opacity-70">{data.text}</span>
-              <div className="flex flex-col">
-                {data.amount.map((amount, idx) => (
-                  <div className="flex my-1 items-center" key={idx}>
-                    <span className="bg-gradient-to-r bg-clip-text from-brand-blue-1 to-brand-blue-2 font-black text-transparent">
-                      {amount}
-                    </span>
 
-                    <div className="ml-2 p-1 w-6 h-6 inline-block rounded-full bg-white shadow">
-                      <div className="relative w-4 h-4">
-                        <Image
-                          src="/logo.png"
-                          alt="Workflow logo"
-                          layout="fill"
-                          objectFit="contain"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+          {breakdownByPoint.map((data, id) => (
+            <BreakdownPointCard key={id} data={data} />
           ))}
+
           <span className="text-gray-400 text-sm my-2">
             *Any action performed on Layer 1 provides double points for that
             action.

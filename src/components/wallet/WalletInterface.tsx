@@ -34,10 +34,12 @@ export default function WalletInterface({
   onWalletConnected,
   onWalletConnectFailed,
   onWalletClickedToConnect,
+  walletButtonClassName,
 }: {
   onWalletConnected?: () => void
   onWalletConnectFailed?: () => void
   onWalletClickedToConnect?: () => void
+  walletButtonClassName?: string
 }) {
   const [connectingWallet, setConnectingWallet] = useState(0)
   const { onWalletConnectedCallback, setOnWalletConnectedCallback } =
@@ -156,7 +158,8 @@ export default function WalletInterface({
             connectingWallet === wallet &&
               'border-transparent bg-brand-blue text-brand-gray',
             'flex-grow p-2 text-lg text-black dark:text-gray-300 dark:border-gray-500 border-2 rounded-lg border-brand-gray-1 font-sf-compact-medium',
-            isDisabled && 'bg-brand-gray dark:bg-gray-500'
+            isDisabled && 'bg-brand-gray dark:bg-gray-500',
+            walletButtonClassName || ''
           )}
         >
           <div className="flex flex-row items-center">

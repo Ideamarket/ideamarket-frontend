@@ -22,7 +22,7 @@ const Claim = () => {
       <AccountContext.Provider value={contextProps}>
         <div className="min-h-screen flex flex-col">
           <FlowNavMenu currentStep={-1} />
-          <div className="bg-ideamarket-bg bg-no-repeat bg-right flex flex-grow">
+          <div className="bg-ideamarket-bg bg-no-repeat bg-ideamarket-bg bg-no-repeat bg-fixed background-position-mobile md:background-position-desktop flex flex-grow">
             <ClaimInner />
           </div>
         </div>

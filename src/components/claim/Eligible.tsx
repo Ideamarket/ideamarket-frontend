@@ -13,25 +13,25 @@ import {
   formatNumberWithCommasAsThousandsSerperator,
   useTransactionManager,
 } from 'utils'
+import { BreakdownPoint } from './EligibilityOutcome'
 
 import TradeCompleteModal, {
   TRANSACTION_TYPES,
 } from 'components/trade/TradeCompleteModal'
 import ModalService from 'components/modals/ModalService'
 import classNames from 'classnames'
+import { BreakdownPointCard } from './BreakdownPointCard'
+import A from 'components/A'
 
 interface Props {
   setClaimStep: (any) => void
+  breakdownByPoint: BreakdownPoint[]
 }
 
-const breakdownByPoint = [
-  { text: 'Listing an Account', amount: [400, 200] },
-  { text: 'Buying Tokens for an Account', amount: [100] },
-  { text: 'Locking Tokens', amount: [400, 200] },
-  { text: 'Verifying an Account', amount: [1000] },
-]
-
-export const Eligible: React.FC<Props> = ({ setClaimStep }) => {
+export const Eligible: React.FC<Props> = ({
+  setClaimStep,
+  breakdownByPoint,
+}) => {
   const { account } = useWeb3React()
   const claimableIMO: number = useClaimable(account)
   const txManager = useTransactionManager()
@@ -120,11 +120,17 @@ export const Eligible: React.FC<Props> = ({ setClaimStep }) => {
                     Claiming $IMO requires you to pay gas fees using L2 $ETH on
                     the Arbitrum Network.
                   </span>
-                  <div className="text-sm ml-auto flex items-center cursor-pointer">
-                    <span className="mr-2 opacity-75 underline">
-                      Learn more
-                    </span>
-                    <IoMdOpen color="gray" className="w-5 h-5" />
+                  <div className="text-sm ml-auto cursor-pointer">
+                    <A
+                      href="https://docs.ideamarket.io/user-guide/tutorial#bridging-crypto-to-layer-2-abritrum"
+                      target="_blank"
+                      className="flex items-center "
+                    >
+                      <span className="mr-2 opacity-75 underline">
+                        Learn more
+                      </span>
+                      <IoMdOpen color="gray" className="w-5 h-5" />
+                    </A>
                   </div>
                 </div>
               </div>
@@ -161,33 +167,7 @@ export const Eligible: React.FC<Props> = ({ setClaimStep }) => {
             Here's a breakdown of your claim...
           </span>
           {breakdownByPoint.map((data, id) => (
-            <div
-              key={id}
-              className="bg-gray-200 border-2 bg-opacity-50 py-5 px-6 rounded-2xl flex justify-between my-2 w-full items-center"
-              role="alert"
-            >
-              <span className="w-max mr-2 opacity-70">{data.text}</span>
-              <div className="flex flex-col">
-                {data.amount.map((amount, idx) => (
-                  <div className="flex my-1 items-center" key={idx}>
-                    <span className="bg-gradient-to-r bg-clip-text from-brand-blue-1 to-brand-blue-2 font-black text-transparent">
-                      {amount}
-                    </span>
-
-                    <div className="ml-2 p-1 w-6 h-6 inline-block rounded-full bg-white shadow">
-                      <div className="relative w-4 h-4">
-                        <Image
-                          src="/logo.png"
-                          alt="Workflow logo"
-                          layout="fill"
-                          objectFit="contain"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <BreakdownPointCard key={id} data={data} />
           ))}
           <span className="text-gray-400 text-sm my-2">
             *Any action performed on Layer 1 provides double points for that

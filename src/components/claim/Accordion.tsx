@@ -13,7 +13,7 @@ export const Accordion: React.FC<Props> = ({ title, body }) => {
   }, [])
 
   return (
-    <div className="flex flex-col p-4 my-2 rounded-xl border-2 bg-gray-200 border-gray-300 w-full">
+    <div className="flex flex-col p-4 my-2 rounded-xl border bg-white/5 border-gray-300 w-full backdrop-blur-3xl">
       <div
         className="flex justify-between cursor-pointer"
         onClick={toggleAccordion}
