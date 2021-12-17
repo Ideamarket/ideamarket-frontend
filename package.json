@@ -50,6 +50,7 @@
     "axios": "^0.24.0",
     "bignumber.js": "9.0.1",
     "chart.js": "^2.9.4",
+    "cheerio": "1.0.0-rc.10",
     "classnames": "2.3.1",
     "copy-to-clipboard": "^3.3.1",
     "fauna-schema-migrate": "2.1.2",

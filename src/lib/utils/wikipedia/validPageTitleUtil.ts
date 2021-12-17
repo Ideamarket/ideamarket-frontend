@@ -1,3 +1,5 @@
+import * as cheerio from 'cheerio'
+
 // Constants
 const WIKIPEDIA_VALID_PAGE_API_ENDPOINT = 'api/markets/wikipedia/validPageTitle'
 export const WIKIPEDIA_BASE_URL = 'https://en.wikipedia.org/wiki'
@@ -38,8 +40,20 @@ async function getPageTitleIfValidPage(title: string) {
   if (!res.ok) {
     return null
   }
-  const pageTitle = (res.url as string).replace(`${WIKIPEDIA_BASE_URL}/`, '')
-  return pageTitle
+
+  try {
+    const html = cheerio.load(await res.text())
+    const bodyClasses = html('body').attr('class').split(' ')
+    const rootPageClass = bodyClasses.find((className) =>
+      className.startsWith('rootpage-')
+    )
+    const [, pageTitle] = rootPageClass.split('rootpage-')
+
+    return pageTitle ?? null
+  } catch (error) {
+    console.error(error)
+    return null
+  }
 }
 
 export async function findValidPageTitle(title: string) {
