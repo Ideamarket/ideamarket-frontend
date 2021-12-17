@@ -95,4 +95,10 @@ select:-webkit-autofill:focus {
       scrollbar-width: none; /* Firefox */
     }
   }
+  .background-position-mobile {
+    background-position: calc(100% + 250px) calc(100% + 310px);
+  }
+  .background-position-desktop {
+    background-position: calc(100% - 50px) calc(100% + 200px);
+  }
 }

@@ -9,6 +9,7 @@ import { useRouter } from 'next/dist/client/router'
 import { useWeb3React } from '@web3-react/core'
 import Tooltip from 'components/tooltip/Tooltip'
 
+import A from 'components/A'
 import useClaimable from 'actions/useClaimable'
 import { isAddressInMerkleRoot } from 'utils/merkleRoot'
 
@@ -30,25 +31,38 @@ const FlowNavMenu: React.FC<Props> = ({ currentStep }) => {
   const claimableIMO: number = useClaimable(account)
   const alreadyClaimed: boolean = isAddressInMerkleRoot(account)
 
-  const getClassNamesForStepCircles = useCallback(
+  const getStepStatus = useCallback(
     (stepNo: number) => {
-      if (stepNo > currentStep)
-        return ' border-gray-300 text-gray-500 text-opacity-60'
-      if (stepNo === 1 && !claimableIMO && !alreadyClaimed)
-        return ' text-white bg-red-400 border-0'
-      return ' border-0 bg-gradient-to-r from-brand-blue-1 to-brand-blue-2 text-white '
+      const isNotEligible = !claimableIMO && !alreadyClaimed
+      if (currentStep === 2) {
+        if (stepNo === 1 && isNotEligible) return -1 // invalid
+        if (stepNo === 2 && isNotEligible) return 0 // inactive
+      }
+      if (stepNo > currentStep) return 0 //inactive
+      return 1 //active
     },
     [currentStep, claimableIMO, alreadyClaimed]
   )
 
+  const getClassNamesForStepCircles = useCallback(
+    (stepNo: number) => {
+      const stepStatus = getStepStatus(stepNo)
+      if (stepStatus === -1) return ' text-white bg-red-400 border-0'
+      if (stepStatus === 0)
+        return ' border-gray-300 text-gray-500 text-opacity-60'
+      return 'border-0 bg-gradient-to-r from-brand-blue-1 to-brand-blue-2 text-white'
+    },
+    [getStepStatus]
+  )
+
   const getClassNamesForTexts = useCallback(
     (stepNo: number) => {
-      if (stepNo > currentStep) return ' text-gray-500 text-opacity-60'
-      if (stepNo === 1 && !claimableIMO && !alreadyClaimed)
-        return ' text-red-400'
+      const stepStatus = getStepStatus(stepNo)
+      if (stepStatus === -1) return ' text-red-400'
+      if (stepStatus === 0) return ' text-gray-500 text-opacity-60'
       return ' bg-gradient-to-r bg-clip-text from-brand-blue-1 to-brand-blue-2 font-black text-transparent'
     },
-    [currentStep, claimableIMO, alreadyClaimed]
+    [getStepStatus]
   )
 
   const stepsData: StepData[] = useMemo(() => {
@@ -166,9 +180,15 @@ const FlowNavMenu: React.FC<Props> = ({ currentStep }) => {
                   Claiming $IMO requires you to pay gas fees using L2 $ETH on
                   the Arbitrum Network.
                 </p>
-                <div className="ml-auto flex text-sm mt-2 items-center cursor-pointer">
-                  <span className="underline mr-2">Learn more</span>
-                  <IoMdOpen className="w-6 h-6" />
+                <div className="ml-auto text-sm mt-2 cursor-pointer">
+                  <A
+                    href="https://docs.ideamarket.io/user-guide/tutorial#bridging-crypto-to-layer-2-abritrum"
+                    target="_blank"
+                    className="flex items-center "
+                  >
+                    <span className="underline mr-2">Learn more</span>
+                    <IoMdOpen className="w-6 h-6" />
+                  </A>
                 </div>
               </div>
             </Tooltip>

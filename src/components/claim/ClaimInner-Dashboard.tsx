@@ -51,7 +51,7 @@ const ClaimInnerDashboard = () => {
         className={classNames(
           'min-h-screen flex items-start md:items-center',
           claimStep !== 3
-            ? 'bg-ideamarket-bg bg-no-repeat bg-right bg-fixed'
+            ? 'bg-ideamarket-bg bg-no-repeat bg-fixed background-position-mobile md:background-position-desktop'
             : ''
         )}
       >
@@ -65,10 +65,10 @@ const ClaimInnerDashboard = () => {
         )}
         <div
           className={classNames(
-            'mx-auto font-inter w-full lg:w-11/12 ',
+            'mx-auto font-inter w-full',
             claimStep === 3
-              ? 'pl-10 pr-10 pt-40 md:pt-1'
-              : 'pl-10 pr-10 lg:pl-32 lg:pr-24 pt-60 md:pt-1'
+              ? 'px-0 md:px-10 pt-40 md:pt-1 w-full'
+              : 'pl-10 pr-10 lg:pl-32 lg:pr-24 pt-60 md:pt-1 lg:w-11/12'
           )}
         >
           {claimStep === 0 ? (
