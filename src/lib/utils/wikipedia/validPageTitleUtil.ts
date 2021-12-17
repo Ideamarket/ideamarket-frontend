@@ -43,13 +43,9 @@ async function getPageTitleIfValidPage(title: string) {
 
   try {
     const html = cheerio.load(await res.text())
-    const bodyClasses = html('body').attr('class').split(' ')
-    const rootPageClass = bodyClasses.find((className) =>
-      className.startsWith('rootpage-')
-    )
-    const [, pageTitle] = rootPageClass.split('rootpage-')
-
-    return pageTitle ?? null
+    const canonicalUrl = html('link[rel="canonical"]').attr('href')
+    const pageTitle = canonicalUrl.replace(`${WIKIPEDIA_BASE_URL}/`, '')
+    return pageTitle
   } catch (error) {
     console.error(error)
     return null
