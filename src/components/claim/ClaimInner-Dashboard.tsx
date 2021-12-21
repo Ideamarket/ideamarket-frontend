@@ -44,6 +44,12 @@ const ClaimInnerDashboard = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [claimStep])
 
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+    })
+  }, [claimStep])
+
   return (
     <>
       <FlowNavMenu currentStep={claimStep} />

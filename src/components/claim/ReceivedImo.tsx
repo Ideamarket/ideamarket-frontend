@@ -7,16 +7,26 @@ import IdeamarketBulbIcon from '../../assets/ideamarket-white.svg'
 import { FaArrowRight } from 'react-icons/fa'
 import { IoIosWallet } from 'react-icons/io'
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { useWeb3React } from '@web3-react/core'
 
 import A from 'components/A'
 import useClaimable from 'actions/useClaimable'
+import classNames from 'classnames'
 
 const ReceivedImo = () => {
   const { account } = useWeb3React()
   const claimableIMO: number = useClaimable(account)
+  const [bottomPos, setBottomPos] = useState<Number>(-1)
+  useEffect(() => {
+    setTimeout(() => {
+      setBottomPos(1)
+    }, 100)
+    setTimeout(() => {
+      setBottomPos(0)
+    }, 3000)
+  }, [])
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-grow justify-around">
@@ -183,6 +193,53 @@ const ReceivedImo = () => {
           </div>
         </div>
       </div>
+
+      {Boolean(bottomPos) && (
+        <>
+          <div
+            className={classNames(
+              'absolute transition-all duration-[3000ms]  ease-in w-screen h-screen left-0 overflow-hidden',
+              bottomPos === -1
+                ? 'invisible top-[-140%] opacity-100'
+                : 'visible top-[140%] opacity-30'
+            )}
+          >
+            <img
+              src={'/claim-success-1.png'}
+              alt="token"
+              className="min-w-[1440px] max-w-[2000px] w-full"
+            />
+          </div>
+          <div
+            className={classNames(
+              'absolute transition-all duration-[3000ms]  ease-in w-screen h-screen left-0 overflow-hidden',
+              bottomPos === -1
+                ? 'invisible top-[-120%] opacity-100'
+                : 'visible top-[120%] opacity-30'
+            )}
+          >
+            <img
+              src={'/claim-success-2.png'}
+              alt="token"
+              className="min-w-[1440px] max-w-[2000px] w-full"
+            />
+          </div>
+          <div
+            className={classNames(
+              'absolute transition-all duration-[3000ms]  ease-in w-screen h-screen left-0 overflow-hidden',
+              bottomPos === -1
+                ? 'invisible top-[-90%] opacity-100'
+                : 'visible top-[90%] opacity-30'
+            )}
+          >
+            <img
+              src={'/claim-success-3.png'}
+              alt="token"
+              className="min-w-[1440px] max-w-[2000px] w-full"
+            />
+          </div>
+        </>
+      )}
     </div>
   )
 }
