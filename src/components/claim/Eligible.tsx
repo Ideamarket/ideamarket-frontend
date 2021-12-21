@@ -37,7 +37,6 @@ export const Eligible: React.FC<Props> = ({
   const txManager = useTransactionManager()
   const [txFailed, setTxFailed] = useState<Boolean>(false)
   const [loading, setLoading] = useState<Boolean>(false)
-  const [bottomPos, setBottomPos] = useState<Number>(-1)
 
   const onTradeComplete = (
     isSuccess: boolean,
@@ -68,12 +67,7 @@ export const Eligible: React.FC<Props> = ({
 
     setLoading(false)
     // onTradeComplete(true, 'IMO', TRANSACTION_TYPES.CLAIM, 'no-market')
-    setTimeout(() => {
-      setBottomPos(1)
-    }, 100)
-    setTimeout(() => {
-      setClaimStep((c) => c + 1)
-    }, 800)
+    setClaimStep((c) => c + 1)
   }
 
   return (
@@ -194,18 +188,6 @@ export const Eligible: React.FC<Props> = ({
             Claim tokens {txFailed ? '(try again)' : ''}
           </span>
         </button>
-      </div>
-      <div
-        className={classNames(
-          'w-screen absolute transition-all duration-1000 ease-in-out w-screen h-screen left-0 overflow-hidden',
-          bottomPos === -1 ? 'invisible -inset-y-2/3' : 'visible inset-y-2/3'
-        )}
-      >
-        <img
-          src={'/claim-success-1.png'}
-          alt="token"
-          className="min-w-[1000px] max-w-[2000px] w-full"
-        />
       </div>
     </>
   )
