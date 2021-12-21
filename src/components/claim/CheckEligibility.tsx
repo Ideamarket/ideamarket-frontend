@@ -19,7 +19,7 @@ const CheckEligibility: React.FC<Props> = ({ setClaimStep }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   return (
-    <div className="flex flex-grow rounded-lg dark:bg-gray-500 w-full md:w-1/2">
+    <div className="flex flex-grow rounded-lg dark:bg-gray-500 w-full md:w-1/2 font-gilroy-bold">
       <div className="mb-8 md:mb-0">
         <div className="flex">
           <WalletStatus />
@@ -27,7 +27,7 @@ const CheckEligibility: React.FC<Props> = ({ setClaimStep }) => {
         <div className="my-6 text-2xl font-extrabold opacity-75">
           Wallet Connected
         </div>
-        <div className="my-6 text-4xl font-extrabold opacity-75">
+        <div className="my-6 text-5xl font-extrabold opacity-75">
           Checking your Elgibility...
         </div>
         {loading && <LoadingDots />}

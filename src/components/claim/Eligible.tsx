@@ -37,6 +37,7 @@ export const Eligible: React.FC<Props> = ({
   const txManager = useTransactionManager()
   const [txFailed, setTxFailed] = useState<Boolean>(false)
   const [loading, setLoading] = useState<Boolean>(false)
+  const [bottomPos, setBottomPos] = useState<Number>(-1)
 
   const onTradeComplete = (
     isSuccess: boolean,
@@ -66,8 +67,13 @@ export const Eligible: React.FC<Props> = ({
     }
 
     setLoading(false)
-    onTradeComplete(true, 'IMO', TRANSACTION_TYPES.CLAIM, 'no-market')
-    setClaimStep((c) => c + 1)
+    // onTradeComplete(true, 'IMO', TRANSACTION_TYPES.CLAIM, 'no-market')
+    setTimeout(() => {
+      setBottomPos(1)
+    }, 100)
+    setTimeout(() => {
+      setClaimStep((c) => c + 1)
+    }, 800)
   }
 
   return (
@@ -103,7 +109,7 @@ export const Eligible: React.FC<Props> = ({
         <div>
           <div
             className={classNames(
-              'p-5 border rounded-3xl w-full md:w-9/12',
+              'p-5 border rounded-3xl w-full md:max-w-sm',
               txFailed
                 ? 'border-red-400 bg-red-100'
                 : 'border-brand-border-gray-2'
@@ -149,7 +155,7 @@ export const Eligible: React.FC<Props> = ({
         <button
           onClick={onClaimButtonClick}
           className={classNames(
-            'mt-10 bg-gradient-to-r from-brand-blue-1 to-brand-blue-2 text-white font-bold w-full max-w-xs py-4 rounded-xl hidden md:flex flex-col items-center',
+            'mt-10 bg-gradient-to-r from-brand-blue-1 to-brand-blue-2 text-white font-bold w-full max-w-sm py-5 rounded-xl hidden md:flex flex-col items-center',
             loading ? 'opacity-50' : ''
           )}
         >
@@ -177,7 +183,7 @@ export const Eligible: React.FC<Props> = ({
         <button
           onClick={onClaimButtonClick}
           className={classNames(
-            'bg-gradient-to-r from-brand-blue-1 to-brand-blue-2 text-white font-bold w-full max-w-xs py-4 rounded-xl flex md:hidden flex-col items-center mt-6',
+            'bg-gradient-to-r from-brand-blue-1 to-brand-blue-2 text-white font-bold w-full max-w-sm py-5 rounded-xl flex md:hidden flex-col items-center mt-6',
             loading ? 'opacity-50' : 'opacity-100'
           )}
         >
@@ -188,6 +194,18 @@ export const Eligible: React.FC<Props> = ({
             Claim tokens {txFailed ? '(try again)' : ''}
           </span>
         </button>
+      </div>
+      <div
+        className={classNames(
+          'w-screen absolute transition-all duration-1000 ease-in-out w-screen h-screen left-0 overflow-hidden',
+          bottomPos === -1 ? 'invisible -inset-y-2/3' : 'visible inset-y-2/3'
+        )}
+      >
+        <img
+          src={'/claim-success-1.png'}
+          alt="token"
+          className="min-w-[1000px] max-w-[2000px] w-full"
+        />
       </div>
     </>
   )

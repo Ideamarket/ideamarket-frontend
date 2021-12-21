@@ -59,13 +59,13 @@ const EligibilityOutcome: React.FC<Props> = ({ setClaimStep }) => {
           setClaimStep={setClaimStep}
           breakdownByPoint={breakdownByPoint}
         />
-      ) : !alreadyClaimed ? (
+      ) : alreadyClaimed ? (
+        <AlreadyClaimed breakdownByPoint={breakdownByPoint} />
+      ) : (
         <NotEligible
           setClaimStep={setClaimStep}
           breakdownByPoint={breakdownByPoint}
         />
-      ) : (
-        <AlreadyClaimed breakdownByPoint={breakdownByPoint} />
       )}
     </div>
   )
