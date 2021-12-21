@@ -25,10 +25,10 @@ const ConnectWallet: React.FC<Props> = ({ setClaimStep }) => {
   return (
     <div className="flex flex-col md:flex-row items-center justify-between dark:bg-gray-500 rounded-lg">
       <div className="flex flex-col m-auto pr-0 md:pr-8 opacity-75 w-full md:w-1/2">
-        <span className="text-4xl font-extrabold">
+        <span className="text-5xl font-extrabold  font-gilroy-bold">
           First, lets connect your wallet...
         </span>
-        <span className="font-normal text-sm w-full md:w-11/12 my-12 md:my-4">
+        <span className="font-normal text-sm w-full md:w-11/12 my-12 md:my-4  font-sans">
           Kindly make sure that you connect with the wallet you've used to trade
           on Ideamarket.
         </span>

@@ -44,14 +44,14 @@ const ClaimInner = () => {
           <div className="text-5xl md:text-6xl font-extrabold opacity-75">
             Lorem ipsum dolor sit amet, consectetur
           </div>
-          <div className="my-16 text-sm md:text-base font-normal opacity-75 max-w-2xl">
+          <div className="my-16 text-sm md:text-base font-normal opacity-75 max-w-2xl font-sans">
             Dui elit sollicitudin cursus mi scelerisque. Sit urna felis id quis
             egestas dictum mauris. Placerat enim lacus tincidunt viverra
             pharetra, sed vestibulum at pellentesque.
           </div>
           <Link href="/claim-dashboard">
             <div
-              className="hidden md:flex flex-col text-center my-6 rounded-lg hover:bg-blue-800 w-full max-w-xs py-4 text-white bg-blue-600 cursor-pointer"
+              className="hidden md:flex flex-col text-center my-6 rounded-lg hover:bg-blue-800 w-full max-w-sm py-5 text-white bg-blue-600 cursor-pointer"
               // TODO
               style={{
                 backgroundImage: `linear-gradient(135deg, #0E8FFF , #2345C3)`,
