@@ -12,6 +12,12 @@ const handlers: Handlers<Partial<ApiResponseData>> = {
       const marketName = req.query.marketName as string
       const tokenName = req.query.tokenName as string
 
+      if (!marketName || !tokenName) {
+        return res
+          .status(400)
+          .json({ message: 'marketName and tokenName cannot be empty/null' })
+      }
+
       const validToken = await validMarketToken({ marketName, tokenName })
       if (!validToken) {
         return res
