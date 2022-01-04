@@ -1,5 +1,0 @@
-# Set default behavior to automatically normalize line endings.
-# NO We don't want this!! LEAVE line endings alone
-# * text=auto
-# Bash shell scripts make sure to keep unix line endings
-* text eol=crlf
