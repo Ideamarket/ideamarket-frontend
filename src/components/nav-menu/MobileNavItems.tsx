@@ -1,8 +1,5 @@
 import { Transition } from '@headlessui/react'
-import { WalletStatus } from 'components'
-import ModalService from 'components/modals/ModalService'
 import { useMixPanel } from 'utils/mixPanel'
-import WalletModal from '../wallet/WalletModal'
 import { getNavbarConfig } from './constants'
 import NavItem from './NavItem'
 import NavThemeButton from './NavThemeButton'
@@ -29,16 +26,11 @@ const MobileNavItems = ({ isMobileNavOpen, imoFeature }: Props) => {
       className="md:hidden"
     >
       <div className="px-2 pt-2 pb-3 space-y-3 sm:px-3">
-        {navbarConfig.menu
-          .filter(
+        {navbarConfig.menu.filter(
             (m) => m.name !== 'IMO' || (m.name === 'IMO' && imoFeature?.enabled)
-          )
-          .map((menuItem, i) => (
-            <NavItem menuItem={menuItem} key={i} />
-          ))}
-        <div className="flex px-2 mt-5">
-          <WalletStatus openModal={() => ModalService.open(WalletModal)} />
-        </div>
+          ).map((menuItem, i) => (
+          <NavItem menuItem={menuItem} key={i} />
+        ))}
         <div className="flex px-1 mt-5">
           <NavThemeButton />
         </div>
