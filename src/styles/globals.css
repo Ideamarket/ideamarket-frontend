@@ -102,3 +102,43 @@ select:-webkit-autofill:focus {
     background-position: calc(100% - 50px) calc(100% + 200px);
   }
 }
+
+/* Toggle Switch styles */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 33px;
+  height: 20px;
+}
+.toggle-switch input[type="checkbox"] {
+  display: none;
+}
+.toggle-switch .switch {
+  position: absolute;
+  cursor: pointer;
+  background-color: #E5E7EB;
+  border-radius: 20px;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  transition: background-color 0.2s ease;
+}
+.toggle-switch .switch::before {
+  position: absolute;
+  content: "";
+  left: 2px;
+  top: 2px;
+  width: 16px;
+  height: 16px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+}
+.toggle-switch input[type="checkbox"]:checked + .switch::before {
+  transform: translateX(13px);
+  background-color: white;
+}
+.toggle-switch input[type="checkbox"]:checked + .switch {
+  background-color: rgb(8, 87, 224);
+}

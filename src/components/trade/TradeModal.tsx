@@ -39,6 +39,7 @@ export default function TradeModal({
           showTypeSelection={true}
           showTradeButton={true}
           disabled={false}
+          parentComponent="TradeModal"
         />
       </div>
     </Modal>
