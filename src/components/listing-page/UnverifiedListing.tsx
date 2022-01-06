@@ -1,15 +1,13 @@
 import ModalService from 'components/modals/ModalService'
 import VerifyModal from 'components/VerifyModal'
-import { useMixPanel } from 'utils/mixPanel'
 
 export default function UnverifiedListing({
   claimableInterest,
   marketSpecifics,
   market,
   token,
+  mixpanel,
 }) {
-  const { mixpanel } = useMixPanel()
-
   return (
     <div className="flex flex-col items-center text-xl">
       <span>Claimable interest</span>

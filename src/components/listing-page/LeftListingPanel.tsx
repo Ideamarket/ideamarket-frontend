@@ -7,6 +7,7 @@ import UnverifiedListing from './UnverifiedListing'
 import VerifiedListing from './VerifiedListing'
 import Permalink from './Permalink'
 import ListingIframe from './ListingIframe'
+import { useMixPanel } from 'utils/mixPanel'
 
 type LeftListingPanelProps = {
   isLoading: boolean
@@ -29,6 +30,8 @@ export default function LeftListingPanel({
   rawMarketName,
   rawTokenName,
 }: LeftListingPanelProps) {
+  const { mixpanel } = useMixPanel()
+
   return (
     <div className="flex flex-col">
       <div className="h-full p-5 mb-5 bg-white border rounded-md dark:bg-gray-700 dark:border-gray-500 md:mr-5 border-brand-border-gray">
@@ -43,6 +46,7 @@ export default function LeftListingPanel({
                   marketSpecifics={marketSpecifics}
                   market={market}
                   token={token}
+                  mixpanel={mixpanel}
                 />
               ) : (
                 <VerifiedListing

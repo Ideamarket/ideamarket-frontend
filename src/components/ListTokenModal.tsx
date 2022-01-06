@@ -354,6 +354,7 @@ export default function ListTokenModal({ close }: { close: () => void }) {
           showTradeButton={false}
           disabled={txManager.isPending}
           unlockText={'for listing'}
+          parentComponent="ListTokenModal"
         />
         {!isWantBuyChecked && (
           <div className="absolute top-0 left-0 w-full h-full bg-gray-600 opacity-75"></div>

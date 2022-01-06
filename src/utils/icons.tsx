@@ -1,6 +1,8 @@
 import IdeaverifyIconBlue from '../assets/IdeaverifyIconBlue.svg'
 import IdeaverifyIconLight from '../assets/IdeaverifyIconLight.svg'
 import IdeaverifyIconDark from '../assets/IdeaverifyIconDark.svg'
+import CrownBlack from '../assets/crown-black.svg'
+import CrownWhite from '../assets/crown-white.svg'
 
 /**
  * This method converts icon to desired version depending on current theme and whether icon is selected.
@@ -20,5 +22,9 @@ export const getIconVersion = (
     if (theme === 'dark') return <IdeaverifyIconLight className="w-5 h-5" />
 
     return <IdeaverifyIconDark className="w-5 h-5" />
+  } else if (iconName === 'crown') {
+    if (theme === 'dark') return <CrownWhite className="w-5 h-5" />
+
+    return <CrownBlack className="w-5 h-5" />
   }
 }
