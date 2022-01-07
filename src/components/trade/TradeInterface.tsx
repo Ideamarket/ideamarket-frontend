@@ -176,10 +176,15 @@ export default function TradeInterface({
     tradeToggle
   )
 
+  const ideaTokenBalanceDisplay = ideaTokenBalanceBN
+    ? formatNumberWithCommasAsThousandsSerperator(
+        web3BNToFloatString(ideaTokenBalanceBN, bigNumberTenPow18, 2)
+      )
+    : '0'
   const balanceDAIValueBN = calculateIdeaTokenDaiValue(
     ideaToken?.rawSupply,
     market,
-    tokenBalanceBN
+    ideaTokenBalanceBN
   )
   const balanceDAIValue = formatNumberWithCommasAsThousandsSerperator(
     web3BNToFloatString(balanceDAIValueBN, bigNumberTenPow18, 2)
@@ -604,21 +609,18 @@ export default function TradeInterface({
     <div>
       <div className="w-full md:w-136 p-4 mx-auto bg-white dark:bg-gray-700 rounded-xl">
         {parentComponent === 'ListingPage' && (
-          <div className="flex justify-between items-center mb-4">
-            <span
-              className="text-gray-400"
+          <div className="md:flex md:justify-between items-center mb-7 md:mb-4">
+            <div
+              className="text-gray-400 mb-4 md:mb-0"
               style={{
                 fontFamily: 'Segoe UI',
               }}
             >
               ACCOUNT HOLDINGS
-            </span>
-            <div className="text-lg font-sf-compact-medium">
+            </div>
+            <div className="flex items-center text-lg font-sf-compact-medium">
               <span className="font-bold mr-4">
-                {formatNumberWithCommasAsThousandsSerperator(
-                  web3BNToFloatString(tokenBalanceBN, bigNumberTenPow18, 2)
-                )}{' '}
-                Tokens
+                {ideaTokenBalanceDisplay} Tokens
               </span>
               <span className="text-gray-400">~${balanceDAIValue}</span>
             </div>

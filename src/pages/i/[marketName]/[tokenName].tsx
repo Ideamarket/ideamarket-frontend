@@ -164,7 +164,7 @@ export default function TokenDetails({
               <div
                 className={classNames(
                   !web3 && 'md:overflow-hidden',
-                  'relative pt-5 px-5 mb-5 md:mr-5 bg-white border rounded-md dark:bg-gray-700 dark:border-gray-500 border-brand-border-gray'
+                  'relative md:pt-5 md:px-5 mb-5 md:mr-5 bg-white border rounded-md dark:bg-gray-700 dark:border-gray-500 border-brand-border-gray'
                 )}
               >
                 {/* <div className="relative">
