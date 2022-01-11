@@ -145,26 +145,25 @@ const NavMenu = () => {
                 <NavItem menuItem={menuItem} key={i} />
               ))}
           </div>
-          <div
-            className="hidden md:flex"
-            onMouseEnter={onMouseEnter}
-            onMouseLeave={onMouseLeave}
-          >
+          <div className="hidden md:flex">
             <NavThemeButton />
-            <div className="flex">
+            <div
+              className="flex"
+              onMouseEnter={onMouseEnter}
+              onMouseLeave={onMouseLeave}
+            >
               <WalletStatusWithConnectButton
                 openModal={() => {
                   mixpanel.track('ADD_WALLET_START')
                   ModalService.open(WalletModal)
                 }}
               />
+              {visibility && (
+                <div className="absolute top-0 mt-10 right-0 p-3 mb-1 text-sm rounded-xl shadow bg-white">
+                  <ProfileTooltip />
+                </div>
+              )}
             </div>
-
-            {visibility && (
-              <div className="absolute top-0 mt-10 right-0 p-3 mb-1 text-sm rounded-xl shadow bg-white">
-                <ProfileTooltip />
-              </div>
-            )}
           </div>
           {/* Desktop END */}
         </nav>
