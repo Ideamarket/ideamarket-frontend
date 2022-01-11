@@ -1,6 +1,6 @@
 import { Transition } from '@headlessui/react'
 import classNames from 'classnames'
-import { ReactNode, useEffect } from 'react'
+import { ReactNode } from 'react'
 import Close from '../../assets/close.svg'
 
 export default function Modal({
@@ -14,17 +14,8 @@ export default function Modal({
   close: () => void
   isCloseActive?: boolean
 }) {
-  // Disable Scroll
-  useEffect(() => {
-    document.body.style.overflow = 'hidden'
-
-    return () => {
-      document.body.style.overflow = 'auto'
-    }
-  }, [])
-
   return (
-    <div className="flex items-center justify-center p-4 text-center">
+    <div className="absolute flex items-center justify-center text-center pt-4 pb-10">
       <span className="inline-block h-screen align-middle"></span>
       &#8203;
       <Transition
@@ -41,7 +32,7 @@ export default function Modal({
         aria-labelledby="modal-headline"
       >
         {isCloseActive && (
-          <div className="flex pb-2">
+          <div className="flex pb-2 pr-2 md:pr-0">
             <button
               type="button"
               className="p-2 ml-auto text-white transition duration-150 ease-in-out rounded-xl w-9 h-9 bg-very-dark-blue hover:text-gray-500 focus:outline-none focus:text-gray-500"
