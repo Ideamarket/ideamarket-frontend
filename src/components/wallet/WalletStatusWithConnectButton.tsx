@@ -13,7 +13,10 @@ export default function WalletStatusWithConnectButton({
 
   return (
     <React.Fragment>
-      <div className="flex flex-row items-center px-2 cursor-pointer justify-self-end">
+      <div
+        className="flex flex-row items-center px-2 cursor-pointer justify-self-end"
+        onClick={() => openModal()}
+      >
         {!active && (
           <div className="px-4 py-2 ml-2 text-sm text-white rounded-lg bg-brand-blue">
             Connect Wallet
@@ -22,10 +25,7 @@ export default function WalletStatusWithConnectButton({
 
         {active && <DotGreen className="w-4 h-4" />}
         {active && (
-          <div
-            className="ml-3 text-gray-400 align-middle whitespace-nowrap hidden md:flex"
-            onClick={() => openModal()}
-          >
+          <div className="ml-3 text-gray-400 align-middle whitespace-nowrap hidden md:flex">
             {account.slice(0, 6)}...{account.slice(-4)}
           </div>
         )}
