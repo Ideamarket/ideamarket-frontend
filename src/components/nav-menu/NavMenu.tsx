@@ -4,7 +4,7 @@ import NProgress from 'nprogress'
 import { getNavbarConfig } from './constants'
 import { Router, useRouter } from 'next/dist/client/router'
 import { MenuIcon, XIcon } from '@heroicons/react/solid'
-import { Tooltip, WalletStatusWithConnectButton } from 'components'
+import { WalletStatusWithConnectButton } from 'components'
 import ModalService from 'components/modals/ModalService'
 import WalletModal from '../wallet/WalletModal'
 import MobileNavItems from './MobileNavItems'
@@ -12,10 +12,13 @@ import NavItem from './NavItem'
 import NavThemeButton from './NavThemeButton'
 import { useMixPanel } from 'utils/mixPanel'
 import { getData } from 'lib/utils/fetch'
+import { ProfileTooltip } from './ProfileTooltip'
 
 const NavMenu = () => {
   const router = useRouter()
   const [isMobileNavOpen, setMobileNavOpen] = useState(false)
+  const [visibility, setVisibility] = useState<Boolean>(false)
+  const [timerId, setTimerId] = useState(null)
   const [imoFeature, setIMOFeature] = useState({
     feature: 'IMO',
     enabled: false,
@@ -54,6 +57,25 @@ const NavMenu = () => {
     }
   }, [])
 
+  const onMouseLeave = () => {
+    setTimerId(
+      setTimeout(() => {
+        setVisibility(false)
+      }, 200)
+    )
+  }
+
+  const onMouseEnter = () => {
+    timerId && clearTimeout(timerId)
+    setVisibility(true)
+  }
+
+  useEffect(() => {
+    return () => {
+      timerId && clearTimeout(timerId)
+    }
+  }, [timerId])
+
   return (
     <div className="absolute z-50 items-center w-full shadow t-0 bg-top-desktop overflow-none font-inter">
       <div className="px-2 py-3">
@@ -77,25 +99,6 @@ const NavMenu = () => {
           </div>
           {/* Mobile END */}
 
-          <Tooltip
-            placement="down"
-            IconComponent={() => (
-              <div className="items-start flex">
-                <span className="opacity-75 font-base text-sm text-gray-400 pl-2 whitespace-nowrap">
-                  Eth Gas : 65 Gwei
-                </span>
-              </div>
-            )}
-            // tooltipContentclassName="p-3 mb-1 text-sm rounded-xl text-gray-400 shadow bg-white"
-            // iconComponentClassNames="w-max h-max"
-          >
-            <div className="flex flex-col w-32 md:w-64">
-              <p className="text-sm">
-                Claiming $IMO requires you to pay gas fees using L2 $ETH on the
-                Arbitrum Network.
-              </p>
-            </div>
-          </Tooltip>
           <div
             className="flex items-center cursor-pointer ml-auto mr-auto md:ml-0 md:mr-0"
             onClick={() => router.push('/')}
@@ -114,12 +117,19 @@ const NavMenu = () => {
           </div>
 
           <div className="flex md:hidden">
-            <WalletStatusWithConnectButton
-              openModal={() => {
-                mixpanel.track('ADD_WALLET_START')
-                ModalService.open(WalletModal)
-              }}
-            />
+            <div className="flex">
+              <WalletStatusWithConnectButton
+                openModal={() => {
+                  mixpanel.track('ADD_WALLET_START')
+                  ModalService.open(WalletModal)
+                }}
+              />
+            </div>
+            {visibility && (
+              <div className="absolute top-0 mt-8 right-0 p-3 mb-1 text-sm rounded-xl shadow bg-white">
+                <ProfileTooltip />
+              </div>
+            )}
           </div>
 
           {/* Desktop START */}
@@ -133,14 +143,26 @@ const NavMenu = () => {
                 <NavItem menuItem={menuItem} key={i} />
               ))}
           </div>
-          <div className="hidden md:flex">
+          <div
+            className="hidden md:flex"
+            onMouseEnter={onMouseEnter}
+            onMouseLeave={onMouseLeave}
+          >
             <NavThemeButton />
-            <WalletStatusWithConnectButton
-              openModal={() => {
-                mixpanel.track('ADD_WALLET_START')
-                ModalService.open(WalletModal)
-              }}
-            />
+            <div className="flex">
+              <WalletStatusWithConnectButton
+                openModal={() => {
+                  mixpanel.track('ADD_WALLET_START')
+                  ModalService.open(WalletModal)
+                }}
+              />
+            </div>
+
+            {visibility && (
+              <div className="absolute top-0 mt-10 right-0 p-3 mb-1 text-sm rounded-xl shadow bg-white">
+                <ProfileTooltip />
+              </div>
+            )}
           </div>
           {/* Desktop END */}
         </nav>
