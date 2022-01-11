@@ -66,6 +66,8 @@ module.exports = {
         'brand-blue-2': '#2345C3',
         'brand-yellow-green-1': '#68B700',
         'brand-yellow-green-2': '#e6ffc4',
+        'yellow-1': '#FFAC33',
+        'green-1': '#4ABB0C',
       },
       fontFamily: {
         sans: ['Inter var', ...defaultTheme.fontFamily.sans],

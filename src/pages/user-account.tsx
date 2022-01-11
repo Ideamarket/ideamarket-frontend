@@ -9,11 +9,11 @@ import {
 } from 'components/account'
 import { uploadAndUpdateProfilePhoto } from 'lib/utils/uploadProfilePhoto'
 import { useForm } from 'react-hook-form'
-import LoginAndLogoutButton from 'components/nav-menu/LoginAndLogoutButton'
 import { SignedAddress } from 'types/customTypes'
 import { useCustomSession } from 'utils/useCustomSession'
 import IS_ACCOUNT_ENABLED from 'utils/isAccountEnabled'
 import router from 'next/router'
+import ProfileGeneralInfo from 'components/account/ProfileGeneralInfo'
 
 export const AccountContext = createContext<any>({})
 
@@ -167,35 +167,27 @@ const Account = () => {
 
   return (
     <AccountContext.Provider value={contextProps}>
-      <div className="min-h-screen bg-top-desktop-new">
-        {!loading && !session ? (
-          <div className="pt-16">
-            <div className="w-11/12 mx-auto my-0 bg-white rounded-lg max-w-7xl font-inter w-90">
-              <div className="flex flex-col items-start justify-center p-8 bg-white rounded-lg xl:flex-row dark:bg-gray-500">
-                <div className="relative flex flex-col w-full mt-2 text-center xl:mr-8 xl:w-1/4">
-                  <div className="p-3">
-                    <div className="pb-4 text-3xl text-blue-400">Account</div>
-                    <div className="text-base font-semibold">
-                      Click here to log in
-                    </div>
-                  </div>
-                  <LoginAndLogoutButton />
-                </div>
+      <div className="min-h-screen bg-brand-gray dark:bg-gray-900 font-inter">
+        <div className="h-full px-4 pt-8 pb-5 text-white md:px-6 md:pt-16 bg-top-mobile md:bg-top-desktop md:h-[38rem]">
+          <div className="mx-auto md:px-4 max-w-88 md:max-w-304">
+            {!loading && !session ? (
+              <>
+                <ProfileGeneralInfo />
                 <ProfileWallet walletState="signedOut" />
-              </div>
-            </div>
+              </>
+            ) : (
+              <>
+                <Toaster />
+                <form onSubmit={handleSubmit(onSubmit)}>
+                  <AccountInnerForm
+                    submitWallet={submitWallet}
+                    removeAddress={removeAddress}
+                  />
+                </form>
+              </>
+            )}
           </div>
-        ) : (
-          <>
-            <Toaster />
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <AccountInnerForm
-                submitWallet={submitWallet}
-                removeAddress={removeAddress}
-              />
-            </form>
-          </>
-        )}
+        </div>
       </div>
     </AccountContext.Provider>
   )

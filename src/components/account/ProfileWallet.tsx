@@ -543,17 +543,32 @@ export default function ProfileWallet({ walletState, userData }: Props) {
 
   return (
     <div className="w-full h-full mt-8">
-      <div className="flex flex-col justify-between sm:flex-row">
-        <div className="hidden py-3 text-3xl font-semibold border-gray-100 sm:block sm:border-b dark:border-gray-400">
-          Wallet
+      <div className="flex flex-col justify-between sm:flex-row mb-0 md:mb-4">
+        <div className="flex order-1 md:order-none">
+          <div
+            className="text-lg font-semibold flex flex-col justify-end mb-2.5 pr-6 ml-auto"
+            onClick={() => {
+              setTable('holdings')
+            }}
+          >
+            Wallet Holdings
+          </div>
+          <div
+            className="text-lg font-semibold text-brand-gray text-opacity-60 flex flex-col justify-end mb-2.5 mr-auto"
+            onClick={() => {
+              setTable('trades')
+            }}
+          >
+            Trades History
+          </div>
         </div>
-        <div className="flex justify-between">
-          <div className="pr-6 text-center">
-            <div className="text-sm font-semibold text-opacity-60">
+        <div className="flex mb-6 md:mb-0">
+          <div className="pr-6 text-center ml-auto">
+            <div className="text-xs font-normal text-brand-gray text-opacity-60 max-w-[6rem] md:max-w-none">
               Total Purchase Value
             </div>
             <div
-              className="text-2xl mb-2.5 font-semibold uppercase"
+              className="text-lg mb-2.5 font-semibold uppercase"
               title={'$' + +purchaseTotalValue}
             >
               $
@@ -563,15 +578,30 @@ export default function ProfileWallet({ walletState, userData }: Props) {
             </div>
           </div>
 
-          <div className="text-center">
-            <div className="text-sm font-semibold text-opacity-60">
+          <div className="pr-6 text-center">
+            <div className="text-xs font-normal text-brand-gray text-opacity-60 max-w-[6rem] md:max-w-none">
               Total Current Value
             </div>
             <div
-              className="text-2xl mb-2.5 font-semibold uppercase"
+              className="text-lg mb-2.5 font-semibold uppercase"
               title={`$${+ownedTokenTotalValue + +lockedTokenTotalValue}`}
             >
               $
+              {formatNumberWithCommasAsThousandsSerperator(
+                (+ownedTokenTotalValue + +lockedTokenTotalValue).toFixed(2)
+              )}
+            </div>
+          </div>
+
+          <div className="text-center mr-auto flex flex-col">
+            <div className="text-xs font-normal text-brand-gray text-opacity-60 max-w-[6rem] md:max-w-none mt-auto">
+              Profit & Loss
+            </div>
+            <div
+              className="text-lg mb-2.5 font-semibold uppercase text-green-1"
+              title={`$${+ownedTokenTotalValue + +lockedTokenTotalValue}`}
+            >
+              +$
               {formatNumberWithCommasAsThousandsSerperator(
                 (+ownedTokenTotalValue + +lockedTokenTotalValue).toFixed(2)
               )}
@@ -630,21 +660,6 @@ export default function ProfileWallet({ walletState, userData }: Props) {
                 }}
               >
                 Locked
-              </div>
-              <div
-                className={classNames(
-                  'text-base text-brand-new-dark dark:text-gray-300 font-semibold lg:px-2 py-3 pt-2 inline-block cursor-pointer',
-                  table === 'trades'
-                    ? 'border-b-2 border-brand-new-dark dark:border-gray-300'
-                    : ''
-                )}
-                onClick={() => {
-                  setTable('trades')
-                  setOrderBy('date')
-                  setOrderDirection('desc')
-                }}
-              >
-                Trades
               </div>
             </div>
           </div>
