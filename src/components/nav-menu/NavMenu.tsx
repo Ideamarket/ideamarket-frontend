@@ -13,9 +13,11 @@ import NavThemeButton from './NavThemeButton'
 import { useMixPanel } from 'utils/mixPanel'
 import { getData } from 'lib/utils/fetch'
 import { ProfileTooltip } from './ProfileTooltip'
+import { useWeb3React } from '@web3-react/core'
 
 const NavMenu = () => {
   const router = useRouter()
+  const { active } = useWeb3React()
   const [isMobileNavOpen, setMobileNavOpen] = useState(false)
   const [visibility, setVisibility] = useState<Boolean>(false)
   const [timerId, setTimerId] = useState(null)
@@ -67,7 +69,7 @@ const NavMenu = () => {
 
   const onMouseEnter = () => {
     timerId && clearTimeout(timerId)
-    setVisibility(true)
+    active && setVisibility(true)
   }
 
   useEffect(() => {
