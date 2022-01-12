@@ -638,6 +638,8 @@ export default function TradeInterface({
                 { 'text-brand-black dark:text-gray-50': !('buy' === tradeType) }
               )}
               onClick={() => {
+                setIdeaTokenAmount('0')
+                setSelectedTokenAmount('0')
                 setTradeType('buy')
               }}
             >
@@ -656,6 +658,8 @@ export default function TradeInterface({
                 }
               )}
               onClick={() => {
+                setIdeaTokenAmount('0')
+                setSelectedTokenAmount('0')
                 setTradeType('sell')
               }}
             >
@@ -674,6 +678,8 @@ export default function TradeInterface({
                 }
               )}
               onClick={() => {
+                setIdeaTokenAmount('0')
+                setSelectedTokenAmount('0')
                 setTradeType('lock')
               }}
             >
@@ -690,6 +696,8 @@ export default function TradeInterface({
               { 'text-brand-black dark:text-gray-50': !('claim' === tradeType) }
             )}
             onClick={() => {
+              setIdeaTokenAmount('0')
+              setSelectedTokenAmount('0')
               setTradeType('claim')
             }}
           >
@@ -743,6 +751,27 @@ export default function TradeInterface({
               </Tooltip>
             </div>
 
+            <div className="flex justify-between items-center px-2 pb-1">
+              <div className="opacity-50">Spend</div>
+              <div>
+                You have:{' '}
+                {(tradeType === 'buy' && isTokenBalanceLoading) ||
+                (tradeType === 'sell' && isIdeaTokenBalanceLoading)
+                  ? '...'
+                  : parseFloat(
+                      tradeType === 'buy' ? tokenBalance : ideaTokenBalance
+                    )}
+                {!txManager.isPending && (
+                  <span
+                    className="cursor-pointer text-brand-blue dark:text-blue-400"
+                    onClick={maxButtonClicked}
+                  >
+                    {' '}
+                    (Max)
+                  </span>
+                )}
+              </div>
+            </div>
             <TradeInterfaceBox
               {...commonProps}
               label="Spend"
@@ -751,6 +780,18 @@ export default function TradeInterface({
                 : { ...selectedTokenProps })}
             />
 
+            <div className="flex justify-between items-center px-2 pb-1 pt-4">
+              <div className="opacity-50">Receive</div>
+              <div>
+                You have:{' '}
+                {(tradeType === 'buy' && isIdeaTokenBalanceLoading) ||
+                (tradeType === 'sell' && isTokenBalanceLoading)
+                  ? '...'
+                  : parseFloat(
+                      tradeType === 'buy' ? ideaTokenBalance : tokenBalance
+                    )}
+              </div>
+            </div>
             <TradeInterfaceBox
               {...commonProps}
               label="Receive"
