@@ -3,20 +3,16 @@ import { TokenListEntry } from '../../../store/tokenListStore'
 import { useEffect, useState } from 'react'
 import TokenSelect from './TokenSelect'
 import Image from 'next/image'
+import { ExclamationCircleIcon } from '@heroicons/react/solid'
 
 type TradeInterfaceBoxProps = {
   label: string
   setIdeaTokenAmount: (value: string) => void
   setSelectedTokenAmount: (value: string) => void
   inputTokenAmount: string | number | any // Amount of token being typed in (idea token or selected token)
-  isTokenBalanceLoading: boolean
-  tokenBalance: string
-  maxButtonClicked: () => void
   selectTokensValues: any
-  showBuySellSwitch?: boolean
   selectedToken: any
   setSelectedToken: (value: any) => void
-  setTradeType: (value: string) => void
   disabled: boolean
   tradeType: string
   selectedIdeaToken: TokenListEntry | null
@@ -33,14 +29,9 @@ const TradeInterfaceBox: React.FC<TradeInterfaceBoxProps> = ({
   setIdeaTokenAmount,
   setSelectedTokenAmount,
   inputTokenAmount = '', // This is the amount of tokens for box being typed in (selected token OR idea token)
-  isTokenBalanceLoading,
-  tokenBalance,
-  maxButtonClicked,
   selectTokensValues,
-  showBuySellSwitch,
   selectedToken,
   setSelectedToken,
-  setTradeType,
   disabled,
   tradeType,
   selectedIdeaToken,
@@ -51,12 +42,6 @@ const TradeInterfaceBox: React.FC<TradeInterfaceBoxProps> = ({
   exceedsBalance,
   isInputAmountGTSupply,
 }) => {
-  const handleBuySellClick = () => {
-    if (!txManager.isPending && tradeType === 'sell') setTradeType('buy')
-    if (!txManager.isPending && tradeType === 'buy') setTradeType('sell')
-    if (!txManager.isPending) setIdeaTokenAmount('0')
-  }
-
   const [inputValue, setInputValue] = useState('')
 
   useEffect(() => {
@@ -108,42 +93,10 @@ const TradeInterfaceBox: React.FC<TradeInterfaceBoxProps> = ({
       : ''
 
   return (
-    <div className="relative px-5 py-4 mb-1 border border-gray-100 rounded-md bg-gray-50 dark:bg-gray-600 text-brand-new-dark">
-      <div
-        style={{
-          top: '-16px',
-          left: '50%',
-          transform: 'translate(-50%, 0)',
-        }}
-        className="absolute flex px-4 py-1 text-xs font-bold bg-white rounded-md shadow-md item-center"
-      >
-        {label}
-      </div>
-
-      {showBuySellSwitch && (
-        <div
-          style={{
-            top: '-16px',
-            left: 'calc(50% + 70px)',
-            transform: 'translate(-50%, 0)',
-          }}
-          className="absolute flex px-4 py-1 text-xs font-bold bg-white rounded-md shadow-md cursor-pointer item-center"
-          onClick={handleBuySellClick}
-        >
-          ⮃
-        </div>
-      )}
-      <div className="flex justify-between mb-2">
-        <input
-          className="w-full max-w-sm text-3xl text-left placeholder-gray-500 placeholder-opacity-50 border-none outline-none dark:placeholder-gray-300 text-brand-gray-2 dark:text-white bg-gray-50 dark:bg-gray-600"
-          min="0"
-          placeholder="0.0"
-          disabled={txManager.isPending}
-          value={inputValue}
-          onChange={onInputChanged}
-        />
+    <div className="relative px-5 py-4 mb-1 border border-gray-100 rounded-xl bg-gray-50 dark:bg-gray-600 text-brand-new-dark">
+      <div className="flex justify-between items-center">
         {selectedIdeaToken ? (
-          <div className="flex flex-row items-center justify-end w-full text-xs font-medium border-gray-200 rounded-md text-brand-gray-4 dark:text-gray-300 trade-select">
+          <div className="flex flex-row items-center justify-start w-full text-xs font-medium border-gray-200 rounded-md text-brand-gray-4 dark:text-gray-300 trade-select">
             <div className="flex items-center px-2 py-1 bg-white shadow-md dark:bg-gray-700 rounded-2xl">
               <div className="flex items-center">
                 {selectedIdeaToken?.logoURL ? (
@@ -176,27 +129,28 @@ const TradeInterfaceBox: React.FC<TradeInterfaceBoxProps> = ({
             selectedToken={selectedToken}
           />
         )}
-      </div>
-      <div className="flex justify-between text-sm">
-        <div className="text-gray-500 dark:text-white">
-          You have: {isTokenBalanceLoading ? '...' : parseFloat(tokenBalance)}
-          {!txManager.isPending && label === 'Spend' && (
-            <span
-              className="cursor-pointer text-brand-blue dark:text-blue-400"
-              onClick={maxButtonClicked}
-            >
-              {' '}
-              (Max)
-            </span>
-          )}
+        <div className="flex flex-col text-right">
+          <input
+            className="w-full max-w-sm text-3xl text-right placeholder-gray-500 placeholder-opacity-50 border-none outline-none dark:placeholder-gray-300 text-brand-gray-2 dark:text-white bg-gray-50 dark:bg-gray-600"
+            min="0"
+            placeholder="0.0"
+            id="input-search" // This prevents 1Password and other password manager icons from appearing in input. Issue explained here: https://1password.community/discussion/117501/as-a-web-developer-how-can-i-disable-1password-filling-for-a-specific-field
+            disabled={txManager.isPending}
+            value={inputValue}
+            onChange={onInputChanged}
+          />
+          <span className="text-sm">
+            ~${tokenValue}
+            <span className="text-gray-300">{slippageLabel}</span>
+          </span>
         </div>
-        <span>
-          ~${tokenValue}
-          <span className="text-gray-300">{slippageLabel}</span>
-        </span>
       </div>
-      {(exceedsBalance || isInputAmountGTSupply) && label === 'Receive' && (
-        <div className="text-brand-red">Insufficient balance</div>
+
+      {(exceedsBalance || isInputAmountGTSupply) && label === 'Spend' && (
+        <div className="text-red-700 flex items-center">
+          <ExclamationCircleIcon className="w-5 h-5 mr-1" />
+          <span>Insufficient balance</span>
+        </div>
       )}
     </div>
   )
