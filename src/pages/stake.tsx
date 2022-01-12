@@ -1,17 +1,28 @@
 import { DefaultLayout } from 'components/layouts'
 import { NextSeo } from 'next-seo'
 import StakeInner from 'components/stake/StakeInner'
-import { ReactElement } from 'react'
+import { ReactElement, useState } from 'react'
 import { GetServerSideProps } from 'next'
 import getSsrBaseUrl from 'utils/getSsrBaseUrl'
 import { getData } from 'lib/utils/fetch'
+import LockListings from 'components/stake/LockListings'
+import StakeIMO from 'components/stake/StakeIMO'
+
+enum STAKE_TYPES {
+  LISTING,
+  IMO,
+  ETH_IMO,
+}
 
 const Stake = () => {
+  const [stakeType, setStakeType] = useState(STAKE_TYPES.LISTING)
+
   return (
     <>
       <NextSeo title="Stake" />
-      <div className="min-h-screen bg-top-desktop-new">
-        <StakeInner />
+      <div className="w-screen flex pb-20">
+        <LockListings />
+        <StakeIMO />
       </div>
     </>
   )
