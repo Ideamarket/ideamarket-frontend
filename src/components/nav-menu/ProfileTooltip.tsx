@@ -53,13 +53,13 @@ export const ProfileTooltip = () => {
           </span>
         </div>
       )}
-      <Link href="/user-account">
+      <Link href="/account">
         <div className="cursor-pointer flex items-center py-3 px-4 border-t border-gray-100 hover:bg-brand-gray">
           <IoIosWallet className="w-6 h-6  text-gray-400" />
           <span className="ml-2 font-medium">Wallet Holdings</span>
         </div>
       </Link>
-      <Link href="/user-account">
+      <Link href="/account">
         <div className="cursor-pointer flex items-center py-3 px-4 border-t border-gray-100 hover:bg-brand-gray">
           <BsArrowLeftRight className="w-6 h-6  text-gray-400" />
           <span className="ml-2 font-medium">Trade History</span>
