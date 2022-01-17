@@ -23,6 +23,7 @@ export default function getQueryLockedTokens({
           name
           supply
           tokenOwner
+          dayChange
           market {
             marketID
             name

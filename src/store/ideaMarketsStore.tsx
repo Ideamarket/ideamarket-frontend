@@ -173,21 +173,25 @@ export async function queryMarket(
 
 export async function queryOwnedTokensMaybeMarket(
   queryKey: string,
-  market: IdeaMarket,
-  owner: string
+  owner: string,
+  markets: IdeaMarket[],
+  filterTokens: string[],
+  nameSearch: string
 ): Promise<IdeaTokenMarketPair[]> {
-  if (owner === undefined) {
+  if (owner === undefined || !owner || !markets) {
     return []
   }
 
+  const marketIds = markets ? markets.map((market) => market.marketID) : []
+
   const L1Result = await request(
     HTTP_GRAPHQL_ENDPOINT_L1,
-    getQueryOwnedTokensMaybeMarket(market ? market.marketID : undefined, owner)
+    getQueryOwnedTokensMaybeMarket(owner)
   )
 
   const L2Result = await request(
     HTTP_GRAPHQL_ENDPOINT,
-    getQueryOwnedTokensMaybeMarket(market ? market.marketID : undefined, owner)
+    getQueryOwnedTokensMaybeMarket(owner)
   )
 
   const L1IdeaTokenMarketPairs = L1Result.ideaTokenBalances.map(
@@ -224,7 +228,22 @@ export async function queryOwnedTokensMaybeMarket(
       } as IdeaTokenMarketPair)
   )
 
-  return L1IdeaTokenMarketPairs.concat(L2IdeaTokenMarketPairs)
+  const combinedPairs = L1IdeaTokenMarketPairs.concat(L2IdeaTokenMarketPairs)
+
+  return combinedPairs
+    .filter((t) =>
+      marketIds.length > 0 ? marketIds.includes(t?.market?.marketID) : true
+    )
+    .filter((t) =>
+      filterTokens?.length >= 0
+        ? filterTokens?.includes(t.token.address.toString())
+        : true
+    )
+    .filter((t) =>
+      nameSearch?.length > 0
+        ? t.token.name.toLowerCase().includes(nameSearch.toLowerCase())
+        : true
+    )
 }
 
 export async function queryMyTokensMaybeMarket(
@@ -725,14 +744,17 @@ export async function queryLockedAmounts(
 
 export async function queryLockedTokens(
   queryKey,
-  market: IdeaMarket,
-  ownerAddress: string
+  ownerAddress: string,
+  markets: IdeaMarket[],
+  filterTokens: string[],
+  nameSearch: string
 ): Promise<LockedIdeaTokenMarketPair[]> {
   if (!ownerAddress) {
     return []
   }
 
-  const marketID = market ? market.marketID : undefined
+  const marketIds = markets ? markets.map((market) => market.marketID) : []
+
   let page = 0
 
   type LockedIdeaTokenAmount = {
@@ -782,22 +804,6 @@ export async function queryLockedTokens(
     page += 1
   }
 
-  // Filter by market if user chooses market option in the select box
-  if (marketID) {
-    const L1Pairs = L1TokenAmounts.filter(
-      (locked) => locked?.token?.market?.marketID === marketID
-    ).map((locked) =>
-      apiResponseToLockedIdeaTokenMarketPair(locked, ownerAddress, true)
-    )
-    const L2Pairs = L2TokenAmounts.filter(
-      (locked) => locked?.token?.market?.marketID === marketID
-    ).map((locked) =>
-      apiResponseToLockedIdeaTokenMarketPair(locked, ownerAddress, false)
-    )
-
-    return L1Pairs.concat(L2Pairs)
-  }
-
   const L1Pairs = L1TokenAmounts.map((locked) =>
     apiResponseToLockedIdeaTokenMarketPair(locked, ownerAddress, true)
   )
@@ -805,7 +811,22 @@ export async function queryLockedTokens(
     apiResponseToLockedIdeaTokenMarketPair(locked, ownerAddress, false)
   )
 
-  return L1Pairs.concat(L2Pairs)
+  const combinedPairs = L1Pairs.concat(L2Pairs)
+
+  return combinedPairs
+    .filter((locked) =>
+      marketIds.length > 0 ? marketIds.includes(locked?.market?.marketID) : true
+    )
+    .filter((locked) =>
+      filterTokens?.length >= 0
+        ? filterTokens?.includes(locked.token.address.toString())
+        : true
+    )
+    .filter((locked) =>
+      nameSearch?.length > 0
+        ? locked.token.name.toLowerCase().includes(nameSearch.toLowerCase())
+        : true
+    )
 }
 
 export async function queryInterestManagerTotalShares(queryKey): Promise<BN> {
@@ -821,14 +842,16 @@ export async function queryInterestManagerTotalShares(queryKey): Promise<BN> {
 
 export async function queryMyTrades(
   queryKey,
-  market: IdeaMarket,
-  ownerAddress: string
+  ownerAddress: string,
+  markets: IdeaMarket[],
+  filterTokens: string[],
+  nameSearch: string
 ): Promise<IdeaTokenTrade[]> {
-  if (!ownerAddress) {
+  if (ownerAddress === undefined || !ownerAddress) {
     return []
   }
 
-  const marketID = market ? market.marketID : undefined
+  const marketIds = markets ? markets.map((market) => market.marketID) : []
 
   let page = 0
   const myTrades: any = []
@@ -856,14 +879,23 @@ export async function queryMyTrades(
   const mapTradeResponse = (trade) =>
     apiResponseToIdeaTokenTrade(trade, ownerAddress)
 
-  // Filter by market if user chooses market option in the select box
-  if (marketID) {
-    return myTrades
-      .filter((trade) => trade?.token?.market?.marketID === marketID)
-      .map(mapTradeResponse)
-  }
-
-  return myTrades.map(mapTradeResponse)
+  return myTrades
+    .filter((trade) =>
+      marketIds.length > 0
+        ? marketIds.includes(trade?.token?.market?.marketID)
+        : true
+    )
+    .filter((t) =>
+      filterTokens?.length >= 0
+        ? filterTokens?.includes(t.token.id.toString())
+        : true
+    )
+    .filter((t) =>
+      nameSearch?.length > 0
+        ? t.token.name.toLowerCase().includes(nameSearch.toLowerCase())
+        : true
+    )
+    .map(mapTradeResponse)
 }
 
 export function setIsWatching(token: IdeaToken, watching: boolean): void {

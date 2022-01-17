@@ -1,4 +1,5 @@
 import classNames from 'classnames'
+import { Tooltip } from 'components'
 import { useCallback, useRef, MutableRefObject } from 'react'
 import { IdeaTokenMarketPair } from 'store/ideaMarketsStore'
 import OwnedTokenRowNew from './OwnedTokenRowNew'
@@ -47,13 +48,8 @@ const headers: Header[] = [
     sortable: false,
   },
   {
-    title: '',
+    title: 'Transfer',
     value: 'giftButton',
-    sortable: false,
-  },
-  {
-    title: '',
-    value: 'metamaskButton',
     sortable: false,
   },
 ]
@@ -99,6 +95,27 @@ export default function OwnedTokenTableNew({
     [canFetchMore, fetchMore]
   )
 
+  const getColumnContent = (column) => {
+    switch (column.value) {
+      case 'lockButton':
+        return (
+          <div className="flex items-center space-x-1">
+            <span>Lock</span>
+            <Tooltip>
+              <div className="w-32 md:w-64">
+                {/* TODO: replace copy here */}
+                Explain locking
+              </div>
+            </Tooltip>
+            {/* TODO: make this APR value dynamic */}
+            <span className="text-blue-600">Up to 112% APR</span>
+          </div>
+        )
+      default:
+        return column.title
+    }
+  }
+
   return (
     <div className="flex flex-col">
       <div className="-my-2 overflow-x-auto">
@@ -133,19 +150,20 @@ export default function OwnedTokenTableNew({
                           &nbsp;
                         </>
                       )}
-                      {header.title}
+                      {getColumnContent(header)}
                     </th>
                   ))}
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-700 dark:divide-gray-500">
-                {rawPairs.map((pair, index) => (
+                {rawPairs.map((pair: any, index) => (
                   <OwnedTokenRowNew
                     key={index}
                     token={pair.token}
                     market={pair.market}
                     balance={pair.balance}
                     balanceBN={pair.rawBalance}
+                    lockedAmount={pair?.lockedAmount}
                     isL1={pair.token.isL1}
                     refetch={refetch}
                     userData={userData}

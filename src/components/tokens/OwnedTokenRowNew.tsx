@@ -12,7 +12,7 @@ import {
   calculateIdeaTokenDaiValue,
   ZERO_ADDRESS,
 } from 'utils'
-import { A, AddToMetamaskButton } from 'components'
+import { A } from 'components'
 import { useTokenIconURL } from 'actions'
 import ModalService from 'components/modals/ModalService'
 import LockModal from 'components/trade/LockModal'
@@ -20,12 +20,14 @@ import useThemeMode from 'components/useThemeMode'
 import Image from 'next/image'
 import GiftModal from 'components/trade/GiftModal'
 import IdeaverifyIconBlue from '../../assets/IdeaverifyIconBlue.svg'
+import { LockClosedIcon } from '@heroicons/react/solid'
 
 export default function OwnedTokenRow({
   token,
   market,
   balance,
   balanceBN,
+  lockedAmount,
   isL1,
   refetch,
   lastElementRef,
@@ -35,6 +37,7 @@ export default function OwnedTokenRow({
   market: IdeaMarket
   balance: string
   balanceBN: BN
+  lockedAmount: number
   isL1: boolean
   refetch: () => void
   lastElementRef?: (node) => void
@@ -77,7 +80,7 @@ export default function OwnedTokenRow({
   return (
     <tr
       ref={lastElementRef}
-      className="grid grid-cols-3 border-b cursor-pointer md:table-row hover:bg-brand-gray border-brand-border-gray dark:hover:bg-gray-600 dark:border-gray-500"
+      className="grid grid-cols-3 border-b cursor-pointer md:table-row hover:bg-brand-gray border-brand-border-gray dark:hover:bg-gray-600 dark:border-gray-500 text-black"
       onClick={() => {
         router.push(
           `/i/${marketSpecifics.getMarketNameURLRepresentation()}/${marketSpecifics.getTokenNameURLRepresentation(
@@ -129,7 +132,7 @@ export default function OwnedTokenRow({
                 e.stopPropagation()
               }}
             >
-              {token.name}
+              {marketSpecifics.getTokenDisplayName(token.name)}
             </A>
             {isL1 && (
               <div className="ml-2 text-xs py-0.5 px-2.5 text-gray-400 border border-gray-400 rounded">
@@ -235,7 +238,18 @@ export default function OwnedTokenRow({
         </p>
       </td>
       {/* Lock or Bridge Button */}
-      <td className="px-4 py-4 md:px-0 whitespace-nowrap">
+      <td
+        className={classNames(
+          lockedAmount ? 'justify-between' : 'justify-end',
+          'px-4 py-4 md:px-5 whitespace-nowrap flex flex-col md:flex-row'
+        )}
+      >
+        {lockedAmount && (
+          <div className="text-sm flex items-center">
+            <span>{lockedAmount} tokens</span>
+            <LockClosedIcon className="w-5 h-5 ml-1" />
+          </div>
+        )}
         <button
           type="button"
           onClick={(e) => {
@@ -244,12 +258,14 @@ export default function OwnedTokenRow({
               ? router.push('/bridge')
               : ModalService.open(LockModal, {
                   token,
-                  balance,
+                  balance: lockedAmount
+                    ? parseFloat(balance) - lockedAmount
+                    : balance,
                   refetch,
                   marketName: market.name,
                 })
           }}
-          className="w-20 h-10 text-base font-medium text-white border-2 rounded-lg bg-brand-blue dark:bg-gray-600 border-brand-blue dark:text-gray-300 tracking-tightest-2 font-sf-compact-medium"
+          className="w-20 h-10 mr-4 text-base font-medium text-white border-2 rounded-lg bg-brand-blue dark:bg-gray-600 border-brand-blue dark:text-gray-300 tracking-tightest-2 font-sf-compact-medium"
         >
           <span>{isL1 ? 'Bridge' : 'Lock'}</span>
         </button>
@@ -261,7 +277,9 @@ export default function OwnedTokenRow({
             e.stopPropagation()
             ModalService.open(GiftModal, {
               token,
-              balance,
+              balance: lockedAmount
+                ? parseFloat(balance) - lockedAmount
+                : balance,
               refetch,
               marketName: market.name,
             })
@@ -270,12 +288,6 @@ export default function OwnedTokenRow({
         >
           <span>Gift</span>
         </button>
-      </td>
-      {/* Add to Metamask button */}
-      <td className="px-4 py-4">
-        <div className="flex items-center w-full h-full">
-          <AddToMetamaskButton token={token} />
-        </div>
       </td>
     </tr>
   )

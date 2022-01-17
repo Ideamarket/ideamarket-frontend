@@ -4,7 +4,7 @@ import TabSwitcher from './TabSwitcher'
 import SettingsTab from './SettingsTab'
 import { Footer } from 'components'
 import { accountTabs } from './constants'
-import { AccountContext } from 'pages/user-account'
+import { AccountContext } from 'pages/account'
 import ProfileWallet from './ProfileWallet'
 
 import ModalService from 'components/modals/ModalService'

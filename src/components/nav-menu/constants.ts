@@ -1,5 +1,4 @@
 import router from 'next/router'
-import IS_ACCOUNT_ENABLED from 'utils/isAccountEnabled'
 
 export const getNavbarConfig = (mixPanel: any) => ({
   menu: [
@@ -88,15 +87,6 @@ export const getNavbarConfig = (mixPanel: any) => ({
           onClick: () => router.push('/claim'),
         },
       ],
-    },
-    {
-      name: IS_ACCOUNT_ENABLED ? 'Account' : 'Wallet',
-      onClick: () => {
-        router.push(IS_ACCOUNT_ENABLED ? '/user-account' : '/account')
-        if (!IS_ACCOUNT_ENABLED) {
-          mixPanel.track('VIEW_WALLET')
-        }
-      },
     },
   ],
 })
