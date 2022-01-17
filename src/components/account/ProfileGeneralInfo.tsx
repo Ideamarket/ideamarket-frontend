@@ -61,7 +61,9 @@ const ProfileGeneralInfo: React.FC<Props> = () => {
           </div>
           <div className="ml-6 font-sans">
             <p className="text-lg">{user.username}</p>
-            <p className="text-xs opacity-70 max-w-[15rem] mt-1">{user.bio}</p>
+            <p className="text-xs opacity-70 max-w-[15rem] mt-1">
+              {!isPublicView || user.visibilityOptions.bio ? user.bio : ''}
+            </p>
           </div>
         </div>
         <div className="flex flex-col font-inter w-full md:w-auto my-8 md:my-0">
@@ -72,7 +74,8 @@ const ProfileGeneralInfo: React.FC<Props> = () => {
             </span>
           </div>
           <span className="text-sm mt-2 font-normal">
-            {user.walletAddress
+            {(!isPublicView || user.visibilityOptions.ethAddress) &&
+            user.walletAddress
               ? `${user.walletAddress?.slice(
                   0,
                   10
