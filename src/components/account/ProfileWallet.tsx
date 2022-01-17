@@ -4,10 +4,7 @@ import BN from 'bn.js'
 import { useState, useEffect } from 'react'
 import { useInfiniteQuery } from 'react-query'
 import {
-  MarketSelect,
   OwnedTokenTableNew,
-  MyTokenTableNew,
-  LockedTokenTableNew,
   WalletModal,
   MyTradesTableNew,
 } from '../../components'
@@ -23,13 +20,14 @@ import {
   queryOwnedTokensMaybeMarket,
   queryLockedTokens,
   queryMyTrades,
-  queryMyTokensMaybeMarket,
   IdeaTokenTrade,
   IdeaTokenMarketPair,
-  LockedIdeaTokenMarketPair,
+  useIdeaMarketsStore,
 } from 'store/ideaMarketsStore'
 import ModalService from 'components/modals/ModalService'
 import { sortNumberByOrder, sortStringByOrder } from 'components/tokens/utils'
+import WalletFilters from './WalletFilters'
+import { useMarketStore } from 'store/markets'
 
 const TOKENS_PER_PAGE = 10
 
@@ -60,10 +58,57 @@ export default function ProfileWallet({ walletState, userData }: Props) {
     (item) => item?.verified
   )
 
-  const [selectedMarket, setSelectedMarket] = useState(undefined)
+  const [isVerifiedFilterActive, setIsVerifiedFilterActive] = useState(false)
+  const [isStarredFilterActive, setIsStarredFilterActive] = useState(false)
+  const [isLockedFilterActive, setIsLockedFilterActive] = useState(false)
+  const [selectedMarkets, setSelectedMarkets] = useState(new Set([]))
+  const [nameSearch, setNameSearch] = useState('')
   const [ownedTokenTotalValue, setOwnedTokensTotalValue] = useState('0.00')
   const [lockedTokenTotalValue, setLockedTokensTotalValue] = useState('0.00')
   const [purchaseTotalValue, setPurchaseTotalValue] = useState('0.00')
+
+  const [table, setTable] = useState('holdings')
+  const [orderBy, setOrderBy] = useState('price')
+  const [orderDirection, setOrderDirection] = useState('desc')
+
+  const watchingTokens = Object.keys(
+    useIdeaMarketsStore((store) => store.watching)
+  )
+
+  const filterTokens = isStarredFilterActive ? watchingTokens : undefined
+
+  const allMarkets = useMarketStore((state) => state.markets)
+  const marketNames = allMarkets.map((m) => m?.market?.name)
+
+  useEffect(() => {
+    const storedMarkets = JSON.parse(localStorage.getItem('STORED_MARKETS'))
+
+    const initialMarkets = storedMarkets
+      ? [...storedMarkets]
+      : ['All', ...marketNames]
+
+    setSelectedMarkets(new Set(initialMarkets))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    if (!userData || userData?.ethAddresses.length > 0) {
+      refetch()
+    }
+    // Need userData?.ethAddresses in order to dynamically update tokens on switch to a newly added wallet
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    address,
+    web3,
+    orderBy,
+    orderDirection,
+    userData?.ethAddresses,
+    selectedMarkets,
+    allMarkets,
+    isStarredFilterActive,
+    isLockedFilterActive,
+    nameSearch,
+  ])
 
   /*
    * @return list of tokens from all ETH addresses
@@ -71,12 +116,17 @@ export default function ProfileWallet({ walletState, userData }: Props) {
   const queryIterator = async (key, queryFunction) => {
     // Addresses that will be displayed in the tables
     const finalAddresses = getFinalAddresses()
+    const filteredMarkets = allMarkets
+      .map((m) => m?.market)
+      .filter((m) => selectedMarkets.has(m.name))
     let result = []
     for (let i = 0; i < finalAddresses?.length; i++) {
       const queryResult = await queryFunction(
         key,
-        selectedMarket,
-        finalAddresses[i]?.address
+        finalAddresses[i]?.address,
+        filteredMarkets,
+        filterTokens,
+        nameSearch
       )
       result = result.concat(queryResult)
     }
@@ -99,34 +149,6 @@ export default function ProfileWallet({ walletState, userData }: Props) {
   const ownedPairs = flatten(infiniteOwnedData || [])
 
   const {
-    data: infiniteListingsData,
-    isFetching: isListingsPairsDataLoading,
-    fetchMore: fetchMoreListings,
-    refetch: refetchListings,
-    canFetchMore: canFetchMoreListings,
-  } = useInfiniteQuery(
-    ['my-tokens', TOKENS_PER_PAGE],
-    listingsQueryFunction,
-    infiniteQueryConfig
-  )
-
-  const listingPairs = flatten(infiniteListingsData || [])
-
-  const {
-    data: infiniteLockedData,
-    isFetching: isLockedPairsDataLoading,
-    fetchMore: fetchMoreLocked,
-    refetch: refetchLocked,
-    canFetchMore: canFetchMoreLocked,
-  } = useInfiniteQuery(
-    ['locked-tokens', TOKENS_PER_PAGE],
-    lockedQueryFunction,
-    infiniteQueryConfig
-  )
-
-  const lockedPairs = flatten(infiniteLockedData || [])
-
-  const {
     data: infiniteTradesData,
     isFetching: isTradesPairsDataLoading,
     fetchMore: fetchMoreTrades,
@@ -140,23 +162,74 @@ export default function ProfileWallet({ walletState, userData }: Props) {
 
   const myTrades = flatten(infiniteTradesData || [])
 
-  const [table, setTable] = useState('holdings')
-  const [orderBy, setOrderBy] = useState('price')
-  const [orderDirection, setOrderDirection] = useState('desc')
-
-  useEffect(() => {
-    if (!userData || userData?.ethAddresses.length > 0) {
-      refetch()
-    }
-    // Need userData?.ethAddresses in order to dynamically update tokens on switch to a newly added wallet
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [address, web3, orderBy, orderDirection, userData?.ethAddresses])
-
   function refetch() {
     refetchOwned()
-    refetchLocked()
     refetchMyTrades()
-    refetchListings()
+  }
+
+  /**
+   * TODO: make more efficient
+   * @param array Contains data of all user's held AND locked tokens in one array
+   * @returns new array with duplicate token pairs combined into one array object
+   */
+  const removeDuplicateRows = (pairs: IdeaTokenMarketPair[]) => {
+    const seenElements = []
+    const duplicateElements = [] // Includes duplicate tokens except the very 1st one seen
+
+    pairs.forEach((pair) => {
+      const isPairSeen = seenElements.find(
+        (ele) => ele.token.address === pair.token.address
+      )
+      if (isPairSeen) {
+        duplicateElements.push(pair)
+      } else {
+        seenElements.push(pair)
+      }
+    })
+
+    const uniqueElements = pairs.filter(
+      (pair) =>
+        !duplicateElements.find(
+          (dup) => dup.token.address === pair.token.address
+        )
+    )
+
+    const finalPairs = []
+    pairs.forEach((pair) => {
+      const isUniqueElement = uniqueElements.find(
+        (ele) => ele.token.address === pair.token.address
+      )
+      const isSeenElement = finalPairs.find(
+        (ele) => ele.token.address === pair.token.address
+      )
+      const isDuplicateElement = duplicateElements.find(
+        (ele) => ele.token.address === pair.token.address
+      )
+      if (isUniqueElement) {
+        finalPairs.push(pair)
+      } else if (isDuplicateElement && !isSeenElement) {
+        // Add new pair with newly calculated values to combine all rows into 1 row visually in table
+        const allDupsWithThisAddress = duplicateElements.filter(
+          (dup) => dup.token.address === pair.token.address
+        )
+        // Since held tokens have locked tokens appended to them, held will always come first. So these will always be locked tokens
+        const dupLockedBalance = allDupsWithThisAddress.reduce(
+          (a, b) => parseFloat(a) + parseFloat(b.balance),
+          0
+        )
+        const newBalance = parseFloat(pair.balance) + dupLockedBalance
+        const newRawBalance = new BN(newBalance)
+        const newPair = {
+          ...pair,
+          balance: newBalance.toString(),
+          rawBalance: newRawBalance,
+          lockedAmount: dupLockedBalance,
+        }
+        finalPairs.push(newPair)
+      }
+    })
+
+    return finalPairs
   }
 
   async function ownedQueryFunction(
@@ -164,12 +237,19 @@ export default function ProfileWallet({ walletState, userData }: Props) {
     numTokens: number,
     skip: number = 0
   ) {
-    const result = await queryIterator(key, queryOwnedTokensMaybeMarket)
-    sortOwned(result)
+    const ownedResults = await queryIterator(key, queryOwnedTokensMaybeMarket)
+    const lockedResults = await queryIterator(key, queryLockedTokens)
+    const combinedResults = ownedResults.concat(lockedResults)
+    // If there are any duplicate tokens, need to combine them into 1 ROW with different data. Balance will be added up for all dup tokens. Need to add prop for lockedAmount
+    const finalPairs = removeDuplicateRows(combinedResults)
+    const filteredResults = isLockedFilterActive
+      ? finalPairs.filter((p) => p.lockedAmount)
+      : finalPairs
+    sortOwned(filteredResults)
 
     // Calculate the total value of non-locked tokens
     let ownedTotal = new BN('0')
-    for (const pair of result ?? []) {
+    for (const pair of ownedResults ?? []) {
       ownedTotal = ownedTotal.add(
         calculateIdeaTokenDaiValue(
           pair.token?.rawSupply,
@@ -179,40 +259,14 @@ export default function ProfileWallet({ walletState, userData }: Props) {
       )
     }
     setOwnedTokensTotalValue(
-      result ? web3BNToFloatString(ownedTotal, bigNumberTenPow18, 18) : '0.00'
+      ownedResults
+        ? web3BNToFloatString(ownedTotal, bigNumberTenPow18, 18)
+        : '0.00'
     )
-
-    const lastIndex =
-      numTokens + skip > result?.length ? result?.length : numTokens + skip
-
-    return result?.slice(skip, lastIndex) || []
-  }
-
-  async function listingsQueryFunction(
-    key: string,
-    numTokens: number,
-    skip: number = 0
-  ) {
-    const result = await queryIterator(key, queryMyTokensMaybeMarket)
-    sortListings(result)
-
-    const lastIndex =
-      numTokens + skip > result?.length ? result?.length : numTokens + skip
-
-    return result?.slice(skip, lastIndex) || []
-  }
-
-  async function lockedQueryFunction(
-    key: string,
-    numTokens: number,
-    skip: number = 0
-  ) {
-    const result = await queryIterator(key, queryLockedTokens)
-    sortLocked(result)
 
     // Calculate the total value of locked tokens
     let lockedTotal = new BN('0')
-    for (const pair of result ?? []) {
+    for (const pair of lockedResults ?? []) {
       lockedTotal = lockedTotal.add(
         calculateIdeaTokenDaiValue(
           pair.token?.rawSupply,
@@ -222,13 +276,17 @@ export default function ProfileWallet({ walletState, userData }: Props) {
       )
     }
     setLockedTokensTotalValue(
-      result ? web3BNToFloatString(lockedTotal, bigNumberTenPow18, 18) : '0.00'
+      lockedResults
+        ? web3BNToFloatString(lockedTotal, bigNumberTenPow18, 18)
+        : '0.00'
     )
 
     const lastIndex =
-      numTokens + skip > result?.length ? result?.length : numTokens + skip
+      numTokens + skip > filteredResults?.length
+        ? filteredResults?.length
+        : numTokens + skip
 
-    return result?.slice(skip, lastIndex) || []
+    return filteredResults?.slice(skip, lastIndex) || []
   }
 
   async function tradesQueryFunction(
@@ -282,101 +340,6 @@ export default function ProfileWallet({ walletState, userData }: Props) {
             parseFloat(lhs.token.dayChange),
             parseFloat(rhs.token.dayChange)
           )
-        })
-      } else if (orderBy === 'balance') {
-        pairs.sort((lhs, rhs) => {
-          return numCmpFunc(parseFloat(lhs.balance), parseFloat(rhs.balance))
-        })
-      } else if (orderBy === 'value') {
-        pairs.sort((lhs, rhs) => {
-          const lhsValue =
-            parseFloat(
-              web3BNToFloatString(
-                calculateCurrentPriceBN(
-                  lhs.token.rawSupply,
-                  lhs.market.rawBaseCost,
-                  lhs.market.rawPriceRise,
-                  lhs.market.rawHatchTokens
-                ),
-                bigNumberTenPow18,
-                2
-              )
-            ) * parseFloat(lhs.balance)
-
-          const rhsValue =
-            parseFloat(
-              web3BNToFloatString(
-                calculateCurrentPriceBN(
-                  rhs.token.rawSupply,
-                  rhs.market.rawBaseCost,
-                  rhs.market.rawPriceRise,
-                  rhs.market.rawHatchTokens
-                ),
-                bigNumberTenPow18,
-                2
-              )
-            ) * parseFloat(rhs.balance)
-
-          return numCmpFunc(lhsValue, rhsValue)
-        })
-      }
-    }
-  }
-
-  function sortListings(pairs: IdeaTokenMarketPair[]) {
-    if (table === 'listings') {
-      const strCmpFunc = sortStringByOrder(orderDirection)
-      const numCmpFunc = sortNumberByOrder(orderDirection)
-
-      if (orderBy === 'name') {
-        pairs.sort((lhs, rhs) => {
-          return strCmpFunc(lhs.token.name, rhs.token.name)
-        })
-      } else if (orderBy === 'market') {
-        pairs.sort((lhs, rhs) => {
-          return strCmpFunc(lhs.market.name, rhs.market.name)
-        })
-      } else if (orderBy === 'price' || orderBy === 'income') {
-        pairs.sort((lhs, rhs) => {
-          return numCmpFunc(
-            parseFloat(lhs.token.supply),
-            parseFloat(rhs.token.supply)
-          )
-        })
-      } else if (orderBy === 'change') {
-        pairs.sort((lhs, rhs) => {
-          return numCmpFunc(
-            parseFloat(lhs.token.dayChange),
-            parseFloat(rhs.token.dayChange)
-          )
-        })
-      }
-    }
-  }
-
-  function sortLocked(pairs: LockedIdeaTokenMarketPair[]) {
-    if (table === 'locked') {
-      const strCmpFunc = sortStringByOrder(orderDirection)
-      const numCmpFunc = sortNumberByOrder(orderDirection)
-
-      if (orderBy === 'name') {
-        pairs.sort((lhs, rhs) => {
-          return strCmpFunc(lhs.token.name, rhs.token.name)
-        })
-      } else if (orderBy === 'market') {
-        pairs.sort((lhs, rhs) => {
-          return strCmpFunc(lhs.market.name, rhs.market.name)
-        })
-      } else if (orderBy === 'price') {
-        pairs.sort((lhs, rhs) => {
-          return numCmpFunc(
-            parseFloat(lhs.token.supply),
-            parseFloat(rhs.token.supply)
-          )
-        })
-      } else if (orderBy === 'lockedUntil') {
-        pairs.sort((lhs, rhs) => {
-          return numCmpFunc(lhs.lockedUntil, rhs.lockedUntil)
         })
       } else if (orderBy === 'balance') {
         pairs.sort((lhs, rhs) => {
@@ -541,12 +504,22 @@ export default function ProfileWallet({ walletState, userData }: Props) {
     }
   }
 
+  const onMarketChanged = (markets) => {
+    localStorage.setItem('STORED_MARKETS', JSON.stringify([...markets]))
+    setSelectedMarkets(markets)
+  }
+
   return (
-    <div className="w-full h-full mt-8">
+    <div className="w-full h-full mt-8 pb-20">
       <div className="flex flex-col justify-between sm:flex-row mb-0 md:mb-4">
         <div className="flex order-1 md:order-none">
           <div
-            className="text-lg font-semibold flex flex-col justify-end mb-2.5 pr-6 ml-auto"
+            className={classNames(
+              table === 'holdings'
+                ? 'text-white'
+                : 'text-brand-gray text-opacity-60 cursor-pointer',
+              'text-lg font-semibold flex flex-col justify-end mb-2.5 pr-6 ml-auto'
+            )}
             onClick={() => {
               setTable('holdings')
             }}
@@ -554,7 +527,12 @@ export default function ProfileWallet({ walletState, userData }: Props) {
             Wallet Holdings
           </div>
           <div
-            className="text-lg font-semibold text-brand-gray text-opacity-60 flex flex-col justify-end mb-2.5 mr-auto"
+            className={classNames(
+              table === 'trades'
+                ? 'text-white'
+                : 'text-brand-gray text-opacity-60 cursor-pointer',
+              'text-lg font-semibold flex flex-col justify-end mb-2.5 mr-auto'
+            )}
             onClick={() => {
               setTable('trades')
             }}
@@ -593,7 +571,7 @@ export default function ProfileWallet({ walletState, userData }: Props) {
             </div>
           </div>
 
-          <div className="text-center mr-auto flex flex-col">
+          {/* <div className="text-center mr-auto flex flex-col">
             <div className="text-xs font-normal text-brand-gray text-opacity-60 max-w-[6rem] md:max-w-none mt-auto">
               Profit & Loss
             </div>
@@ -606,76 +584,23 @@ export default function ProfileWallet({ walletState, userData }: Props) {
                 (+ownedTokenTotalValue + +lockedTokenTotalValue).toFixed(2)
               )}
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
 
-      <div className="pt-2 bg-white border rounded-md dark:bg-gray-700 dark:border-gray-500 border-brand-border-gray ">
-        <div className="flex flex-col mx-5 dark:border-gray-500 md:flex-row md:items-center md:justify-between">
-          <div>
-            <div className="xs:inline-block">
-              <div
-                className={classNames(
-                  'text-base text-brand-new-dark dark:text-gray-300 font-semibold lg:px-2 mr-5 py-3 pt-2 inline-block cursor-pointer',
-                  table === 'holdings'
-                    ? 'border-b-2 border-brand-new-dark dark:border-gray-300'
-                    : ''
-                )}
-                onClick={() => {
-                  setTable('holdings')
-                  setOrderBy('price')
-                  setOrderDirection('desc')
-                }}
-              >
-                Holdings
-              </div>
-              <div
-                className={classNames(
-                  'text-base text-brand-new-dark dark:text-gray-300 font-semibold lg:px-2 mr-5 py-3 pt-2 inline-block cursor-pointer',
-                  table === 'listings'
-                    ? 'border-b-2 border-brand-new-dark dark:border-gray-300'
-                    : ''
-                )}
-                onClick={() => {
-                  setTable('listings')
-                  setOrderBy('price')
-                  setOrderDirection('desc')
-                }}
-              >
-                Listings
-              </div>
-            </div>
-            <div className="xs:inline-block">
-              <div
-                className={classNames(
-                  'text-base text-brand-new-dark dark:text-gray-300 font-semibold lg:px-2 mr-5 py-3 pt-2 inline-block cursor-pointer',
-                  table === 'locked'
-                    ? 'border-b-2 border-brand-new-dark dark:border-gray-300'
-                    : ''
-                )}
-                onClick={() => {
-                  setTable('locked')
-                  setOrderBy('lockedUntil')
-                  setOrderDirection('asc')
-                }}
-              >
-                Locked
-              </div>
-            </div>
-          </div>
-          <div
-            className="w-full pt-6 pr-0 mb-4 md:w-80 md:pt-0 md:mb-0"
-            style={{ marginTop: -8 }}
-          >
-            <MarketSelect
-              isClearable={true}
-              onChange={(value) => {
-                setSelectedMarket(value?.market)
-              }}
-              disabled={false}
-            />
-          </div>
-        </div>
+      <div className="bg-white border rounded-md dark:bg-gray-700 dark:border-gray-500 border-brand-border-gray ">
+        <WalletFilters
+          selectedMarkets={selectedMarkets}
+          isVerifiedFilterActive={isVerifiedFilterActive}
+          isStarredFilterActive={isStarredFilterActive}
+          isLockedFilterActive={isLockedFilterActive}
+          nameSearch={nameSearch}
+          onMarketChanged={onMarketChanged}
+          onNameSearchChanged={setNameSearch}
+          setIsVerifiedFilterActive={setIsVerifiedFilterActive}
+          setIsStarredFilterActive={setIsStarredFilterActive}
+          setIsLockedFilterActive={setIsLockedFilterActive}
+        />
         <div className="border-t border-brand-border-gray dark:border-gray-500 shadow-home ">
           {!web3 && (
             <div className="flex items-center justify-center">
@@ -690,56 +615,36 @@ export default function ProfileWallet({ walletState, userData }: Props) {
               </button>
             </div>
           )}
-          {table === 'holdings' && web3 !== undefined && (
-            <OwnedTokenTableNew
-              rawPairs={ownedPairs}
-              isPairsDataLoading={isOwnedPairsDataLoading}
-              refetch={refetch}
-              canFetchMore={canFetchMoreOwned}
-              orderDirection={orderDirection}
-              orderBy={orderBy}
-              fetchMore={fetchMoreOwned}
-              headerClicked={headerClicked}
-              userData={userData}
-            />
-          )}
-          {table === 'listings' && web3 !== undefined && (
-            <MyTokenTableNew
-              rawPairs={listingPairs}
-              isPairsDataLoading={isListingsPairsDataLoading}
-              canFetchMore={canFetchMoreListings}
-              orderDirection={orderDirection}
-              orderBy={orderBy}
-              fetchMore={fetchMoreListings}
-              headerClicked={headerClicked}
-              userData={userData}
-            />
-          )}
+          {table === 'holdings' &&
+            !selectedMarkets?.has('None') &&
+            web3 !== undefined && (
+              <OwnedTokenTableNew
+                rawPairs={ownedPairs}
+                isPairsDataLoading={isOwnedPairsDataLoading}
+                refetch={refetch}
+                canFetchMore={canFetchMoreOwned}
+                orderDirection={orderDirection}
+                orderBy={orderBy}
+                fetchMore={fetchMoreOwned}
+                headerClicked={headerClicked}
+                userData={userData}
+              />
+            )}
 
-          {table === 'locked' && web3 !== undefined && (
-            <LockedTokenTableNew
-              rawPairs={lockedPairs}
-              isPairsDataLoading={isLockedPairsDataLoading}
-              canFetchMore={canFetchMoreLocked}
-              orderDirection={orderDirection}
-              orderBy={orderBy}
-              fetchMore={fetchMoreLocked}
-              headerClicked={headerClicked}
-              userData={userData}
-            />
-          )}
-          {table === 'trades' && web3 !== undefined && (
-            <MyTradesTableNew
-              rawPairs={myTrades}
-              isPairsDataLoading={isTradesPairsDataLoading}
-              canFetchMore={canFetchMoreTrades}
-              orderDirection={orderDirection}
-              orderBy={orderBy}
-              fetchMore={fetchMoreTrades}
-              headerClicked={headerClicked}
-              userData={userData}
-            />
-          )}
+          {table === 'trades' &&
+            !selectedMarkets?.has('None') &&
+            web3 !== undefined && (
+              <MyTradesTableNew
+                rawPairs={myTrades}
+                isPairsDataLoading={isTradesPairsDataLoading}
+                canFetchMore={canFetchMoreTrades}
+                orderDirection={orderDirection}
+                orderBy={orderBy}
+                fetchMore={fetchMoreTrades}
+                headerClicked={headerClicked}
+                userData={userData}
+              />
+            )}
         </div>
       </div>
     </div>

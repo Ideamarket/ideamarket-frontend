@@ -4,7 +4,6 @@ import PublicInfoColumn from 'components/account/PublicInfoColumn'
 import router from 'next/router'
 import { ReactElement, useEffect, useState } from 'react'
 import getSsrBaseUrl from 'utils/getSsrBaseUrl'
-import IS_ACCOUNT_ENABLED from 'utils/isAccountEnabled'
 import { useCustomSession } from 'utils/useCustomSession'
 
 type Props = {
@@ -15,12 +14,6 @@ type Props = {
 export default function PublicProfile({ username, userDataSsr }: Props) {
   const [userData, setUserData] = useState(null)
   const { session } = useCustomSession()
-
-  useEffect(() => {
-    if (!IS_ACCOUNT_ENABLED) {
-      router.push('/')
-    }
-  }, [])
 
   useEffect(() => {
     if (userDataSsr) {
