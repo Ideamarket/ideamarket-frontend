@@ -23,7 +23,7 @@ export default function PublicProfile({ username, userDataSsr }: Props) {
 
   useEffect(() => {
     if (session?.user.username === username) {
-      router.push('/user-account')
+      router.push('/account')
     }
   }, [username, session?.user.username])
 
