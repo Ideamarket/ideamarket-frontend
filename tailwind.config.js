@@ -112,6 +112,7 @@ module.exports = {
       boxShadow: {
         home: '0 1px 5px 0 rgba(0, 0, 0, 0.05)',
         embed: '0px 0px 8px rgba(0, 0, 0, 0.25)',
+        'shadow-1': '0px 4px 10px rgba(0, 0, 0, 0.15)',
       },
       width: {
         120: '30rem',

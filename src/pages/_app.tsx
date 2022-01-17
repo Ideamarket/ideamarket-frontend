@@ -6,7 +6,7 @@ import '../styles/fonts/inter/style.css'
 import '../styles/nprogress.css'
 import { ThemeProvider } from 'next-themes'
 
-import { createContext, ReactElement, useEffect, useState } from 'react'
+import { ReactElement } from 'react'
 import type { AppProps } from 'next/app'
 import { DefaultSeo } from 'next-seo'
 import {
@@ -25,22 +25,15 @@ import Web3ReactManager from 'components/wallet/Web3ReactManager'
 import ModalRoot from 'components/modals/ModalRoot'
 import { WrongNetworkOverlay } from 'components'
 import { initUseMarketStore } from 'store/markets'
-import { NETWORK, INetworkSpecifics } from 'store/networks'
 //import ModalService from 'components/modals/ModalService'
 //import MigrationDoneModal from 'components/MigrationDoneModal'
 import { Provider } from 'next-auth/client'
 import { NextPage } from 'next'
 
 import MixPanelProvider from 'utils/mixPanel'
-
-export const GlobalContext = createContext({
-  onWalletConnectedCallback: () => {},
-  setOnWalletConnectedCallback: (f: () => void) => {},
-  isEmailFooterActive: false,
-  setIsEmailFooterActive: (val: boolean) => {},
-  requiredNetwork: null,
-  setRequiredNetwork: (val: INetworkSpecifics) => {},
-})
+import { GlobalContextComponent } from 'lib/GlobalContext'
+import { ClientWrapper } from 'lib/ClientWrapper'
+export { GlobalContext } from 'lib/GlobalContext'
 
 function getLibrary(provider: any): Web3 {
   return new Web3(provider)
@@ -56,24 +49,6 @@ type AppPropsWithLayout = AppProps & {
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page)
-
-  const [isEmailFooterActive, setIsEmailFooterActive] = useState(false)
-  useEffect(() => {
-    const isEmailBarClosed = localStorage.getItem('IS_EMAIL_BAR_CLOSED')
-      ? localStorage.getItem('IS_EMAIL_BAR_CLOSED') === 'true'
-      : false
-    setIsEmailFooterActive(!isEmailBarClosed)
-    const migrationModalSeen = localStorage.getItem('MIGRATION_MODAL_SEEN')
-    if (migrationModalSeen !== 'true') {
-      //ModalService.open(MigrationDoneModal)
-    }
-  }, [])
-
-  const [onWalletConnectedCallback, setOnWalletConnectedCallback] = useState(
-    () => () => {}
-  )
-
-  const [requiredNetwork, setRequiredNetwork] = useState(NETWORK)
 
   initUseMarketStore()
 
@@ -110,28 +85,21 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
         ]}
       />
       <Provider session={pageProps.session}>
-        <GlobalContext.Provider
-          value={{
-            onWalletConnectedCallback,
-            setOnWalletConnectedCallback,
-            isEmailFooterActive,
-            setIsEmailFooterActive,
-            requiredNetwork,
-            setRequiredNetwork,
-          }}
-        >
+        <GlobalContextComponent>
           <ThemeProvider attribute="class" defaultTheme="light">
             <Web3ReactProvider getLibrary={getLibrary}>
               <Web3ReactManager>
-                <MixPanelProvider>
-                  {getLayout(<Component {...pageProps} />)}
-                </MixPanelProvider>
+                <ClientWrapper>
+                  <MixPanelProvider>
+                    {getLayout(<Component {...pageProps} />)}
+                  </MixPanelProvider>
+                </ClientWrapper>
               </Web3ReactManager>
               <WrongNetworkOverlay />
               <ModalRoot />
             </Web3ReactProvider>
           </ThemeProvider>
-        </GlobalContext.Provider>
+        </GlobalContextComponent>
       </Provider>
     </>
   )
