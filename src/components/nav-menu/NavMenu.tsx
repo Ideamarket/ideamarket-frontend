@@ -128,7 +128,7 @@ const NavMenu = () => {
               />
             </div>
             {visibility && (
-              <div className="absolute top-0 mt-8 right-0 p-3 mb-1 text-sm rounded-xl shadow bg-white">
+              <div className="absolute top-0 mt-8 right-0 p-3 mb-1 text-sm rounded-xl shadow bg-white overflow-hidden">
                 <ProfileTooltip />
               </div>
             )}
@@ -159,7 +159,7 @@ const NavMenu = () => {
                 }}
               />
               {visibility && (
-                <div className="absolute top-0 mt-10 right-0 p-3 mb-1 text-sm rounded-xl shadow bg-white">
+                <div className="absolute top-0 mt-10 right-0 mb-1 text-sm rounded-xl shadow bg-white overflow-hidden">
                   <ProfileTooltip />
                 </div>
               )}
