@@ -12,6 +12,7 @@ import {
   uploadAccountPhoto,
 } from 'lib/axios'
 import { CircleSpinner } from 'components'
+import { UserProfile } from 'types/customTypes'
 
 const reducer = (state, action: any) => {
   switch (action.type) {
@@ -61,7 +62,7 @@ const reducer = (state, action: any) => {
       return state
   }
 }
-const initialState = {
+const initialState: UserProfile = {
   name: '',
   username: '',
   bio: '',

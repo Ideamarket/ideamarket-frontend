@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { NETWORK, INetworkSpecifics } from 'store/networks'
+import { UserProfile } from 'types/customTypes'
 
 interface GlobalContextState {
   onWalletConnectedCallback: () => void
@@ -10,7 +11,7 @@ interface GlobalContextState {
   setRequiredNetwork: (val: INetworkSpecifics) => void
   jwtToken: null | string
   setJwtToken: (val: string) => void
-  user: any
+  user: UserProfile
   setUser: (val: any) => void
   signedWalletAddress: any
   setSignedWalletAddress: (val: any) => void
@@ -26,7 +27,7 @@ export const initialState: GlobalContextState = {
   jwtToken: null,
   setJwtToken: (val: string) => {},
   user: {},
-  setUser: (val: any) => {},
+  setUser: (val: UserProfile) => {},
   signedWalletAddress: {},
   setSignedWalletAddress: (val: any) => {},
 }
