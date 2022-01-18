@@ -17,7 +17,7 @@ export type UserProfile = {
   bio?: string
   profilePhoto?: string
   email?: string
-  emailVerified?: Boolean
+  emailVerified?: boolean
   walletAddress?: string
   visibilityOptions?: VisibilityOptions
 }
