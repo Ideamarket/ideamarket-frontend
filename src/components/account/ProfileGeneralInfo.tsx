@@ -1,8 +1,7 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext } from 'react'
 import ModalService from 'components/modals/ModalService'
 import Image from 'next/image'
 import ProfileSettingsModal from './ProfileSettingsModal'
-import { BsToggleOff, BsToggleOn } from 'react-icons/bs'
 import { BiCog, BiWallet } from 'react-icons/bi'
 import { MdOutlineEmail } from 'react-icons/md'
 import { BsFillBellFill } from 'react-icons/bs'
@@ -13,16 +12,8 @@ import { GlobalContext } from 'lib/GlobalContext'
 interface Props {}
 
 const ProfileGeneralInfo: React.FC<Props> = () => {
-  const [isPublicView, toggleView] = useState<Boolean>(false)
   const {
-    user: {
-      bio,
-      profilePhoto,
-      username,
-      visibilityOptions,
-      walletAddress,
-      email,
-    },
+    user: { bio, profilePhoto, username, walletAddress, email },
   } = useContext(GlobalContext)
 
   const onClickSettings = () => {
@@ -33,19 +24,7 @@ const ProfileGeneralInfo: React.FC<Props> = () => {
     <>
       <div className="flex justify-between mb-6 font-sf-compact-medium">
         <span className="text-base opacity-50">My Profile</span>
-        <div className="grid grid-cols-2 gap-4 text-xs opacity-75 justify-items-end">
-          <div
-            className="flex items-center cursor-pointer"
-            onClick={() => toggleView((c) => !c)}
-          >
-            {isPublicView ? (
-              <BsToggleOff className="w-6 h-6" />
-            ) : (
-              <BsToggleOn className="w-6 h-6" />
-            )}
-
-            <span className="ml-1">Public View</span>
-          </div>
+        <div className="text-xs opacity-75 justify-items-end">
           <div
             className="flex items-center cursor-pointer"
             onClick={onClickSettings}
@@ -70,13 +49,11 @@ const ProfileGeneralInfo: React.FC<Props> = () => {
           </div>
           <div className="ml-6 font-sans">
             <p className="text-lg">{username}</p>
-            <p className="text-xs opacity-70 max-w-[15rem] mt-1">
-              {!isPublicView || visibilityOptions?.bio ? bio : ''}
-            </p>
+            <p className="text-xs opacity-70 max-w-[15rem] mt-1">{bio || ''}</p>
           </div>
         </div>
         <div className="flex flex-col font-inter w-full md:w-auto my-8 md:my-0">
-          {(!isPublicView || visibilityOptions?.ethAddress) && walletAddress ? (
+          {walletAddress ? (
             <>
               <div className="flex opacity-70 items-center">
                 <BiWallet className="w-5 h-5" />
@@ -92,7 +69,7 @@ const ProfileGeneralInfo: React.FC<Props> = () => {
             ''
           )}
         </div>
-        {isPublicView && (!email || !visibilityOptions?.email) ? (
+        {!email ? (
           ''
         ) : (
           <div className="flex flex-col w-full md:w-auto">

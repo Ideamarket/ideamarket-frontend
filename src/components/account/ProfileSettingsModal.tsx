@@ -1,7 +1,6 @@
 import { useContext, useReducer, useRef, useState } from 'react'
 import Modal from '../modals/Modal'
 import Image from 'next/image'
-import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai'
 import { FaRegTrashAlt } from 'react-icons/fa'
 import { MdOutlineAddPhotoAlternate } from 'react-icons/md'
 import { GlobalContext } from 'lib/GlobalContext'
@@ -21,8 +20,6 @@ const reducer = (state, action: any) => {
     case 'reset':
       return {
         ...action.payload,
-        visibilityOptions:
-          action.payload.visibilityOptions || state.visibilityOptions,
       }
     case 'set-name':
       return { ...state, name: action.payload }
@@ -36,30 +33,6 @@ const reducer = (state, action: any) => {
       return { ...state, walletAddress: action.payload }
     case 'set-profilePhoto':
       return { ...state, profilePhoto: action.payload }
-    case 'set-bioVisibility':
-      return {
-        ...state,
-        visibilityOptions: {
-          ...state.visibilityOptions,
-          bio: action.payload,
-        },
-      }
-    case 'set-emailVisibility':
-      return {
-        ...state,
-        visibilityOptions: {
-          ...state.visibilityOptions,
-          email: action.payload,
-        },
-      }
-    case 'set-ethAddressVisibility':
-      return {
-        ...state,
-        visibilityOptions: {
-          ...state.visibilityOptions,
-          ethAddress: action.payload,
-        },
-      }
     default:
       return state
   }
@@ -71,11 +44,6 @@ const initialState: UserProfile = {
   email: '',
   walletAddress: '',
   profilePhoto: undefined,
-  visibilityOptions: {
-    bio: true,
-    email: true,
-    ethAddress: false,
-  },
 }
 
 export default function ProfileSettingsModal({ close }: { close: () => void }) {
@@ -87,15 +55,7 @@ export default function ProfileSettingsModal({ close }: { close: () => void }) {
   } = useContext(GlobalContext)
   const [user, dispatch] = useReducer(reducer, initialState)
 
-  const {
-    name,
-    username,
-    bio,
-    email,
-    walletAddress,
-    profilePhoto,
-    visibilityOptions,
-  } = user
+  const { name, username, bio, email, walletAddress, profilePhoto } = user
 
   const [loading, setLoading] = useState<Boolean>(false)
   const [previewImage, setPreviewImage] = useState(undefined)
@@ -134,7 +94,6 @@ export default function ProfileSettingsModal({ close }: { close: () => void }) {
       username,
       email,
       bio,
-      visibilityOptions,
       signedWalletAddress,
     }
 
@@ -150,10 +109,6 @@ export default function ProfileSettingsModal({ close }: { close: () => void }) {
     }
     await updateUser(requestBody)
     setLoading(false)
-  }
-
-  const toggleVisibility = (key: string) => {
-    dispatch({ type: `set-${key}Visibility`, payload: !visibilityOptions[key] })
   }
 
   const inputRef = useRef(null)
@@ -291,12 +246,6 @@ export default function ProfileSettingsModal({ close }: { close: () => void }) {
 
         <div className="flex items-center my-4">
           <span className="text-sm text-black text-opacity-50">Bio</span>
-          <div
-            className="ml-auto cursor-pointer flex items-center"
-            onClick={() => toggleVisibility('bio')}
-          >
-            {renderVisibilityToggle(visibilityOptions.bio)}
-          </div>
         </div>
         <textarea
           className="pl-2 w-full h-20 leading-tight border rounded appearance-none focus:outline-none focus:bg-white"
@@ -310,12 +259,6 @@ export default function ProfileSettingsModal({ close }: { close: () => void }) {
           <span className="text-sm text-black text-opacity-50">
             Email Address
           </span>
-          <div
-            className="ml-auto cursor-pointer flex items-center"
-            onClick={() => toggleVisibility('email')}
-          >
-            {renderVisibilityToggle(visibilityOptions.email)}
-          </div>
         </div>
         <input
           className="pl-2 w-full h-10 leading-tight border rounded appearance-none focus:outline-none focus:bg-white"
@@ -337,12 +280,6 @@ export default function ProfileSettingsModal({ close }: { close: () => void }) {
           <span className="text-sm text-black text-opacity-50">
             ETH Address
           </span>
-          <div
-            className="ml-auto cursor-pointer flex items-center"
-            onClick={() => toggleVisibility('ethAddress')}
-          >
-            {renderVisibilityToggle(visibilityOptions.ethAddress)}
-          </div>
         </div>
         <input
           className="pl-2 w-full h-10 leading-tight border rounded appearance-none focus:outline-none focus:bg-white"
@@ -354,23 +291,5 @@ export default function ProfileSettingsModal({ close }: { close: () => void }) {
         />
       </div>
     </Modal>
-  )
-}
-
-const renderVisibilityToggle = (isVisible: Boolean) => {
-  if (isVisible)
-    return (
-      <>
-        <AiOutlineEye className="w-4 h-4 opacity-50" />
-        <span className="ml-1 text-sm text-black text-opacity-50 w-8">
-          Show
-        </span>
-      </>
-    )
-  return (
-    <>
-      <AiOutlineEyeInvisible className="w-4 h-4 opacity-50" />
-      <span className="ml-1 text-sm text-black text-opacity-50 w-8">Hide</span>
-    </>
   )
 }
