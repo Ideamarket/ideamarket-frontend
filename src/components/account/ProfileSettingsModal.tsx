@@ -15,7 +15,6 @@ import { CircleSpinner } from 'components'
 import { UserProfile } from 'types/customTypes'
 import ModalService from 'components/modals/ModalService'
 import EmailVerificationCode from './EmailVerificationCode'
-import classNames from 'classnames'
 
 const reducer = (state, action: any) => {
   switch (action.type) {
@@ -100,12 +99,14 @@ export default function ProfileSettingsModal({ close }: { close: () => void }) {
 
   const [loading, setLoading] = useState<Boolean>(false)
   const [previewImage, setPreviewImage] = useState(undefined)
+  const [updateErrorText, setUpdateErrorText] = useState('')
 
   useEffect(() => {
     dispatch({ type: 'reset', payload: currentUser })
   }, [currentUser])
 
   const updateUser = async (requestBody) => {
+    setUpdateErrorText('')
     try {
       const response = await updateAccount({ requestBody, token: jwtToken })
       if (response.data?.success && response.data?.data) {
@@ -114,7 +115,13 @@ export default function ProfileSettingsModal({ close }: { close: () => void }) {
         throw new Error('Failed to update')
       }
     } catch (error) {
-      console.log('Failed to update', error)
+      console.log('Failed to update', error.response)
+      const errorMessage = Object.values(
+        error.response?.data?.errors?.[0] || {}
+      )?.[0]
+      if (errorMessage) {
+        setUpdateErrorText(errorMessage as string)
+      }
     } finally {
     }
   }
@@ -185,7 +192,6 @@ export default function ProfileSettingsModal({ close }: { close: () => void }) {
   }
 
   const verifyEmail = async (openModal?: boolean) => {
-    console.log('verify email')
     try {
       const response = await sendVerificationCodeToAccountEmail({
         token: jwtToken,
@@ -204,6 +210,11 @@ export default function ProfileSettingsModal({ close }: { close: () => void }) {
   return (
     <Modal close={close}>
       <div className="p-6 bg-white w-full md:w-[28rem]">
+        {updateErrorText ? (
+          <p className="text-red-400">{updateErrorText}</p>
+        ) : (
+          ''
+        )}
         <div className="flex justify-between items-center">
           <span className="text-2xl text-center text-black text-opacity-90 md:text-3xl font-gilroy-bold font-bold">
             Settings
@@ -313,18 +324,14 @@ export default function ProfileSettingsModal({ close }: { close: () => void }) {
             dispatch({ type: 'set-email', payload: event.target.value })
           }
         />
-        <button
-          className={classNames(
-            'w-full text-base text-white font-medium p-3 rounded-xl mt-2',
-            currentUser.emailVerified
-              ? 'border-gray-200 focus:border-brand-blue bg-gray-400 cursor-default'
-              : ' bg-brand-blue border-brand-blue'
-          )}
-          onClick={() => verifyEmail(true)}
-          disabled={currentUser.emailVerified}
-        >
-          Verify Email
-        </button>
+        {!currentUser.emailVerified && (
+          <button
+            className="w-full text-base text-white font-medium p-3 rounded-xl mt-2 bg-brand-blue border-brand-blue"
+            onClick={() => verifyEmail(true)}
+          >
+            Verify Email
+          </button>
+        )}
 
         <div className="flex items-center my-4">
           <span className="text-sm text-black text-opacity-50">
@@ -345,9 +352,6 @@ export default function ProfileSettingsModal({ close }: { close: () => void }) {
           }
           disabled
         />
-        <button className="w-full text-base text-white font-medium p-3 bg-brand-blue border-brand-blue rounded-xl mt-2">
-          Verify Wallet
-        </button>
       </div>
     </Modal>
   )
