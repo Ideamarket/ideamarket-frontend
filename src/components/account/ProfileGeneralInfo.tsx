@@ -33,7 +33,7 @@ const ProfileGeneralInfo: React.FC<Props> = () => {
     <>
       <div className="flex justify-between mb-6 font-sf-compact-medium">
         <span className="text-base opacity-50">My Profile</span>
-        <div className="grid grid-cols-2 gap-4 text-xs opacity-75">
+        <div className="grid grid-cols-2 gap-4 text-xs opacity-75 justify-items-end">
           <div
             className="flex items-center cursor-pointer"
             onClick={() => toggleView((c) => !c)}
@@ -103,7 +103,9 @@ const ProfileGeneralInfo: React.FC<Props> = () => {
               </span>
             </div>
             {email ? (
-              <span className="text-sm my-2 font-normal">{email}</span>
+              <span className="text-sm my-2 font-normal text-left md:text-center">
+                {email}
+              </span>
             ) : (
               <div className="bg-brand-blue rounded-lg font-bold my-2">
                 <div className="rounded-lg p-4 bg-white flex">
