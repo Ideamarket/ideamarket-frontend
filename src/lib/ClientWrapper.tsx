@@ -4,6 +4,8 @@ import { useWeb3React } from '@web3-react/core'
 import { getAccount, loginAccount, registerAccount } from './axios'
 import { useMutation } from 'react-query'
 import { SignedAddress } from 'types/customTypes'
+import ModalService from 'components/modals/ModalService'
+import ProfileSettingsModal from 'components/account/ProfileSettingsModal'
 
 export const ClientWrapper: React.FC = ({ children }) => {
   const { active, account, library } = useWeb3React()
@@ -69,11 +71,10 @@ export const ClientWrapper: React.FC = ({ children }) => {
     try {
       const response = await registerAccount({ signedWalletAddress })
       if (response.data?.success && response.data?.data) {
-        const {
-          data: { tokenValue },
-        } = response.data
-        onChangeJwtToken(tokenValue, signedWalletAddress)
-        setUser(response.data.data)
+        const { data } = response.data
+        setUser(data)
+        await loginByWallet()
+        ModalService.open(ProfileSettingsModal)
       } else {
         throw new Error('Failed to register')
       }
