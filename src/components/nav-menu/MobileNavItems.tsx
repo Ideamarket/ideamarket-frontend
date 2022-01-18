@@ -26,11 +26,13 @@ const MobileNavItems = ({ isMobileNavOpen, imoFeature }: Props) => {
       className="md:hidden"
     >
       <div className="px-2 pt-2 pb-3 space-y-3 sm:px-3">
-        {navbarConfig.menu.filter(
+        {navbarConfig.menu
+          .filter(
             (m) => m.name !== 'IMO' || (m.name === 'IMO' && imoFeature?.enabled)
-          ).map((menuItem, i) => (
-          <NavItem menuItem={menuItem} key={i} />
-        ))}
+          )
+          .map((menuItem, i) => (
+            <NavItem menuItem={menuItem} key={i} />
+          ))}
         <div className="flex px-1 mt-5">
           <NavThemeButton />
         </div>

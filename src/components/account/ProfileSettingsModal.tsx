@@ -7,12 +7,15 @@ import { MdOutlineAddPhotoAlternate } from 'react-icons/md'
 import { GlobalContext } from 'lib/GlobalContext'
 import { useEffect } from 'react'
 import {
-  sendAccountEmailVerificationCode,
+  sendVerificationCodeToAccountEmail,
   updateAccount,
   uploadAccountPhoto,
 } from 'lib/axios'
 import { CircleSpinner } from 'components'
 import { UserProfile } from 'types/customTypes'
+import ModalService from 'components/modals/ModalService'
+import EmailVerificationCode from './EmailVerificationCode'
+import classNames from 'classnames'
 
 const reducer = (state, action: any) => {
   switch (action.type) {
@@ -181,13 +184,14 @@ export default function ProfileSettingsModal({ close }: { close: () => void }) {
     }
   }
 
-  const verifyEmail = async () => {
+  const verifyEmail = async (openModal?: boolean) => {
+    console.log('verify email')
     try {
-      const response = await sendAccountEmailVerificationCode({
+      const response = await sendVerificationCodeToAccountEmail({
         token: jwtToken,
       })
       if (response.data?.success && response.data?.data) {
-        console.log('sent a message')
+        openModal && ModalService.open(EmailVerificationCode, { verifyEmail })
       } else {
         throw new Error('Failed to send an email')
       }
@@ -201,7 +205,7 @@ export default function ProfileSettingsModal({ close }: { close: () => void }) {
     <Modal close={close}>
       <div className="p-6 bg-white w-full md:w-[28rem]">
         <div className="flex justify-between items-center">
-          <span className="text-2xl text-center text-black text-opacity-90 md:text-3xl font-gilroy-bold">
+          <span className="text-2xl text-center text-black text-opacity-90 md:text-3xl font-gilroy-bold font-bold">
             Settings
           </span>
           <button
@@ -310,8 +314,14 @@ export default function ProfileSettingsModal({ close }: { close: () => void }) {
           }
         />
         <button
-          className="w-full text-base text-white font-medium p-3 bg-brand-blue border-brand-blue rounded-xl mt-2"
-          onClick={verifyEmail}
+          className={classNames(
+            'w-full text-base text-white font-medium p-3 rounded-xl mt-2',
+            currentUser.emailVerified
+              ? 'border-gray-200 focus:border-brand-blue bg-gray-400 cursor-default'
+              : ' bg-brand-blue border-brand-blue'
+          )}
+          onClick={() => verifyEmail(true)}
+          disabled={currentUser.emailVerified}
         >
           Verify Email
         </button>
