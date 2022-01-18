@@ -44,7 +44,7 @@ export const ProfileTooltip = () => {
         <MailIcon className="w-6 h-6  text-gray-400" />
         <span className="ml-2 font-medium">Connect Email</span>
       </div>
-      {!Boolean(user.email && user.emailVerified) && (
+      {!Boolean(user.email) && (
         <div className="py-2 px-4 bg-brand-blue text-center">
           <span className="text-white">
             <BsFillBellFill className="w-4 h-4 text-yellow-1" /> receive
