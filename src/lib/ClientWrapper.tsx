@@ -46,12 +46,9 @@ export const ClientWrapper: React.FC = ({ children }) => {
 
   const onChangeJwtToken = (
     token: string,
-    signedWalletAddress: SignedAddress
+    signedWalletAddress?: SignedAddress
   ): void => {
     sessionStorage.setItem('jwtToken', token)
-    sessionStorage.setItem('signature', signedWalletAddress.signature)
-    sessionStorage.setItem('message', signedWalletAddress.message)
-    sessionStorage.setItem('walletaddress', account)
     setJwtToken(token)
 
     if (token && signedWalletAddress) {
@@ -65,9 +62,6 @@ export const ClientWrapper: React.FC = ({ children }) => {
         .catch((error) => console.log('error', error))
     } else {
       sessionStorage.removeItem('jwtToken')
-      sessionStorage.removeItem('signature')
-      sessionStorage.removeItem('message')
-      sessionStorage.removeItem('walletaddress')
     }
   }
 
@@ -89,26 +83,20 @@ export const ClientWrapper: React.FC = ({ children }) => {
   }
 
   const loginByWallet = async () => {
-    const sessionSignature = sessionStorage.getItem('signature')
-    const sessionMessage = sessionStorage.getItem('message')
-    const sessionWalletaddress = sessionStorage.getItem('walletaddress')
+    setUser({})
+    const sessionSignatures =
+      JSON.parse(sessionStorage.getItem('signatures')) || {}
 
     let signedWalletAddress: SignedAddress
-    if (
-      sessionWalletaddress === account &&
-      sessionSignature &&
-      sessionMessage
-    ) {
+    if (sessionSignatures[account]) {
       signedWalletAddress = {
-        signature: sessionSignature,
-        message: sessionMessage,
+        signature: sessionSignatures[account].signature,
+        message: sessionSignatures[account].message,
       }
     } else {
-      sessionStorage.removeItem('signature')
-      sessionStorage.removeItem('message')
-      sessionStorage.removeItem('walletaddress')
-      setUser({})
       signedWalletAddress = await getSignedInWalletAddress()
+      sessionSignatures[account] = signedWalletAddress
+      sessionStorage.setItem('signatures', JSON.stringify(sessionSignatures))
     }
     setSignedWalletAddress(signedWalletAddress)
 
@@ -126,7 +114,7 @@ export const ClientWrapper: React.FC = ({ children }) => {
       }
     } catch (error) {
       console.log('Failed to login', error)
-      onChangeJwtToken(null, signedWalletAddress)
+      onChangeJwtToken(null)
       registerByWallet(signedWalletAddress)
     }
   }

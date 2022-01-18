@@ -14,7 +14,9 @@ interface Props {}
 
 const ProfileGeneralInfo: React.FC<Props> = () => {
   const [isPublicView, toggleView] = useState<Boolean>(false)
-  const { user } = useContext(GlobalContext)
+  const {
+    user: { bio, profilePhoto, username, visibilityOptions, walletAddress },
+  } = useContext(GlobalContext)
 
   const onClickSettings = () => {
     ModalService.open(ProfileSettingsModal)
@@ -49,9 +51,9 @@ const ProfileGeneralInfo: React.FC<Props> = () => {
       <div className="flex justify-between items-center mb-10 flex-col md:flex-row">
         <div className="flex items-center w-full md:w-auto">
           <div className="relative w-20 h-20 rounded-full bg-gray-400 overflow-hidden">
-            {Boolean(user.profilePhoto) && (
+            {Boolean(profilePhoto) && (
               <Image
-                src={user.profilePhoto}
+                src={profilePhoto}
                 alt="Workflow logo"
                 layout="fill"
                 objectFit="cover"
@@ -60,28 +62,28 @@ const ProfileGeneralInfo: React.FC<Props> = () => {
             )}
           </div>
           <div className="ml-6 font-sans">
-            <p className="text-lg">{user.username}</p>
+            <p className="text-lg">{username}</p>
             <p className="text-xs opacity-70 max-w-[15rem] mt-1">
-              {!isPublicView || user.visibilityOptions.bio ? user.bio : ''}
+              {!isPublicView || visibilityOptions?.bio ? bio : ''}
             </p>
           </div>
         </div>
         <div className="flex flex-col font-inter w-full md:w-auto my-8 md:my-0">
-          <div className="flex opacity-70 items-center">
-            <BiWallet className="w-5 h-5" />
-            <span className="uppercase text-xs ml-1 font-medium">
-              Eth Address
-            </span>
-          </div>
-          <span className="text-sm mt-2 font-normal">
-            {(!isPublicView || user.visibilityOptions.ethAddress) &&
-            user.walletAddress
-              ? `${user.walletAddress?.slice(
-                  0,
-                  10
-                )}...${user.walletAddress?.slice(-8)}`
-              : ''}
-          </span>
+          {(!isPublicView || visibilityOptions?.ethAddress) && walletAddress ? (
+            <>
+              <div className="flex opacity-70 items-center">
+                <BiWallet className="w-5 h-5" />
+                <span className="uppercase text-xs ml-1 font-medium">
+                  Eth Address
+                </span>
+              </div>
+              <span className="text-sm mt-2 font-normal">
+                {`${walletAddress?.slice(0, 10)}...${walletAddress?.slice(-8)}`}
+              </span>
+            </>
+          ) : (
+            ''
+          )}
         </div>
         <div className="flex flex-col w-full md:w-auto">
           <div className="flex opacity-70 items-center">
