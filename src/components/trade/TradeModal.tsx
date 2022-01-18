@@ -7,10 +7,12 @@ export default function TradeModal({
   close,
   ideaToken,
   market,
+  parentComponent,
 }: {
   close: () => void
   ideaToken: IdeaToken
   market: IdeaMarket
+  parentComponent?: string
 }) {
   function onTradeComplete(
     isSuccess: boolean,
@@ -39,7 +41,7 @@ export default function TradeModal({
           showTypeSelection={true}
           showTradeButton={true}
           disabled={false}
-          parentComponent="TradeModal"
+          parentComponent={parentComponent || 'TradeModal'}
         />
       </div>
     </Modal>

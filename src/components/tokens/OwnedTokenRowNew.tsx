@@ -12,10 +12,9 @@ import {
   calculateIdeaTokenDaiValue,
   ZERO_ADDRESS,
 } from 'utils'
-import { A } from 'components'
+import { A, TradeModal } from 'components'
 import { useTokenIconURL } from 'actions'
 import ModalService from 'components/modals/ModalService'
-import LockModal from 'components/trade/LockModal'
 import useThemeMode from 'components/useThemeMode'
 import Image from 'next/image'
 import GiftModal from 'components/trade/GiftModal'
@@ -76,6 +75,10 @@ export default function OwnedTokenRow({
   const balanceValue = formatNumberWithCommasAsThousandsSerperator(
     web3BNToFloatString(balanceValueBN, bigNumberTenPow18, 2)
   )
+
+  const onTradeClosed = () => {
+    refetch()
+  }
 
   return (
     <tr
@@ -256,14 +259,15 @@ export default function OwnedTokenRow({
             e.stopPropagation()
             isL1
               ? router.push('/bridge')
-              : ModalService.open(LockModal, {
-                  token,
-                  balance: lockedAmount
-                    ? parseFloat(balance) - lockedAmount
-                    : balance,
-                  refetch,
-                  marketName: market.name,
-                })
+              : ModalService.open(
+                  TradeModal,
+                  {
+                    ideaToken: token,
+                    market,
+                    parentComponent: 'OwnedTokenRow',
+                  },
+                  onTradeClosed
+                )
           }}
           className="w-20 h-10 mr-4 text-base font-medium text-white border-2 rounded-lg bg-brand-blue dark:bg-gray-600 border-brand-blue dark:text-gray-300 tracking-tightest-2 font-sf-compact-medium"
         >

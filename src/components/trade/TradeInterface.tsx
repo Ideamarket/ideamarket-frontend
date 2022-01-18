@@ -145,7 +145,9 @@ export default function TradeInterface({
       : '0.00'
 
   const { account } = useWeb3React()
-  const [tradeType, setTradeType] = useState('buy') // Used for smart contracts and which trade UI tab user is on
+  const [tradeType, setTradeType] = useState(
+    parentComponent === 'OwnedTokenRow' ? 'lock' : 'buy'
+  ) // Used for smart contracts and which trade UI tab user is on
   const [showLockOptions, setShowLockOptions] = useState(false)
   const [lockPeriod, setLockPeriod] = useState('3month')
   const [recipientAddress, setRecipientAddress] = useState('')
@@ -359,7 +361,7 @@ export default function TradeInterface({
   useEffect(() => {
     setSelectedToken(useTokenListStore.getState().tokens[0])
     setIdeaTokenAmount('')
-    setTradeType('buy')
+    setTradeType(parentComponent === 'OwnedTokenRow' ? 'lock' : 'buy')
     setApproveButtonKey(approveButtonKey + 1)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resetOn])
