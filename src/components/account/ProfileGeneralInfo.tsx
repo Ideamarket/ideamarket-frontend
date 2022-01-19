@@ -86,44 +86,40 @@ const ProfileGeneralInfo: React.FC<Props> = ({ userData }) => {
             ''
           )}
         </div>
-        {!email ? (
-          ''
-        ) : (
-          <div className="flex flex-col w-full md:w-auto">
-            <div className="flex opacity-70 items-center">
-              <MdOutlineEmail className="w-5 h-5" />
-              <span className="uppercase text-xs ml-1 font-medium">
-                Email Address
-              </span>
-            </div>
-            {email ? (
-              <span className="text-sm my-2 font-normal text-left md:text-center">
-                {email}
-              </span>
-            ) : (
-              <div className="bg-brand-blue rounded-lg font-bold my-2">
-                <div className="rounded-lg p-4 bg-white flex">
-                  <span className="text-brand-blue m-auto font-sf-compact-medium tracking-wider text-sm">
-                    Connect Email
+        <div className="flex flex-col w-full md:w-auto">
+          <div className="flex opacity-70 items-center">
+            <MdOutlineEmail className="w-5 h-5" />
+            <span className="uppercase text-xs ml-1 font-medium">
+              Email Address
+            </span>
+          </div>
+          {email ? (
+            <span className="text-sm my-2 font-normal text-left md:text-center">
+              {email}
+            </span>
+          ) : (
+            <div className="bg-brand-blue rounded-lg font-bold my-2">
+              <div className="rounded-lg p-4 bg-white flex">
+                <span className="text-brand-blue m-auto font-sf-compact-medium tracking-wider text-sm">
+                  Connect Email
+                </span>
+              </div>
+              <div className="p-2 text-xs flex flex-col">
+                <div className="flex">
+                  <span className="ml-1">
+                    <BsFillBellFill className="w-4 h-4 text-yellow-1" /> receive
+                    notificaions, updates <br />
+                    and announcements <SpearkIcon className="w-4 h-4" />
                   </span>
                 </div>
-                <div className="p-2 text-xs flex flex-col">
-                  <div className="flex">
-                    <span className="ml-1">
-                      <BsFillBellFill className="w-4 h-4 text-yellow-1" />{' '}
-                      receive notificaions, updates <br />
-                      and announcements <SpearkIcon className="w-4 h-4" />
-                    </span>
-                  </div>
-                  <div className="cursor-pointer ml-auto my-2 font-sans opacity-50 font-normal flex items-center">
-                    <span className="mr-1">Learn more</span>
-                    <IoMdExit className="w-4 h-4" />
-                  </div>
+                <div className="cursor-pointer ml-auto my-2 font-sans opacity-50 font-normal flex items-center">
+                  <span className="mr-1">Learn more</span>
+                  <IoMdExit className="w-4 h-4" />
                 </div>
               </div>
-            )}
-          </div>
-        )}
+            </div>
+          )}
+        </div>
       </div>
     </>
   )

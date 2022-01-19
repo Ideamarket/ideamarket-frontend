@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import Image from 'next/image'
 import NProgress from 'nprogress'
 import { getNavbarConfig } from './constants'
@@ -14,10 +14,15 @@ import { useMixPanel } from 'utils/mixPanel'
 import { getData } from 'lib/utils/fetch'
 import { ProfileTooltip } from './ProfileTooltip'
 import { useWeb3React } from '@web3-react/core'
+import { GlobalContext } from 'lib/GlobalContext'
+import { useMutation } from 'react-query'
+import { SignedAddress } from 'types/customTypes'
 
 const NavMenu = () => {
   const router = useRouter()
-  const { active } = useWeb3React()
+  const { active, account, library } = useWeb3React()
+  const { signedWalletAddress, setSignedWalletAddress } =
+    useContext(GlobalContext)
   const [isMobileNavOpen, setMobileNavOpen] = useState(false)
   const [visibility, setVisibility] = useState<Boolean>(false)
   const [timerId, setTimerId] = useState(null)
@@ -69,7 +74,79 @@ const NavMenu = () => {
 
   const onMouseEnter = () => {
     timerId && clearTimeout(timerId)
-    active && setVisibility(true)
+    active &&
+      signedWalletAddress?.signature &&
+      signedWalletAddress?.message &&
+      setVisibility(true)
+  }
+
+  const [walletVerificationRequest] = useMutation<{
+    message: string
+    data: any
+  }>(() =>
+    fetch('/api/walletVerificationRequest', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }).then(async (res) => {
+      if (!res.ok) {
+        const response = await res.json()
+        throw new Error(response.message)
+      }
+      return res.json()
+    })
+  )
+  const getSignedInWalletAddress = async (): Promise<SignedAddress> => {
+    const { data } = await walletVerificationRequest()
+    const uuid: string = data?.uuid
+    const message: string = `
+      Welcome to Ideamarket!
+
+      Click to sign in and accept the Ideamarket Terms of Service: https://docs.ideamarket.io/legal/terms-of-service
+
+      This request will not trigger a blockchain transaction or cost any gas fees.
+
+      Your authentication status will reset after 30 days.
+
+      Wallet address:
+      ${account}
+
+      UUID:
+      ${uuid}
+    `
+    let signature: string = null
+
+    if (message) {
+      try {
+        signature = await library?.eth?.personal?.sign(message, account, '')
+      } catch (error) {
+        console.log('metamask signin error', error)
+      }
+    }
+    return message && signature
+      ? {
+          message,
+          signature,
+        }
+      : null
+  }
+
+  const openModal = async () => {
+    mixpanel.track('ADD_WALLET_START')
+    if (
+      !active ||
+      (signedWalletAddress?.signature && signedWalletAddress?.message)
+    ) {
+      ModalService.open(WalletModal)
+    } else {
+      const signedWalletAddress = await getSignedInWalletAddress()
+      const sessionSignatures =
+        JSON.parse(localStorage.getItem('signatures')) || {}
+      sessionSignatures[account] = signedWalletAddress || {}
+      setSignedWalletAddress(signedWalletAddress)
+      localStorage.setItem('signatures', JSON.stringify(sessionSignatures))
+    }
   }
 
   useEffect(() => {
@@ -120,12 +197,7 @@ const NavMenu = () => {
 
           <div className="flex md:hidden">
             <div className="flex">
-              <WalletStatusWithConnectButton
-                openModal={() => {
-                  mixpanel.track('ADD_WALLET_START')
-                  ModalService.open(WalletModal)
-                }}
-              />
+              <WalletStatusWithConnectButton openModal={openModal} />
             </div>
             {visibility && (
               <div className="absolute top-0 mt-8 right-0 p-3 mb-1 text-sm rounded-xl shadow bg-white overflow-hidden">
@@ -152,12 +224,7 @@ const NavMenu = () => {
               onMouseEnter={onMouseEnter}
               onMouseLeave={onMouseLeave}
             >
-              <WalletStatusWithConnectButton
-                openModal={() => {
-                  mixpanel.track('ADD_WALLET_START')
-                  ModalService.open(WalletModal)
-                }}
-              />
+              <WalletStatusWithConnectButton openModal={openModal} />
               {visibility && (
                 <div className="absolute top-0 mt-10 right-0 mb-1 text-sm rounded-xl shadow bg-white overflow-hidden">
                   <ProfileTooltip />
