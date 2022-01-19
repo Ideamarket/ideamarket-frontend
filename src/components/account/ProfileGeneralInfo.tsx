@@ -8,31 +8,48 @@ import { BsFillBellFill } from 'react-icons/bs'
 import { IoMdExit } from 'react-icons/io'
 import SpearkIcon from '../../assets/speaker.svg'
 import { GlobalContext } from 'lib/GlobalContext'
+import { useWeb3React } from '@web3-react/core'
 
-interface Props {}
+interface Props {
+  userData?: any
+}
 
-const ProfileGeneralInfo: React.FC<Props> = () => {
+const ProfileGeneralInfo: React.FC<Props> = ({ userData }) => {
   const {
-    user: { bio, profilePhoto, username, walletAddress, email },
+    user: {
+      bio,
+      profilePhoto,
+      username: connectedUsername,
+      email,
+      walletAddress,
+    },
   } = useContext(GlobalContext)
+  const { account } = useWeb3React()
 
   const onClickSettings = () => {
     ModalService.open(ProfileSettingsModal)
   }
 
+  const isPublicProfile = userData // Is this a public profile being viewed
+  const isUserSignedIn = walletAddress // If there is a user wallet address, then someone is signed in
+  const username = isPublicProfile ? userData?.username : connectedUsername
+  const address = isPublicProfile ? userData?.walletAddress : account
+
   return (
     <>
       <div className="flex justify-between mb-6 font-sf-compact-medium">
         <span className="text-base opacity-50">My Profile</span>
-        <div className="text-xs opacity-75 justify-items-end">
-          <div
-            className="flex items-center cursor-pointer"
-            onClick={onClickSettings}
-          >
-            <BiCog className="w-6 h-6" />
-            <span className="ml-1">Settings</span>
+        {!isPublicProfile && isUserSignedIn && (
+          <div className="text-xs opacity-75 justify-items-end">
+            <div
+              className="flex items-center cursor-pointer"
+              onClick={onClickSettings}
+            >
+              <BiCog className="w-6 h-6" />
+              <span className="ml-1">Settings</span>
+            </div>
           </div>
-        </div>
+        )}
       </div>
       <div className="flex justify-between items-center mb-10 flex-col md:flex-row">
         <div className="flex items-center w-full md:w-auto">
@@ -53,7 +70,7 @@ const ProfileGeneralInfo: React.FC<Props> = () => {
           </div>
         </div>
         <div className="flex flex-col font-inter w-full md:w-auto my-8 md:my-0">
-          {walletAddress ? (
+          {address ? (
             <>
               <div className="flex opacity-70 items-center">
                 <BiWallet className="w-5 h-5" />
@@ -62,7 +79,7 @@ const ProfileGeneralInfo: React.FC<Props> = () => {
                 </span>
               </div>
               <span className="text-sm mt-2 font-normal">
-                {`${walletAddress?.slice(0, 10)}...${walletAddress?.slice(-8)}`}
+                {`${address?.slice(0, 10)}...${address?.slice(-8)}`}
               </span>
             </>
           ) : (

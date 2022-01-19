@@ -32,15 +32,30 @@ export const ClientWrapper: React.FC = ({ children }) => {
 
   const getSignedInWalletAddress = async (): Promise<SignedAddress> => {
     const { data } = await walletVerificationRequest()
-    const message: string = data?.uuid
+    const uuid: string = data?.uuid
+    const message: string = `
+      Welcome to Ideamarket!
+
+      Click to sign in and accept the Ideamarket Terms of Service: https://docs.ideamarket.io/legal/terms-of-service
+
+      This request will not trigger a blockchain transaction or cost any gas fees.
+
+      Your authentication status will reset after 30 days.
+
+      Wallet address:
+      ${account}
+
+      UUID:
+      ${uuid}
+    `
     let signature: string = null
 
-    if (message) {
+    if (uuid) {
       signature = await library?.eth?.personal?.sign(message, account, '')
     }
-    return message && signature
+    return uuid && signature
       ? {
-          message,
+          message: uuid,
           signature,
         }
       : null

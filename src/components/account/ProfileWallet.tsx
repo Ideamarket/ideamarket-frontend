@@ -47,16 +47,13 @@ const infiniteQueryConfig = {
 }
 
 type Props = {
-  walletState: string // This stores whether wallet is on public page, signed-in account page, or non-signed-in account page
+  walletState: string // This stores whether wallet is on public page or account page
   userData?: any
 }
 
 export default function ProfileWallet({ walletState, userData }: Props) {
   const web3 = useWalletStore((state) => state)
   const address = useWalletStore((state) => state.address)
-  const verifiedAddresses = userData?.ethAddresses?.filter(
-    (item) => item?.verified
-  )
 
   const [isVerifiedFilterActive, setIsVerifiedFilterActive] = useState(false)
   const [isStarredFilterActive, setIsStarredFilterActive] = useState(false)
@@ -92,17 +89,14 @@ export default function ProfileWallet({ walletState, userData }: Props) {
   }, [])
 
   useEffect(() => {
-    if (!userData || userData?.ethAddresses.length > 0) {
-      refetch()
-    }
-    // Need userData?.ethAddresses in order to dynamically update tokens on switch to a newly added wallet
+    refetch()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     address,
     web3,
     orderBy,
     orderDirection,
-    userData?.ethAddresses,
+    userData,
     selectedMarkets,
     allMarkets,
     isStarredFilterActive,
@@ -483,7 +477,7 @@ export default function ProfileWallet({ walletState, userData }: Props) {
   function getFinalAddresses() {
     switch (walletState) {
       case 'public':
-        return verifiedAddresses
+        return [{ address: userData?.walletAddress, verified: true }]
       case 'signedIn':
         return userData?.ethAddresses
       case 'signedOut':

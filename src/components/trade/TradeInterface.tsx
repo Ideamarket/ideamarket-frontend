@@ -876,9 +876,9 @@ export default function TradeInterface({
                     <span>
                       {lockPeriod === '3month' ? '3 months' : '1 month'}
                     </span>
-                    <span className="text-green-500">
+                    {/* <span className="text-green-500">
                       {lockPeriod === '3month' ? '(22% APR)' : '(12% APR)'}
-                    </span>
+                    </span> */}
                     {showLockOptions ? (
                       <ChevronUpIcon
                         onClick={() => setShowLockOptions(!showLockOptions)}
@@ -925,7 +925,7 @@ export default function TradeInterface({
                     <span>Locked Period</span>
                     <span className="text-xs opacity-0">(x days)</span>
                   </div>
-                  <div className="my-4">Estimated APR</div>
+                  {/* <div className="my-4">Estimated APR</div> */}
                   <div>Redemption Date (if locked today)</div>
                 </div>
 
@@ -947,7 +947,7 @@ export default function TradeInterface({
                     <span className="font-bold">1 month</span>
                     <span className="text-xs">(30 days)</span>
                   </div>
-                  <div className="text-green-500 font-bold">12%</div>
+                  {/* <div className="text-green-500 font-bold">12%</div> */}
                   <div>
                     {moment(new Date(Date.now() + 2629800000)).format('LL')}
                   </div>
@@ -971,7 +971,7 @@ export default function TradeInterface({
                     <span className="font-bold">3 months</span>
                     <span className="text-xs">(90 days)</span>
                   </div>
-                  <div className="text-green-500 font-bold">22%</div>
+                  {/* <div className="text-green-500 font-bold">22%</div> */}
                   <div>
                     {moment(new Date(Date.now() + 7889400000)).format('LL')}
                   </div>
