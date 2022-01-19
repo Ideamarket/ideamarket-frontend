@@ -1,4 +1,4 @@
-import { useContext, useReducer, useRef, useState } from 'react'
+import { useContext, useMemo, useReducer, useRef, useState } from 'react'
 import Modal from '../modals/Modal'
 import Image from 'next/image'
 import { FaRegTrashAlt } from 'react-icons/fa'
@@ -14,6 +14,7 @@ import { CircleSpinner } from 'components'
 import { UserProfile } from 'types/customTypes'
 import ModalService from 'components/modals/ModalService'
 import EmailVerificationCode from './EmailVerificationCode'
+import classNames from 'classnames'
 
 const reducer = (state, action: any) => {
   switch (action.type) {
@@ -56,6 +57,14 @@ export default function ProfileSettingsModal({ close }: { close: () => void }) {
   const [user, dispatch] = useReducer(reducer, initialState)
 
   const { name, username, bio, email, walletAddress, profilePhoto } = user
+  const isEmailValid = useMemo(
+    () =>
+      email?.match(
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      ),
+    [email]
+  )
 
   const [loading, setLoading] = useState<Boolean>(false)
   const [previewImage, setPreviewImage] = useState(undefined)
@@ -92,7 +101,6 @@ export default function ProfileSettingsModal({ close }: { close: () => void }) {
     const requestBody = {
       name,
       username,
-      email,
       bio,
       signedWalletAddress,
     }
@@ -150,6 +158,7 @@ export default function ProfileSettingsModal({ close }: { close: () => void }) {
     setUpdateErrorText('')
     sendVerificationCodeToAccountEmail({
       token: jwtToken,
+      email,
     })
       .then((response) => {
         if (
@@ -157,7 +166,8 @@ export default function ProfileSettingsModal({ close }: { close: () => void }) {
           response.data?.data &&
           response.data?.data?.codeSent
         ) {
-          openModal && ModalService.open(EmailVerificationCode, { verifyEmail })
+          openModal &&
+            ModalService.open(EmailVerificationCode, { verifyEmail, email })
         } else {
           setUpdateErrorText(response.data?.data?.messge)
         }
@@ -272,9 +282,15 @@ export default function ProfileSettingsModal({ close }: { close: () => void }) {
             dispatch({ type: 'set-email', payload: event.target.value })
           }
         />
-        {!currentUser.emailVerified && (
+        {currentUser.email !== email && (
           <button
-            className="w-full text-base text-white font-medium p-3 rounded-xl mt-2 bg-brand-blue border-brand-blue"
+            className={classNames(
+              'w-full text-base text-white font-medium p-3 rounded-xl mt-2',
+              !isEmailValid
+                ? 'border-gray-200 focus:border-brand-blue bg-gray-400 cursor-default'
+                : ' bg-brand-blue border-brand-blue'
+            )}
+            disabled={!isEmailValid}
             onClick={() => verifyEmail(true)}
           >
             Verify Email

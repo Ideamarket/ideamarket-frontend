@@ -37,17 +37,20 @@ export const uploadAccountPhoto = ({ formData, token }) =>
     },
   })
 
-export const sendVerificationCodeToAccountEmail = ({ token }) =>
+export const sendVerificationCodeToAccountEmail = ({ token, email }) =>
   client.get(`${BASE_URL}/account/emailVerification`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
+    params: {
+      email,
+    },
   })
 
-export const checkAccountEmailVerificationCode = ({ token, code }) =>
+export const checkAccountEmailVerificationCode = ({ token, code, email }) =>
   client.post(
     `${BASE_URL}/account/emailVerification`,
-    { code },
+    { code, email },
     {
       headers: {
         Authorization: `Bearer ${token}`,
