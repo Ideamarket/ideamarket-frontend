@@ -134,12 +134,11 @@ const NavMenu = () => {
 
   const openModal = async () => {
     mixpanel.track('ADD_WALLET_START')
+    ModalService.open(WalletModal)
     if (
-      !active ||
-      (signedWalletAddress?.signature && signedWalletAddress?.message)
+      active &&
+      (!signedWalletAddress?.signature || !signedWalletAddress?.message)
     ) {
-      ModalService.open(WalletModal)
-    } else {
       const signedWalletAddress = await getSignedInWalletAddress()
       const sessionSignatures =
         JSON.parse(localStorage.getItem('signatures')) || {}

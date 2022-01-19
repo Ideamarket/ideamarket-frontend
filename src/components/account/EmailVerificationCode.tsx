@@ -7,9 +7,11 @@ import { CircleSpinner } from 'components'
 export default function EmailVerificationCode({
   close,
   verifyEmail,
+  email,
 }: {
   close: () => void
   verifyEmail: (val: boolean) => void
+  email: string
 }) {
   const { user, setUser, jwtToken } = useContext(GlobalContext)
   const [verified, setVerified] = useState(undefined)
@@ -23,13 +25,14 @@ export default function EmailVerificationCode({
       const response = await checkAccountEmailVerificationCode({
         token: jwtToken,
         code: code.join(''),
+        email,
       })
       if (
         response.data?.success &&
         response.data?.data &&
         response.data.data.emailVerified
       ) {
-        setUser({ ...user, emailVerified: true })
+        setUser({ ...user, email })
         close()
       } else {
         throw new Error('Failed to verify an email')
