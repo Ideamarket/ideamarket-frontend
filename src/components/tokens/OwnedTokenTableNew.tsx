@@ -1,5 +1,6 @@
 import classNames from 'classnames'
 import { Tooltip } from 'components'
+import A from 'components/A'
 import { useCallback, useRef, MutableRefObject } from 'react'
 import { IdeaTokenMarketPair } from 'store/ideaMarketsStore'
 import OwnedTokenRowNew from './OwnedTokenRowNew'
@@ -103,8 +104,20 @@ export default function OwnedTokenTableNew({
             <span>Lock</span>
             <Tooltip>
               <div className="w-32 md:w-64">
-                {/* TODO: replace copy here */}
-                Explain locking
+                Lock tokens to show your long-term confidence in a listing. You
+                will be unable to sell or withdraw locked tokens for the time
+                period specified.
+                <br />
+                <br />
+                For more information, see{' '}
+                <A
+                  href="https://docs.ideamarket.io/user-guide/tutorial#buy-upvotes"
+                  target="_blank"
+                  className="underline"
+                >
+                  locking tokens
+                </A>
+                .
               </div>
             </Tooltip>
             {/* TODO: make this APR value dynamic */}

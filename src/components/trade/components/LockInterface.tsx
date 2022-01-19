@@ -158,9 +158,7 @@ const LockInterface = ({
             onClick={() => setShowInfoDD(!showInfoDD)}
             className="flex justify-between items-center cursor-pointer font-bold"
           >
-            <span>
-              Faucibus vel, lacinia congue nec, lacus non risus, dui senectus?
-            </span>
+            <span>Why should I lock tokens?</span>
             {showInfoDD ? (
               <ChevronUpIcon className="w-5 h-5" />
             ) : (
@@ -169,12 +167,9 @@ const LockInterface = ({
           </div>
           {showInfoDD && (
             <div className="text-gray-500 text-sm">
-              Dolor, in tempus tempor leo diam aenean auctor nibh. Laoreet
-              quisque sed ornare morbi venenatis condimentum. Condimentum
-              phasellus volutpat tellus ipsum pulvinar sed ut viverra tellus.
-              Faucibus vel, lacinia congue nec, lacus non risus, dui senectus.
-              Rhoncus justo, massa et habitasse amet pharetra habitasse
-              venenatis.
+              Locking tokens signals your confidence in a listing. For a limited
+              time, locked tokens will be rewarded with $IMO, Ideamarket’s
+              native token.
             </div>
           )}
         </div>
@@ -219,66 +214,72 @@ const LockInterface = ({
       <div>
         {userAlreadyLocked && (
           <div className="mt-8">
-            {rawPairs.map((pair, pairInd) => (
-              <div
-                className="w-full px-5 py-4 mb-4 border border-gray-100 rounded-md bg-gray-50 dark:bg-gray-600 text-brand-new-dark"
-                key={pairInd}
-              >
-                <div className="flex justify-between">
-                  <div>
-                    <div className="text-sm">Locked Tokens</div>
-                    <div className="font-bold text-lg">
-                      {formatNumberWithCommasAsThousandsSerperator(
-                        parseFloat(pair.amount).toFixed(2)
+            {rawPairs.map((pair, pairInd) => {
+              const redemptionDate = moment(pair.lockedUntil * 1000).format(
+                'LL'
+              )
+
+              return (
+                <div
+                  className="w-full px-5 py-4 mb-4 border border-gray-100 rounded-md bg-gray-50 dark:bg-gray-600 text-brand-new-dark"
+                  key={pairInd}
+                >
+                  <div className="flex justify-between">
+                    <div>
+                      <div className="text-sm">Locked Tokens</div>
+                      <div className="font-bold text-lg">
+                        {formatNumberWithCommasAsThousandsSerperator(
+                          parseFloat(pair.amount).toFixed(2)
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex items-center">
+                      {/* <div>
+                        <div className="text-sm">APR</div>
+                        <div className="font-bold text-lg text-green-500">
+                          12%
+                        </div>
+                      </div> */}
+                      {pairsToggle[pairInd] ? (
+                        <ChevronUpIcon
+                          onClick={() => togglePairVisibility(pairInd)}
+                          className="w-5 h-5 ml-4 cursor-pointer text-gray-400"
+                        />
+                      ) : (
+                        <ChevronDownIcon
+                          onClick={() => togglePairVisibility(pairInd)}
+                          className="w-5 h-5 ml-4 cursor-pointer text-gray-400"
+                        />
                       )}
                     </div>
                   </div>
-                  <div className="flex items-center">
-                    {/* <div>
-                      <div className="text-sm">APR</div>
-                      <div className="font-bold text-lg text-green-500">
-                        12%
-                      </div>
-                    </div> */}
-                    {pairsToggle[pairInd] ? (
-                      <ChevronUpIcon
-                        onClick={() => togglePairVisibility(pairInd)}
-                        className="w-5 h-5 ml-4 cursor-pointer text-gray-400"
-                      />
-                    ) : (
-                      <ChevronDownIcon
-                        onClick={() => togglePairVisibility(pairInd)}
-                        className="w-5 h-5 ml-4 cursor-pointer text-gray-400"
-                      />
-                    )}
-                  </div>
-                </div>
 
-                {pairsToggle[pairInd] && (
-                  <div className="flex flex-col mt-12">
-                    <div className="flex justify-between">
-                      <div>Locked Period</div>
-                      <div>
-                        <div className="font-bold">3 months</div>
-                        <div className="text-sm text-right">(90 days)</div>
+                  {pairsToggle[pairInd] && (
+                    <div className="flex flex-col mt-12">
+                      {/* <div className="flex justify-between">
+                        <div>Locked Period</div>
+                        <div>
+                          <div className="font-bold">3 months</div>
+                          <div className="text-sm text-right">(90 days)</div>
+                        </div>
                       </div>
+                      <div className="flex justify-between">
+                        <div>Locked Date</div>
+                        <div>23 November 2021</div>
+                      </div> */}
+                      <div className="flex justify-between">
+                        <div>Redemption Date</div>
+                        <div>{redemptionDate}</div>
+                      </div>
+                      {/* <div className="flex justify-between">
+                        <div>Cummulative Interest</div>
+                        <div>0.105</div>
+                      </div> */}
                     </div>
-                    <div className="flex justify-between">
-                      <div>Locked Date</div>
-                      <div>23 November 2021</div>
-                    </div>
-                    <div className="flex justify-between">
-                      <div>Redemption Date</div>
-                      <div>{moment(pair.lockedUntil * 1000).format('LL')}</div>
-                    </div>
-                    {/* <div className="flex justify-between">
-                      <div>Cummulative Interest</div>
-                      <div>0.105</div>
-                    </div> */}
-                  </div>
-                )}
-              </div>
-            ))}
+                  )}
+                </div>
+              )
+            })}
             <hr className="my-8" />
           </div>
         )}
@@ -289,10 +290,7 @@ const LockInterface = ({
                 onClick={() => setShowInfoDD(!showInfoDD)}
                 className="flex justify-between items-center cursor-pointer font-bold"
               >
-                <span>
-                  Faucibus vel, lacinia congue nec, lacus non risus, dui
-                  senectus?
-                </span>
+                <span>Why should I lock tokens?</span>
                 {showInfoDD ? (
                   <ChevronUpIcon className="w-5 h-5" />
                 ) : (
@@ -301,12 +299,9 @@ const LockInterface = ({
               </div>
               {showInfoDD && (
                 <div className="text-gray-500 text-sm">
-                  Dolor, in tempus tempor leo diam aenean auctor nibh. Laoreet
-                  quisque sed ornare morbi venenatis condimentum. Condimentum
-                  phasellus volutpat tellus ipsum pulvinar sed ut viverra
-                  tellus. Faucibus vel, lacinia congue nec, lacus non risus, dui
-                  senectus. Rhoncus justo, massa et habitasse amet pharetra
-                  habitasse venenatis.
+                  Locking tokens signals your confidence in a listing. For a
+                  limited time, locked tokens will be rewarded with $IMO,
+                  Ideamarket’s native token.
                 </div>
               )}
             </div>
