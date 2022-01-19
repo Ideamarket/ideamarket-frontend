@@ -5,7 +5,6 @@ import ProfileSettingsModal from './ProfileSettingsModal'
 import { BiCog, BiWallet } from 'react-icons/bi'
 import { MdOutlineEmail } from 'react-icons/md'
 import { BsFillBellFill } from 'react-icons/bs'
-import { IoMdExit } from 'react-icons/io'
 import SpearkIcon from '../../assets/speaker.svg'
 import { GlobalContext } from 'lib/GlobalContext'
 import { useWeb3React } from '@web3-react/core'
@@ -18,7 +17,7 @@ const ProfileGeneralInfo: React.FC<Props> = ({ userData }) => {
   const {
     user: {
       bio,
-      profilePhoto,
+      profilePhoto: connectedProfilePhoto,
       username: connectedUsername,
       email,
       walletAddress,
@@ -34,6 +33,9 @@ const ProfileGeneralInfo: React.FC<Props> = ({ userData }) => {
   const isUserSignedIn = walletAddress // If there is a user wallet address, then someone is signed in
   const username = isPublicProfile ? userData?.username : connectedUsername
   const address = isPublicProfile ? userData?.walletAddress : account
+  const profilePhoto = isPublicProfile
+    ? userData?.profilePhoto
+    : connectedProfilePhoto
 
   return (
     <>
@@ -86,20 +88,20 @@ const ProfileGeneralInfo: React.FC<Props> = ({ userData }) => {
             ''
           )}
         </div>
-        <div className="flex flex-col w-full md:w-auto">
-          <div className="flex opacity-70 items-center">
-            <MdOutlineEmail className="w-5 h-5" />
-            <span className="uppercase text-xs ml-1 font-medium">
-              Email Address
-            </span>
-          </div>
-          {email ? (
-            <span className="text-sm my-2 font-normal text-left md:text-center">
-              {email}
-            </span>
-          ) : (
+        {isUserSignedIn && !email && (
+          <div className="flex flex-col w-full md:w-auto">
+            <div className="flex opacity-70 items-center">
+              <MdOutlineEmail className="w-5 h-5" />
+              <span className="uppercase text-xs ml-1 font-medium">
+                Email Address
+              </span>
+            </div>
+
             <div className="bg-brand-blue rounded-lg font-bold my-2">
-              <div className="rounded-lg p-4 bg-white flex">
+              <div
+                onClick={onClickSettings}
+                className="rounded-lg p-4 bg-white flex cursor-pointer"
+              >
                 <span className="text-brand-blue m-auto font-sf-compact-medium tracking-wider text-sm">
                   Connect Email
                 </span>
@@ -112,14 +114,10 @@ const ProfileGeneralInfo: React.FC<Props> = ({ userData }) => {
                     and announcements <SpearkIcon className="w-4 h-4" />
                   </span>
                 </div>
-                <div className="cursor-pointer ml-auto my-2 font-sans opacity-50 font-normal flex items-center">
-                  <span className="mr-1">Learn more</span>
-                  <IoMdExit className="w-4 h-4" />
-                </div>
               </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </>
   )

@@ -236,7 +236,7 @@ export default function ProfileSettingsModal({ close }: { close: () => void }) {
                 Username
               </p>
               <input
-                className="pl-2 w-full h-10 leading-tight border rounded appearance-none focus:outline-none focus:bg-white"
+                className="pl-2 w-full h-10 leading-tight border rounded appearance-none focus:outline-none focus:bg-white dark:focus:bg-gray-700"
                 value={username}
                 onChange={(event) =>
                   dispatch({
@@ -247,9 +247,11 @@ export default function ProfileSettingsModal({ close }: { close: () => void }) {
               />
             </div>
             <div className="flex flex-col w-full mt-2">
-              <p className="ml-2 text-sm text-black text-opacity-50">Name</p>
+              <p className="ml-2 text-sm text-black text-opacity-50">
+                Display name
+              </p>
               <input
-                className="pl-2 w-full h-10 leading-tight border rounded appearance-none focus:outline-none focus:bg-white"
+                className="pl-2 w-full h-10 leading-tight border rounded appearance-none focus:outline-none focus:bg-white dark:focus:bg-gray-700"
                 value={name}
                 onChange={(event) =>
                   dispatch({ type: 'set-name', payload: event.target.value })
@@ -263,7 +265,7 @@ export default function ProfileSettingsModal({ close }: { close: () => void }) {
           <span className="text-sm text-black text-opacity-50">Bio</span>
         </div>
         <textarea
-          className="pl-2 w-full h-20 leading-tight border rounded appearance-none focus:outline-none focus:bg-white"
+          className="pl-2 w-full h-20 leading-tight border rounded appearance-none focus:outline-none focus:bg-white dark:focus:bg-gray-700"
           value={bio}
           onChange={(event) =>
             dispatch({ type: 'set-bio', payload: event.target.value })
@@ -276,7 +278,7 @@ export default function ProfileSettingsModal({ close }: { close: () => void }) {
           </span>
         </div>
         <input
-          className="pl-2 w-full h-10 leading-tight border rounded appearance-none focus:outline-none focus:bg-white"
+          className="pl-2 w-full h-10 leading-tight border rounded appearance-none focus:outline-none focus:bg-white dark:focus:bg-gray-700"
           value={email}
           onChange={(event) =>
             dispatch({ type: 'set-email', payload: event.target.value })
@@ -303,7 +305,7 @@ export default function ProfileSettingsModal({ close }: { close: () => void }) {
           </span>
         </div>
         <input
-          className="pl-2 w-full h-10 leading-tight border rounded appearance-none focus:outline-none focus:bg-white"
+          className="pl-2 w-full h-10 leading-tight border rounded appearance-none focus:outline-none focus:bg-white dark:focus:bg-gray-700"
           value={walletAddress}
           onChange={(event) =>
             dispatch({ type: 'set-walletAddress', payload: event.target.value })

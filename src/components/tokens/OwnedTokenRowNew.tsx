@@ -248,7 +248,7 @@ export default function OwnedTokenRow({
         )}
       >
         {lockedAmount && (
-          <div className="text-sm flex items-center">
+          <div className="text-sm flex items-center dark:text-white">
             <span>{lockedAmount} tokens</span>
             <LockClosedIcon className="w-5 h-5 ml-1" />
           </div>

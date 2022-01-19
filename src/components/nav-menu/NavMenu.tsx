@@ -5,8 +5,6 @@ import { getNavbarConfig } from './constants'
 import { Router, useRouter } from 'next/dist/client/router'
 import { MenuIcon, XIcon } from '@heroicons/react/solid'
 import { WalletStatusWithConnectButton } from 'components'
-import ModalService from 'components/modals/ModalService'
-import WalletModal from '../wallet/WalletModal'
 import MobileNavItems from './MobileNavItems'
 import NavItem from './NavItem'
 import NavThemeButton from './NavThemeButton'
@@ -74,10 +72,7 @@ const NavMenu = () => {
 
   const onMouseEnter = () => {
     timerId && clearTimeout(timerId)
-    active &&
-      signedWalletAddress?.signature &&
-      signedWalletAddress?.message &&
-      setVisibility(true)
+    active && setVisibility(true)
   }
 
   const [walletVerificationRequest] = useMutation<{
@@ -133,8 +128,8 @@ const NavMenu = () => {
   }
 
   const openModal = async () => {
-    mixpanel.track('ADD_WALLET_START')
-    ModalService.open(WalletModal)
+    mixpanel.track('ADD_ACCOUNT_START')
+
     if (
       active &&
       (!signedWalletAddress?.signature || !signedWalletAddress?.message)
@@ -196,11 +191,11 @@ const NavMenu = () => {
 
           <div className="flex md:hidden">
             <div className="flex">
-              <WalletStatusWithConnectButton openModal={openModal} />
+              <WalletStatusWithConnectButton />
             </div>
             {visibility && (
               <div className="absolute top-0 mt-8 right-0 p-3 mb-1 text-sm rounded-xl shadow bg-white overflow-hidden">
-                <ProfileTooltip />
+                <ProfileTooltip openModal={openModal} />
               </div>
             )}
           </div>
@@ -223,10 +218,10 @@ const NavMenu = () => {
               onMouseEnter={onMouseEnter}
               onMouseLeave={onMouseLeave}
             >
-              <WalletStatusWithConnectButton openModal={openModal} />
+              <WalletStatusWithConnectButton />
               {visibility && (
                 <div className="absolute top-0 mt-10 right-0 mb-1 text-sm rounded-xl shadow bg-white overflow-hidden">
-                  <ProfileTooltip />
+                  <ProfileTooltip openModal={openModal} />
                 </div>
               )}
             </div>
