@@ -104,7 +104,10 @@ export default function EmailVerificationCode({
           </p>
         )}
         <div className="flex">
-          <button className="w-full font-sf-compact-medium text-base font-medium text-gray-700 p-3 bg-gray-200 rounded-xl mr-2">
+          <button
+            className="w-full font-sf-compact-medium text-base font-medium text-gray-700 p-3 bg-gray-200 rounded-xl mr-2"
+            onClick={() => close && close()}
+          >
             Cancel
           </button>
           <button
