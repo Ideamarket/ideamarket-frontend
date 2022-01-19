@@ -54,3 +54,17 @@ export const checkAccountEmailVerificationCode = ({ token, code }) =>
       },
     }
   )
+
+export const getPublicProfile = async ({ username }) => {
+  const response = await client.get(
+    `${BASE_URL}/account/publicProfile?username=${username}`,
+    {
+      headers: {
+        // TODO: pass in token if there is one
+        // Authorization: `Bearer ${token}`,
+      },
+    }
+  )
+
+  return response?.data?.data
+}

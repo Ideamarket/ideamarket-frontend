@@ -185,7 +185,7 @@ const LockInterface = ({
               <span>Locked Period</span>
               <span className="text-xs opacity-0">(x days)</span>
             </div>
-            <div className="my-4">Estimated APR</div>
+            {/* <div className="my-4">Estimated APR</div> */}
             <div>Redemption Date (if locked today)</div>
           </div>
 
@@ -194,7 +194,7 @@ const LockInterface = ({
               <span className="font-bold">1 month</span>
               <span className="text-xs">(30 days)</span>
             </div>
-            <div className="text-green-500 font-bold">12%</div>
+            {/* <div className="text-green-500 font-bold">12%</div> */}
             <div>{moment(new Date(Date.now() + 2629800000)).format('LL')}</div>
           </div>
 
@@ -203,7 +203,7 @@ const LockInterface = ({
               <span className="font-bold">3 months</span>
               <span className="text-xs">(90 days)</span>
             </div>
-            <div className="text-green-500 font-bold">22%</div>
+            {/* <div className="text-green-500 font-bold">22%</div> */}
             <div>{moment(new Date(Date.now() + 7889400000)).format('LL')}</div>
           </div>
         </div>
@@ -234,12 +234,12 @@ const LockInterface = ({
                     </div>
                   </div>
                   <div className="flex items-center">
-                    <div>
+                    {/* <div>
                       <div className="text-sm">APR</div>
                       <div className="font-bold text-lg text-green-500">
                         12%
                       </div>
-                    </div>
+                    </div> */}
                     {pairsToggle[pairInd] ? (
                       <ChevronUpIcon
                         onClick={() => togglePairVisibility(pairInd)}
@@ -271,10 +271,10 @@ const LockInterface = ({
                       <div>Redemption Date</div>
                       <div>{moment(pair.lockedUntil * 1000).format('LL')}</div>
                     </div>
-                    <div className="flex justify-between">
+                    {/* <div className="flex justify-between">
                       <div>Cummulative Interest</div>
                       <div>0.105</div>
-                    </div>
+                    </div> */}
                   </div>
                 )}
               </div>
@@ -329,7 +329,7 @@ const LockInterface = ({
                   <span>Locked Period</span>
                   <span className="text-xs opacity-0">(x days)</span>
                 </div>
-                <div className="my-4">Estimated APR</div>
+                {/* <div className="my-4">Estimated APR</div> */}
                 <div>Redemption Date (if locked today)</div>
               </div>
 
@@ -351,7 +351,7 @@ const LockInterface = ({
                   <span className="font-bold">1 month</span>
                   <span className="text-xs">(30 days)</span>
                 </div>
-                <div className="text-green-500 font-bold">12%</div>
+                {/* <div className="text-green-500 font-bold">12%</div> */}
                 <div>
                   {moment(new Date(Date.now() + 2629800000)).format('LL')}
                 </div>
@@ -375,7 +375,7 @@ const LockInterface = ({
                   <span className="font-bold">3 months</span>
                   <span className="text-xs">(90 days)</span>
                 </div>
-                <div className="text-green-500 font-bold">22%</div>
+                {/* <div className="text-green-500 font-bold">22%</div> */}
                 <div>
                   {moment(new Date(Date.now() + 7889400000)).format('LL')}
                 </div>

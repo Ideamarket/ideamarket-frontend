@@ -108,7 +108,7 @@ export default function OwnedTokenTableNew({
               </div>
             </Tooltip>
             {/* TODO: make this APR value dynamic */}
-            <span className="text-blue-600">Up to 112% APR</span>
+            {/* <span className="text-blue-600">Up to 112% APR</span> */}
           </div>
         )
       default:
