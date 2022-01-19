@@ -11,7 +11,9 @@ export default function WalletStatusWithConnectButton({
   openModal: () => void
 }) {
   const { active, account } = useWeb3React()
-  const { user } = useContext(GlobalContext)
+  const { user, signedWalletAddress } = useContext(GlobalContext)
+  const isSignedIn =
+    active && signedWalletAddress?.signature && signedWalletAddress?.message
 
   return (
     <React.Fragment>
@@ -19,19 +21,19 @@ export default function WalletStatusWithConnectButton({
         className="flex flex-row items-center px-2 cursor-pointer justify-self-end"
         onClick={() => openModal()}
       >
-        {!active && (
+        {!isSignedIn && (
           <div className="px-4 py-2 ml-2 text-sm text-white rounded-lg bg-brand-blue">
-            Connect Wallet
+            {active ? 'Create Account' : 'Connect Wallet'}
           </div>
         )}
 
-        {active && <DotGreen className="w-4 h-4" />}
-        {active && (
+        {isSignedIn && <DotGreen className="w-4 h-4" />}
+        {isSignedIn && (
           <div className="ml-3 text-gray-400 align-middle whitespace-nowrap hidden md:flex">
             {account.slice(0, 6)}...{account.slice(-4)}
           </div>
         )}
-        {active && (
+        {isSignedIn && (
           <div className="ml-3 w-6 h-6 relative rounded-full bg-gray-400">
             {Boolean(user?.profilePhoto) && (
               <Image
