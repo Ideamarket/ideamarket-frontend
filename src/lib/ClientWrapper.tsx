@@ -55,9 +55,9 @@ export const ClientWrapper: React.FC = ({ children }) => {
       })
       if (response.data?.success && response.data?.data) {
         const {
-          data: { tokenValue },
+          data: { token },
         } = response.data
-        onChangeJwtToken(tokenValue, signedWalletAddress)
+        onChangeJwtToken(token, signedWalletAddress)
       } else {
         throw new Error('Failed to login')
       }

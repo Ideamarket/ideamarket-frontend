@@ -1,9 +1,5 @@
 import { CogIcon } from '@heroicons/react/outline'
-import {
-  ChevronDownIcon,
-  ChevronUpIcon,
-  ExternalLinkIcon,
-} from '@heroicons/react/solid'
+import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/solid'
 import { lockToken } from 'actions'
 import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
@@ -203,10 +199,10 @@ const LockInterface = ({
           </div>
         </div>
 
-        <div className="text-gray-500 text-sm w-full mt-4 flex justify-end">
+        {/* <div className="text-gray-500 text-sm w-full mt-4 flex justify-end">
           <span className="cursor-pointer">FAQ</span>
           <ExternalLinkIcon className="w-5 h-5 ml-1 cursor-pointer" />
-        </div>
+        </div> */}
       </div>
     )
   } else {
@@ -426,10 +422,10 @@ const LockInterface = ({
 
             <TxPending txManager={txManager} />
 
-            <div className="text-gray-500 text-sm w-full mt-4 flex justify-end">
+            {/* <div className="text-gray-500 text-sm w-full mt-4 flex justify-end">
               <span className="cursor-pointer">FAQ</span>
               <ExternalLinkIcon className="w-5 h-5 ml-1 cursor-pointer" />
-            </div>
+            </div> */}
           </div>
         ) : (
           <div className="flex justify-center">
