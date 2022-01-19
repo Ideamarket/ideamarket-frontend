@@ -147,26 +147,31 @@ export default function ProfileSettingsModal({ close }: { close: () => void }) {
   }
 
   const verifyEmail = async (openModal?: boolean) => {
-    try {
-      const response = await sendVerificationCodeToAccountEmail({
-        token: jwtToken,
+    setUpdateErrorText('')
+    sendVerificationCodeToAccountEmail({
+      token: jwtToken,
+    })
+      .then((response) => {
+        if (
+          response.data?.success &&
+          response.data?.data &&
+          response.data?.data?.codeSent
+        ) {
+          openModal && ModalService.open(EmailVerificationCode, { verifyEmail })
+        } else {
+          setUpdateErrorText(response.data?.data?.messge)
+        }
       })
-      if (response.data?.success && response.data?.data) {
-        openModal && ModalService.open(EmailVerificationCode, { verifyEmail })
-      } else {
-        throw new Error('Failed to send an email')
-      }
-    } catch (error) {
-      console.log('Failed to send an email', error)
-      return null
-    }
+      .catch((error) => {
+        console.log('error', error)
+      })
   }
 
   return (
     <Modal close={close}>
       <div className="p-6 bg-white w-full md:w-[28rem]">
         {updateErrorText ? (
-          <p className="text-red-400">{updateErrorText}</p>
+          <p className="text-red-400 mb-3">{updateErrorText}</p>
         ) : (
           ''
         )}
