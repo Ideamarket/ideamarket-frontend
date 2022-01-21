@@ -1,6 +1,5 @@
 import { IdentificationIcon, MailIcon } from '@heroicons/react/solid'
 import { IoIosWallet } from 'react-icons/io'
-import { BsArrowLeftRight } from 'react-icons/bs'
 import { BiCog } from 'react-icons/bi'
 import { IoMdExit } from 'react-icons/io'
 import Link from 'next/link'
@@ -74,13 +73,7 @@ export const ProfileTooltip = ({
       <Link href="/account">
         <div className="cursor-pointer flex items-center py-3 px-4 border-t border-gray-100 hover:bg-brand-gray">
           <IoIosWallet className="w-6 h-6  text-gray-400" />
-          <span className="ml-2 font-medium">Wallet Holdings</span>
-        </div>
-      </Link>
-      <Link href="/account">
-        <div className="cursor-pointer flex items-center py-3 px-4 border-t border-gray-100 hover:bg-brand-gray">
-          <BsArrowLeftRight className="w-6 h-6  text-gray-400" />
-          <span className="ml-2 font-medium">Trade History</span>
+          <span className="ml-2 font-medium">Wallet/Profile</span>
         </div>
       </Link>
       {isSignedIn && (

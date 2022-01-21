@@ -274,7 +274,7 @@ export default function ProfileSettingsModal({ close }: { close: () => void }) {
         </div>
         <input
           className="pl-2 w-full h-10 leading-tight border rounded appearance-none focus:outline-none focus:bg-white dark:focus:bg-gray-700"
-          value={email}
+          value={email || ''}
           onChange={(event) =>
             dispatch({ type: 'set-email', payload: event.target.value })
           }
