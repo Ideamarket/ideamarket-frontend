@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import Image from 'next/image'
 import NProgress from 'nprogress'
 import { getNavbarConfig } from './constants'
@@ -16,6 +16,8 @@ import { useMutation } from 'react-query'
 import { SignedAddress } from 'types/customTypes'
 import useAuth from 'components/account/useAuth'
 import { GhostIcon } from 'assets'
+import ToggleSwitch from 'components/ToggleSwitch'
+import { GlobalContext } from 'lib/GlobalContext'
 
 const NavMenu = () => {
   const router = useRouter()
@@ -30,6 +32,8 @@ const NavMenu = () => {
   const { mixpanel } = useMixPanel()
 
   const navbarConfig = getNavbarConfig(mixpanel)
+
+  const { isGhostMarketActive, setIsGhostMarketActive } = useContext(GlobalContext)
 
   useEffect(() => {
     const featureSwitch = async () => {
@@ -207,15 +211,12 @@ const NavMenu = () => {
           </div>
           <div className="flex text-lg items-center">
             <GhostIcon className="w-6 h-6" />
-            <span className="text-white ml-1">Ghost market</span>
-            <span className="text-brand-blue ml-2">LIVE</span>
-            <label className="relative flex justify-between items-center text-xl w-9 ml-2">
-              <input
-                type="checkbox"
-                className="absolute left-1/2 -translate-x-1/2 w-full h-full peer appearance-none rounded-md opacity-0"
-              />
-              <span className="w-9 h-5 flex items-center flex-shrink-0 p-1 bg-gray-400 rounded-full duration-300 ease-in-out peer-checked:bg-brand-blue after:w-4 after:h-4 after:bg-white after:rounded-full after:shadow-md after:duration-300 peer-checked:after:translate-x-3"></span>
-            </label>
+            <span className="text-white ml-1 mr-2">Ghost Market</span>
+            {isGhostMarketActive && <span className="text-brand-blue mr-2">LIVE</span>}
+            <ToggleSwitch
+              handleChange={() => setIsGhostMarketActive(!isGhostMarketActive)}
+              isOn={isGhostMarketActive}
+            />
           </div>
           <div className="hidden md:flex">
             <NavThemeButton />
