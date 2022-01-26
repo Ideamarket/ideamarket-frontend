@@ -41,11 +41,11 @@ export const ProfileTooltip = ({
   }
 
   return (
-    <div className="flex flex-col w-32 md:w-64 dark:text-black">
+    <div className="flex flex-col w-28 md:w-60 dark:text-black">
       {!isSignedIn && (
         <div
           onClick={() => onLoginClicked()}
-          className="cursor-pointer flex items-center py-3 px-4 hover:bg-brand-gray"
+          className="cursor-pointer flex items-center py-4 px-5 hover:bg-brand-gray"
         >
           <IdentificationIcon className="w-6 h-6 text-gray-400" />
           <div className="ml-2">Create Account</div>
@@ -54,7 +54,7 @@ export const ProfileTooltip = ({
       {isSignedIn && !Boolean(user.email) && (
         <>
           <div
-            className="cursor-pointer flex items-center py-3 px-4 hover:bg-brand-gray"
+            className="cursor-pointer flex items-center py-4 px-5 hover:bg-brand-gray"
             onClick={onClickSettings}
           >
             <MailIcon className="w-6 h-6  text-gray-400" />
@@ -71,14 +71,14 @@ export const ProfileTooltip = ({
         </>
       )}
       <Link href="/account">
-        <div className="cursor-pointer flex items-center py-3 px-4 border-t border-gray-100 hover:bg-brand-gray">
+        <div className="cursor-pointer flex items-center py-4 px-5 border-t border-gray-100 hover:bg-brand-gray">
           <IoIosWallet className="w-6 h-6  text-gray-400" />
           <span className="ml-2 font-medium">Wallet/Profile</span>
         </div>
       </Link>
       {isSignedIn && (
         <div
-          className="cursor-pointer flex items-center py-3 px-4 border-t border-gray-100 hover:bg-brand-gray"
+          className="cursor-pointer flex items-center py-4 px-5 border-t border-gray-100 hover:bg-brand-gray"
           onClick={onClickSettings}
         >
           <BiCog className="w-6 h-6  text-gray-400" />
@@ -86,7 +86,7 @@ export const ProfileTooltip = ({
         </div>
       )}
       <div
-        className="cursor-pointer flex items-center py-3 px-4 border-t border-gray-100 hover:bg-brand-gray"
+        className="cursor-pointer flex items-center py-4 px-5 border-t border-gray-100 hover:bg-brand-gray"
         onClick={onClickDisconnectWallet}
       >
         <IoMdExit className="w-6 h-6  text-gray-400" />
