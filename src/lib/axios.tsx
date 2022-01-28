@@ -1,37 +1,38 @@
 import axios from 'axios'
 
-const client = axios.create({ baseURL: process.env.IDEAMARKET_BACKEND_HOST })
-const BASE_URL =
-  process.env.NEXT_PUBLIC_IDEAMARKET_BACKEND_HOST ||
-  'https://server-dev.ideamarket.io'
+const client = axios.create({
+  baseURL:
+    process.env.NEXT_PUBLIC_IDEAMARKET_BACKEND_HOST ||
+    'https://server-dev.ideamarket.io',
+})
 
 export default client
 
 export const registerAccount = ({ signedWalletAddress }) =>
-  client.post(`${BASE_URL}/account`, {
+  client.post(`/account`, {
     signedWalletAddress,
   })
 export const loginAccount = ({ signedWalletAddress }) =>
-  client.post(`${BASE_URL}/account/authenticate`, {
+  client.post(`/account/authenticate`, {
     signedWalletAddress,
   })
 
 export const getAccount = ({ jwt }) =>
-  client.get(`${BASE_URL}/account`, {
+  client.get(`/account`, {
     headers: {
       Authorization: `Bearer ${jwt}`,
     },
   })
 
 export const updateAccount = ({ requestBody, token }) =>
-  client.patch(`${BASE_URL}/account`, requestBody, {
+  client.patch(`/account`, requestBody, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   })
 
 export const uploadAccountPhoto = ({ formData, token }) =>
-  client.post(`${BASE_URL}/account/profilePhoto`, formData, {
+  client.post(`/account/profilePhoto`, formData, {
     headers: {
       Authorization: `Bearer ${token}`,
       'content-Type': 'multipart/form-data',
@@ -39,7 +40,7 @@ export const uploadAccountPhoto = ({ formData, token }) =>
   })
 
 export const sendVerificationCodeToAccountEmail = ({ token, email }) =>
-  client.get(`${BASE_URL}/account/emailVerification`, {
+  client.get(`/account/emailVerification`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -50,7 +51,7 @@ export const sendVerificationCodeToAccountEmail = ({ token, email }) =>
 
 export const checkAccountEmailVerificationCode = ({ token, code, email }) =>
   client.post(
-    `${BASE_URL}/account/emailVerification`,
+    `/account/emailVerification`,
     { code, email },
     {
       headers: {
@@ -61,7 +62,7 @@ export const checkAccountEmailVerificationCode = ({ token, code, email }) =>
 
 export const getPublicProfile = async ({ username }) => {
   const response = await client.get(
-    `${BASE_URL}/account/publicProfile?username=${username}`,
+    `/account/publicProfile?username=${username}`,
     {
       headers: {
         // TODO: pass in token if there is one

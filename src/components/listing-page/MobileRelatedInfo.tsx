@@ -1,5 +1,4 @@
 import classNames from 'classnames'
-import { MutualTokensList } from 'components'
 import { useState } from 'react'
 
 type Props = {
@@ -50,14 +49,14 @@ const MobileRelatedInfo = ({ rawTokenName, tokenName, marketName }: Props) => {
             No tweets found for {tokenName}
           </a>
         </div>
-        <div
+        {/* <div
           className={classNames(
             relatedOrTweets === 'related' ? 'visible' : 'hidden',
             'w-full'
           )}
         >
           <MutualTokensList tokenName={tokenName} marketName={marketName} />
-        </div>
+        </div> */}
       </div>
     </>
   )

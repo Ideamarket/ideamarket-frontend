@@ -1,5 +1,3 @@
-import { MutualTokensList } from 'components'
-
 type Props = {
   rawTokenName: string
   tokenName: string
@@ -13,11 +11,8 @@ const WikiDesktopRelatedInfo = ({
   marketName,
 }: Props) => {
   return (
-    <div className="hidden md:flex">
-      <div className="w-1/2 mr-5">
-        <div className="flex items-end justify-between h-20 pb-5 mb-12 border-b border-gray-200">
-          <h3 className="text-2xl font-medium leading-6">Wiki Page</h3>
-        </div>
+    <div className="hidden md:flex mt-4 pl-10">
+      <div className="w-full">
         {wikiSnapshot?.type === 'wikipedia' && (
           <iframe
             id="wiki-iframe"
@@ -35,9 +30,9 @@ const WikiDesktopRelatedInfo = ({
           />
         )}
       </div>
-      <div className="w-1/2 ml-5">
+      {/* <div className="w-1/2 ml-5">
         <MutualTokensList tokenName={tokenName} marketName={marketName} />
-      </div>
+      </div> */}
     </div>
   )
 }
