@@ -5,7 +5,7 @@ import useAuth from './useAuth'
 import { useWeb3React } from '@web3-react/core'
 import { useMutation } from 'react-query'
 import { getSignedInWalletAddress } from 'lib/utils/web3-eth'
-import { WalletGreenIcon } from '../../assets'
+import WalletGreenIcon from '../../assets/wallet-green.svg'
 import { IoMdExit } from 'react-icons/io'
 
 export default function CreateAccountModal({ close }: { close: () => void }) {

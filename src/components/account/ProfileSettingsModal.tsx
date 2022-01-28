@@ -4,7 +4,6 @@ import Image from 'next/image'
 import { FaRegTrashAlt } from 'react-icons/fa'
 import { BsCheck2Circle } from 'react-icons/bs'
 import { MdOutlineAddPhotoAlternate } from 'react-icons/md'
-import { IoMdInformationCircle } from 'react-icons/io'
 import { GlobalContext } from 'lib/GlobalContext'
 import { useEffect } from 'react'
 import {
@@ -12,7 +11,7 @@ import {
   updateAccount,
   uploadAccountPhoto,
 } from 'lib/axios'
-import { CircleSpinner, Tooltip } from 'components'
+import { CircleSpinner } from 'components'
 import { UserProfile } from 'types/customTypes'
 import ModalService from 'components/modals/ModalService'
 import EmailVerificationCode from './EmailVerificationCode'
@@ -254,16 +253,6 @@ export default function ProfileSettingsModal({ close }: { close: () => void }) {
                 <p className="text-sm text-black text-opacity-50">
                   Display name
                 </p>
-                <div className="ml-auto">
-                  <Tooltip
-                    IconComponent={IoMdInformationCircle}
-                    iconComponentClassNames="text-gray-400"
-                  >
-                    <div className="w-32 md:w-64">
-                      Your display name should contain...
-                    </div>
-                  </Tooltip>
-                </div>
               </div>
               <input
                 className="pl-2 w-full h-14 mb-1 leading-tight border rounded focus:outline-none focus:bg-white dark:focus:bg-gray-700"

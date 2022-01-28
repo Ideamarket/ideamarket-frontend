@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import Image from 'next/image'
-
-import { WalletGreenIcon } from '../../assets'
+import WalletGreenIcon from '../../assets/wallet-green.svg'
 import { useWeb3React } from '@web3-react/core'
 import { GlobalContext } from 'lib/GlobalContext'
 import { AccountOptionsInterface } from './AccountOptionsInterface'
