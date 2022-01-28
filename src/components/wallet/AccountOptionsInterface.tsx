@@ -1,7 +1,8 @@
-import { IdentificationIcon, MailIcon } from '@heroicons/react/solid'
+import { MailIcon } from '@heroicons/react/solid'
 import { IoIosWallet } from 'react-icons/io'
 import { BiCog } from 'react-icons/bi'
 import { IoMdExit } from 'react-icons/io'
+import { FiUserPlus } from 'react-icons/fi'
 import Link from 'next/link'
 import ModalService from 'components/modals/ModalService'
 import ProfileSettingsModal from 'components/account/ProfileSettingsModal'
@@ -14,7 +15,7 @@ import { GlobalContext } from 'lib/GlobalContext'
 import { BsFillBellFill } from 'react-icons/bs'
 import SpearkIcon from '../../assets/speaker.svg'
 
-export const ProfileTooltip = ({
+export const AccountOptionsInterface = ({
   onLoginClicked,
 }: {
   onLoginClicked: () => void
@@ -41,14 +42,17 @@ export const ProfileTooltip = ({
   }
 
   return (
-    <div className="flex flex-col w-28 md:w-60 dark:text-black">
+    <div className="flex flex-col w-full md:w-60 dark:text-black md:w-auto">
       {!isSignedIn && (
         <div
           onClick={() => onLoginClicked()}
           className="cursor-pointer flex items-center py-4 px-5 hover:bg-brand-gray"
         >
-          <IdentificationIcon className="w-6 h-6 text-gray-400" />
-          <div className="ml-2">Create Account</div>
+          <FiUserPlus className="w-6 h-6 text-gray-400" />
+          <div className="ml-2">
+            <p className="font-medium">Create Account</p>
+            <p className="mt-1 text-gray-300 text-xs">Use Connected Wallet</p>
+          </div>
         </div>
       )}
       {isSignedIn && !Boolean(user.email) && (
@@ -61,12 +65,13 @@ export const ProfileTooltip = ({
             <span className="ml-2 font-medium">Connect Email</span>
           </div>
 
-          <div className="py-2 px-4 bg-brand-blue text-center">
+          <div className="py-2 px-4 bg-brand-blue text-center flex items-center">
+            <BsFillBellFill className="w-6 h-6 text-yellow-1" />
             <span className="text-white">
-              <BsFillBellFill className="w-4 h-4 text-yellow-1" /> receive
-              notificaions, updates <br />
-              and announcements <SpearkIcon className="w-4 h-4" />
+              receive notificaions, updates <br />
+              and announcements
             </span>
+            <SpearkIcon className="w-6 h-6" />
           </div>
         </>
       )}

@@ -2,7 +2,9 @@ import { useContext, useMemo, useReducer, useRef, useState } from 'react'
 import Modal from '../modals/Modal'
 import Image from 'next/image'
 import { FaRegTrashAlt } from 'react-icons/fa'
+import { BsCheck2Circle } from 'react-icons/bs'
 import { MdOutlineAddPhotoAlternate } from 'react-icons/md'
+import { IoMdInformationCircle } from 'react-icons/io'
 import { GlobalContext } from 'lib/GlobalContext'
 import { useEffect } from 'react'
 import {
@@ -10,7 +12,7 @@ import {
   updateAccount,
   uploadAccountPhoto,
 } from 'lib/axios'
-import { CircleSpinner } from 'components'
+import { CircleSpinner, Tooltip } from 'components'
 import { UserProfile } from 'types/customTypes'
 import ModalService from 'components/modals/ModalService'
 import EmailVerificationCode from './EmailVerificationCode'
@@ -63,28 +65,40 @@ export default function ProfileSettingsModal({ close }: { close: () => void }) {
 
   const [loading, setLoading] = useState<Boolean>(false)
   const [previewImage, setPreviewImage] = useState(undefined)
-  const [updateErrorText, setUpdateErrorText] = useState('')
+  const [validationError, setValidationError] = useState(initialState)
+  const [successToastPos, setPosition] = useState(0)
 
   useEffect(() => {
     dispatch({ type: 'reset', payload: currentUser })
   }, [currentUser])
 
   const updateUser = async (requestBody) => {
-    setUpdateErrorText('')
+    setValidationError(initialState)
     try {
       const response = await updateAccount({ requestBody, token: jwtToken })
       if (response.data?.success && response.data?.data) {
         setUser(response.data.data)
+        setTimeout(() => {
+          setPosition(1)
+        }, 100)
+        setTimeout(() => {
+          setPosition(0)
+        }, 1000)
       } else {
         throw new Error('Failed to update')
       }
     } catch (error) {
       console.log('Failed to update', error.response)
-      const errorMessage = Object.values(
-        error.response?.data?.errors?.[0] || {}
-      )?.[0]
-      if (errorMessage) {
-        setUpdateErrorText(errorMessage as string)
+      const errors = error.response?.data?.errors
+      let errorsObj = {}
+      if (errors && errors.length) {
+        errors.forEach((error) => {
+          errorsObj = {
+            ...errorsObj,
+            ...error,
+          }
+        })
+        setValidationError(errorsObj)
       }
     } finally {
     }
@@ -150,7 +164,7 @@ export default function ProfileSettingsModal({ close }: { close: () => void }) {
   }
 
   const verifyEmail = async (openModal?: boolean) => {
-    setUpdateErrorText('')
+    setValidationError(initialState)
     sendVerificationCodeToAccountEmail({
       token: jwtToken,
       email,
@@ -164,7 +178,7 @@ export default function ProfileSettingsModal({ close }: { close: () => void }) {
           openModal &&
             ModalService.open(EmailVerificationCode, { verifyEmail, email })
         } else {
-          setUpdateErrorText(response.data?.data?.messge)
+          setValidationError({ email: response.data?.data?.messge })
         }
       })
       .catch((error) => {
@@ -174,12 +188,23 @@ export default function ProfileSettingsModal({ close }: { close: () => void }) {
 
   return (
     <Modal close={close}>
-      <div className="p-6 bg-white w-full md:w-[28rem]">
-        {updateErrorText ? (
-          <p className="text-red-400 mb-3">{updateErrorText}</p>
-        ) : (
-          ''
+      <div
+        className={classNames(
+          'transition-all duration-[1000ms] ease-in shadow-2xl rounded-lg text-base text-gray-500 font-medium font-inter bg-white p-4 absolute w-72 left-0 right-0 mx-auto',
+          !successToastPos ? 'invisible top-0' : 'visible top-10'
         )}
+        style={{
+          boxShadow: '0px 9.87664px 24.6916px rgba(0, 0, 0, 0.25)',
+        }}
+      >
+        <p>
+          <span>
+            <BsCheck2Circle className="w-6 h-6 text-green-500" />
+          </span>{' '}
+          Changes saved successfully!
+        </p>
+      </div>
+      <div className="p-6 bg-white w-full md:w-[28rem]">
         <div className="flex justify-between items-center">
           <span className="text-2xl text-center text-black text-opacity-90 md:text-3xl font-gilroy-bold font-bold">
             Settings
@@ -196,16 +221,14 @@ export default function ProfileSettingsModal({ close }: { close: () => void }) {
         </div>
 
         <div className="flex items-center my-4">
-          <div className="relative w-32 h-32 rounded-full bg-gray-400 ">
-            {Boolean((previewImage && previewImage !== '') || profilePhoto) && (
-              <Image
-                src={previewImage || profilePhoto}
-                alt="Profile image"
-                layout="fill"
-                objectFit="cover"
-                className="rounded-full"
-              />
-            )}
+          <div className="relative w-20 h-20 rounded-full bg-gray-400 ">
+            <Image
+              src={previewImage || profilePhoto || '/avatar.png'}
+              alt="Profile image"
+              layout="fill"
+              objectFit="cover"
+              className="rounded-full"
+            />
             <input
               type="file"
               hidden
@@ -213,50 +236,79 @@ export default function ProfileSettingsModal({ close }: { close: () => void }) {
               onChange={fileUploadInputChange}
             />
             <div
-              className="cursor-pointer absolute w-8 h-8 rounded-full shadow-shadow-1 bottom-0 bg-white p-1"
+              className="cursor-pointer absolute w-7 h-7 rounded-full shadow-shadow-1 bottom-0 bg-white p-1"
               onClick={fileUploadAction}
             >
-              <MdOutlineAddPhotoAlternate className="w-6 h-6" />
+              <MdOutlineAddPhotoAlternate className="w-5 h-5" />
             </div>
             <div
-              className="cursor-pointer absolute w-8 h-8 rounded-full shadow-shadow-1 bottom-0 right-0 bg-white p-1"
+              className="cursor-pointer absolute w-7 h-7 rounded-full shadow-shadow-1 bottom-0 right-0 bg-white p-1"
               onClick={fileRemoveAction}
             >
-              <FaRegTrashAlt className="w-6 h-6 text-red-500" />
+              <FaRegTrashAlt className="w-5 h-5 text-red-500" />
             </div>
           </div>
           <div className="flex flex-col grow ml-5" style={{ flexGrow: 1 }}>
-            <div className="flex flex-col w-full">
-              <p className="ml-2 text-sm text-black text-opacity-50">
-                Username
-              </p>
-              <input
-                className="pl-2 w-full h-10 leading-tight border rounded appearance-none focus:outline-none focus:bg-white dark:focus:bg-gray-700"
-                value={username}
-                onChange={(event) =>
-                  dispatch({
-                    type: 'set-username',
-                    payload: event.target.value,
-                  })
-                }
-              />
-            </div>
             <div className="flex flex-col w-full mt-2">
-              <p className="ml-2 text-sm text-black text-opacity-50">
-                Display name
-              </p>
+              <div className="flex ml-2 mb-1 items-center">
+                <p className="text-sm text-black text-opacity-50">
+                  Display name
+                </p>
+                <div className="ml-auto">
+                  <Tooltip
+                    IconComponent={IoMdInformationCircle}
+                    iconComponentClassNames="text-gray-400"
+                  >
+                    <div className="w-32 md:w-64">
+                      Your display name should contain...
+                    </div>
+                  </Tooltip>
+                </div>
+              </div>
               <input
-                className="pl-2 w-full h-10 leading-tight border rounded appearance-none focus:outline-none focus:bg-white dark:focus:bg-gray-700"
+                className="pl-2 w-full h-14 mb-1 leading-tight border rounded focus:outline-none focus:bg-white dark:focus:bg-gray-700"
                 value={name}
                 onChange={(event) =>
                   dispatch({ type: 'set-name', payload: event.target.value })
                 }
               />
             </div>
+            {Boolean(validationError.name) && (
+              <p className="text-red-700 mb-3">{validationError.name}</p>
+            )}
           </div>
         </div>
 
-        <div className="flex items-center my-4">
+        <div className="flex items-center mb-2 mt-4">
+          <span className="text-sm text-black text-opacity-50">Username</span>
+        </div>
+
+        <div className="relative">
+          <span className="absolute inset-y-0 left-0 flex items-center pl-2">
+            <button
+              type="submit"
+              className="p-1 focus:outline-none focus:shadow-outline"
+            >
+              @
+            </button>
+          </span>
+          <input
+            name="username"
+            className="pl-10 w-full h-10 leading-tight border rounded appearance-none focus:outline-none focus:bg-white dark:focus:bg-gray-700"
+            value={username}
+            onChange={(event) =>
+              dispatch({
+                type: 'set-username',
+                payload: event.target.value,
+              })
+            }
+          />
+        </div>
+        {Boolean(validationError.username) && (
+          <p className="text-red-700 mb-3">{validationError.username}</p>
+        )}
+
+        <div className="flex items-center mb-2 mt-4">
           <span className="text-sm text-black text-opacity-50">Bio</span>
         </div>
         <textarea
@@ -267,7 +319,7 @@ export default function ProfileSettingsModal({ close }: { close: () => void }) {
           }
         />
 
-        <div className="flex items-center my-4">
+        <div className="flex items-center mb-2 mt-4">
           <span className="text-sm text-black text-opacity-50">
             Email Address
           </span>
@@ -294,7 +346,7 @@ export default function ProfileSettingsModal({ close }: { close: () => void }) {
           </button>
         )}
 
-        <div className="flex items-center my-4">
+        <div className="flex items-center mb-2 mt-4">
           <span className="text-sm text-black text-opacity-50">
             ETH Address
           </span>

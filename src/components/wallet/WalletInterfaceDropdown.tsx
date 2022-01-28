@@ -42,7 +42,7 @@ export default function WalletInterfaceDropdown({
   const { onWalletConnectedCallback, setOnWalletConnectedCallback } =
     useContext(GlobalContext)
 
-  const { library, connector, activate, deactivate } = useWeb3React()
+  const { library, connector, activate, deactivate, active } = useWeb3React()
 
   // handle logic to recognize the connector currently being activated
   const [activatingConnector, setActivatingConnector] = useState<any>()
@@ -138,7 +138,8 @@ export default function WalletInterfaceDropdown({
       <div
         className={classNames(
           'relative flex py-4 px-5 hover:bg-brand-gray',
-          withoutBorder ? '' : 'border-t border-gray-100'
+          withoutBorder ? '' : 'border-t border-gray-100',
+          'w-96 md:w-auto'
         )}
       >
         {isDisabled && (
@@ -156,8 +157,8 @@ export default function WalletInterfaceDropdown({
             connectingWallet === 0 && !isDisabled
               ? 'cursor-pointer'
               : 'cursor-not-allowed',
-            'flex-grow text-lg text-black dark:text-gray-300 rounded-lg',
-            isDisabled && 'bg-brand-gray dark:bg-gray-500',
+            'flex-grow text-lg text-black rounded-lg',
+            isDisabled && 'bg-brand-gray',
             walletButtonClassName || ''
           )}
         >
@@ -213,13 +214,28 @@ export default function WalletInterfaceDropdown({
           wallet={ConnectorIds.Fortmatic}
         />
       </div>
-      <div
-        className="cursor-pointer flex items-center py-4 px-5 border-t border-gray-100 hover:bg-brand-gray"
-        onClick={onDisconnectClicked}
-      >
-        <IoMdExit className="w-6 h-6  text-gray-400" />
-        <span className="ml-2 font-medium">Disconnect Wallet</span>
-      </div>
+      {active ? (
+        <div
+          className="cursor-pointer flex items-center py-4 px-5 border-t border-gray-100 hover:bg-brand-gray"
+          onClick={onDisconnectClicked}
+        >
+          <IoMdExit className="w-6 h-6  text-gray-400" />
+          <span className="ml-2 font-medium text-sm">Disconnect Wallet</span>
+        </div>
+      ) : (
+        <div
+          className="cursor-pointer flex flex-col items-center py-3 px-4 font-medium text-white bg-brand-blue"
+          onClick={onDisconnectClicked}
+        >
+          <p className="text-sm">I don’t have a wallet</p>
+          <p className="text-xs opacity-70">
+            Learn how to get one{' '}
+            <span>
+              <IoMdExit className="w-4 h-4" />
+            </span>
+          </p>
+        </div>
+      )}
     </div>
   )
 }

@@ -18,6 +18,7 @@ const ProfileGeneralInfo: React.FC<Props> = ({ userData }) => {
     user: {
       bio,
       profilePhoto: connectedProfilePhoto,
+      name,
       username: connectedUsername,
       email,
       walletAddress,
@@ -55,19 +56,24 @@ const ProfileGeneralInfo: React.FC<Props> = ({ userData }) => {
       </div>
       <div className="flex justify-between items-center mb-10 flex-col md:flex-row">
         <div className="flex items-center w-full md:w-auto">
-          <div className="relative w-20 h-20 rounded-full bg-gray-400 overflow-hidden">
-            {Boolean(profilePhoto) && (
-              <Image
-                src={profilePhoto}
-                alt="Workflow logo"
-                layout="fill"
-                objectFit="cover"
-                className="rounded-full"
-              />
-            )}
+          <div className="relative w-20 h-20 rounded-full overflow-hidden">
+            <Image
+              src={profilePhoto || '/avatar.png'}
+              alt="Profile photo"
+              layout="fill"
+              objectFit="cover"
+              className="rounded-full"
+            />
           </div>
           <div className="ml-6 font-sans">
-            <p className="text-lg">{username}</p>
+            <p className="text-lg">
+              {name}
+              {Boolean(username) && (
+                <span className="ml-1 text-white/50 text-base">
+                  @{username}
+                </span>
+              )}
+            </p>
             <p className="text-xs opacity-70 max-w-[15rem] mt-1">{bio || ''}</p>
           </div>
         </div>
