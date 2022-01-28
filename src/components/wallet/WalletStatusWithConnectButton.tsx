@@ -122,7 +122,7 @@ export default function WalletStatusWithConnectButton() {
 
             {walletVisibility && (
               <div className="absolute top-0 mt-10 right-0 mb-1 text-sm rounded-xl shadow bg-white overflow-hidden">
-                <WalletTooltip openModal={onLoginClicked} />
+                <WalletTooltip />
               </div>
             )}
           </>
@@ -142,7 +142,7 @@ export default function WalletStatusWithConnectButton() {
               </div>
               {walletVisibility && (
                 <div className="absolute top-0 mt-10 right-0 mb-1 text-sm rounded-xl shadow bg-white overflow-hidden">
-                  <WalletTooltip openModal={onLoginClicked} />
+                  <WalletTooltip />
                 </div>
               )}
             </div>

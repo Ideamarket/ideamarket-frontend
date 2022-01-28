@@ -10,10 +10,6 @@ import NavItem from './NavItem'
 import NavThemeButton from './NavThemeButton'
 import { useMixPanel } from 'utils/mixPanel'
 import { getData } from 'lib/utils/fetch'
-// import { ProfileTooltip } from '../wallet/ProfileTooltip'
-// import { useWeb3React } from '@web3-react/core'
-// import { GlobalContext } from 'lib/GlobalContext'
-// import { useMutation } from 'react-query'
 
 const NavMenu = () => {
   const router = useRouter()
