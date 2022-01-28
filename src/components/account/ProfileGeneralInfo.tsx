@@ -56,7 +56,7 @@ const ProfileGeneralInfo: React.FC<Props> = ({ userData }) => {
       </div>
       <div className="flex justify-between items-center mb-10 flex-col md:flex-row">
         <div className="flex items-center w-full md:w-auto">
-          <div className="relative w-20 h-20 rounded-full overflow-hidden">
+          <div className="relative w-20 h-20 min-w-[5rem] rounded-full overflow-hidden">
             <Image
               src={profilePhoto || '/avatar.png'}
               alt="Profile photo"
