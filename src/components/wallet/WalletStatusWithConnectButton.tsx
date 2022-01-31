@@ -118,12 +118,6 @@ export default function WalletStatusWithConnectButton() {
             >
               Connect Wallet
             </div>
-
-            {walletVisibility && (
-              <div className="absolute top-0 mt-10 right-0 mb-1 text-sm rounded-xl shadow bg-white overflow-hidden">
-                <WalletTooltip />
-              </div>
-            )}
           </>
         )}
 
@@ -139,11 +133,6 @@ export default function WalletStatusWithConnectButton() {
               <div className="ml-3 text-gray-400 align-middle whitespace-nowrap hidden lg:flex">
                 {account.slice(0, 6)}...{account.slice(-4)}
               </div>
-              {walletVisibility && (
-                <div className="absolute top-0 mt-10 right-0 mb-1 text-sm rounded-xl shadow bg-white overflow-hidden">
-                  <WalletTooltip />
-                </div>
-              )}
             </div>
             <div
               className="ml-3 w-6 h-6 relative rounded-full"
@@ -165,6 +154,11 @@ export default function WalletStatusWithConnectButton() {
               )}
             </div>
           </>
+        )}
+        {walletVisibility && (
+          <div className="absolute top-0 mt-10 right-0 mb-1 text-sm rounded-xl shadow bg-white overflow-hidden">
+            <WalletTooltip />
+          </div>
         )}
       </div>
     </div>

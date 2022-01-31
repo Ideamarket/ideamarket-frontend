@@ -86,7 +86,7 @@ export default function WalletInterfaceDropdown({
       setActivatingConnector(undefined)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activatingConnector, connector, connectingWallet])
+  }, [activatingConnector, connector])
 
   async function onWalletClicked(wallet) {
     if (onWalletClickedToConnect) {
