@@ -7,6 +7,7 @@ import { useMutation } from 'react-query'
 import { getSignedInWalletAddress } from 'lib/utils/web3-eth'
 import WalletGreenIcon from '../../assets/wallet-green.svg'
 import { IoMdExit } from 'react-icons/io'
+import { A } from 'components'
 
 export default function CreateAccountModal({ close }: { close: () => void }) {
   const { active, account, library } = useWeb3React()
@@ -55,9 +56,14 @@ export default function CreateAccountModal({ close }: { close: () => void }) {
             SIGN
           </span>{' '}
           on the wallet dailog box and accept the Ideamarket{' '}
-          <span className="text-brand-blue font-semibold cursor-pointer">
-            Terms of Service <IoMdExit className="w-6 h-6 text-brand-blue" />
-          </span>
+          <A
+            href="https://docs.ideamarket.io/legal/terms-of-service"
+            className="text-brand-blue font-semibold cursor-pointer"
+          >
+            <span>
+              Terms of Service <IoMdExit className="w-6 h-6 text-brand-blue" />
+            </span>
+          </A>
         </p>
 
         <p className="text-sm font-inter text-gray-400 font-normal my-8">

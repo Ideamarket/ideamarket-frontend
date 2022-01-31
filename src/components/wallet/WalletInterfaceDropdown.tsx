@@ -20,6 +20,7 @@ import {
 } from 'wallets/connectors/index'
 import { Tooltip } from 'components'
 import getConfig from 'next/config'
+import A from 'components/A'
 
 const { publicRuntimeConfig } = getConfig()
 const { MIX_PANEL_KEY } = publicRuntimeConfig
@@ -85,7 +86,7 @@ export default function WalletInterfaceDropdown({
       setActivatingConnector(undefined)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activatingConnector, connector])
+  }, [activatingConnector, connector, connectingWallet])
 
   async function onWalletClicked(wallet) {
     if (onWalletClickedToConnect) {
@@ -227,13 +228,15 @@ export default function WalletInterfaceDropdown({
           className="cursor-pointer flex flex-col items-center py-3 px-4 font-medium text-white bg-brand-blue"
           onClick={onDisconnectClicked}
         >
-          <p className="text-sm">I don’t have a wallet</p>
-          <p className="text-xs opacity-70">
-            Learn how to get one{' '}
-            <span>
-              <IoMdExit className="w-4 h-4" />
-            </span>
-          </p>
+          <A href="http://metamask.io">
+            <p className="text-sm">I don’t have a wallet</p>
+            <p className="text-xs opacity-70">
+              Learn how to get one{' '}
+              <span>
+                <IoMdExit className="w-4 h-4" />
+              </span>
+            </p>
+          </A>
         </div>
       )}
     </div>
