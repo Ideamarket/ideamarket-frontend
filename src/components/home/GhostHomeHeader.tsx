@@ -2,6 +2,7 @@ import React, { useContext, useRef, useState } from 'react'
 import { GlobalContext } from 'pages/_app'
 import Image from 'next/image'
 import ModalService from 'components/modals/ModalService'
+import CreateAccountModal from 'components/account/CreateAccountModal'
 import { CircleSpinner, WalletModal } from 'components'
 import A from 'components/A'
 import { GlobeAltIcon, PlusCircleIcon, XIcon } from '@heroicons/react/outline'
@@ -87,6 +88,13 @@ const HomeHeader = ({
    * User clicked the button to list token on Ghost Market
    */
   const onClickGhostList = async () => {
+
+    // TODO: if jwtToken is not present, then popup modal to ask user to create account or sign in
+    if (!jwtToken) {
+      ModalService.open(CreateAccountModal, {}, () => setShowListingCards(true))
+      return
+    }
+
     setIsListing(true)
     const market = getMarketFromURL(urlInput, markets)
 
@@ -415,7 +423,7 @@ const HomeHeader = ({
                   </div>
                 ) : (
                   <button
-                    onClick={() => ModalService.open(WalletModal)}
+                    onClick={() => ModalService.open(WalletModal, {}, () => setShowListingCards(true))}
                     className="text-white bg-blue-500 flex flex-col justify-center items-center w-full h-20 mt-4 font-bold rounded-lg"
                   >
                     <div className="font-bold text-lg">CONNECT WALLET</div>

@@ -73,3 +73,17 @@ export const getPublicProfile = async ({ username }) => {
 
   return response?.data?.data
 }
+
+export const fetchWalletVerification = () =>
+  fetch('/api/walletVerificationRequest', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  }).then(async (res) => {
+    if (!res.ok) {
+      const response = await res.json()
+      throw new Error(response.message)
+    }
+    return res.json()
+  })

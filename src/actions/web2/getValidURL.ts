@@ -12,7 +12,7 @@ export const getValidURL = async (url: string) => {
       },
     })
 
-    return response?.data?.data
+    return response?.data?.data?.validUrl
   } catch (error) {
     console.error('Could not list this token on the ghost market', error)
     return null
