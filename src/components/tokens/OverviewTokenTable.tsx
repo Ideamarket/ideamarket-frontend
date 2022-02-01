@@ -1,6 +1,7 @@
 import React, {
   MutableRefObject,
   useCallback,
+  useContext,
   useEffect,
   useRef,
   useState,
@@ -21,6 +22,7 @@ import TokenRowSkeleton from './OverviewTokenRowSkeleton'
 import { OverviewColumns } from './table/OverviewColumns'
 import { MainFilters } from './utils/OverviewUtils'
 import { flatten } from 'utils/lodash'
+import { GlobalContext } from 'lib/GlobalContext'
 
 type Props = {
   selectedMarkets: Set<string>
@@ -48,6 +50,8 @@ export default function Table({
   tradeOrListSuccessToggle,
 }: Props) {
   const TOKENS_PER_PAGE = 10
+
+  const { isGhostMarketActive } = useContext(GlobalContext)
 
   const [currentColumn, setCurrentColumn] = useState('')
   const [orderBy, setOrderBy] = useState('supply')
@@ -105,6 +109,7 @@ export default function Table({
         nameSearch,
         filterTokens,
         isVerifiedFilterActive,
+        isGhostMarketActive,
       ],
     ],
     queryTokens,
@@ -162,6 +167,7 @@ export default function Table({
     orderDirection,
     nameSearch,
     tradeOrListSuccessToggle,
+    isGhostMarketActive,
     refetch,
   ])
 
@@ -218,7 +224,7 @@ export default function Table({
           <div className="overflow-x-scroll border-b border-gray-200 dark:border-gray-500 sm:rounded-t-lg lg:overflow-x-visible">
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-500">
               <thead className="hidden md:table-header-group">
-                <tr className="z-10 lg:sticky md:top-28 sticky-safari">
+                <tr className="z-40 lg:sticky md:top-28 sticky-safari">
                   <OverviewColumns
                     currentColumn={currentColumn}
                     orderDirection={orderDirection}
@@ -228,14 +234,15 @@ export default function Table({
                 </tr>
               </thead>
               <tbody className="w-full bg-white divide-y divide-gray-200 dark:bg-gray-700 dark:divide-gray-500">
-                {(tokenData as IdeaToken[]).map((token, index) => {
+                {(tokenData as any[]).map((token, index) => {
+                  const marketID = token?.marketID
                   // Only load the rows if a market is found
-                  if (marketsMap[token.marketID]) {
+                  if (marketsMap[marketID]) {
                     return (
                       <TokenRow
-                        key={token.marketID + '-' + token.tokenID}
+                        key={index}
                         token={token}
-                        market={marketsMap[token.marketID]}
+                        market={marketsMap[marketID]}
                         showMarketSVG={false}
                         compoundSupplyRate={compoundSupplyRate}
                         getColumn={getColumn}

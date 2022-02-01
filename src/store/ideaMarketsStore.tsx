@@ -16,14 +16,14 @@ import {
   getQuerySingleTokenByID,
   getQueryTokenChartData,
   getQueryTokenLockedChartData,
-  getQueryTokenNameTextSearch,
-  getQueryTokens,
   getQuerySinglePricePoint,
   getQueryTokenBalances,
   getQueryBalancesOfHolders,
   getQueryMyTrades,
 } from './queries'
 import { NETWORK, L1_NETWORK } from 'store/networks'
+import { getAllListings } from 'actions/web2/getAllListings'
+import { getMarketSpecificsByMarketName } from './markets'
 
 const tenPow2 = new BigNumber('10').pow(new BigNumber('2'))
 
@@ -277,7 +277,8 @@ type Params = [
   orderDirection: string,
   search: string,
   filterTokens: string[],
-  isVerifiedFilter: boolean
+  isVerifiedFilter: boolean,
+  isGhostMarketActive: boolean
 ]
 
 export async function queryTokens(
@@ -297,80 +298,80 @@ export async function queryTokens(
     orderDirection,
     search,
     filterTokens,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isVerifiedFilter,
+    isGhostMarketActive,
   ] = params
 
   const fromTs = Math.floor(Date.now() / 1000) - duration
-  const marketIds = markets.map((market) => market.marketID)
+  const marketIds = markets.map((market) => market.marketID).join()
 
-  let L2Result
-  if (search.length >= 2) {
-    L2Result = (
-      await request(
-        HTTP_GRAPHQL_ENDPOINT,
-        getQueryTokenNameTextSearch(
-          marketIds,
-          skip,
-          num,
-          fromTs,
-          orderBy,
-          orderDirection,
-          search,
-          filterTokens,
-          isVerifiedFilter
-        )
-      )
-    ).tokenNameSearch
-  } else {
-    L2Result = (
-      await request(
-        HTTP_GRAPHQL_ENDPOINT,
-        getQueryTokens(
-          marketIds,
-          skip,
-          num,
-          fromTs,
-          orderBy,
-          orderDirection,
-          filterTokens,
-          isVerifiedFilter
-        )
-      )
-    ).ideaTokens
-  }
+  // if (search.length >= 2) {
+  // L2Result = (
+  //   await request(
+  //     HTTP_GRAPHQL_ENDPOINT,
+  //     getQueryTokenNameTextSearch(
+  //       marketIds,
+  //       skip,
+  //       num,
+  //       fromTs,
+  //       orderBy,
+  //       orderDirection,
+  //       search,
+  //       filterTokens,
+  //       isVerifiedFilter
+  //     )
+  //   )
+  // ).tokenNameSearch
+  // } else {
 
-  const finalResult = await Promise.all(
-    L2Result.map(async (token) => {
-      const l1Token = await querySingleToken(
-        'token',
-        token?.market?.name,
-        token?.name,
-        true
-      )
-      let l1LockedAmount = '0'
-      if (l1Token) {
-        l1LockedAmount = l1Token.lockedAmount
-      }
-      const l2LockedAmount = web3BNToFloatString(
-        new BN(token.lockedAmount),
-        bigNumberTenPow18,
-        2
-      )
-      const supply = web3BNToFloatString(
-        new BN(token.supply),
-        bigNumberTenPow18,
-        2
-      )
-      const lockedPercentage = (
-        ((+l1LockedAmount + +l2LockedAmount) / +supply) *
-        100
-      ).toString()
+  const marketType = isGhostMarketActive ? null : 'onchain'
 
-      return { ...token, lockedPercentage }
-    })
-  )
+  const L2Result = await getAllListings({
+    marketType, // TODO: make this dynamic based on filters
+    marketIds,
+    skip,
+    limit: num,
+    orderBy,
+    orderDirection,
+    filterTokens,
+    earliestPricePointTs: fromTs,
+    search,
+  })
+  // }
 
-  return finalResult.map((token) => apiResponseToIdeaToken(token))
+  // const finalResult = await Promise.all(
+  //   L2Result.map(async (token) => {
+  //     const l1Token = await querySingleToken(
+  //       'token',
+  //       token?.market?.name,
+  //       token?.name,
+  //       true
+  //     )
+  //     let l1LockedAmount = '0'
+  //     if (l1Token) {
+  //       l1LockedAmount = l1Token.lockedAmount
+  //     }
+  //     const l2LockedAmount = web3BNToFloatString(
+  //       new BN(token.lockedAmount),
+  //       bigNumberTenPow18,
+  //       2
+  //     )
+  //     const supply = web3BNToFloatString(
+  //       new BN(token.supply),
+  //       bigNumberTenPow18,
+  //       2
+  //     )
+  //     const lockedPercentage = (
+  //       ((+l1LockedAmount + +l2LockedAmount) / +supply) *
+  //       100
+  //     ).toString()
+
+  //     return { ...token, lockedPercentage }
+  //   })
+  // )
+
+  return L2Result.map((token) => newApiResponseToIdeaToken(token))
 }
 
 export async function querySingleToken(
@@ -1021,6 +1022,144 @@ function apiResponseToIdeaToken(
     isL1,
     holder,
   } as IdeaToken
+
+  return ret
+}
+
+function newApiResponseToIdeaToken(
+  apiResponse,
+  marketApiResponse?,
+  holder?,
+  isL1?
+): IdeaToken {
+  const { web2TokenData } = apiResponse
+  const { web3TokenData } = apiResponse
+
+  let market
+  if (web3TokenData?.market) {
+    market = web3TokenData?.market
+  } else if (marketApiResponse) {
+    market = marketApiResponse
+  }
+
+  const marketID = web3TokenData ? market?.id : web2TokenData?.marketId
+  const marketName = web3TokenData ? market?.name : web2TokenData?.marketName
+  const isOnChain = web3TokenData ? true : web2TokenData?.isOnChain
+  const onchainId = web3TokenData
+    ? web3TokenData?.tokenID
+    : web2TokenData?.onchainId
+
+  // When marketType is 'onchain', no web2TokenData is returned
+  const url = web2TokenData
+    ? web2TokenData?.value
+    : getMarketSpecificsByMarketName(marketName).getTokenURL(
+        web3TokenData?.name
+      )
+
+  const onchainValue =
+    getMarketSpecificsByMarketName(marketName).convertUserInputToTokenName(url)
+
+  const name = web3TokenData ? web3TokenData?.name : onchainValue
+
+  const ret = {
+    address: web3TokenData?.id,
+    marketID,
+    marketName,
+    tokenID: onchainId, // web3 token ID
+    listingId: web2TokenData?.listingId, // web2 ghost ID
+    url,
+    name,
+    isOnChain,
+    ghostListedBy: web2TokenData?.ghostListedBy,
+    ghostListedAt: web2TokenData?.ghostListedAt,
+    onchainListedBy: web2TokenData?.onchainListedBy,
+    onchainListedAt: web2TokenData?.onchainListedAt,
+    totalVotes: web2TokenData?.totalVotes,
+    supply: web3TokenData?.supply
+      ? web3BNToFloatString(new BN(web3TokenData?.supply), bigNumberTenPow18, 2)
+      : undefined,
+    rawSupply: web3TokenData?.supply
+      ? new BN(web3TokenData?.supply)
+      : undefined,
+    holders: web3TokenData?.holders,
+    marketCap: web3TokenData?.marketCap
+      ? web3BNToFloatString(
+          new BN(web3TokenData?.marketCap),
+          bigNumberTenPow18,
+          2
+        )
+      : undefined,
+    rawMarketCap: web3TokenData?.marketCap
+      ? new BN(web3TokenData?.marketCap)
+      : undefined,
+    rank: web3TokenData?.rank,
+    tokenOwner: web3TokenData?.tokenOwner
+      ? web3TokenData?.tokenOwner
+      : undefined,
+    daiInToken: web3TokenData?.daiInToken
+      ? web3BNToFloatString(
+          new BN(web3TokenData?.daiInToken),
+          bigNumberTenPow18,
+          2
+        )
+      : undefined,
+    rawDaiInToken: web3TokenData?.daiInToken
+      ? new BN(web3TokenData?.daiInToken)
+      : undefined,
+    invested: web3TokenData?.invested
+      ? web3BNToFloatString(
+          new BN(web3TokenData?.invested),
+          bigNumberTenPow18,
+          2
+        )
+      : undefined,
+    rawInvested: web3TokenData?.invested
+      ? new BN(web3TokenData?.invested)
+      : undefined,
+    tokenInterestRedeemed: web3TokenData?.tokenInterestRedeemed
+      ? web3BNToFloatString(
+          new BN(web3TokenData?.tokenInterestRedeemed),
+          bigNumberTenPow18,
+          2
+        )
+      : undefined,
+    rawTokenInterestRedeemed: web3TokenData?.tokenInterestRedeemed
+      ? new BN(web3TokenData?.tokenInterestRedeemed)
+      : undefined,
+    latestPricePoint:
+      web3TokenData?.latestPricePoint &&
+      apiResponseToPricePoint(web3TokenData?.latestPricePoint),
+    earliestPricePoint:
+      web3TokenData?.earliestPricePoint &&
+      web3TokenData?.earliestPricePoint.length > 0 &&
+      apiResponseToPricePoint(web3TokenData?.earliestPricePoint[0]),
+    dayChange: web3TokenData?.dayChange
+      ? (parseFloat(web3TokenData?.dayChange) * 100).toFixed(2)
+      : undefined,
+    weeklyChange:
+      (web3TokenData?.pricePoints &&
+        getWeeklyChange(web3TokenData?.pricePoints)) ||
+      '0',
+    dayVolume: web3TokenData?.dayVolume
+      ? parseFloat(web3TokenData?.dayVolume).toFixed(2)
+      : undefined,
+    listedAt: web3TokenData?.listedAt,
+    lockedAmount: web3TokenData?.lockedAmount
+      ? web3BNToFloatString(
+          new BN(web3TokenData?.lockedAmount),
+          bigNumberTenPow18,
+          2
+        )
+      : undefined,
+    rawLockedAmount: web3TokenData?.lockedAmount
+      ? new BN(web3TokenData?.lockedAmount)
+      : undefined,
+    lockedPercentage: web3TokenData?.lockedPercentage
+      ? parseFloat(web3TokenData?.lockedPercentage).toFixed(2)
+      : '',
+    isL1,
+    holder,
+  } as any
 
   return ret
 }

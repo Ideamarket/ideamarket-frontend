@@ -1,5 +1,5 @@
 import { useQuery } from 'react-query'
-import { MutualTokensList, DefaultLayout, WalletModal } from 'components'
+import { MutualTokensList, DefaultLayout, TradeModal } from 'components'
 // import { useWalletStore } from 'store/walletStore'
 // import { queryDaiBalance } from 'store/daiStore'
 // import { NETWORK } from 'store/networks'
@@ -26,7 +26,6 @@ import InvestmentCalculator from 'components/investment-calculator/InvestmentCal
 import WikiRelatedInfo from 'components/listing-page/WikiRelatedInfo'
 // import PageViewsPanel from 'components/listing-page/PageViewsPanel'
 import MultiChart from 'components/listing-page/MultiChart'
-import { GiSharkJaws } from 'react-icons/gi'
 import {
   bigNumberTenPow18,
   calculateCurrentPriceBN,
@@ -44,6 +43,7 @@ import {
 import { useBalance } from 'actions'
 import { useWeb3React } from '@web3-react/core'
 import { TrendingUpIcon } from '@heroicons/react/solid'
+import { getURLMetaData } from 'actions/web2/getURLMetaData'
 
 const DetailsSkeleton = () => (
   <div className="w-12 mx-auto bg-gray-400 rounded animate animate-pulse">
@@ -125,22 +125,30 @@ export default function TokenDetails({
   //       )
   //     : '0.00'
 
+  const url = marketSpecifics?.getTokenURL(tokenName)
+
+  const { data: urlMetaData, isLoading: isURLMetaDataLoading } = useQuery(
+    [url],
+    getURLMetaData
+  )
+
   const isLoading = isTokenLoading || isMarketLoading /*||
     isInterestManagerTotalSharesLoading ||
     isInterestManagerDaiBalanceLoading*/
 
-  const tokenPrice = isLoading
-    ? ''
-    : web3BNToFloatString(
-        calculateCurrentPriceBN(
-          token.rawSupply,
-          market.rawBaseCost,
-          market.rawPriceRise,
-          market.rawHatchTokens
-        ),
-        bigNumberTenPow18,
-        2
-      )
+  const tokenPrice =
+    isLoading || !token || !market
+      ? ''
+      : web3BNToFloatString(
+          calculateCurrentPriceBN(
+            token?.rawSupply,
+            market.rawBaseCost,
+            market.rawPriceRise,
+            market.rawHatchTokens
+          ),
+          bigNumberTenPow18,
+          2
+        )
 
   const relatedInfoProps = {
     rawTokenName,
@@ -187,20 +195,23 @@ export default function TokenDetails({
             token={token}
             refetch={refetch}
           /> */}
-          <div className="absolute top-0 w-full px-4 bg-top-mobile md:bg-top-desktop h-screen z-0">
+          <div className="absolute top-0 w-full px-4 bg-brand-navy h-screen z-0">
             {/* TODO: find a better way to add space to top and keep blue background */}
           </div>
 
           <div className="px-2 pb-5 mx-auto pt-40 transform md:mt-10 -translate-y-30 md:-translate-y-28 max-w-88 md:max-w-304">
             <div className="flex flex-col md:grid md:grid-cols-2 mb-20">
-              <div className="relative flex flex-col justify-between bg-white/[.1] h-136 text-white rounded-lg">
-                <div className="p-6 overflow-y-scroll">
+              <div className="relative flex flex-col justify-between bg-white/[.1] text-white rounded-lg">
+                <div className="p-6">
                   <div className="flex">
-                    <GiSharkJaws className="w-8 h-8 mt-1 p-1 rounded-full bg-white/50" />
-                    <div className="flex flex-col ml-3">
+                    <div className="flex flex-col">
                       <div className="leading-5">
                         <div className="inline font-medium mr-1">
-                          Baby Shark | CoComelon Nursery Rhymes & Kids Songs
+                          {!isURLMetaDataLoading &&
+                          urlMetaData &&
+                          urlMetaData?.ogTitle
+                            ? urlMetaData.ogTitle
+                            : 'loading'}
                         </div>
                         <span className="inline-block">
                           <span className="font-normal mr-2">on</span>
@@ -214,17 +225,17 @@ export default function TokenDetails({
                       </div>
 
                       <a
-                        href={marketSpecifics.getTokenURL(tokenName)}
+                        href={url}
                         className="text-brand-blue font-normal text-sm mt-1"
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        {marketSpecifics.getTokenURL(tokenName)}
+                        {url}
                       </a>
                     </div>
                   </div>
 
-                  <div className="flex items-center space-x-1 mt-4 pl-10 text-sm">
+                  <div className="flex items-center space-x-1 mt-4 text-sm">
                     <div className="px-2 py-2 bg-white/[.1] rounded-lg whitespace-nowrap">
                       Ghost Listed by @testing 87 days ago
                     </div>
@@ -233,7 +244,36 @@ export default function TokenDetails({
                     </div>
                   </div>
 
-                  <div className="flex items-center space-x-2 mt-4 pl-10">
+                  {marketName !== 'Wikipedia' && marketName !== 'Twitter' && (
+                    // Didn't use Next image because can't do wildcard domain allow in next config file
+                    <a
+                      href={url}
+                      className="cursor-pointer"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <img
+                        className="rounded-xl mt-4"
+                        src={
+                          !isURLMetaDataLoading &&
+                          urlMetaData &&
+                          urlMetaData?.ogImage
+                            ? urlMetaData.ogImage
+                            : '/gray.svg'
+                        }
+                        alt=""
+                      />
+                      <div className="my-4 text-gray-300 text-sm leading-5">
+                        {!isURLMetaDataLoading &&
+                        urlMetaData &&
+                        urlMetaData?.ogDescription
+                          ? urlMetaData.ogDescription
+                          : 'Description loading'}
+                      </div>
+                    </a>
+                  )}
+
+                  <div className="flex items-center space-x-2 mt-4 ">
                     <button className="bg-white px-4 py-2 flex items-center text-brand-navy rounded-lg">
                       200
                       <TrendingUpIcon className="w-5 ml-1" />
@@ -244,18 +284,22 @@ export default function TokenDetails({
                     </div>
                   </div>
 
-                  {marketName?.toLowerCase() === 'twitter' && (
-                    <>
-                      <MobileRelatedInfo {...relatedInfoProps} />
-                      <DesktopRelatedInfo {...relatedInfoProps} />
-                    </>
-                  )}
-                  {marketName?.toLowerCase() === 'wikipedia' && (
-                    <WikiRelatedInfo {...relatedInfoProps} />
+                  {(marketName === 'Wikipedia' || marketName === 'Twitter') && (
+                    <div style={{ height: '500px' }}>
+                      {marketName?.toLowerCase() === 'twitter' && (
+                        <>
+                          <MobileRelatedInfo {...relatedInfoProps} />
+                          <DesktopRelatedInfo {...relatedInfoProps} />
+                        </>
+                      )}
+                      {marketName?.toLowerCase() === 'wikipedia' && (
+                        <WikiRelatedInfo {...relatedInfoProps} />
+                      )}
+                    </div>
                   )}
                 </div>
 
-                <div className="flex items-center bg-white w-full h-20 p-4 rounded-b-lg text-black">
+                <div className="flex items-center bg-white w-full h-20 p-4 rounded-b-lg text-black z-50">
                   <div className="flex flex-col w-1/2">
                     <div className="text-sm opacity-50 font-semibold">
                       YOU OWN
@@ -270,7 +314,13 @@ export default function TokenDetails({
 
                   <div className="flex justify-end space-x-2 items-center w-full w-1/2">
                     <button
-                      onClick={() => ModalService.open(WalletModal, {})}
+                      onClick={() =>
+                        ModalService.open(
+                          TradeModal,
+                          { ideaToken: token, market },
+                          refetch
+                        )
+                      }
                       className="bg-blue-500 px-4 py-2 flex items-center text-white rounded-lg"
                     >
                       <ArrowSmUpIcon className="w-5" />

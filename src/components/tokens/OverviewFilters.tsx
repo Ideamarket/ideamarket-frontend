@@ -92,7 +92,7 @@ const DropdownButton = ({
       className={classNames(
         className,
         dropdownType !== 'columns' ? 'pl-3' : 'pl-2',
-        `relative flex items-center p-1 border rounded-md pr-1 font-semibold text-sm text-brand-black dark:text-gray-50 cursor-pointer z-40`
+        `relative flex items-center p-1 border rounded-md pr-1 font-semibold text-sm text-brand-black dark:text-gray-50 cursor-pointer `
       )}
       onMouseOver={() => {
         setIsDropdownOpen(true)

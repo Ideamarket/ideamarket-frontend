@@ -1,13 +1,12 @@
 import { IMarketSpecifics } from '.'
-import MindsOutlineWhite from '../../assets/minds-outline-white.svg'
-import MindsOutlineBlack from '../../assets/minds-outline-black.svg'
 import { queryLambdavatar } from 'actions'
+import { GlobeAltIcon } from '@heroicons/react/outline'
 
-export default class MindsMarketSpecifics implements IMarketSpecifics {
+export default class UrlMarketSpecifics implements IMarketSpecifics {
   // Market
 
   getMarketName(): string {
-    return 'Minds'
+    return 'URL'
   }
 
   isEnabled(): boolean {
@@ -15,29 +14,29 @@ export default class MindsMarketSpecifics implements IMarketSpecifics {
   }
 
   getMarketNameURLRepresentation(): string {
-    return 'minds'
+    return 'url'
   }
 
   getMarketSVGBlack(): JSX.Element {
-    return <MindsOutlineBlack className="w-4" />
+    return <GlobeAltIcon className="w-6" />
   }
 
   getMarketSVGWhite(): JSX.Element {
-    return <MindsOutlineWhite className="w-4" />
+    return <GlobeAltIcon className="w-6" />
   }
 
   getMarketSVGTheme(theme?): JSX.Element {
     if (theme === 'dark') {
-      return <MindsOutlineWhite className="w-4" />
+      return <GlobeAltIcon className="w-6" />
     } else {
-      return <MindsOutlineBlack className="w-4" />
+      return <GlobeAltIcon className="w-6" />
     }
   }
 
   // Tokens
 
   getTokenURL(tokenName: string): string {
-    return `https://minds.com/${this.getTokenNameURLRepresentation(tokenName)}`
+    return `${tokenName}`
   }
 
   getTokenIconURL(tokenName: string): Promise<string> {
@@ -51,23 +50,17 @@ export default class MindsMarketSpecifics implements IMarketSpecifics {
    * Convert URL input to token value that will be stored on blockchain
    */
   convertUserInputToTokenName(userInput: string): string {
-    if (!userInput) return null
-    const parsedURL = userInput
-      .replace('https://', '')
-      .replace('www.', '')
-      .replace('minds.com/', '')
-      .replaceAll('/', '') // get rid of any extra slashes at end of URL
-    return `@${parsedURL}`
+    return `${userInput}`
   }
 
   getTokenNameURLRepresentation(tokenName: string): string {
-    return tokenName.slice(1)
+    return tokenName
   }
 
   getTokenNameFromURLRepresentation(
     tokenNameInURLRepresentation: string
   ): string {
-    return `@${tokenNameInURLRepresentation}`
+    return `${tokenNameInURLRepresentation}`
   }
 
   getTokenDisplayName(tokenName: string): string {
@@ -77,7 +70,7 @@ export default class MindsMarketSpecifics implements IMarketSpecifics {
   // List Token
 
   getListTokenPrefix(): string {
-    return 'minds.com/'
+    return ''
   }
 
   getListTokenSuffix(): string {
@@ -87,7 +80,7 @@ export default class MindsMarketSpecifics implements IMarketSpecifics {
   // Verification
 
   isVerificationEnabled(): boolean {
-    return true
+    return false
   }
 
   getVerificationExplanation(): string {

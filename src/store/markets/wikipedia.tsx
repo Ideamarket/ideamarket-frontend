@@ -54,8 +54,14 @@ export default class WikipediaMarketSpecifics implements IMarketSpecifics {
    * @returns token name in correct format for inserting into smart contract
    */
   convertUserInputToTokenName(userInput: string): string {
+    if (!userInput) return null
+    const parsedURL = userInput
+      .replace('https://', '')
+      .replace('www.', '')
+      .replace('en.wikipedia.org/wiki/', '')
+      .replaceAll('/', '') // get rid of any extra slashes at end of URL
     // Replaces all &ndash; (–) and &mdash; (—) symbols with simple dashes (-) because only simple dashes can be decoded
-    const removedSpecialDashes = userInput?.replace(/\u2013|\u2014/g, '-')
+    const removedSpecialDashes = parsedURL?.replace(/\u2013|\u2014/g, '-')
     // Decode any special characters
     const decodedInput = decodeURI(removedSpecialDashes)
     // Make sure first char is capitalized

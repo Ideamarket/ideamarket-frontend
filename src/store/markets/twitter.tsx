@@ -19,18 +19,18 @@ export default class TwitterMarketSpecifics implements IMarketSpecifics {
   }
 
   getMarketSVGBlack(): JSX.Element {
-    return <TwitterOutlineBlack />
+    return <TwitterOutlineBlack className="w-5" />
   }
 
   getMarketSVGWhite(): JSX.Element {
-    return <TwitterOutlineWhite />
+    return <TwitterOutlineWhite className="w-5" />
   }
 
   getMarketSVGTheme(theme?): JSX.Element {
     if (theme === 'dark') {
-      return <TwitterOutlineWhite />
+      return <TwitterOutlineWhite className="w-5" />
     } else {
-      return <TwitterOutlineBlack />
+      return <TwitterOutlineBlack className="w-5" />
     }
   }
 
@@ -47,8 +47,17 @@ export default class TwitterMarketSpecifics implements IMarketSpecifics {
     })
   }
 
+  /**
+   * Convert URL input to token value that will be stored on blockchain
+   */
   convertUserInputToTokenName(userInput: string): string {
-    return `@${userInput.toLowerCase()}`
+    if (!userInput) return null
+    const parsedURL = userInput
+      .replace('https://', '')
+      .replace('www.', '')
+      .replace('twitter.com/', '')
+      .replaceAll('/', '') // get rid of any extra slashes at end of URL
+    return `@${parsedURL.toLowerCase()}`
   }
 
   getTokenNameURLRepresentation(tokenName: string): string {

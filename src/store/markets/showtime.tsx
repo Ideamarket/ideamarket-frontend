@@ -47,8 +47,17 @@ export default class ShowtimeMarketSpecifics implements IMarketSpecifics {
     })
   }
 
+  /**
+   * Convert URL input to token value that will be stored on blockchain
+   */
   convertUserInputToTokenName(userInput: string): string {
-    return userInput.toLowerCase()
+    if (!userInput) return null
+    const parsedURL = userInput
+      .replace('https://', '')
+      .replace('www.', '')
+      .replace('tryshowtime.com/', '')
+      .replaceAll('/', '') // get rid of any extra slashes at end of URL
+    return parsedURL.toLowerCase()
   }
 
   getTokenNameURLRepresentation(tokenName: string): string {

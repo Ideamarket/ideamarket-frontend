@@ -1,44 +1,50 @@
-import { getData } from 'lib/utils/fetch'
 import { useContractStore } from 'store/contractStore'
 import { getMarketSpecificsByMarketName } from 'store/markets'
-import { getBrokenTokenName } from 'utils/wikipedia'
+import { getSingleListing } from './web2/getSingleListing'
+import { getValidURL } from './web2/getValidURL'
 
 export default async function verifyTokenName(
-  name: string,
-  selectedMarket: any
+  url: string,
+  selectedMarket: any,
+  isWalletConnected: boolean // Is there a user connected to a wallet?
 ) {
-  const { data: apiData } = await getData({
-    url: `/api/markets/validateTokenName?marketName=${
-      selectedMarket.name
-    }&tokenName=${name ? name?.replace('@', '') : ''}`,
-  })
+  const canonical = await getValidURL(url)
 
-  // Set correct name that is returned from API and then convert into valid input for smart contract. Will be null if input name was invalid
-  const validName =
-    apiData && apiData.validToken
-      ? getMarketSpecificsByMarketName(
-          selectedMarket.name
-        ).convertUserInputToTokenName(apiData.validToken)
-      : null
-  // If broken name, use broken name to verify since that is how it was placed in contract
-  const brokenName = getBrokenTokenName(name)
+  // Final value that will be stored on chain as token's value
+  const finalTokenValue = getMarketSpecificsByMarketName(
+    selectedMarket.name
+  ).convertUserInputToTokenName(canonical)
 
-  const nameToVerify = brokenName ? brokenName : validName ? validName : name
-
-  const factoryContract = useContractStore.getState().factoryContract
-  const contractIsValid = await factoryContract.methods
-    .isValidTokenName(nameToVerify, selectedMarket.marketID.toString())
-    .call()
-
-  const isValid = validName && contractIsValid
-
-  let isAlreadyListed = false
-  if (!isValid) {
-    isAlreadyListed =
-      (await factoryContract.methods
-        .getTokenIDByName(nameToVerify, selectedMarket.marketID.toString())
-        .call()) !== '0'
+  let contractIsValid = true
+  // Need to be connected to wallet to check contract validation. Skip it if not connnected to wallet so users can still type URLs
+  if (isWalletConnected) {
+    const factoryContract = useContractStore.getState().factoryContract
+    contractIsValid = await factoryContract.methods
+      .isValidTokenName(
+        finalTokenValue || '',
+        selectedMarket.marketID.toString()
+      )
+      .call()
   }
 
-  return { isValid, isAlreadyListed, validName }
+  // When fetching listing, backend always expects URL (not a token name from old market)
+  const getExistingListing = await getSingleListing(
+    canonical,
+    selectedMarket.marketID
+  )
+
+  const isAlreadyGhostListed = getExistingListing?.web2TokenData
+  const isAlreadyOnChain = getExistingListing?.web3TokenData
+
+  // Is valid if 1) canonical is not null 2) contract validation works 3) not already on chain 4) not already on ghost market
+  const isValid =
+    canonical && contractIsValid && !isAlreadyOnChain && !isAlreadyGhostListed
+
+  return {
+    isValid,
+    isAlreadyGhostListed,
+    isAlreadyOnChain,
+    finalTokenValue,
+    canonical,
+  }
 }
