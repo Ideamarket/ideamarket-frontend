@@ -50,7 +50,12 @@ const StakeEthIMO = () => {
 
   const [balanceToggle, setBalanceToggle] = useState(false) // Need toggle to reload balance after stake/unstake
   const [userIMOBalance, userIMOBalanceBN, isUserIMOBalanceLoading] =
-    useLPStakedBalance(account)
+    useBalance(imoAddress, account, 18, balanceToggle)
+  const [
+    userIMOStakedBalance,
+    userIMOStakedBalanceBN,
+    isUserIMOStakedBalanceLoading,
+  ] = useLPStakedBalance(account)
   const [
     claimableRewardsIMOBalance,
     userxIMOBalanceBN,
@@ -417,7 +422,7 @@ const StakeEthIMO = () => {
                     <StakePriceItem
                       title="Staked"
                       tokenName="xIMO"
-                      price={userIMOBalance}
+                      price={userIMOStakedBalance}
                     />
                     <StakePriceItem
                       title="IMO Rewards Claimable"
