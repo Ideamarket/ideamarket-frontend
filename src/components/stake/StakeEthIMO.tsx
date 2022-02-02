@@ -2,10 +2,10 @@ import { CogIcon } from '@heroicons/react/outline'
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/solid'
 import { useWeb3React } from '@web3-react/core'
 import { useBalance, useTotalSupply } from 'actions'
-import stakeIMO from 'actions/stakeIMO'
+import stakeEthIMO from 'actions/stakeETHIMO'
 import useIMOPayoutAmount from 'actions/useIMOPayoutAmount'
 import useStakingAPR from 'actions/useStakingAPR'
-import withdrawxIMO from 'actions/withdrawxIMO'
+import withdrawEthIMO from 'actions/withdrawEthIMO'
 import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
 import { A, CircleSpinner, Tooltip, WalletModal } from 'components'
@@ -15,6 +15,7 @@ import ApproveButton from 'components/trade/ApproveButton'
 import TradeCompleteModal, {
   TRANSACTION_TYPES,
 } from 'components/trade/TradeCompleteModal'
+import { accordionData } from 'pages/stake'
 import { useState } from 'react'
 import { IoMdExit } from 'react-icons/io'
 import { NETWORK } from 'store/networks'
@@ -25,18 +26,14 @@ import {
   useTransactionManager,
 } from 'utils'
 import { LockingAccordion } from './LockingAccordion'
-import StakedIcon from '../../assets/staked-bulb.svg'
-import UnStakedIcon from '../../assets/unstaked-bulb.svg'
 import StakePriceItem from './StakePriceItem'
-import Image from 'next/image'
-import { accordionData } from 'pages/stake'
 
 const imoAddress = NETWORK.getDeployedAddresses().imo
-const imoStakingAddress = NETWORK.getDeployedAddresses().imoStaking
+const sushiStakingAddress = NETWORK.getDeployedAddresses().imoStaking
 const dripIMOSourceAddress =
   NETWORK.getDeployedAddresses().drippingIMOSourceContract
 
-const StakeIMO = () => {
+const StakeEthIMO = () => {
   const [showStakeInfo, setShowStakeInfo] = useState(true)
   const [showLockInfo, setShowLockInfo] = useState(true)
   const txManager = useTransactionManager()
@@ -53,10 +50,10 @@ const StakeIMO = () => {
   const [userIMOBalance, userIMOBalanceBN, isUserIMOBalanceLoading] =
     useBalance(imoAddress, account, 18, balanceToggle)
   const [userxIMOBalance, userxIMOBalanceBN, isUserxIMOBalanceLoading] =
-    useBalance(imoStakingAddress, account, 18, balanceToggle)
+    useBalance(sushiStakingAddress, account, 18, balanceToggle)
   const [, stakingContractIMOBalanceBN] = useBalance(
     imoAddress,
-    imoStakingAddress,
+    sushiStakingAddress,
     18,
     balanceToggle
   )
@@ -67,7 +64,7 @@ const StakeIMO = () => {
     balanceToggle
   )
   const [xIMOTotalSupply, xIMOTotalSupplyBN] = useTotalSupply(
-    imoStakingAddress,
+    sushiStakingAddress,
     18,
     balanceToggle
   )
@@ -139,7 +136,7 @@ const StakeIMO = () => {
     const args = [amountBN]
 
     try {
-      await txManager.executeTx('Stake', stakeIMO, ...args)
+      await txManager.executeTx('Stake', stakeEthIMO, ...args)
     } catch (ex) {
       console.log(ex)
       onTradeComplete(false, 'IMO', TRANSACTION_TYPES.NONE, 'no-market')
@@ -161,7 +158,7 @@ const StakeIMO = () => {
     const args = [amountBN]
 
     try {
-      await txManager.executeTx('Withdraw', withdrawxIMO, ...args)
+      await txManager.executeTx('Withdraw', withdrawEthIMO, ...args)
     } catch (ex) {
       console.log(ex)
       onTradeComplete(false, 'IMO', TRANSACTION_TYPES.NONE, 'no-market')
@@ -184,8 +181,13 @@ const StakeIMO = () => {
     <div className="w-11/12 flex flex-col md:flex-row justify-center space-x-4 mt-8 mx-auto">
       <div className="w-full md:w-1/2">
         <span className="text-5xl text-blue-600 font-gilroy-bold">
-          STAKE $IMO
+          STAKE ETH-IMO
         </span>
+        <p className="font-medium text-lg mt-8 mb-3">
+          Earn IMO rewards by providing liquidity to the ETH-IMO pool on
+          Sushiswap using the panel to the right. 5 million $IMO will be awarded
+          for ETH-IMO liquidity provision rewards over a period of 12 months.
+        </p>
 
         <div className="mt-8">
           <div
@@ -202,33 +204,27 @@ const StakeIMO = () => {
 
           {showLockInfo && (
             <div className="text-gray-500 text-sm mt-1">
-              Staking allows you to earn more $IMO by locking up $IMO you
-              already have. When you stake $IMO, you will receive xIMO (staked
-              $IMO) in proportion to the amount of $IMO you staked. This
-              represents your claim to the $IMO you have staked. You can stake
-              and unstake $IMO at any time. If you claimed an airdrop, you
-              should have some $IMO already. If you don’t have $IMO yet, you can
-              buy some on Sushiswap, or earn some by Locking Listings. 3 million
-              $IMO will be awarded for staking rewards over a period of 6
-              months.
+              Decentralized exchanges like Sushiswap require liquidity in order
+              to facillitate swaps between tokens. This liquidity takes the form
+              of equal values of each token deposited in a pool governed by
+              smart contracts. Liquidity providers (LPs) who provide liquidity
+              for a token pair earn rewards for doing so, as the tokens they
+              have committed to the pool aren't accessible to them until
+              removed. LPs are given a liquidity token that represents their
+              claim on pooled funds.If you've contributed to the ETH-IMO pool on
+              Sushiswap, you can earn more IMO by staking your ETH-IMO LP token
+              in the panel to the right. You will receive xETH-IMO (staked
+              ETH-IMO) in proportion to the amount of ETH-IMO you staked. This
+              represents your claim to the ETH-IMO you have staked. You can
+              stake and unstake ETH-IMO at any time.
             </div>
           )}
 
-          <div className="flex w-full space-x-6">
-            <A href="/claim" className="w-1/2">
-              <button className="py-4 mt-2 rounded-2xl w-full text-white bg-brand-blue hover:bg-blue-800">
-                <p className="text-md">Elegible for the airdrop?</p>
-                <p className="font-bold text-lg flex items-center text-center place-content-center">
-                  <span className="mr-1">CLAMI IMO </span>
-                  <IoMdExit className="w-6 h-6" />
-                </p>
-              </button>
-            </A>
-            <A href="/" className="w-1/2">
+          <div className="flex w-full">
+            <A href="/" className="w-full">
               <button className="py-4 mt-2 rounded-2xl w-full text-white bg-gray-900 hover:bg-gray-600">
-                <p className="text-md">Don’t have any $IMO?</p>
                 <p className="font-bold text-lg flex items-center text-center place-content-center">
-                  <span className="mr-1">BUY ON UNISWAP </span>
+                  <span className="mr-1">GO TO UNISWAP </span>
                   <IoMdExit className="w-6 h-6" />
                 </p>
               </button>
@@ -367,19 +363,6 @@ const StakeIMO = () => {
             <div className="pb-4 pt-2">
               {account ? (
                 <div>
-                  <button className="flex items-center px-4 py-2 mt-4 text-blue-700 border-2 border-blue-700 rounded-lg dark:text-blue-400 dark:border-blue-400 md:mt-0">
-                    <div className="relative w-6 h-4">
-                      <Image
-                        src="/logo.png"
-                        alt="Workflow logo"
-                        layout="fill"
-                        objectFit="contain"
-                      />
-                    </div>
-                    1 xIMO ={' '}
-                    {parseFloat(xIMOTotalSupply) <= 0 ? 0 : ratioImoAmount} IMO
-                  </button>
-
                   <div className="flex justify-between">
                     {isInputAmountGTSupply ? (
                       <div className="text-brand-red mb-2">
@@ -391,10 +374,10 @@ const StakeIMO = () => {
                   </div>
                   <ApproveButton
                     tokenAddress={
-                      isStakeSelected ? imoAddress : imoStakingAddress
+                      isStakeSelected ? imoAddress : sushiStakingAddress
                     }
                     tokenName={isStakeSelected ? 'IMO' : 'xIMO'}
-                    spenderAddress={imoStakingAddress}
+                    spenderAddress={sushiStakingAddress}
                     requiredAllowance={floatToWeb3BN(
                       inputAmount,
                       18,
@@ -421,32 +404,14 @@ const StakeIMO = () => {
                   >
                     {isStakeSelected ? 'Stake' : 'Withdraw'}
                   </button>
-                  {/* <p className="uppercase">Balance</p>
-                  <div className="flex space-x-6 w-full">
-                    <div className="rounded-lg border border-gray-400 flex p-3 items-center space-x-4 w-1/2">
-                      <StakedIcon className="w-10 h-10" />
-                      <div className="flex flex-col">
-                        <p>Staked</p>
-                        <p>{userxIMOBalanceBigNumber} IMO</p>
-                      </div>
-                    </div>
-                    <div className="rounded-lg border border-gray-400 flex p-3 items-center space-x-4 w-1/2">
-                      <UnStakedIcon className="w-10 h-10" />
-                      <div className="flex flex-col">
-                        <p>Unstaked</p>
-                        <p>1200 xIMO</p>
-                      </div>
-                    </div>
-                  </div> */}
-
                   <div className="justify-between mt-8 hidden md:flex max-w-88">
                     <StakePriceItem
-                      title="Balance"
+                      title="Staked"
                       tokenName="xIMO"
                       price={userxIMOBalance}
                     />
                     <StakePriceItem
-                      title="Unstaked"
+                      title="IMO Rewards Claimable"
                       tokenName="IMO"
                       price={userIMOBalance}
                       className="ml-4"
@@ -497,4 +462,4 @@ const StakeIMO = () => {
   )
 }
 
-export default StakeIMO
+export default StakeEthIMO

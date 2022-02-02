@@ -18,6 +18,7 @@ type State = {
   merkleDistributorContract: any
   imoContract: any
   imoStakingContract: any
+  sushiStakingContract: any
   drippingIMOSourceContract: any
 }
 
@@ -32,6 +33,7 @@ export const useContractStore = create<State>((set) => ({
   merkleDistributorContract: undefined,
   imoContract: undefined,
   imoStakingContract: undefined,
+  sushiStakingContract: undefined,
   drippingIMOSourceContract: undefined,
 }))
 
@@ -47,6 +49,7 @@ export function clearContracts() {
     merkleDistributorContract: undefined,
     imoContract: undefined,
     imoStakingContract: undefined,
+    sushiStakingContract: undefined,
     drippingIMOSourceContract: undefined,
   })
 }
@@ -119,6 +122,12 @@ export function initContractsFromWeb3(web3: Web3) {
     { from: web3.eth.defaultAccount }
   )
 
+  const sushiStakingContract = new web3.eth.Contract(
+    abis.sushiStaking as any,
+    deployedAddresses.sushiStaking,
+    { from: web3.eth.defaultAccount }
+  )
+
   const drippingIMOSourceContract = new web3.eth.Contract(
     abis.drippingIMOSource as any,
     deployedAddresses.drippingIMOSource,
@@ -136,6 +145,7 @@ export function initContractsFromWeb3(web3: Web3) {
     merkleDistributorContract: merkleDistributorContract,
     imoContract: imoContract,
     imoStakingContract: imoStakingContract,
+    sushiStakingContract: sushiStakingContract,
     drippingIMOSourceContract: drippingIMOSourceContract,
   })
 }
