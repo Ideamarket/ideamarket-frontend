@@ -30,7 +30,7 @@ import {
 import { LockingAccordion } from './LockingAccordion'
 import StakePriceItem from './StakePriceItem'
 
-const imoAddress = NETWORK.getDeployedAddresses().imo
+const lptokenAddress = NETWORK.getDeployedAddresses().lptoken
 const sushiStakingAddress = NETWORK.getDeployedAddresses().sushiStaking
 const dripIMOSourceAddress =
   NETWORK.getDeployedAddresses().drippingIMOSourceContract
@@ -49,26 +49,30 @@ const StakeEthIMO = () => {
   const toggleIsStake = () => setIsStakeSelected(!isStakeSelected)
 
   const [balanceToggle, setBalanceToggle] = useState(false) // Need toggle to reload balance after stake/unstake
-  const [userIMOBalance, userIMOBalanceBN, isUserIMOBalanceLoading] =
-    useBalance(imoAddress, account, 18, balanceToggle)
+  const [userLPBalance, userLPBalanceBN, isUserIMOBalanceLoading] = useBalance(
+    lptokenAddress,
+    account,
+    18,
+    balanceToggle
+  ) // lp token balance
   const [
     userIMOStakedBalance,
     userIMOStakedBalanceBN,
     isUserIMOStakedBalanceLoading,
-  ] = useLPStakedBalance(account)
+  ] = useLPStakedBalance(account) // staked balance
   const [
     claimableRewardsIMOBalance,
     userxIMOBalanceBN,
     isUserxIMOBalanceLoading,
-  ] = useClaimableRewardsIMO(account)
+  ] = useClaimableRewardsIMO(account) // claimable rewards
   const [, stakingContractIMOBalanceBN] = useBalance(
-    imoAddress,
+    lptokenAddress,
     sushiStakingAddress,
     18,
     balanceToggle
   )
   const [, dripSourceIMOBalanceBN] = useBalance(
-    imoAddress,
+    lptokenAddress,
     dripIMOSourceAddress,
     18,
     balanceToggle
@@ -102,15 +106,15 @@ const StakeEthIMO = () => {
   const inputAmountBigNumber = new BigNumber(inputAmount).multipliedBy(
     new BigNumber('10').exponentiatedBy(18)
   )
-  const userIMOBalanceBigNumber = new BigNumber(
-    userIMOBalance ? userIMOBalanceBN.toString() : '0'
+  const userLPBalanceBigNumber = new BigNumber(
+    userLPBalance ? userLPBalanceBN.toString() : '0'
   )
-  const userxIMOBalanceBigNumber = new BigNumber(
-    claimableRewardsIMOBalance ? userxIMOBalanceBN.toString() : '0'
+  const userLPStakedBalanceBigNumber = new BigNumber(
+    userIMOStakedBalance ? userIMOStakedBalanceBN.toString() : '0'
   )
   // Need to use Big Numbers to check for really small decimal values
   const isInputAmountGTSupply = inputAmountBigNumber.isGreaterThan(
-    isStakeSelected ? userIMOBalanceBigNumber : userxIMOBalanceBigNumber
+    isStakeSelected ? userLPBalanceBigNumber : userLPStakedBalanceBigNumber
   )
 
   const isInvalid =
@@ -124,9 +128,7 @@ const StakeEthIMO = () => {
   const isActionButtonDisabled = isInvalid || isMissingAllowance
 
   const maxClicked = () => {
-    setInputAmount(
-      isStakeSelected ? userIMOBalance : claimableRewardsIMOBalance
-    )
+    setInputAmount(isStakeSelected ? userLPBalance : userIMOStakedBalanceBN)
   }
 
   const onTradeComplete = (
@@ -343,7 +345,7 @@ const StakeEthIMO = () => {
                   (!isStakeSelected && isUserxIMOBalanceLoading)
                     ? '...'
                     : parseFloat(
-                        isStakeSelected ? userIMOBalance : userIMOStakedBalance
+                        isStakeSelected ? userLPBalance : userIMOStakedBalance
                       )}
                   {!txManager.isPending && (
                     <span
@@ -386,7 +388,7 @@ const StakeEthIMO = () => {
                   </div>
                   <ApproveButton
                     tokenAddress={
-                      isStakeSelected ? imoAddress : sushiStakingAddress
+                      isStakeSelected ? lptokenAddress : sushiStakingAddress
                     }
                     tokenName={isStakeSelected ? 'IMO' : 'xIMO'}
                     spenderAddress={sushiStakingAddress}

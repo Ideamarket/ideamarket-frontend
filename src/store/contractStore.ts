@@ -19,6 +19,7 @@ type State = {
   imoContract: any
   imoStakingContract: any
   sushiStakingContract: any
+  lptoken: any
   drippingIMOSourceContract: any
 }
 
@@ -34,6 +35,7 @@ export const useContractStore = create<State>((set) => ({
   imoContract: undefined,
   imoStakingContract: undefined,
   sushiStakingContract: undefined,
+  lptoken: undefined,
   drippingIMOSourceContract: undefined,
 }))
 
@@ -50,6 +52,7 @@ export function clearContracts() {
     imoContract: undefined,
     imoStakingContract: undefined,
     sushiStakingContract: undefined,
+    lptoken: undefined,
     drippingIMOSourceContract: undefined,
   })
 }
@@ -128,6 +131,12 @@ export function initContractsFromWeb3(web3: Web3) {
     { from: web3.eth.defaultAccount }
   )
 
+  const lptoken = new web3.eth.Contract(
+    abis.lptoken as any,
+    deployedAddresses.lptoken,
+    { from: web3.eth.defaultAccount }
+  )
+
   const drippingIMOSourceContract = new web3.eth.Contract(
     abis.drippingIMOSource as any,
     deployedAddresses.drippingIMOSource,
@@ -146,6 +155,7 @@ export function initContractsFromWeb3(web3: Web3) {
     imoContract: imoContract,
     imoStakingContract: imoStakingContract,
     sushiStakingContract: sushiStakingContract,
+    lptoken: lptoken,
     drippingIMOSourceContract: drippingIMOSourceContract,
   })
 }
