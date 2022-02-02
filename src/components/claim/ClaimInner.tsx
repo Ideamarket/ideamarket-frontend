@@ -4,7 +4,11 @@ import { Accordion } from './Accordion'
 
 import ExternalLinkIcon from '../../assets/external-link.svg'
 
-const ClaimInner = ({ isCommunityAirdrop:  }) => {
+interface Props {
+  isCommunityAirdrop?: boolean
+}
+
+const ClaimInner: React.FC<Props> = ({ isCommunityAirdrop }) => {
   const accordionData = [
     {
       title: 'What is Ideamarket?',
@@ -80,7 +84,13 @@ const ClaimInner = ({ isCommunityAirdrop:  }) => {
               Ideamarket Token Overview
               <ExternalLinkIcon className="h-full inline ml-2" />
             </span>
-            <Link href="/claim-dashboard">
+            <Link
+              href={
+                isCommunityAirdrop
+                  ? '/community-claim-dashboard'
+                  : '/claim-dashboard'
+              }
+            >
               <div
                 className="flex md:hidden flex-col text-center my-8 rounded-lg hover:bg-blue-800 w-full w-max-26 py-4 text-white bg-blue-600 cursor-pointer"
                 // TODO

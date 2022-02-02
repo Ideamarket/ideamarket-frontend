@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { BreakdownPoint } from './EligibilityOutcome'
 
 import { WalletStatus } from 'components'
-import { BreakdownPointCard } from './BreakdownPointCard'
+// import { BreakdownPointCard } from './BreakdownPointCard'
 
 interface Props {
   breakdownByPoint: BreakdownPoint[]

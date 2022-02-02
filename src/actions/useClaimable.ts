@@ -1,16 +1,24 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useContractStore } from 'store/contractStore'
-import MerkleRoot from 'assets/merkle-root.json'
+import UserMerkleRoot from 'assets/merkle-root.json'
+import CommunityMerkleRoot from 'assets/community-merkle-root.json'
 import { getClaimAmount, isAddressInMerkleRoot } from 'utils/merkleRoot'
 
 const useClaimable = (address: string, isGettingAllClaimTokens?: boolean) => {
   const [balance, setBalance] = useState(0)
-  const merkleDistributorContract =
-    useContractStore.getState().merkleDistributorContract
+  const merkleDistributorContract = useMemo(() => {
+    return isGettingAllClaimTokens
+      ? useContractStore.getState().communityMerkleDistributorContract
+      : useContractStore.getState().merkleDistributorContract
+  }, [isGettingAllClaimTokens])
+
+  const MerkleRoot = isGettingAllClaimTokens
+    ? CommunityMerkleRoot
+    : UserMerkleRoot
 
   useEffect(() => {
     const run = async () => {
-      if (!isAddressInMerkleRoot(address)) {
+      if (!isAddressInMerkleRoot(address, isGettingAllClaimTokens)) {
         setBalance(0)
         return
       }
@@ -20,8 +28,8 @@ const useClaimable = (address: string, isGettingAllClaimTokens?: boolean) => {
           .isClaimed(MerkleRoot.claims[address].index)
           .call()
 
-        const claimableIMO = getClaimAmount(address)
-        if (isClaimed && !isGettingAllClaimTokens) setBalance(0)
+        const claimableIMO = getClaimAmount(address, isGettingAllClaimTokens)
+        if (isClaimed) setBalance(0)
         else setBalance(claimableIMO)
       } catch (error) {
         setBalance(0)
@@ -29,7 +37,7 @@ const useClaimable = (address: string, isGettingAllClaimTokens?: boolean) => {
     }
 
     run()
-  }, [address, merkleDistributorContract])
+  }, [address, merkleDistributorContract, isGettingAllClaimTokens, MerkleRoot])
 
   return balance
 }

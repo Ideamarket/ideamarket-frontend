@@ -5,15 +5,15 @@ import React, { useCallback } from 'react'
 import { BreakdownPoint } from './EligibilityOutcome'
 
 import { WalletStatus } from 'components'
-import { BreakdownPointCard } from './BreakdownPointCard'
+// import { BreakdownPointCard } from './BreakdownPointCard'
 
 interface Props {
   setClaimStep: (any) => void
-  breakdownByPoint: BreakdownPoint[]
+  breakdownByPoint?: BreakdownPoint[]
 }
 export const NotEligible: React.FC<Props> = ({
   setClaimStep,
-  breakdownByPoint,
+  // breakdownByPoint,
 }) => {
   const onChangeWallet = useCallback(() => {
     setClaimStep(0)

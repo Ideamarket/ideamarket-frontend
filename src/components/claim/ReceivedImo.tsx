@@ -15,9 +15,13 @@ import A from 'components/A'
 import useClaimable from 'actions/useClaimable'
 import classNames from 'classnames'
 
-const ReceivedImo = () => {
+interface Props {
+  isCommunityAirdrop: boolean
+}
+
+const ReceivedImo: React.FC<Props> = ({ isCommunityAirdrop }) => {
   const { account } = useWeb3React()
-  const claimableIMO: number = useClaimable(account, true)
+  const claimableIMO: number = useClaimable(account, isCommunityAirdrop)
   const [bottomPos, setBottomPos] = useState<Number>(-1)
   useEffect(() => {
     setTimeout(() => {

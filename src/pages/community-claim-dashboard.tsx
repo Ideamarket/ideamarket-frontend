@@ -9,8 +9,8 @@ export const AccountContext = createContext<any>({})
 const ClaimDashboard = () => {
   return (
     <>
-      <NextSeo title="Claim-Dashboard" />
-      <ClaimInnerDashboard isCommunityAirdrop={false} />
+      <NextSeo title="Community-Claim-Dashboard" />
+      <ClaimInnerDashboard isCommunityAirdrop={true} />
     </>
   )
 }

@@ -11,16 +11,23 @@ import { AlreadyClaimed } from './AlreadyClaimed'
 
 interface Props {
   setClaimStep: (any) => void
+  isCommunityAirdrop: boolean
 }
 export interface BreakdownPoint {
   text: string
   amount: number[]
 }
 
-const EligibilityOutcome: React.FC<Props> = ({ setClaimStep }) => {
+const EligibilityOutcome: React.FC<Props> = ({
+  setClaimStep,
+  isCommunityAirdrop,
+}) => {
   const { account } = useWeb3React()
-  const claimableIMO: number = useClaimable(account)
-  const alreadyClaimed: boolean = isAddressInMerkleRoot(account)
+  const claimableIMO: number = useClaimable(account, isCommunityAirdrop)
+  const alreadyClaimed: boolean = isAddressInMerkleRoot(
+    account,
+    isCommunityAirdrop
+  )
   const breakdownByPoint: BreakdownPoint[] = useMemo(() => {
     const claimPointBreakdown = getClaimPointBreakdown(account)
     return [
@@ -58,6 +65,7 @@ const EligibilityOutcome: React.FC<Props> = ({ setClaimStep }) => {
         <Eligible
           setClaimStep={setClaimStep}
           breakdownByPoint={breakdownByPoint}
+          isCommunityAirdrop={isCommunityAirdrop}
         />
       ) : alreadyClaimed ? (
         <AlreadyClaimed breakdownByPoint={breakdownByPoint} />

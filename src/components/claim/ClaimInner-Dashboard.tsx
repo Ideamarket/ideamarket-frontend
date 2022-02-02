@@ -11,7 +11,11 @@ import ReceivedImo from './ReceivedImo'
 import EligibilityOutcome from './EligibilityOutcome'
 import { useWalletStore } from 'store/walletStore'
 
-const ClaimInnerDashboard = () => {
+interface Props {
+  isCommunityAirdrop: boolean
+}
+
+const ClaimInnerDashboard: React.FC<Props> = ({ isCommunityAirdrop }) => {
   const [claimStep, setClaimStep] = useState(0)
 
   const web3 = useWalletStore.getState().web3 as any
@@ -52,7 +56,10 @@ const ClaimInnerDashboard = () => {
 
   return (
     <>
-      <FlowNavMenu currentStep={claimStep} />
+      <FlowNavMenu
+        currentStep={claimStep}
+        isCommunityAirdrop={isCommunityAirdrop}
+      />
       <div
         className={classNames(
           'min-h-screen flex items-start md:items-center',
@@ -82,9 +89,12 @@ const ClaimInnerDashboard = () => {
           ) : claimStep === 1 ? (
             <CheckEligibility setClaimStep={setClaimStep} />
           ) : claimStep === 2 ? (
-            <EligibilityOutcome setClaimStep={setClaimStep} />
+            <EligibilityOutcome
+              setClaimStep={setClaimStep}
+              isCommunityAirdrop={isCommunityAirdrop}
+            />
           ) : (
-            <ReceivedImo />
+            <ReceivedImo isCommunityAirdrop={isCommunityAirdrop} />
           )}
         </div>
       </div>
