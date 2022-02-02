@@ -31,7 +31,7 @@ import { LockingAccordion } from './LockingAccordion'
 import StakePriceItem from './StakePriceItem'
 
 const imoAddress = NETWORK.getDeployedAddresses().imo
-const sushiStakingAddress = NETWORK.getDeployedAddresses().imoStaking
+const sushiStakingAddress = NETWORK.getDeployedAddresses().sushiStaking
 const dripIMOSourceAddress =
   NETWORK.getDeployedAddresses().drippingIMOSourceContract
 
@@ -343,9 +343,7 @@ const StakeEthIMO = () => {
                   (!isStakeSelected && isUserxIMOBalanceLoading)
                     ? '...'
                     : parseFloat(
-                        isStakeSelected
-                          ? userIMOBalance
-                          : claimableRewardsIMOBalance
+                        isStakeSelected ? userIMOBalance : userIMOStakedBalance
                       )}
                   {!txManager.isPending && (
                     <span
