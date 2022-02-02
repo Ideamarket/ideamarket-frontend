@@ -106,10 +106,10 @@ const ReceivedImo = () => {
             </span>
             <div className="flex items-center opacity-75 px-10 my-6">
               <span className="text-base font-thin text-left font-sans">
-                Dui elit sollicitudin cursus mi scelerisque. Sit urna felis id
-                quis egestas dictum mauris.
+                We’re awarding 13 million $IMO over the next 12 months through
+                rewards programs. Click the arrow to learn more.
               </span>
-              <span className="items-center">
+              <span className="items-center ml-auto">
                 <button
                   className="rounded-full font-bold min-w-min w-16 h-16 border-2 border-white text-white"
                   onClick={() => {}}
@@ -124,7 +124,7 @@ const ReceivedImo = () => {
                   Listing IMO Staking
                 </span>
                 <span className="text-brand-neon-green text-2xl font-extrabold font-inter">
-                  12% APY
+                  13000% APY
                 </span>
               </div>
               <div className="flex flex-col border-white/20 border text-left p-1 py-5 justify-center bg-white/5 rounded-xl  text-center">
@@ -132,7 +132,7 @@ const ReceivedImo = () => {
                   Stake IMO
                 </span>
                 <span className="text-brand-neon-green text-2xl font-extrabold font-inter">
-                  4% APY
+                  200% APY
                 </span>
               </div>
             </div>
@@ -163,16 +163,10 @@ const ReceivedImo = () => {
                 </p>
                 <ul className="my-2 text-base font-light text-left font-sans opacity-70 list-disc ml-6">
                   <li>
-                    Mauris vitae bibendum hendrerit accumsan adipiscing duis
-                    non.
+                    Which protocol should Ideamarket use to generate interest on
+                    the DAI stored in listings?
                   </li>
-                  <li>
-                    Id at quisque tellus facilisis aliquam facilisi at nulla
-                    sem.
-                  </li>
-                  <li>
-                    In ipsum in egestas sagittis, purus amet id lobortis quam.
-                  </li>
+                  <li>Idea: Capping Listing Token Supply</li>
                 </ul>
                 <div className="flex mt-3">
                   <CommonwealthIcon className="w-6 h-6" />
@@ -181,7 +175,7 @@ const ReceivedImo = () => {
                   </span>
                 </div>
               </div>
-              <span className="items-center hidden md:flex">
+              <span className="items-center hidden md:flex ml-auto">
                 <button
                   className="rounded-full bg-transparent font-bold min-w-min w-16 h-16 border-2 border-white"
                   onClick={() => {}}
