@@ -8,19 +8,34 @@ const ClaimInner = () => {
   const accordionData = [
     {
       title: 'What is Ideamarket?',
-      body: 'Ideamarket is the Ethereum-based marketplace of ideas where you can make money by buying tokens linked to ideas and their champions.',
+      body: `Ideamarket is a dapp for creating public narratives without trusted third parties — a literal marketplace of ideas, built on Arbitrum (Ethereum Layer 2).`,
     },
     {
       title: 'Why did we launch a token?',
-      body: 'While Ideamarket is currently a company, we want to transition to a DAO in the near future. $IMO will enable holders to vote on proposals for Ideamarket’s future plans and projects.',
-    },
-    {
-      title: 'Why now?',
-      body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Velcongue nibh scelerisque cursus enim.',
+      body: `In the long run, the future of public knowledge must belong to the public. $IMO enables the  gradual transfer of Ideamarket’s ownership from the team to the community at large.
+
+            $IMO enables holders to vote on proposals for Ideamarket’s future plans and projects, and in future releases, will enable users to pay for platform-specific features.`,
     },
     {
       title: 'How will $IMO be distributed?',
-      body: 'The total supply of $IMO is 100 million. The distribution will be: existing stakeholders — 40%, Retroactive Airdrop — 5%, Ecosystem & Treasury — 25%, Token rewards — 30%\n\nClick the ‘Ideamarket Token Overview’ below for more information.',
+      body: `The initial distribution for IMO is as follows:
+              Early investors — 10%
+              Team (present & future) — 18%
+              Strategic partnerships — 10%
+              Retroactive Airdrop — 5%
+              Ecosystem & Treasury — 25%
+              Community rewards — 32%
+              Listing Token staking — 5%
+              $IMO staking — 3%
+              Sushiswap LP rewards — 5%
+              Community airdrops — 4%
+              Verification rewards — 2%
+              Future rewards programs: 13%
+
+              All $IMO allocated to Ideamarket team members are subject to a 2-year 
+              vesting schedule — a 1-year lockup, plus a 1-year linear unlock. 85% of 
+              investor tokens are subject to the same schedule, with 15% unlocked 
+              immediately to provide liquidity on Sushiswap.`,
     },
   ]
 
