@@ -3,6 +3,7 @@ import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/solid'
 import { useWeb3React } from '@web3-react/core'
 import { useBalance, useTotalSupply } from 'actions'
 import stakeEthIMO from 'actions/stakeETHIMO'
+import useClaimableRewardsIMO from 'actions/useClaimableRewardsIMO'
 import useIMOPayoutAmount from 'actions/useIMOPayoutAmount'
 import useStakingAPR from 'actions/useStakingAPR'
 import withdrawEthIMO from 'actions/withdrawEthIMO'
@@ -50,7 +51,7 @@ const StakeEthIMO = () => {
   const [userIMOBalance, userIMOBalanceBN, isUserIMOBalanceLoading] =
     useBalance(imoAddress, account, 18, balanceToggle)
   const [userxIMOBalance, userxIMOBalanceBN, isUserxIMOBalanceLoading] =
-    useBalance(sushiStakingAddress, account, 18, balanceToggle)
+    useClaimableRewardsIMO(account)
   const [, stakingContractIMOBalanceBN] = useBalance(
     imoAddress,
     sushiStakingAddress,
