@@ -5,6 +5,7 @@ import { useBalance, useTotalSupply } from 'actions'
 import stakeEthIMO from 'actions/stakeETHIMO'
 import useClaimableRewardsIMO from 'actions/useClaimableRewardsIMO'
 import useIMOPayoutAmount from 'actions/useIMOPayoutAmount'
+import useLPStakedBalance from 'actions/useLPStakedBalance'
 import useStakingAPR from 'actions/useStakingAPR'
 import withdrawEthIMO from 'actions/withdrawEthIMO'
 import BigNumber from 'bignumber.js'
@@ -49,7 +50,7 @@ const StakeEthIMO = () => {
 
   const [balanceToggle, setBalanceToggle] = useState(false) // Need toggle to reload balance after stake/unstake
   const [userIMOBalance, userIMOBalanceBN, isUserIMOBalanceLoading] =
-    useBalance(imoAddress, account, 18, balanceToggle)
+    useLPStakedBalance(account)
   const [
     claimableRewardsIMOBalance,
     userxIMOBalanceBN,
@@ -412,7 +413,7 @@ const StakeEthIMO = () => {
                   >
                     {isStakeSelected ? 'Stake' : 'Withdraw'}
                   </button>
-                  <div className="justify-between mt-8 hidden md:flex max-w-88">
+                  <div className="justify-between mt-8 hidden md:flex max-w-150">
                     <StakePriceItem
                       title="Staked"
                       tokenName="xIMO"
