@@ -248,6 +248,7 @@ const StakeEthIMOFlow = () => {
                   className="w-4 h-4 cursor-pointer text-brand-gray-2 dark:text-gray-300"
                   placement="down"
                   IconComponent={CogIcon}
+                  customBottomPad={-45}
                 >
                   <div className="w-64">
                     <AdvancedOptions

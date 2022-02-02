@@ -16,6 +16,7 @@ export default function Tooltip({
   placement,
   iconComponentClassNames,
   tooltipContentclassName,
+  customBottomPad,
 }: {
   children?: ReactNode
   className?: string
@@ -23,6 +24,7 @@ export default function Tooltip({
   placement?: string
   iconComponentClassNames?: string
   tooltipContentclassName?: string
+  customBottomPad?: number
 }) {
   const ref = useRef(null)
   const contentRef = useRef(null)
@@ -61,7 +63,7 @@ export default function Tooltip({
     if (placement === 'down') {
       setToolTipProperties({
         ...toolTipProperties,
-        tooltipBottom: h - rect.y - rect.height - 145,
+        tooltipBottom: h - rect.y - rect.height - 145 - customBottomPad,
         tooltipLeft: tooltipLeft,
       })
     } else {
