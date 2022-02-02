@@ -163,7 +163,7 @@ export const Eligible: React.FC<Props> = ({
       </div>
       <div className="flex flex-col items-center justify-center h-full w-full md:w-96 my-auto">
         <div className="flex flex-col mx-auto w-full md:w-96">
-          <span className="text-gray-400 text-left text-sm mb-4">
+          {/* <span className="text-gray-400 text-left text-sm mb-4">
             Here's a breakdown of your claim...
           </span>
           {breakdownByPoint.map((data, id) => (
@@ -172,7 +172,7 @@ export const Eligible: React.FC<Props> = ({
           <span className="text-gray-400 text-sm my-2">
             *Any action performed on Layer 1 provides double points for that
             action.
-          </span>
+          </span> */}
         </div>
         <button
           onClick={onClaimButtonClick}

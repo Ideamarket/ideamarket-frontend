@@ -37,7 +37,7 @@ export const AlreadyClaimed: React.FC<Props> = ({ breakdownByPoint }) => {
       </div>
       <div className="flex flex-col items-center justify-center h-full w-full md:w-96 my-auto">
         <div className="flex flex-col mx-auto w-full md:w-96">
-          <span className="text-gray-400 text-left text-sm mb-4">
+          {/* <span className="text-gray-400 text-left text-sm mb-4">
             Here's a breakdown of your claim...
           </span>
 
@@ -48,7 +48,7 @@ export const AlreadyClaimed: React.FC<Props> = ({ breakdownByPoint }) => {
           <span className="text-gray-400 text-sm my-2">
             *Any action performed on Layer 1 provides double points for that
             action.
-          </span>
+          </span> */}
         </div>
         <Link href="/stake">
           <a className="flex md:hidden w-full md:w-max h-18 items-center justify-center text-sm bg-gradient-to-r from-brand-blue-1 to-brand-blue-2 text-white font-bold rounded-lg uppercase my-8">
