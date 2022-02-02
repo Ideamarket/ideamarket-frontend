@@ -64,8 +64,9 @@ const ClaimInner: React.FC<Props> = ({ isCommunityAirdrop }) => {
             The token of the literal marketplace of Ideas
           </div>
           <div className="my-16 text-sm md:text-base font-normal opacity-75 max-w-2xl font-sans">
-            If you have participated on the Ideamarket protocol, you may be
-            eligible to receive $IMO tokens. Click below to get started!
+            {isCommunityAirdrop
+              ? 'If you are part of an eligible community, you may be able to recieve $IMO tokens. Click below to get started!'
+              : 'If you have participated on the Ideamarket protocol, you may be eligible to receive $IMO tokens. Click below to get started!'}
           </div>
           <Link
             href={
