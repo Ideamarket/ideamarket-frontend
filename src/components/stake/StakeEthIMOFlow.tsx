@@ -1,12 +1,10 @@
 import { CogIcon } from '@heroicons/react/outline'
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/solid'
 import { useWeb3React } from '@web3-react/core'
-import { useBalance, useTotalSupply } from 'actions'
+import { useBalance } from 'actions'
 import stakeEthIMO from 'actions/stakeETHIMO'
 import useClaimableRewardsIMO from 'actions/useClaimableRewardsIMO'
-import useIMOPayoutAmount from 'actions/useIMOPayoutAmount'
 import useLPStakedBalance from 'actions/useLPStakedBalance'
-import useStakingAPR from 'actions/useStakingAPR'
 import withdrawEthIMO from 'actions/withdrawEthIMO'
 import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
@@ -21,22 +19,14 @@ import { accordionData } from 'pages/stake'
 import { useState } from 'react'
 import { IoMdExit } from 'react-icons/io'
 import { NETWORK } from 'store/networks'
-import {
-  floatToWeb3BN,
-  formatNumberWithCommasAsThousandsSerperator,
-  oneBigNumber,
-  useTransactionManager,
-} from 'utils'
+import { floatToWeb3BN, oneBigNumber, useTransactionManager } from 'utils'
 import { LockingAccordion } from './LockingAccordion'
 import StakePriceItem from './StakePriceItem'
 
 const lptokenAddress = NETWORK.getDeployedAddresses().lptoken
 const sushiStakingAddress = NETWORK.getDeployedAddresses().sushiStaking
-const dripIMOSourceAddress =
-  NETWORK.getDeployedAddresses().drippingIMOSourceContract
 
-const StakeEthIMO = () => {
-  const [showStakeInfo, setShowStakeInfo] = useState(true)
+const StakeEthIMOFlow = () => {
   const [showLockInfo, setShowLockInfo] = useState(true)
   const txManager = useTransactionManager()
   const [isStakeSelected, setIsStakeSelected] = useState(true)
@@ -55,54 +45,15 @@ const StakeEthIMO = () => {
     18,
     balanceToggle
   ) // lp token balance
-  const [
-    userIMOStakedBalance,
-    userIMOStakedBalanceBN,
-    isUserIMOStakedBalanceLoading,
-  ] = useLPStakedBalance(account) // staked balance
+  const [userIMOStakedBalance, userIMOStakedBalanceBN] = useLPStakedBalance(
+    account,
+    balanceToggle
+  ) // staked balance
   const [
     claimableRewardsIMOBalance,
     userxIMOBalanceBN,
     isUserxIMOBalanceLoading,
-  ] = useClaimableRewardsIMO(account) // claimable rewards
-  const [, stakingContractIMOBalanceBN] = useBalance(
-    lptokenAddress,
-    sushiStakingAddress,
-    18,
-    balanceToggle
-  )
-  const [, dripSourceIMOBalanceBN] = useBalance(
-    lptokenAddress,
-    dripIMOSourceAddress,
-    18,
-    balanceToggle
-  )
-  const [xIMOTotalSupply, xIMOTotalSupplyBN] = useTotalSupply(
-    sushiStakingAddress,
-    18,
-    balanceToggle
-  )
-
-  // How much IMO the user will get by withdrawing xIMO
-  const [imoPayoutAmount] = useIMOPayoutAmount(
-    inputAmount,
-    stakingContractIMOBalanceBN,
-    xIMOTotalSupplyBN,
-    dripSourceIMOBalanceBN
-  )
-  const [ratioImoAmount, ratioImoAmountBN] = useIMOPayoutAmount(
-    '1',
-    stakingContractIMOBalanceBN,
-    xIMOTotalSupplyBN,
-    dripSourceIMOBalanceBN
-  )
-
-  const [apr] = useStakingAPR(
-    ratioImoAmountBN,
-    stakingContractIMOBalanceBN,
-    xIMOTotalSupplyBN
-  )
-
+  ] = useClaimableRewardsIMO(account, balanceToggle) // claimable rewards
   const inputAmountBigNumber = new BigNumber(inputAmount).multipliedBy(
     new BigNumber('10').exponentiatedBy(18)
   )
@@ -125,10 +76,11 @@ const StakeEthIMO = () => {
     isInputAmountGTSupply
 
   const isApproveButtonDisabled = isInvalid || !isMissingAllowance
-  const isActionButtonDisabled = isInvalid || isMissingAllowance
+  const isActionButtonDisabled =
+    isInvalid || (isStakeSelected ? isMissingAllowance : false)
 
   const maxClicked = () => {
-    setInputAmount(isStakeSelected ? userLPBalance : userIMOStakedBalanceBN)
+    setInputAmount(isStakeSelected ? userLPBalance : userIMOStakedBalance)
   }
 
   const onTradeComplete = (
@@ -235,10 +187,13 @@ const StakeEthIMO = () => {
           )}
 
           <div className="flex w-full">
-            <A href="/" className="w-full">
+            <A
+              href="https://app.sushi.com/add/ETH/0xB41bd4C99dA73510d9e081C5FADBE7A27Ac1F814"
+              className="w-full"
+            >
               <button className="py-4 mt-2 rounded-2xl w-full text-white bg-gray-900 hover:bg-gray-600">
                 <p className="font-bold text-lg flex items-center text-center place-content-center">
-                  <span className="mr-1">GO TO UNISWAP </span>
+                  <span className="mr-1">GO TO SUSHISWAP </span>
                   <IoMdExit className="w-6 h-6" />
                 </p>
               </button>
@@ -259,19 +214,6 @@ const StakeEthIMO = () => {
       </div>
 
       <div className="w-full md:w-1/2">
-        {/* <div className="flex justify-center items-center space-x-4 p-4 mt-8 text-green-400 font-gilroy-bold">
-          <div className="leading-4 mt-2">
-            <div>CURRENT</div>
-            <div className="text-3xl text-right">APR</div>
-          </div>
-          <div className="text-6xl">
-            {apr
-              ? formatNumberWithCommasAsThousandsSerperator(apr.toFixed(2))
-              : 0}
-            %
-          </div>
-        </div> */}
-
         <div className="relative w-full h-2/3 pt-10 mt-8">
           <div className="absolute top-0 left-0 bg-white/20 rounded-2xl w-full h-40 z-0"></div>
 
@@ -323,16 +265,15 @@ const StakeEthIMO = () => {
 
             <div className="flex justify-between mt-4 mb-2">
               <div className="opacity-50">
-                {isStakeSelected ? 'IMO' : 'xIMO'} amount
+                {isStakeSelected ? 'ETH-IMO LP' : ''} Amount
               </div>
-              {/* <div>You have: {userIMOBalance}</div> */}
             </div>
             <div className="relative px-5 py-4 mb-6 border border-gray-100 rounded-md bg-gray-50 dark:bg-gray-600 text-brand-new-dark">
               <div className="flex justify-between mb-2">
                 <input
                   className="w-full max-w-sm text-3xl text-left placeholder-gray-500 placeholder-opacity-50 border-none outline-none dark:placeholder-gray-300 text-brand-gray-2 dark:text-white bg-gray-50 dark:bg-gray-600"
                   min="0"
-                  placeholder={`0.0 ${isStakeSelected ? 'IMO' : 'xIMO'}`}
+                  placeholder={`0.0 ${isStakeSelected ? 'ETH-IMO LP' : ''}`}
                   disabled={txManager.isPending}
                   value={inputAmount}
                   onChange={onInputChanged}
@@ -357,22 +298,8 @@ const StakeEthIMO = () => {
                     </span>
                   )}
                 </div>
-                {/* <span>~${tokenValue}</span> */}
               </div>
-              {/* {(exceedsBalance || isInputAmountGTSupply) && (
-                <div className="text-brand-red">Insufficient balance</div>
-              )} */}
             </div>
-
-            {!isStakeSelected && (
-              <div>
-                Payout:{' '}
-                {formatNumberWithCommasAsThousandsSerperator(
-                  parseFloat(imoPayoutAmount).toFixed()
-                )}{' '}
-                IMO
-              </div>
-            )}
 
             <div className="pb-4 pt-2">
               {account ? (
@@ -386,24 +313,26 @@ const StakeEthIMO = () => {
                       <div></div>
                     )}
                   </div>
-                  <ApproveButton
-                    tokenAddress={
-                      isStakeSelected ? lptokenAddress : sushiStakingAddress
-                    }
-                    tokenName={isStakeSelected ? 'IMO' : 'xIMO'}
-                    spenderAddress={sushiStakingAddress}
-                    requiredAllowance={floatToWeb3BN(
-                      inputAmount,
-                      18,
-                      BigNumber.ROUND_UP
-                    )}
-                    unlockPermanent={isUnlockPermanentChecked}
-                    txManager={txManager}
-                    setIsMissingAllowance={setIsMissingAllowance}
-                    disable={isApproveButtonDisabled}
-                    txType={isStakeSelected ? 'stake' : 'unstake'}
-                    key={+balanceToggle} // This resets validity of this button, Get issues without it
-                  />
+                  {isStakeSelected ? (
+                    <ApproveButton
+                      tokenAddress={lptokenAddress}
+                      tokenName={'ETH-IMO LP'}
+                      spenderAddress={sushiStakingAddress}
+                      requiredAllowance={floatToWeb3BN(
+                        inputAmount,
+                        18,
+                        BigNumber.ROUND_UP
+                      )}
+                      unlockPermanent={isUnlockPermanentChecked}
+                      txManager={txManager}
+                      setIsMissingAllowance={setIsMissingAllowance}
+                      disable={isApproveButtonDisabled}
+                      txType={'stake'}
+                      key={+balanceToggle} // This resets validity of this button, Get issues without it
+                    />
+                  ) : (
+                    ''
+                  )}
                   <button
                     onClick={
                       isStakeSelected ? stakeIMOClicked : withdrawxIMOClicked
@@ -418,7 +347,7 @@ const StakeEthIMO = () => {
                   >
                     {isStakeSelected ? 'Stake' : 'Withdraw'}
                   </button>
-                  <div className="justify-between mt-8 hidden md:flex max-w-150">
+                  <div className="justify-between mt-8 hidden md:flex max-w-150 m-auto">
                     <StakePriceItem
                       title="Staked"
                       tokenName="xIMO"
@@ -476,4 +405,4 @@ const StakeEthIMO = () => {
   )
 }
 
-export default StakeEthIMO
+export default StakeEthIMOFlow

@@ -8,7 +8,7 @@ import { getData } from 'lib/utils/fetch'
 import LockListings from 'components/stake/LockListings'
 import StakeIMO from 'components/stake/StakeIMO'
 import TabNamePane from 'components/stake/TabNamePane'
-import StakeEthIMO from 'components/stake/StakeEthIMO'
+import StakeEthIMOFlow from 'components/stake/StakeEthIMOFlow'
 
 export enum STAKE_TYPES {
   LISTING,
@@ -68,7 +68,7 @@ const Stake = () => {
         ) : stakeType === STAKE_TYPES.IMO ? (
           <StakeIMO />
         ) : (
-          <StakeEthIMO />
+          <StakeEthIMOFlow />
         )}
       </div>
     </>

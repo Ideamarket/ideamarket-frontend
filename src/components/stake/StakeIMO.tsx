@@ -4,7 +4,6 @@ import { useWeb3React } from '@web3-react/core'
 import { useBalance, useTotalSupply } from 'actions'
 import stakeIMO from 'actions/stakeIMO'
 import useIMOPayoutAmount from 'actions/useIMOPayoutAmount'
-import useStakingAPR from 'actions/useStakingAPR'
 import withdrawxIMO from 'actions/withdrawxIMO'
 import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
@@ -25,8 +24,6 @@ import {
   useTransactionManager,
 } from 'utils'
 import { LockingAccordion } from './LockingAccordion'
-import StakedIcon from '../../assets/staked-bulb.svg'
-import UnStakedIcon from '../../assets/unstaked-bulb.svg'
 import StakePriceItem from './StakePriceItem'
 import Image from 'next/image'
 import { accordionData } from 'pages/stake'
@@ -37,7 +34,6 @@ const dripIMOSourceAddress =
   NETWORK.getDeployedAddresses().drippingIMOSourceContract
 
 const StakeIMO = () => {
-  const [showStakeInfo, setShowStakeInfo] = useState(true)
   const [showLockInfo, setShowLockInfo] = useState(true)
   const txManager = useTransactionManager()
   const [isStakeSelected, setIsStakeSelected] = useState(true)
@@ -79,17 +75,11 @@ const StakeIMO = () => {
     xIMOTotalSupplyBN,
     dripSourceIMOBalanceBN
   )
-  const [ratioImoAmount, ratioImoAmountBN] = useIMOPayoutAmount(
+  const [ratioImoAmount] = useIMOPayoutAmount(
     '1',
     stakingContractIMOBalanceBN,
     xIMOTotalSupplyBN,
     dripSourceIMOBalanceBN
-  )
-
-  const [apr] = useStakingAPR(
-    ratioImoAmountBN,
-    stakingContractIMOBalanceBN,
-    xIMOTotalSupplyBN
   )
 
   const inputAmountBigNumber = new BigNumber(inputAmount).multipliedBy(
@@ -249,19 +239,6 @@ const StakeIMO = () => {
       </div>
 
       <div className="w-full md:w-1/2">
-        {/* <div className="flex justify-center items-center space-x-4 p-4 mt-8 text-green-400 font-gilroy-bold">
-          <div className="leading-4 mt-2">
-            <div>CURRENT</div>
-            <div className="text-3xl text-right">APR</div>
-          </div>
-          <div className="text-6xl">
-            {apr
-              ? formatNumberWithCommasAsThousandsSerperator(apr.toFixed(2))
-              : 0}
-            %
-          </div>
-        </div> */}
-
         <div className="relative w-full h-2/3 pt-10 mt-8">
           <div className="absolute top-0 left-0 bg-white/20 rounded-2xl w-full h-40 z-0"></div>
 
@@ -315,7 +292,6 @@ const StakeIMO = () => {
               <div className="opacity-50">
                 {isStakeSelected ? 'IMO' : 'xIMO'} amount
               </div>
-              {/* <div>You have: {userIMOBalance}</div> */}
             </div>
             <div className="relative px-5 py-4 mb-6 border border-gray-100 rounded-md bg-gray-50 dark:bg-gray-600 text-brand-new-dark">
               <div className="flex justify-between mb-2">
@@ -347,11 +323,7 @@ const StakeIMO = () => {
                     </span>
                   )}
                 </div>
-                {/* <span>~${tokenValue}</span> */}
               </div>
-              {/* {(exceedsBalance || isInputAmountGTSupply) && (
-                <div className="text-brand-red">Insufficient balance</div>
-              )} */}
             </div>
 
             {!isStakeSelected && (
@@ -367,7 +339,7 @@ const StakeIMO = () => {
             <div className="pb-4 pt-2">
               {account ? (
                 <div>
-                  <button className="flex items-center px-4 py-2 mt-4 text-blue-700 border-2 border-blue-700 rounded-lg dark:text-blue-400 dark:border-blue-400 md:mt-0">
+                  <button className="flex items-center px-4 py-2 mt-4 text-blue-700 rounded-lg dark:text-blue-400 md:mt-0 m-auto">
                     <div className="relative w-6 h-4">
                       <Image
                         src="/logo.png"
@@ -421,25 +393,8 @@ const StakeIMO = () => {
                   >
                     {isStakeSelected ? 'Stake' : 'Withdraw'}
                   </button>
-                  {/* <p className="uppercase">Balance</p>
-                  <div className="flex space-x-6 w-full">
-                    <div className="rounded-lg border border-gray-400 flex p-3 items-center space-x-4 w-1/2">
-                      <StakedIcon className="w-10 h-10" />
-                      <div className="flex flex-col">
-                        <p>Staked</p>
-                        <p>{userxIMOBalanceBigNumber} IMO</p>
-                      </div>
-                    </div>
-                    <div className="rounded-lg border border-gray-400 flex p-3 items-center space-x-4 w-1/2">
-                      <UnStakedIcon className="w-10 h-10" />
-                      <div className="flex flex-col">
-                        <p>Unstaked</p>
-                        <p>1200 xIMO</p>
-                      </div>
-                    </div>
-                  </div> */}
 
-                  <div className="justify-between mt-8 hidden md:flex max-w-88">
+                  <div className="justify-between mt-8 hidden md:flex max-w-88 m-auto">
                     <StakePriceItem
                       title="Balance"
                       tokenName="xIMO"

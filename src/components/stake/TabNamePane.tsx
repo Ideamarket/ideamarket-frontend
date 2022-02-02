@@ -20,11 +20,7 @@ const dripIMOSourceAddress =
 export default function TabNamePane({ stakeType, onClickStakeType }: Props) {
   const [lockingAPR, setLockingAPR] = useState(undefined)
   useEffect(() => {
-    fetch(
-      `${
-        process.env.IDEAMARKET_BACKEND_HOST || 'http://server-dev.ideamarket.io'
-      }/general/apr`
-    )
+    fetch(`${process.env.NEXT_PUBLIC_IDEAMARKET_BACKEND_HOST}/general/apr`)
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {

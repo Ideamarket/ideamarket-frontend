@@ -4,7 +4,10 @@ import { useContractStore } from 'store/contractStore'
 import BigNumber from 'bignumber.js'
 import { web3BNToFloatString } from 'utils'
 
-export default function useLPStakedBalance(user: string) {
+export default function useLPStakedBalance(
+  user: string,
+  balanceToggle: boolean
+) {
   const [isLoading, setIsLoading] = useState(true)
   const [balanceBN, setBalanceBN] = useState(undefined)
   const [balance, setBalance] = useState(undefined)
@@ -30,7 +33,7 @@ export default function useLPStakedBalance(user: string) {
     async function run() {
       const bn = await getBalance()
       if (!isCancelled) {
-        const pow = new BigNumber('10').pow(new BigNumber(2))
+        const pow = new BigNumber('10').pow(new BigNumber(18))
         setBalanceBN(bn)
         setBalance(web3BNToFloatString(bn, pow, 4, BigNumber.ROUND_DOWN))
         setIsLoading(false)
@@ -42,7 +45,7 @@ export default function useLPStakedBalance(user: string) {
     return () => {
       isCancelled = true
     }
-  }, [user, sushiStaking])
+  }, [user, sushiStaking, balanceToggle])
 
   return [balance, balanceBN, isLoading]
 }

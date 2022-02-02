@@ -11,7 +11,7 @@ type Props = {
 const StakePriceItem = ({ title, price, tokenName, className }: Props) => {
   return (
     <div className={className}>
-      <div className="mb-4 text-2xl font-extrabold">{title}</div>
+      <div className="mb-4 text-lg font-medium">{title}</div>
       <div className="flex items-center">
         <div className="relative w-16 h-16 mr-4">
           <Image
