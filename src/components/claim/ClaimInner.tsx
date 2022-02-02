@@ -4,7 +4,7 @@ import { Accordion } from './Accordion'
 
 import ExternalLinkIcon from '../../assets/external-link.svg'
 
-const ClaimInner = () => {
+const ClaimInner = ({ isCommunityAirdrop:  }) => {
   const accordionData = [
     {
       title: 'What is Ideamarket?',
@@ -48,7 +48,7 @@ const ClaimInner = () => {
             If you have participated on the Ideamarket protocol, you may be
             eligible to receive $IMO tokens. Click below to get started!
           </div>
-          <Link href="/claim-dashboard">
+          <Link href="/community-claim-dashboard">
             <div
               className="hidden md:flex flex-col text-center my-6 rounded-lg hover:bg-blue-800 w-full max-w-sm py-5 text-white bg-blue-600 cursor-pointer"
               // TODO
