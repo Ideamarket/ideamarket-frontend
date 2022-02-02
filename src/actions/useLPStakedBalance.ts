@@ -18,7 +18,7 @@ export default function useLPStakedBalance(user: string) {
           .userInfo(0, user)
           .call()
           .then((value) => {
-            resolve(new BN(value))
+            resolve(new BN(value?.[0] || '0'))
           })
           .catch((error) => {
             console.error('Getting balance of ERC20 failed', error)
