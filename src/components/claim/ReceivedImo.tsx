@@ -17,7 +17,7 @@ import classNames from 'classnames'
 
 const ReceivedImo = () => {
   const { account } = useWeb3React()
-  const claimableIMO: number = useClaimable(account)
+  const claimableIMO: number = useClaimable(account, true)
   const [bottomPos, setBottomPos] = useState<Number>(-1)
   useEffect(() => {
     setTimeout(() => {
@@ -69,10 +69,11 @@ const ReceivedImo = () => {
             <div className="flex flex-col bg-gradient-to-r from-brand-blue-1 to-brand-blue-2 text-white rounded-b-2xl text-center py-4 font-inter">
               <div className="flex items-center m-auto">
                 <IoIosWallet className="w-6 h-6 text-white mr-1" />
-                <span className="text-sm">{`${account.slice(
-                  0,
-                  6
-                )}...${account.slice(-4)}`}</span>
+                <span className="text-sm">
+                  {account
+                    ? `${account.slice(0, 6)}...${account.slice(-4)}`
+                    : ''}
+                </span>
               </div>
               <div className="flex items-center m-auto my-2">
                 <IdeamarketBulbIcon className="relative w-4 h-4 mr-1" />
@@ -110,12 +111,11 @@ const ReceivedImo = () => {
                 rewards programs. Click the arrow to learn more.
               </span>
               <span className="items-center ml-auto">
-                <button
-                  className="rounded-full font-bold min-w-min w-16 h-16 border-2 border-white text-white"
-                  onClick={() => {}}
-                >
-                  <FaArrowRight className="w-5 h-5 text-white m-auto" />
-                </button>
+                <A href="https://ideamarket.io/stake">
+                  <button className="rounded-full font-bold min-w-min w-16 h-16 border-2 border-white text-white">
+                    <FaArrowRight className="w-5 h-5 text-white m-auto" />
+                  </button>
+                </A>
               </span>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-7">
@@ -150,12 +150,11 @@ const ReceivedImo = () => {
                     regarding Ideamarket’s future direction.
                   </p>
                   <span className="flex md:hidden items-center">
-                    <button
-                      className="rounded-full bg-transparent font-bold min-w-min w-16 h-16 border-2 border-white"
-                      onClick={() => {}}
-                    >
-                      <FaArrowRight className="w-5 h-5 text-white m-auto" />
-                    </button>
+                    <A href="https://commonwealth.im/ideamarket">
+                      <button className="rounded-full bg-transparent font-bold min-w-min w-16 h-16 border-2 border-white">
+                        <FaArrowRight className="w-5 h-5 text-white m-auto" />
+                      </button>
+                    </A>
                   </span>
                 </div>
                 <p className="my-3 text-base text-left font-sans font-medium">
@@ -176,12 +175,11 @@ const ReceivedImo = () => {
                 </div>
               </div>
               <span className="items-center hidden md:flex ml-auto">
-                <button
-                  className="rounded-full bg-transparent font-bold min-w-min w-16 h-16 border-2 border-white"
-                  onClick={() => {}}
-                >
-                  <FaArrowRight className="w-5 h-5 text-white m-auto" />
-                </button>
+                <A href="https://commonwealth.im/ideamarket">
+                  <button className="rounded-full bg-transparent font-bold min-w-min w-16 h-16 border-2 border-white">
+                    <FaArrowRight className="w-5 h-5 text-white m-auto" />
+                  </button>
+                </A>
               </span>
             </div>
           </div>

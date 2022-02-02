@@ -351,7 +351,7 @@ const StakeEthIMOFlow = () => {
                   <div className="justify-between mt-8 hidden md:flex max-w-150 m-auto">
                     <StakePriceItem
                       title="Staked"
-                      tokenName="xIMO"
+                      tokenName="IMO-ETH"
                       price={userIMOStakedBalance}
                     />
                     <StakePriceItem

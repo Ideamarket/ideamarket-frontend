@@ -209,16 +209,16 @@ const StakeIMO = () => {
               <button className="py-4 mt-2 rounded-2xl w-full text-white bg-brand-blue hover:bg-blue-800">
                 <p className="text-md">Elegible for the airdrop?</p>
                 <p className="font-bold text-lg flex items-center text-center place-content-center">
-                  <span className="mr-1">CLAMI IMO </span>
+                  <span className="mr-1">CLAIM IMO </span>
                   <IoMdExit className="w-6 h-6" />
                 </p>
               </button>
             </A>
-            <A href="/" className="w-1/2">
+            <A href="https://app.sushi.com/swap" className="w-1/2">
               <button className="py-4 mt-2 rounded-2xl w-full text-white bg-gray-900 hover:bg-gray-600">
                 <p className="text-md">Don’t have any $IMO?</p>
                 <p className="font-bold text-lg flex items-center text-center place-content-center">
-                  <span className="mr-1">BUY ON UNISWAP </span>
+                  <span className="mr-1">BUY ON SUSHISWAP </span>
                   <IoMdExit className="w-6 h-6" />
                 </p>
               </button>

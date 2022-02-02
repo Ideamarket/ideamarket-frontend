@@ -3,7 +3,7 @@ import { useContractStore } from 'store/contractStore'
 import MerkleRoot from 'assets/merkle-root.json'
 import { getClaimAmount, isAddressInMerkleRoot } from 'utils/merkleRoot'
 
-const useClaimable = (address: string) => {
+const useClaimable = (address: string, isGettingAllClaimTokens?: boolean) => {
   const [balance, setBalance] = useState(0)
   const merkleDistributorContract =
     useContractStore.getState().merkleDistributorContract
@@ -21,7 +21,7 @@ const useClaimable = (address: string) => {
           .call()
 
         const claimableIMO = getClaimAmount(address)
-        if (isClaimed) setBalance(0)
+        if (isClaimed && !isGettingAllClaimTokens) setBalance(0)
         else setBalance(claimableIMO)
       } catch (error) {
         setBalance(0)
