@@ -79,8 +79,8 @@ const FlowNavMenu: React.FC<Props> = ({ currentStep }) => {
       {
         text:
           currentStep >= 1 && (claimableIMO || alreadyClaimed)
-            ? 'Elgibile!'
-            : 'Check Elgibility',
+            ? 'Eligibile!'
+            : 'Check Eligibility',
         circleClassName: getClassNamesForStepCircles(1),
         textClassName: getClassNamesForTexts(1),
         icon:

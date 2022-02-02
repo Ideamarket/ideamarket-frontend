@@ -28,7 +28,7 @@ const CheckEligibility: React.FC<Props> = ({ setClaimStep }) => {
           Wallet Connected
         </div>
         <div className="my-6 text-5xl font-extrabold opacity-75">
-          Checking your Elgibility...
+          Checking your Eligibility...
         </div>
         {loading && <LoadingDots />}
       </div>
