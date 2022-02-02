@@ -21,7 +21,7 @@ interface Props {
 
 const ReceivedImo: React.FC<Props> = ({ isCommunityAirdrop }) => {
   const { account } = useWeb3React()
-  const claimableIMO: number = useClaimable(account, isCommunityAirdrop)
+  const claimableIMO: number = useClaimable(account, isCommunityAirdrop, true)
   const [bottomPos, setBottomPos] = useState<Number>(-1)
   useEffect(() => {
     setTimeout(() => {

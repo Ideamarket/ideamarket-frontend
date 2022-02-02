@@ -4,21 +4,23 @@ import UserMerkleRoot from 'assets/merkle-root.json'
 import CommunityMerkleRoot from 'assets/community-merkle-root.json'
 import { getClaimAmount, isAddressInMerkleRoot } from 'utils/merkleRoot'
 
-const useClaimable = (address: string, isGettingAllClaimTokens?: boolean) => {
+const useClaimable = (
+  address: string,
+  isCommunityAirdrop: boolean,
+  isGettingAllClaimTokens?: boolean
+) => {
   const [balance, setBalance] = useState(0)
   const merkleDistributorContract = useMemo(() => {
-    return isGettingAllClaimTokens
+    return isCommunityAirdrop
       ? useContractStore.getState().communityMerkleDistributorContract
       : useContractStore.getState().merkleDistributorContract
-  }, [isGettingAllClaimTokens])
+  }, [isCommunityAirdrop])
 
-  const MerkleRoot = isGettingAllClaimTokens
-    ? CommunityMerkleRoot
-    : UserMerkleRoot
+  const MerkleRoot = isCommunityAirdrop ? CommunityMerkleRoot : UserMerkleRoot
 
   useEffect(() => {
     const run = async () => {
-      if (!isAddressInMerkleRoot(address, isGettingAllClaimTokens)) {
+      if (!isAddressInMerkleRoot(address, isCommunityAirdrop)) {
         setBalance(0)
         return
       }
@@ -28,8 +30,8 @@ const useClaimable = (address: string, isGettingAllClaimTokens?: boolean) => {
           .isClaimed(MerkleRoot.claims[address].index)
           .call()
 
-        const claimableIMO = getClaimAmount(address, isGettingAllClaimTokens)
-        if (isClaimed) setBalance(0)
+        const claimableIMO = getClaimAmount(address, isCommunityAirdrop)
+        if (isClaimed && !isGettingAllClaimTokens) setBalance(0)
         else setBalance(claimableIMO)
       } catch (error) {
         setBalance(0)
@@ -37,7 +39,7 @@ const useClaimable = (address: string, isGettingAllClaimTokens?: boolean) => {
     }
 
     run()
-  }, [address, merkleDistributorContract, isGettingAllClaimTokens, MerkleRoot])
+  }, [address, merkleDistributorContract, isCommunityAirdrop, MerkleRoot])
 
   return balance
 }
