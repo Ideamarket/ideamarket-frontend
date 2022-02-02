@@ -50,8 +50,11 @@ const StakeEthIMO = () => {
   const [balanceToggle, setBalanceToggle] = useState(false) // Need toggle to reload balance after stake/unstake
   const [userIMOBalance, userIMOBalanceBN, isUserIMOBalanceLoading] =
     useBalance(imoAddress, account, 18, balanceToggle)
-  const [userxIMOBalance, userxIMOBalanceBN, isUserxIMOBalanceLoading] =
-    useClaimableRewardsIMO(account)
+  const [
+    claimableRewardsIMOBalance,
+    userxIMOBalanceBN,
+    isUserxIMOBalanceLoading,
+  ] = useClaimableRewardsIMO(account)
   const [, stakingContractIMOBalanceBN] = useBalance(
     imoAddress,
     sushiStakingAddress,
@@ -97,7 +100,7 @@ const StakeEthIMO = () => {
     userIMOBalance ? userIMOBalanceBN.toString() : '0'
   )
   const userxIMOBalanceBigNumber = new BigNumber(
-    userxIMOBalance ? userxIMOBalanceBN.toString() : '0'
+    claimableRewardsIMOBalance ? userxIMOBalanceBN.toString() : '0'
   )
   // Need to use Big Numbers to check for really small decimal values
   const isInputAmountGTSupply = inputAmountBigNumber.isGreaterThan(
@@ -115,7 +118,9 @@ const StakeEthIMO = () => {
   const isActionButtonDisabled = isInvalid || isMissingAllowance
 
   const maxClicked = () => {
-    setInputAmount(isStakeSelected ? userIMOBalance : userxIMOBalance)
+    setInputAmount(
+      isStakeSelected ? userIMOBalance : claimableRewardsIMOBalance
+    )
   }
 
   const onTradeComplete = (
@@ -332,7 +337,9 @@ const StakeEthIMO = () => {
                   (!isStakeSelected && isUserxIMOBalanceLoading)
                     ? '...'
                     : parseFloat(
-                        isStakeSelected ? userIMOBalance : userxIMOBalance
+                        isStakeSelected
+                          ? userIMOBalance
+                          : claimableRewardsIMOBalance
                       )}
                   {!txManager.isPending && (
                     <span
@@ -409,12 +416,12 @@ const StakeEthIMO = () => {
                     <StakePriceItem
                       title="Staked"
                       tokenName="xIMO"
-                      price={userxIMOBalance}
+                      price={userIMOBalance}
                     />
                     <StakePriceItem
                       title="IMO Rewards Claimable"
                       tokenName="IMO"
-                      price={userIMOBalance}
+                      price={claimableRewardsIMOBalance}
                       className="ml-4"
                     />
                   </div>

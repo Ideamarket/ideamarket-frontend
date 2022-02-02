@@ -1,12 +1,69 @@
+import { useBalance, useTotalSupply } from 'actions'
+import useIMOPayoutAmount from 'actions/useIMOPayoutAmount'
+import useStakingAPR from 'actions/useStakingAPR'
 import classNames from 'classnames'
 import { STAKE_TYPES } from 'pages/stake'
+import { useEffect, useState } from 'react'
+import { NETWORK } from 'store/networks'
+import { formatNumberWithCommasAsThousandsSerperator } from 'utils'
 
 type Props = {
   stakeType: STAKE_TYPES
   onClickStakeType: (s: STAKE_TYPES) => void
 }
 
+const imoAddress = NETWORK.getDeployedAddresses().imo
+const imoStakingAddress = NETWORK.getDeployedAddresses().imoStaking
+const dripIMOSourceAddress =
+  NETWORK.getDeployedAddresses().drippingIMOSourceContract
+
 export default function TabNamePane({ stakeType, onClickStakeType }: Props) {
+  const [lockingAPR, setLockingAPR] = useState(undefined)
+  useEffect(() => {
+    fetch(
+      `${
+        process.env.IDEAMARKET_BACKEND_HOST || 'http://server-dev.ideamarket.io'
+      }/general/apr`
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          setLockingAPR(Number(data.data.apr))
+        } else setLockingAPR(0)
+      })
+      .catch((err) => setLockingAPR(0))
+  }, [])
+
+  const [balanceToggle] = useState(false) // Need toggle to reload balance after stake/unstake
+  const [, stakingContractIMOBalanceBN] = useBalance(
+    imoAddress,
+    imoStakingAddress,
+    18,
+    balanceToggle
+  )
+  const [, xIMOTotalSupplyBN] = useTotalSupply(
+    imoStakingAddress,
+    18,
+    balanceToggle
+  )
+  const [, dripSourceIMOBalanceBN] = useBalance(
+    imoAddress,
+    dripIMOSourceAddress,
+    18,
+    balanceToggle
+  )
+  const [, ratioImoAmountBN] = useIMOPayoutAmount(
+    '1',
+    stakingContractIMOBalanceBN,
+    xIMOTotalSupplyBN,
+    dripSourceIMOBalanceBN
+  )
+  const [apr] = useStakingAPR(
+    ratioImoAmountBN,
+    stakingContractIMOBalanceBN,
+    xIMOTotalSupplyBN
+  )
+
   return (
     <div
       className="grid text-white font-gilroy-bold pt-20 overflow-auto"
@@ -38,7 +95,10 @@ export default function TabNamePane({ stakeType, onClickStakeType }: Props) {
               : 'text-brand-light-green'
           )}
         >
-          4232% APR
+          {lockingAPR
+            ? formatNumberWithCommasAsThousandsSerperator(lockingAPR.toFixed(2))
+            : 0}
+          % APR
         </span>
       </div>
       <div
@@ -64,7 +124,10 @@ export default function TabNamePane({ stakeType, onClickStakeType }: Props) {
               : 'text-brand-light-green'
           )}
         >
-          4232% APR
+          {apr
+            ? formatNumberWithCommasAsThousandsSerperator(apr.toFixed(2))
+            : 0}
+          % APR
         </span>
       </div>
       <div
@@ -90,7 +153,7 @@ export default function TabNamePane({ stakeType, onClickStakeType }: Props) {
               : 'text-brand-light-green'
           )}
         >
-          4232% APR
+          350% APR
         </span>
       </div>
     </div>
