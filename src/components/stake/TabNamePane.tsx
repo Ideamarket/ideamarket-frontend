@@ -18,6 +18,7 @@ const dripIMOSourceAddress = NETWORK.getDeployedAddresses().drippingIMOSource
 
 export default function TabNamePane({ stakeType, onClickStakeType }: Props) {
   const [lockingAPR, setLockingAPR] = useState(undefined)
+  const [lpAPR, setLpAPR] = useState(undefined)
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_IDEAMARKET_BACKEND_HOST}/general/apr`)
       .then((response) => response.json())
@@ -26,7 +27,18 @@ export default function TabNamePane({ stakeType, onClickStakeType }: Props) {
           setLockingAPR(Number(data.data.apr))
         } else setLockingAPR(0)
       })
-      .catch((err) => setLockingAPR(0))
+      .catch(() => setLockingAPR(0))
+  }, [])
+
+  useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_IDEAMARKET_BACKEND_HOST}/general/lp-apr`)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          setLpAPR(Number(data.data.apr))
+        } else setLpAPR(0)
+      })
+      .catch(() => setLpAPR(0))
   }, [])
 
   const [balanceToggle] = useState(false) // Need toggle to reload balance after stake/unstake
@@ -148,7 +160,7 @@ export default function TabNamePane({ stakeType, onClickStakeType }: Props) {
               : 'text-brand-light-green'
           )}
         >
-          350% APR
+          {lpAPR}% APR
         </span>
       </div>
     </div>

@@ -38,10 +38,10 @@ const ClaimInner: React.FC<Props> = ({ isCommunityAirdrop }) => {
   ]
 
   return (
-    <div className="flex flex-col flex-grow font-gilroy-bold pl-10 pr-10 lg:pl-32 lg:pr-24 pt-20 md:pt-0">
+    <div className="flex flex-col flex-grow pl-10 pr-10 lg:pl-32 lg:pr-24 pt-20 md:pt-0 font-inter">
       <div className="flex m-auto w-full flex-col md:flex-row w-full lg:w-11/12">
         <div className="flex flex-col m-auto ml-0 text-black max-w-3xl pr-0 md:pr-8">
-          <div className="flex items-center text-3xl md:text-4xl font-extrabold  opacity-75 relative pt-12 md:pt-6 pb-6">
+          <div className="flex items-center font-gilroy-bold text-3xl md:text-4xl font-extrabold  opacity-75 relative pt-12 md:pt-6 pb-6">
             Introducing $IMO
             <div className="rounded-full background-white ml-2 shadow w-8 h-8 md:w-10 md:h-10 p-1">
               <div className="flex-grow-0 w-6 h-6 md:w-8 md:h-8 relative">
@@ -54,10 +54,10 @@ const ClaimInner: React.FC<Props> = ({ isCommunityAirdrop }) => {
               </div>
             </div>
           </div>
-          <div className="text-5xl md:text-6xl font-extrabold opacity-75">
+          <div className="text-5xl md:text-6xl font-gilroy-bold font-extrabold opacity-75">
             The token of the literal marketplace of Ideas
           </div>
-          <div className="my-16 text-sm md:text-base font-normal opacity-75 max-w-2xl font-sans">
+          <div className="my-16 text-sm md:text-base font-normal opacity-75 max-w-2xl ">
             {isCommunityAirdrop
               ? 'If you are part of an eligible community, you may be able to recieve $IMO tokens. Click below to get started!'
               : 'If you have participated on the Ideamarket protocol, you may be eligible to receive $IMO tokens. Click below to get started!'}
@@ -74,7 +74,6 @@ const ClaimInner: React.FC<Props> = ({ isCommunityAirdrop }) => {
               // TODO
               style={{
                 backgroundImage: `linear-gradient(135deg, #0E8FFF , #2345C3)`,
-                fontFamily: 'Segoe UI',
               }}
             >
               <div className="text-xl font-bold uppercase">Get Started</div>
@@ -83,13 +82,7 @@ const ClaimInner: React.FC<Props> = ({ isCommunityAirdrop }) => {
           </Link>
         </div>
         <div>
-          <div
-            className="flex items-center justify-center h-full flex-col md:w-80 w-full md:ml-auto md:mr-0 lg:mr-auto"
-            // TODO
-            style={{
-              fontFamily: 'Segoe UI',
-            }}
-          >
+          <div className="flex items-center justify-center h-full flex-col md:w-80 w-full md:ml-auto md:mr-0 lg:mr-auto">
             <span className="text-sm font-light my-4 text-left mr-auto ml-2">
               Lets get some questions out of the way...
             </span>
@@ -112,7 +105,6 @@ const ClaimInner: React.FC<Props> = ({ isCommunityAirdrop }) => {
                 // TODO
                 style={{
                   backgroundImage: `linear-gradient(135deg, #0E8FFF , #2345C3)`,
-                  fontFamily: 'Segoe UI',
                 }}
               >
                 <div className="text-xl font-bold uppercase">Get Started</div>
