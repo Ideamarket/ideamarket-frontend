@@ -1,6 +1,6 @@
 import { DefaultLayout } from 'components/layouts'
 import { NextSeo } from 'next-seo'
-import { ReactElement, useState } from 'react'
+import { ReactElement, useEffect, useState } from 'react'
 import { GetServerSideProps } from 'next'
 import getSsrBaseUrl from 'utils/getSsrBaseUrl'
 import { getData } from 'lib/utils/fetch'
@@ -8,6 +8,7 @@ import LockListings from 'components/stake/LockListings'
 import StakeIMO from 'components/stake/StakeIMO'
 import TabNamePane from 'components/stake/TabNamePane'
 import StakeEthIMOFlow from 'components/stake/StakeEthIMOFlow'
+import { getLockingAPR } from 'lib/axios'
 
 export enum STAKE_TYPES {
   LISTING,
@@ -56,14 +57,29 @@ export const accordionData = [
 
 const Stake = () => {
   const [stakeType, setStakeType] = useState(STAKE_TYPES.LISTING)
+  const [lockingAPR, setLockingAPR] = useState(undefined)
+  useEffect(() => {
+    getLockingAPR()
+      .then((response) => {
+        const { data } = response
+        if (data.success) {
+          setLockingAPR(Number(data.data.apr))
+        } else setLockingAPR(0)
+      })
+      .catch(() => setLockingAPR(0))
+  }, [])
 
   return (
     <>
       <NextSeo title="Stake" />
       <div className="w-full flex pb-20 flex-col">
-        <TabNamePane stakeType={stakeType} onClickStakeType={setStakeType} />
+        <TabNamePane
+          stakeType={stakeType}
+          onClickStakeType={setStakeType}
+          lockingAPR={lockingAPR}
+        />
         {stakeType === STAKE_TYPES.LISTING ? (
-          <LockListings />
+          <LockListings lockingAPR={lockingAPR} />
         ) : stakeType === STAKE_TYPES.IMO ? (
           <StakeIMO />
         ) : (

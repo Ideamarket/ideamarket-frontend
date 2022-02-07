@@ -3,9 +3,14 @@ import { A } from 'components'
 import moment from 'moment'
 import { accordionData } from 'pages/stake'
 import { useState } from 'react'
+import { formatNumber } from 'utils'
 import { LockingAccordion } from './LockingAccordion'
 
-const LockListings = () => {
+type Props = {
+  lockingAPR: number
+}
+
+const LockListings = ({ lockingAPR }: Props) => {
   const [showLockInfo, setShowLockInfo] = useState(true)
 
   return (
@@ -85,7 +90,9 @@ const LockListings = () => {
               <span className="font-bold">1 month</span>
               <span className="text-xs">(30 days)</span>
             </div>
-            <div className="text-green-500 font-bold">12%</div>
+            <div className="text-green-500 font-bold">
+              {formatNumber(lockingAPR)}%
+            </div>
             <div>{moment(new Date(Date.now() + 2629800000)).format('LL')}</div>
             <div>March 2, 2022</div>
             <div>May 2, 2022</div>
@@ -96,7 +103,9 @@ const LockListings = () => {
               <span className="font-bold">3 months</span>
               <span className="text-xs">(90 days)</span>
             </div>
-            <div className="text-green-500 font-bold">22%</div>
+            <div className="text-green-500 font-bold">
+              {formatNumber(lockingAPR * 1.2)}%
+            </div>
             <div>{moment(new Date(Date.now() + 7889400000)).format('LL')}</div>
             <div>March 2, 2022</div>
             <div>May 2, 2022</div>

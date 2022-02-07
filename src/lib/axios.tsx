@@ -87,3 +87,5 @@ export const fetchWalletVerification = () =>
     }
     return res.json()
   })
+
+export const getLockingAPR = () => client.get(`general/apr`)

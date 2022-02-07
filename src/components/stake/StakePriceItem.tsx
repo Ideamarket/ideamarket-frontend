@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { formatNumberWithCommasAsThousandsSerperator } from 'utils'
+import { formatNumbertoLocaleString } from 'utils'
 
 type Props = {
   title: string
@@ -28,9 +28,7 @@ const StakePriceItem = ({ title, price, tokenName, className }: Props) => {
         </div>
         <div>
           <div className="font-extrabold">
-            {formatNumberWithCommasAsThousandsSerperator(
-              parseFloat(price).toFixed()
-            )}
+            {formatNumbertoLocaleString(parseFloat(price))}
           </div>
           <div>{tokenName}</div>
         </div>

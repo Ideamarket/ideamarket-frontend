@@ -21,6 +21,7 @@ import {
   calculateIdeaTokenDaiValue,
   floatToWeb3BN,
   formatBigNumber,
+  formatNumber,
   formatNumberWithCommasAsThousandsSerperator,
   isAddress,
   useTransactionManager,
@@ -59,6 +60,7 @@ import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/solid'
 import moment from 'moment'
 import ToggleSwitch from 'components/ToggleSwitch'
 import { A } from 'components'
+import { getLockingAPR } from 'lib/axios'
 
 const { publicRuntimeConfig } = getConfig()
 const { MIX_PANEL_KEY } = publicRuntimeConfig
@@ -145,6 +147,7 @@ export default function TradeInterface({
       : '0.00'
 
   const { account } = useWeb3React()
+  const [lockingAPR, setLockingAPR] = useState(undefined)
   const [tradeType, setTradeType] = useState(
     parentComponent === 'OwnedTokenRow' ? 'lock' : 'buy'
   ) // Used for smart contracts and which trade UI tab user is on
@@ -612,6 +615,17 @@ export default function TradeInterface({
     tokenValue: ideaTokenValue,
   }
 
+  useEffect(() => {
+    getLockingAPR()
+      .then((response) => {
+        const { data } = response
+        if (data.success) {
+          setLockingAPR(Number(data.data.apr))
+        } else setLockingAPR(0)
+      })
+      .catch(() => setLockingAPR(0))
+  }, [])
+
   return (
     <div>
       <div className="w-full md:w-136 p-4 mx-auto bg-white dark:bg-gray-700 rounded-xl">
@@ -930,7 +944,7 @@ export default function TradeInterface({
                     <span>Locked Period</span>
                     <span className="text-xs opacity-0">(x days)</span>
                   </div>
-                  {/* <div className="my-4">Estimated APR</div> */}
+                  <div className="mt-4 mb-1">Estimated APR</div>
                   <div>Redemption Date</div>
                 </div>
 
@@ -952,7 +966,9 @@ export default function TradeInterface({
                     <span className="font-bold">1 month</span>
                     <span className="text-xs">(30 days)</span>
                   </div>
-                  {/* <div className="text-green-500 font-bold">12%</div> */}
+                  <div className="text-green-500 font-bold">
+                    {formatNumber(lockingAPR)}%
+                  </div>
                   <div>
                     {moment(new Date(Date.now() + 2629800000)).format('LL')}
                   </div>
@@ -976,7 +992,9 @@ export default function TradeInterface({
                     <span className="font-bold">3 months</span>
                     <span className="text-xs">(90 days)</span>
                   </div>
-                  {/* <div className="text-green-500 font-bold">22%</div> */}
+                  <div className="text-green-500 font-bold">
+                    {formatNumber(lockingAPR * 1.2)}%
+                  </div>
                   <div>
                     {moment(new Date(Date.now() + 7889400000)).format('LL')}
                   </div>

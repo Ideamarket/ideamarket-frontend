@@ -5,11 +5,13 @@ import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
 import { Tooltip } from 'components'
 import ModalService from 'components/modals/ModalService'
+import { getLockingAPR } from 'lib/axios'
 import moment from 'moment'
 import { useEffect, useState } from 'react'
 import { useContractStore } from 'store/contractStore'
 import {
   floatToWeb3BN,
+  formatNumber,
   formatNumberWithCommasAsThousandsSerperator,
   useTransactionManager,
 } from 'utils'
@@ -38,6 +40,7 @@ const LockInterface = ({
   const txManager = useTransactionManager()
   const [showInfoDD, setShowInfoDD] = useState(false) // Info dropdown
   const [lockPeriod, setLockPeriod] = useState('3month')
+  const [lockingAPR, setLockingAPR] = useState(undefined)
 
   const [isUnlockOnceChecked, setIsUnlockOnceChecked] = useState(false)
   const [isUnlockPermanentChecked, setIsUnlockPermanentChecked] = useState(true)
@@ -121,6 +124,17 @@ const LockInterface = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  useEffect(() => {
+    getLockingAPR()
+      .then((response) => {
+        const { data } = response
+        if (data.success) {
+          setLockingAPR(Number(data.data.apr))
+        } else setLockingAPR(0)
+      })
+      .catch(() => setLockingAPR(0))
+  }, [])
+
   const [showLockMore, setShowLockMore] = useState(false) // Show UI for locking more or not. Only enabled using Lock More tokens button
 
   const userAlreadyLocked = rawPairs && rawPairs.length > 0 // User already has some locked tokens
@@ -176,7 +190,7 @@ const LockInterface = ({
               <span>Locked Period</span>
               <span className="text-xs opacity-0">(x days)</span>
             </div>
-            {/* <div className="my-4">Estimated APR</div> */}
+            <div className="mt-4 mb-1">Estimated APR</div>
             <div>Redemption Date</div>
           </div>
 
@@ -185,7 +199,9 @@ const LockInterface = ({
               <span className="font-bold">1 month</span>
               <span className="text-xs">(30 days)</span>
             </div>
-            {/* <div className="text-green-500 font-bold">12%</div> */}
+            <div className="text-green-500 font-bold">
+              {formatNumber(lockingAPR)}%
+            </div>
             <div>{moment(new Date(Date.now() + 2629800000)).format('LL')}</div>
           </div>
 
@@ -194,7 +210,9 @@ const LockInterface = ({
               <span className="font-bold">3 months</span>
               <span className="text-xs">(90 days)</span>
             </div>
-            {/* <div className="text-green-500 font-bold">22%</div> */}
+            <div className="text-green-500 font-bold">
+              {formatNumber(lockingAPR * 1.2)}%
+            </div>
             <div>{moment(new Date(Date.now() + 7889400000)).format('LL')}</div>
           </div>
         </div>
@@ -320,7 +338,7 @@ const LockInterface = ({
                   <span>Locked Period</span>
                   <span className="text-xs opacity-0">(x days)</span>
                 </div>
-                {/* <div className="my-4">Estimated APR</div> */}
+                <div className="my-4">Estimated APR</div>
                 <div>Redemption Date</div>
               </div>
 
@@ -342,7 +360,9 @@ const LockInterface = ({
                   <span className="font-bold">1 month</span>
                   <span className="text-xs">(30 days)</span>
                 </div>
-                {/* <div className="text-green-500 font-bold">12%</div> */}
+                <div className="text-green-500 font-bold">
+                  {formatNumber(lockingAPR)}%
+                </div>
                 <div>
                   {moment(new Date(Date.now() + 2629800000)).format('LL')}
                 </div>
@@ -366,7 +386,9 @@ const LockInterface = ({
                   <span className="font-bold">3 months</span>
                   <span className="text-xs">(90 days)</span>
                 </div>
-                {/* <div className="text-green-500 font-bold">22%</div> */}
+                <div className="text-green-500 font-bold">
+                  {formatNumber(lockingAPR * 1.2)}%
+                </div>
                 <div>
                   {moment(new Date(Date.now() + 7889400000)).format('LL')}
                 </div>

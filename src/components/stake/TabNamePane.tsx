@@ -9,6 +9,7 @@ import { formatNumberWithCommasAsThousandsSerperator } from 'utils'
 
 type Props = {
   stakeType: STAKE_TYPES
+  lockingAPR: number
   onClickStakeType: (s: STAKE_TYPES) => void
 }
 
@@ -16,19 +17,12 @@ const imoAddress = NETWORK.getDeployedAddresses().imo
 const imoStakingAddress = NETWORK.getDeployedAddresses().imoStaking
 const dripIMOSourceAddress = NETWORK.getDeployedAddresses().drippingIMOSource
 
-export default function TabNamePane({ stakeType, onClickStakeType }: Props) {
-  const [lockingAPR, setLockingAPR] = useState(undefined)
+export default function TabNamePane({
+  stakeType,
+  lockingAPR,
+  onClickStakeType,
+}: Props) {
   const [lpAPR, setLpAPR] = useState(undefined)
-  useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_IDEAMARKET_BACKEND_HOST}/general/apr`)
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          setLockingAPR(Number(data.data.apr))
-        } else setLockingAPR(0)
-      })
-      .catch(() => setLockingAPR(0))
-  }, [])
 
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_IDEAMARKET_BACKEND_HOST}/general/lp-apr`)

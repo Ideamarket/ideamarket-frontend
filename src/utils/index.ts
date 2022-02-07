@@ -11,6 +11,7 @@ export { getUniswapPath } from './uniswap'
 export type { UniswapPoolDetails } from './uniswap'
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
+const MAX_DECIMAL_POINTS = 5
 
 export const web3TenPow18 = new BN('10').pow(new BN('18'))
 export const web3UintMax = new BN('2').pow(new BN('256')).sub(new BN('1'))
@@ -160,6 +161,12 @@ export function formatNumberWithCommasAsThousandsSerperator(
   number: string | number
 ): string {
   return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+}
+
+export function formatNumbertoLocaleString(number: string | number): string {
+  return Number(number).toLocaleString(undefined, {
+    maximumFractionDigits: MAX_DECIMAL_POINTS,
+  })
 }
 
 export function calculateIdeaTokenDaiValue(
