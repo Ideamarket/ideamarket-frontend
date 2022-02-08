@@ -124,7 +124,7 @@ export default function TokenRow({
       // href={`/i/${marketSpecifics.getMarketNameURLRepresentation()}/${marketSpecifics.getTokenNameURLRepresentation(
       //   token?.name
       // )}`}
-      className="absolute top-0 left-0 w-full h-full"
+      className="w-full h-full"
     />
   )
 
@@ -152,8 +152,8 @@ export default function TokenRow({
       {/* Icon and Name */}
       <td
         className={classNames(
-          isExpanded ? 'pt-4 pb-96' : 'py-4',
-          'w-52 md:w-auto relative flex pl-2 md:table-cell md:col-span-3 md:pl-6 whitespace-nowrap'
+          isExpanded ? 'pt-4' : 'py-4',
+          'relative flex flex-col md:flex-row pl-2 md:table-cell md:col-span-3 md:pl-6 whitespace-nowrap w-52 md:w-1/3 lg:w-1/2'
         )}
       >
         <div className="flex items-center w-full text-gray-900 dark:text-gray-200">
@@ -220,14 +220,9 @@ export default function TokenRow({
         {pageLink}
 
         {isExpanded && (
-          <div className="relative w-full h-full">
-            <div
-              className="absolute h-full"
-              style={{ left: '-30px', bottom: '-10px' }}
-            >
-              <div>
-                <div className="flex flex-col">
-                  {/* <div className="flex items-center space-x-1 mt-4 pl-10 text-sm">
+          <div className="relative w-full ">
+            <div className="flex flex-col">
+              {/* <div className="flex items-center space-x-1 mt-4 pl-10 text-sm">
                     <div className="px-2 py-2 bg-black/[.1] rounded-lg whitespace-nowrap">
                       Ghost Listed by @testing 87 days ago
                     </div>
@@ -236,35 +231,31 @@ export default function TokenRow({
                     </div>
                   </div> */}
 
-                  {/* Didn't use Next image because can't do wildcard domain allow in next config file */}
-                  <a
-                    href={url}
-                    className="mt-4 pl-10 h-56 cursor-pointer"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <img
-                      className="rounded-xl mt-4 h-full"
-                      src={
-                        !isURLMetaDataLoading &&
-                        urlMetaData &&
-                        urlMetaData?.ogImage
-                          ? urlMetaData.ogImage
-                          : '/gray.svg'
-                      }
-                      alt=""
-                      referrerPolicy="no-referrer"
-                    />
-                    <div className="w-full my-4 text-black/[.5] text-sm text-left leading-5">
-                      {!isURLMetaDataLoading &&
-                      urlMetaData &&
-                      urlMetaData?.ogDescription
-                        ? urlMetaData.ogDescription
-                        : 'No description found'}
-                    </div>
-                  </a>
+              {/* Didn't use Next image because can't do wildcard domain allow in next config file */}
+              <a
+                href={url}
+                className="mt-4 pl-10 cursor-pointer"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img
+                  className="rounded-xl mt-4 h-full md:h-56"
+                  src={
+                    !isURLMetaDataLoading && urlMetaData && urlMetaData?.ogImage
+                      ? urlMetaData.ogImage
+                      : '/gray.svg'
+                  }
+                  alt=""
+                  referrerPolicy="no-referrer"
+                />
+                <div className="w-full my-4 text-black/[.5] text-sm text-left leading-5 whitespace-normal">
+                  {!isURLMetaDataLoading &&
+                  urlMetaData &&
+                  urlMetaData?.ogDescription
+                    ? urlMetaData.ogDescription
+                    : 'No description found'}
                 </div>
-              </div>
+              </a>
             </div>
           </div>
         )}
@@ -284,8 +275,8 @@ export default function TokenRow({
       {/* Price */}
       <td
         className={classNames(
-          isExpanded ? 'pt-4 pb-96' : 'py-4',
-          'relative hidden pl-6 md:table-cell whitespace-nowrap'
+          isExpanded ? 'pt-4' : 'py-4',
+          'relative hidden pl-6 md:table-cell whitespace-nowrap align-baseline'
         )}
       >
         <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-300">
@@ -303,8 +294,8 @@ export default function TokenRow({
       {getColumn('24H Change') && (
         <td
           className={classNames(
-            isExpanded ? 'pt-4 pb-96' : 'py-4',
-            'relative hidden pl-6 md:table-cell whitespace-nowrap'
+            isExpanded ? 'pt-4' : 'py-4',
+            'relative hidden pl-6 md:table-cell whitespace-nowrap align-baseline'
           )}
         >
           {isOnChain ? (
@@ -336,8 +327,8 @@ export default function TokenRow({
       {getColumn('7D Change') && (
         <td
           className={classNames(
-            isExpanded ? 'pt-4 pb-96' : 'py-4',
-            'relative hidden pl-6 md:table-cell whitespace-nowrap'
+            isExpanded ? 'pt-4' : 'py-4',
+            'relative hidden pl-6 md:table-cell whitespace-nowrap align-baseline'
           )}
         >
           {isOnChain ? (
@@ -369,8 +360,8 @@ export default function TokenRow({
       {getColumn('Deposits') && (
         <td
           className={classNames(
-            isExpanded ? 'pt-4 pb-96' : 'py-4',
-            'relative hidden pl-6 md:table-cell whitespace-nowrap'
+            isExpanded ? 'pt-4' : 'py-4',
+            'relative hidden pl-6 md:table-cell whitespace-nowrap align-baseline'
           )}
         >
           <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-300">
@@ -394,7 +385,7 @@ export default function TokenRow({
       )}
       {/* %Locked */}
       {/* {getColumn('% Locked') && (
-        <td className={classNames(isExpanded ? 'pt-4 pb-96' : 'py-4', "relative hidden pl-6 md:table-cell whitespace-nowrap")}>
+        <td className={classNames(isExpanded ? 'pt-4' : 'py-4', "relative hidden pl-6 md:table-cell whitespace-nowrap align-baseline")}>
           <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-300">
             % Locked
           </p>
@@ -415,8 +406,8 @@ export default function TokenRow({
       {/* {getColumn('1YR Income') && (
         <td
           className={classNames(
-            isExpanded ? 'pt-4 pb-96' : 'py-4',
-            'relative hidden pl-6 md:table-cell whitespace-nowrap'
+            isExpanded ? 'pt-4' : 'py-4',
+            'relative hidden pl-6 md:table-cell whitespace-nowrap align-baseline'
           )}
         >
           {isOnChain ? (
@@ -439,8 +430,8 @@ export default function TokenRow({
       {/* {getColumn('Claimable Income') ? (
         <td
           className={classNames(
-            isExpanded ? 'pt-4 pb-96' : 'py-4',
-            'relative hidden pl-6 md:table-cell whitespace-nowrap'
+            isExpanded ? 'pt-4' : 'py-4',
+            'relative hidden pl-6 md:table-cell whitespace-nowrap align-baseline'
           )}
         >
           {isOnChain ? (
@@ -464,8 +455,8 @@ export default function TokenRow({
       {/* Buy Button */}
       <td
         className={classNames(
-          isExpanded ? 'pt-4 pb-96' : 'py-4',
-          'hidden text-center md:table-cell whitespace-nowrap'
+          isExpanded ? 'pt-4' : 'py-4',
+          'hidden text-center md:table-cell whitespace-nowrap align-baseline'
         )}
       >
         <div className="flex space-x-2">
@@ -517,8 +508,8 @@ export default function TokenRow({
       {/* Star desktop */}
       <td
         className={classNames(
-          isExpanded ? 'pt-4 pb-96' : 'py-4',
-          'hidden px-3 text-sm leading-5 text-gray-500 md:table-cell dark:text-gray-300 md:pl-3 md:pr-6 whitespace-nowrap'
+          isExpanded ? 'pt-4' : 'py-4',
+          'hidden px-3 text-sm leading-5 text-gray-500 md:table-cell dark:text-gray-300 md:pl-3 md:pr-6 whitespace-nowrap align-baseline'
         )}
       >
         <div className="flex items-center justify-center h-full">
