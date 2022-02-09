@@ -32,7 +32,7 @@ const Claim = () => {
       return
     router.push('/')
     // eslint-disable-next-line no-use-before-define
-  }, [airdropType, AIRDROP_TYPES])
+  }, [airdropType, router])
 
   return (
     <>
