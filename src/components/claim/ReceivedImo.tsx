@@ -14,14 +14,15 @@ import { useWeb3React } from '@web3-react/core'
 import A from 'components/A'
 import useClaimable from 'actions/useClaimable'
 import classNames from 'classnames'
+import { AIRDROP_TYPES } from 'types/airdropTypes'
 
 interface Props {
-  isCommunityAirdrop: boolean
+  airdropType: AIRDROP_TYPES
 }
 
-const ReceivedImo: React.FC<Props> = ({ isCommunityAirdrop }) => {
+const ReceivedImo: React.FC<Props> = ({ airdropType }) => {
   const { account } = useWeb3React()
-  const claimableIMO: number = useClaimable(account, isCommunityAirdrop, true)
+  const claimableIMO: number = useClaimable(account, airdropType, true)
   const [bottomPos, setBottomPos] = useState<Number>(-1)
   useEffect(() => {
     setTimeout(() => {

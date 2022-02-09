@@ -3,12 +3,22 @@ import Image from 'next/image'
 import { Accordion } from './Accordion'
 
 import ExternalLinkIcon from '../../assets/external-link.svg'
+import { AIRDROP_TYPES } from 'types/airdropTypes'
 
 interface Props {
-  isCommunityAirdrop?: boolean
+  airdropType: AIRDROP_TYPES
 }
 
-const ClaimInner: React.FC<Props> = ({ isCommunityAirdrop }) => {
+const displayDescripton = (airdropType: AIRDROP_TYPES) => {
+  if (airdropType === AIRDROP_TYPES.USER)
+    return 'If you have participated on the Ideamarket protocol, you may be eligible to receive $IMO tokens. Click below to get started!'
+  if (airdropType === AIRDROP_TYPES.TWITTER_VERIFICATION)
+    return 'If you verified your twitter listing on Ideamarket over the follower threshold, you may be eligible to receive $IMO tokens. Click below to get started!'
+
+  return 'If you are part of an eligible community, you may be able to recieve $IMO tokens. Click below to get started!'
+}
+
+const ClaimInner: React.FC<Props> = ({ airdropType }) => {
   const accordionData = [
     {
       title: 'What is Ideamarket?',
@@ -58,17 +68,9 @@ const ClaimInner: React.FC<Props> = ({ isCommunityAirdrop }) => {
             The token of the literal marketplace of Ideas
           </div>
           <div className="my-16 text-sm md:text-base font-normal opacity-75 max-w-2xl ">
-            {isCommunityAirdrop
-              ? 'If you are part of an eligible community, you may be able to recieve $IMO tokens. Click below to get started!'
-              : 'If you have participated on the Ideamarket protocol, you may be eligible to receive $IMO tokens. Click below to get started!'}
+            {displayDescripton(airdropType)}
           </div>
-          <Link
-            href={
-              isCommunityAirdrop
-                ? '/community-claim-dashboard'
-                : '/claim-dashboard'
-            }
-          >
+          <Link href={`/claim/${airdropType}/dashboard`}>
             <div
               className="hidden md:flex flex-col text-center my-6 rounded-lg hover:bg-blue-800 w-full max-w-sm py-5 text-white bg-blue-600 cursor-pointer"
               // TODO
@@ -93,13 +95,7 @@ const ClaimInner: React.FC<Props> = ({ isCommunityAirdrop }) => {
               Ideamarket Token Overview
               <ExternalLinkIcon className="h-full inline ml-2" />
             </span>
-            <Link
-              href={
-                isCommunityAirdrop
-                  ? '/community-claim-dashboard'
-                  : '/claim-dashboard'
-              }
-            >
+            <Link href={`/claim/${airdropType}/dashboard`}>
               <div
                 className="flex md:hidden flex-col text-center my-8 rounded-lg hover:bg-blue-800 w-full w-max-26 py-4 text-white bg-blue-600 cursor-pointer"
                 // TODO

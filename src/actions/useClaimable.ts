@@ -1,26 +1,40 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useContractStore } from 'store/contractStore'
-import UserMerkleRoot from 'assets/merkle-root.json'
-import CommunityMerkleRoot from 'assets/community-merkle-root.json'
-import { getClaimAmount, isAddressInMerkleRoot } from 'utils/merkleRoot'
+import {
+  getClaimAmount,
+  getMerkleRoot,
+  isAddressInMerkleRoot,
+} from 'utils/merkleRoot'
+import { AIRDROP_TYPES } from 'types/airdropTypes'
+
+export const getMerkleContract = (
+  airdropType: AIRDROP_TYPES,
+  contractStore: any
+) => {
+  if (airdropType === AIRDROP_TYPES.USER) {
+    return contractStore.merkleDistributorContract
+  }
+  if (airdropType === AIRDROP_TYPES.COMMUNITY) {
+    return contractStore.communityMerkleDistributorContract
+  }
+  return contractStore.twitterVerifyMerkleDistributor
+}
 
 const useClaimable = (
   address: string,
-  isCommunityAirdrop: boolean,
+  airdropType: AIRDROP_TYPES,
   isGettingAllClaimTokens?: boolean
 ) => {
   const [balance, setBalance] = useState(0)
   const merkleDistributorContract = useMemo(() => {
-    return isCommunityAirdrop
-      ? useContractStore.getState().communityMerkleDistributorContract
-      : useContractStore.getState().merkleDistributorContract
-  }, [isCommunityAirdrop])
+    return getMerkleContract(airdropType, useContractStore.getState())
+  }, [airdropType])
 
-  const MerkleRoot = isCommunityAirdrop ? CommunityMerkleRoot : UserMerkleRoot
+  const MerkleRoot = getMerkleRoot(airdropType)
 
   useEffect(() => {
     const run = async () => {
-      if (!isAddressInMerkleRoot(address, isCommunityAirdrop)) {
+      if (!isAddressInMerkleRoot(address, airdropType)) {
         setBalance(0)
         return
       }
@@ -30,7 +44,7 @@ const useClaimable = (
           .isClaimed(MerkleRoot.claims[address].index)
           .call()
 
-        const claimableIMO = getClaimAmount(address, isCommunityAirdrop)
+        const claimableIMO = getClaimAmount(address, airdropType)
         if (isClaimed && !isGettingAllClaimTokens) setBalance(0)
         else setBalance(claimableIMO)
       } catch (error) {
@@ -42,7 +56,7 @@ const useClaimable = (
   }, [
     address,
     merkleDistributorContract,
-    isCommunityAirdrop,
+    airdropType,
     MerkleRoot,
     isGettingAllClaimTokens,
   ])

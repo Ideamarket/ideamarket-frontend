@@ -22,6 +22,7 @@ type State = {
   sushiStakingContract: any
   lptoken: any
   drippingIMOSourceContract: any
+  twitterVerifyMerkleDistributor: any
 }
 
 export const useContractStore = create<State>((set) => ({
@@ -39,6 +40,7 @@ export const useContractStore = create<State>((set) => ({
   sushiStakingContract: undefined,
   lptoken: undefined,
   drippingIMOSourceContract: undefined,
+  twitterVerifyMerkleDistributor: undefined,
 }))
 
 export function clearContracts() {
@@ -57,6 +59,7 @@ export function clearContracts() {
     sushiStakingContract: undefined,
     lptoken: undefined,
     drippingIMOSourceContract: undefined,
+    twitterVerifyMerkleDistributor: undefined,
   })
 }
 
@@ -152,6 +155,12 @@ export function initContractsFromWeb3(web3: Web3) {
     { from: web3.eth.defaultAccount }
   )
 
+  const twitterVerifyMerkleDistributor = new web3.eth.Contract(
+    abis.twitterVerifyMerkleDistributor as any,
+    deployedAddresses.twitterVerifyMerkleDistributor,
+    { from: web3.eth.defaultAccount }
+  )
+
   useContractStore.setState({
     factoryContract: factoryContract,
     quoterContract: quoterContract,
@@ -167,6 +176,7 @@ export function initContractsFromWeb3(web3: Web3) {
     sushiStakingContract: sushiStakingContract,
     lptoken: lptoken,
     drippingIMOSourceContract: drippingIMOSourceContract,
+    twitterVerifyMerkleDistributor: twitterVerifyMerkleDistributor,
   })
 }
 

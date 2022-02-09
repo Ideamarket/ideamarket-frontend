@@ -22,20 +22,21 @@ import ModalService from 'components/modals/ModalService'
 import classNames from 'classnames'
 // import { BreakdownPointCard } from './BreakdownPointCard'
 import A from 'components/A'
+import { AIRDROP_TYPES } from 'types/airdropTypes'
 
 interface Props {
   setClaimStep: (any) => void
   breakdownByPoint?: BreakdownPoint[]
-  isCommunityAirdrop: boolean
+  airdropType: AIRDROP_TYPES
 }
 
 export const Eligible: React.FC<Props> = ({
   setClaimStep,
   // breakdownByPoint,
-  isCommunityAirdrop,
+  airdropType,
 }) => {
   const { account } = useWeb3React()
-  const claimableIMO: number = useClaimable(account, isCommunityAirdrop)
+  const claimableIMO: number = useClaimable(account, airdropType)
   const txManager = useTransactionManager()
   const [txFailed, setTxFailed] = useState<Boolean>(false)
   const [loading, setLoading] = useState<Boolean>(false)
@@ -58,7 +59,7 @@ export const Eligible: React.FC<Props> = ({
     setLoading(true)
     setTxFailed(false)
     try {
-      await txManager.executeTx('claim', claimIMO, account, isCommunityAirdrop)
+      await txManager.executeTx('claim', claimIMO, account, airdropType)
     } catch (error) {
       console.log(error)
       setLoading(false)

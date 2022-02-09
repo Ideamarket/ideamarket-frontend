@@ -1,4 +1,5 @@
 import router from 'next/router'
+import { AIRDROP_TYPES } from 'types/airdropTypes'
 
 export const getNavbarConfig = (mixPanel: any) => ({
   menu: [
@@ -84,11 +85,15 @@ export const getNavbarConfig = (mixPanel: any) => ({
         },
         {
           name: 'Early User Airdrop Claim',
-          onClick: () => router.push('/claim'),
+          onClick: () => router.push(`/claim/${AIRDROP_TYPES.USER}`),
         },
         {
           name: 'Community Claim',
-          onClick: () => router.push('/community-claim'),
+          onClick: () => router.push(`/claim/${AIRDROP_TYPES.COMMUNITY}`),
+        },
+        {
+          name: 'Twitter Verification Airdrop Claim',
+          onClick: () => router.push(`/claim/${AIRDROP_TYPES.TWITTER_VERIFICATION}`),
         },
       ],
     },

@@ -12,10 +12,11 @@ import Tooltip from 'components/tooltip/Tooltip'
 import A from 'components/A'
 import useClaimable from 'actions/useClaimable'
 import { isAddressInMerkleRoot } from 'utils/merkleRoot'
+import { AIRDROP_TYPES } from 'types/airdropTypes'
 
 interface Props {
   currentStep: number
-  isCommunityAirdrop: boolean
+  airdropType: AIRDROP_TYPES
 }
 
 interface StepData {
@@ -26,14 +27,11 @@ interface StepData {
   // metamask || checkmark || ''
 }
 
-const FlowNavMenu: React.FC<Props> = ({ currentStep, isCommunityAirdrop }) => {
+const FlowNavMenu: React.FC<Props> = ({ currentStep, airdropType }) => {
   const router = useRouter()
   const { active, account } = useWeb3React()
-  const claimableIMO: number = useClaimable(account, isCommunityAirdrop)
-  const alreadyClaimed: boolean = isAddressInMerkleRoot(
-    account,
-    isCommunityAirdrop
-  )
+  const claimableIMO: number = useClaimable(account, airdropType)
+  const alreadyClaimed: boolean = isAddressInMerkleRoot(account, airdropType)
 
   const getStepStatus = useCallback(
     (stepNo: number) => {

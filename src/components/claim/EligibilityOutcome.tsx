@@ -8,26 +8,21 @@ import { getClaimPointBreakdown } from 'utils/claimPointBreakdown'
 import { Eligible } from './Eligible'
 import { NotEligible } from './NotEligible'
 import { AlreadyClaimed } from './AlreadyClaimed'
+import { AIRDROP_TYPES } from 'types/airdropTypes'
 
 interface Props {
   setClaimStep: (any) => void
-  isCommunityAirdrop: boolean
+  airdropType: AIRDROP_TYPES
 }
 export interface BreakdownPoint {
   text: string
   amount: number[]
 }
 
-const EligibilityOutcome: React.FC<Props> = ({
-  setClaimStep,
-  isCommunityAirdrop,
-}) => {
+const EligibilityOutcome: React.FC<Props> = ({ setClaimStep, airdropType }) => {
   const { account } = useWeb3React()
-  const claimableIMO: number = useClaimable(account, isCommunityAirdrop)
-  const alreadyClaimed: boolean = isAddressInMerkleRoot(
-    account,
-    isCommunityAirdrop
-  )
+  const claimableIMO: number = useClaimable(account, airdropType)
+  const alreadyClaimed: boolean = isAddressInMerkleRoot(account, airdropType)
   const breakdownByPoint: BreakdownPoint[] = useMemo(() => {
     const claimPointBreakdown = getClaimPointBreakdown(account)
     return [
@@ -65,7 +60,7 @@ const EligibilityOutcome: React.FC<Props> = ({
         <Eligible
           setClaimStep={setClaimStep}
           breakdownByPoint={breakdownByPoint}
-          isCommunityAirdrop={isCommunityAirdrop}
+          airdropType={airdropType}
         />
       ) : alreadyClaimed ? (
         <AlreadyClaimed breakdownByPoint={breakdownByPoint} />

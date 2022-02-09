@@ -24,5 +24,6 @@
   "imoStaking": "0xe4CC6152F0173604f07C6ced613C302f21D77184",
   "sushiStaking": "0xb0448763523E129Bfc2Cd20ceeFAcC16c620F726",
   "lptoken": "0x9eAE34FAa17CaF99D2109f513edc5A6E3A7435B5",
-  "drippingIMOSource": "0xc1092Eb50fa05Ec3b632e8Cf993d57Da5152cA29"
+  "drippingIMOSource": "0xc1092Eb50fa05Ec3b632e8Cf993d57Da5152cA29",
+  "twitterVerifyMerkleDistributor": "0x214a14850329Bec9fa577D4cE6e00b69dfD287d4"
 }
