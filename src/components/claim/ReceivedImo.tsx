@@ -129,7 +129,7 @@ const ReceivedImo: React.FC<Props> = ({ airdropType }) => {
                   Listing IMO Staking
                 </span>
                 <span className="text-brand-neon-green text-2xl font-extrabold font-inter">
-                  550% APY
+                  550% APR
                 </span>
               </div>
               <div className="flex flex-col border-white/20 border text-left p-1 py-5 justify-center bg-white/5 rounded-xl  text-center">
@@ -137,7 +137,7 @@ const ReceivedImo: React.FC<Props> = ({ airdropType }) => {
                   Stake IMO
                 </span>
                 <span className="text-brand-neon-green text-2xl font-extrabold font-inter">
-                  300% APY
+                  300% APR
                 </span>
               </div>
             </div>
