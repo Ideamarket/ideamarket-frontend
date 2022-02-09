@@ -13,6 +13,8 @@ interface GlobalContextState {
   setJwtToken: (val: string) => void
   user: UserProfile
   setUser: (val: any) => void
+  imoAdvVisibility: boolean
+  setImoAdvVisibility: (val) => void
 }
 
 export const initialState: GlobalContextState = {
@@ -26,6 +28,8 @@ export const initialState: GlobalContextState = {
   setJwtToken: (val: string) => {},
   user: {},
   setUser: (val: UserProfile) => {},
+  imoAdvVisibility: true,
+  setImoAdvVisibility: (val) => {},
 }
 
 export const GlobalContext = React.createContext(initialState)
@@ -40,6 +44,7 @@ export const GlobalContextComponent: React.FC<Props> = ({ children }) => {
   const [isEmailFooterActive, setIsEmailFooterActive] = useState(false)
   const [jwtToken, setJwtToken] = useState(null)
   const [user, setUser] = useState({})
+  const [imoAdvVisibility, setImoAdvVisibility] = useState(true)
 
   useEffect(() => {
     const isEmailBarClosed = localStorage.getItem('IS_EMAIL_BAR_CLOSED')
@@ -65,6 +70,8 @@ export const GlobalContextComponent: React.FC<Props> = ({ children }) => {
         setJwtToken,
         user,
         setUser,
+        imoAdvVisibility,
+        setImoAdvVisibility,
       }}
     >
       {children}
