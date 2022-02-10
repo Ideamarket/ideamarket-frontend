@@ -51,7 +51,7 @@ const StakeEthIMOFlow = () => {
   ) // staked balance
   const [
     claimableRewardsIMOBalance,
-    userxIMOBalanceBN,
+    // userxIMOBalanceBN,
     isUserxIMOBalanceLoading,
   ] = useClaimableRewardsIMO(account, balanceToggle) // claimable rewards
   const inputAmountBigNumber = new BigNumber(inputAmount).multipliedBy(
@@ -116,11 +116,12 @@ const StakeEthIMOFlow = () => {
   const withdrawxIMOClicked = async () => {
     let amountBN = floatToWeb3BN(inputAmount, 18, BigNumber.ROUND_DOWN)
     const amountBigNumber = new BigNumber(amountBN.toString())
-    // If the entered amount is about equal to user's total xIMO balance, then withdraw all xIMO
-    if (amountBigNumber.minus(userxIMOBalanceBN).isLessThan(oneBigNumber)) {
-      amountBN = userxIMOBalanceBN
+    // If the entered amount is about equal to user's total staked balance, then withdraw all staked
+    if (
+      amountBigNumber.minus(userIMOStakedBalanceBN).isLessThan(oneBigNumber)
+    ) {
+      amountBN = userIMOStakedBalanceBN
     }
-
     const args = [amountBN]
 
     try {
