@@ -45,15 +45,15 @@ const StakeEthIMOFlow = () => {
     18,
     balanceToggle
   ) // lp token balance
-  const [userIMOStakedBalance, userIMOStakedBalanceBN] = useLPStakedBalance(
+  const [
+    userIMOStakedBalance,
+    userIMOStakedBalanceBN,
+    userIMOStakedBalanceLoading,
+  ] = useLPStakedBalance(account, balanceToggle) // staked balance
+  const [claimableRewardsIMOBalance] = useClaimableRewardsIMO(
     account,
     balanceToggle
-  ) // staked balance
-  const [
-    claimableRewardsIMOBalance,
-    // userxIMOBalanceBN,
-    isUserxIMOBalanceLoading,
-  ] = useClaimableRewardsIMO(account, balanceToggle) // claimable rewards
+  ) // claimable rewards
   const inputAmountBigNumber = new BigNumber(inputAmount).multipliedBy(
     new BigNumber('10').exponentiatedBy(18)
   )
@@ -115,13 +115,17 @@ const StakeEthIMOFlow = () => {
 
   const withdrawxIMOClicked = async () => {
     let amountBN = floatToWeb3BN(inputAmount, 18, BigNumber.ROUND_DOWN)
-    const amountBigNumber = new BigNumber(amountBN.toString())
+
+    // commented following in order to give more flexibility
+
     // If the entered amount is about equal to user's total staked balance, then withdraw all staked
-    if (
-      amountBigNumber.minus(userIMOStakedBalanceBN).isLessThan(oneBigNumber)
-    ) {
-      amountBN = userIMOStakedBalanceBN
-    }
+    // if (
+    //   userLPStakedBalanceBigNumber
+    //     .minus(inputAmountBigNumber)
+    //     .isLessThan(oneBigNumber)
+    // ) {
+    //   amountBN = userIMOStakedBalanceBN
+    // }
     const args = [amountBN]
 
     try {
@@ -285,7 +289,7 @@ const StakeEthIMOFlow = () => {
                 <div className="text-gray-500 dark:text-white">
                   You have:{' '}
                   {(isStakeSelected && isUserIMOBalanceLoading) ||
-                  (!isStakeSelected && isUserxIMOBalanceLoading)
+                  (!isStakeSelected && userIMOStakedBalanceLoading)
                     ? '...'
                     : parseFloat(
                         isStakeSelected ? userLPBalance : userIMOStakedBalance
