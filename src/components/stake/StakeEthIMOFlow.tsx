@@ -19,7 +19,7 @@ import { accordionData } from 'pages/stake'
 import { useState } from 'react'
 import { IoMdExit } from 'react-icons/io'
 import { NETWORK } from 'store/networks'
-import { floatToWeb3BN, oneBigNumber, useTransactionManager } from 'utils'
+import { floatToWeb3BN, useTransactionManager } from 'utils'
 import { LockingAccordion } from './LockingAccordion'
 import StakePriceItem from './StakePriceItem'
 
