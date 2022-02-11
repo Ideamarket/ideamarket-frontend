@@ -34,7 +34,10 @@ const useClaimable = (
 
   useEffect(() => {
     const run = async () => {
-      if (!isAddressInMerkleRoot(address, airdropType)) {
+      if (
+        !isAddressInMerkleRoot(address, airdropType) ||
+        !merkleDistributorContract
+      ) {
         setBalance(0)
         return
       }

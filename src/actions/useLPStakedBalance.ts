@@ -17,6 +17,10 @@ export default function useLPStakedBalance(
     let isCancelled = false
     const getBalance = async () => {
       return new Promise<BN>((resolve) => {
+        if (!sushiStaking) {
+          resolve(new BN('0'))
+          return
+        }
         sushiStaking.methods
           .userInfo(0, user)
           .call()

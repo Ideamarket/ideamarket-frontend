@@ -17,6 +17,10 @@ export default function useClaimableRewardsIMO(
     let isCancelled = false
     const getBalance = async () => {
       return new Promise<BN>((resolve) => {
+        if (!sushiStaking) {
+          resolve(new BN('0'))
+          return
+        }
         sushiStaking.methods
           .pendingIMO(0, user)
           .call()
