@@ -23,3 +23,11 @@ export function getGreatestDate({
 }) {
   return new Date(date1) >= new Date(date2) ? date1 : date2
 }
+
+/**
+ * This function returns the time difference in days between 2 dates
+ */
+export function getTimeDifferenceIndays(date1: Date, date2: Date) {
+  const differenceInTime = Math.abs(date1.getTime() - date2.getTime())
+  return Math.ceil(differenceInTime / (1000 * 3600 * 24))
+}

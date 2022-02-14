@@ -27,7 +27,7 @@ import BigNumber from 'bignumber.js'
 import IdeaverifyIconBlue from '../../assets/IdeaverifyIconBlue.svg'
 import { useMixPanel } from 'utils/mixPanel'
 import { getRealTokenName } from 'utils/wikipedia'
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState, useMemo } from 'react'
 import { getURLMetaData } from 'actions/web2/getURLMetaData'
 import { GlobeAltIcon } from '@heroicons/react/outline'
 import { TrendingUpBlue, TrendingUpGray } from 'assets'
@@ -39,6 +39,7 @@ import ModalService from 'components/modals/ModalService'
 import useAuth from 'components/account/useAuth'
 import { getSignedInWalletAddress } from 'lib/utils/web3-eth'
 import CreateAccountModal from 'components/account/CreateAccountModal'
+import { getTimeDifferenceIndays } from 'lib/utils/dateUtil'
 
 type Props = {
   token: any
@@ -184,6 +185,19 @@ export default function TokenRow({
 
     refetch()
   }
+  const timeAfterGhostListedInDays = useMemo(() => {
+    if (!token?.ghostListedAt) return null
+    const ghostListedAt = new Date(token?.ghostListedAt)
+    const currentDate = new Date()
+    return getTimeDifferenceIndays(ghostListedAt, currentDate)
+  }, [token])
+
+  const timeAfterOnChainListedInDays = useMemo(() => {
+    if (!token?.onchainListedAt) return null
+    const onchainListedAt = new Date(token?.onchainListedAt)
+    const currentDate = new Date()
+    return getTimeDifferenceIndays(onchainListedAt, currentDate)
+  }, [token])
 
   return (
     <tr
@@ -288,14 +302,22 @@ export default function TokenRow({
         {isExpanded && (
           <div className="relative w-full ">
             <div className="flex flex-col">
-              {/* <div className="flex items-center space-x-1 mt-4 pl-10 text-sm">
-                    <div className="px-2 py-2 bg-black/[.1] rounded-lg whitespace-nowrap">
-                      Ghost Listed by @testing 87 days ago
-                    </div>
-                    <div className="px-2 py-2 bg-black/[.1] rounded-lg whitespace-nowrap">
-                      Listed by @someone 56 days ago
-                    </div>
-                  </div> */}
+              <div className="flex items-center space-x-1 mt-4 pl-10 text-sm">
+                {token?.ghostListedBy && timeAfterGhostListedInDays ? (
+                  <div className="px-2 py-2 bg-black/[.1] rounded-lg whitespace-nowrap">
+                    {`Ghost Listed by @${token?.ghostListedBy} ${timeAfterGhostListedInDays} days ago`}
+                  </div>
+                ) : (
+                  ``
+                )}
+                {token?.onchainListedBy && timeAfterOnChainListedInDays ? (
+                  <div className="px-2 py-2 bg-black/[.1] rounded-lg whitespace-nowrap">
+                    {`Listed by @${token?.onchainListedBy} ${timeAfterOnChainListedInDays} days ago`}
+                  </div>
+                ) : (
+                  ``
+                )}
+              </div>
 
               {/* Didn't use Next image because can't do wildcard domain allow in next config file */}
               <a

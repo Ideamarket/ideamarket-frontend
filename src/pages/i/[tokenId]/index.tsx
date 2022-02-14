@@ -20,7 +20,7 @@ import ModalService from 'components/modals/ModalService'
 import ListingStats from 'components/listing-page/ListingStats'
 import ListingSEO from 'components/listing-page/ListingSEO'
 // import { bnToFloatString, bigNumberTenPow18 } from 'utils'
-import { ReactElement, useContext, useEffect, useState } from 'react'
+import { ReactElement, useContext, useEffect, useMemo, useState } from 'react'
 import DesktopRelatedInfo from 'components/listing-page/DesktopRelatedInfo'
 import MobileRelatedInfo from 'components/listing-page/MobileRelatedInfo'
 import InvestmentCalculator from 'components/investment-calculator/InvestmentCalculator'
@@ -55,6 +55,7 @@ import { upvoteListing } from 'actions/web2/upvoteListing'
 import CreateAccountModal from 'components/account/CreateAccountModal'
 import { getSignedInWalletAddress } from 'lib/utils/web3-eth'
 import useAuth from 'components/account/useAuth'
+import { getTimeDifferenceIndays } from 'lib/utils/dateUtil'
 
 const DetailsSkeleton = () => (
   <div className="w-12 mx-auto bg-gray-400 rounded animate animate-pulse">
@@ -276,6 +277,22 @@ export default function TokenDetails({ rawTokenId }: { rawTokenId: string }) {
     setIsLocallyUpvoted(token?.upVoted)
     setLocalTotalVotes(token?.totalVotes)
   }, [token])
+  const { ghostListedBy, ghostListedAt, onchainListedAt, onchainListedBy } =
+    token as any
+
+  const timeAfterGhostListedInDays = useMemo(() => {
+    if (!ghostListedAt) return null
+    const ghostListedAtDate = new Date(ghostListedAt)
+    const currentDate = new Date()
+    return getTimeDifferenceIndays(ghostListedAtDate, currentDate)
+  }, [ghostListedAt])
+
+  const timeAfterOnChainListedInDays = useMemo(() => {
+    if (!onchainListedAt) return null
+    const onchainListedAtDate = new Date(onchainListedAt)
+    const currentDate = new Date()
+    return getTimeDifferenceIndays(onchainListedAtDate, currentDate)
+  }, [onchainListedAt])
 
   return (
     <>
@@ -320,14 +337,22 @@ export default function TokenDetails({ rawTokenId }: { rawTokenId: string }) {
                     </div>
                   </div>
 
-                  {/* <div className="flex items-center space-x-1 mt-4 text-sm">
-                    <div className="px-2 py-2 bg-white/[.1] rounded-lg whitespace-nowrap">
-                      Ghost Listed by @testing 87 days ago
-                    </div>
-                    <div className="px-2 py-2 bg-white/[.1] rounded-lg whitespace-nowrap">
-                      Listed by @someone 56 days ago
-                    </div>
-                  </div> */}
+                  <div className="flex items-center space-x-1 mt-4 text-sm">
+                    {ghostListedBy && timeAfterGhostListedInDays ? (
+                      <div className="px-2 py-2 bg-white/[.1] rounded-lg whitespace-nowrap">
+                        {`Ghost Listed by @${ghostListedBy} ${timeAfterGhostListedInDays} days ago`}
+                      </div>
+                    ) : (
+                      ``
+                    )}
+                    {onchainListedBy && timeAfterOnChainListedInDays ? (
+                      <div className="px-2 py-2 bg-white/[.1] rounded-lg whitespace-nowrap">
+                        {`Listed by @${onchainListedBy} ${timeAfterOnChainListedInDays} days ago`}
+                      </div>
+                    ) : (
+                      ``
+                    )}
+                  </div>
 
                   {marketName === 'Twitter' && (
                     <div className="w-full md:w-auto text-left my-2">
