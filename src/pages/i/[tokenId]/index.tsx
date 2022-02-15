@@ -278,7 +278,7 @@ export default function TokenDetails({ rawTokenId }: { rawTokenId: string }) {
     setLocalTotalVotes(token?.totalVotes)
   }, [token])
   const { ghostListedBy, ghostListedAt, onchainListedAt, onchainListedBy } =
-    token as any
+    (token || {}) as any
 
   const timeAfterGhostListedInDays = useMemo(() => {
     if (!ghostListedAt) return null
