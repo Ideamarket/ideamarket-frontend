@@ -294,6 +294,10 @@ export default function TokenDetails({ rawTokenId }: { rawTokenId: string }) {
     return getTimeDifferenceIndays(onchainListedAtDate, currentDate)
   }, [onchainListedAt])
 
+  const onChainListedByString = onchainListedBy
+    ? `${onchainListedBy.slice(0, 6)}...${onchainListedBy.slice(-4)}`
+    : ''
+
   return (
     <>
       <ListingSEO
@@ -337,17 +341,23 @@ export default function TokenDetails({ rawTokenId }: { rawTokenId: string }) {
                     </div>
                   </div>
 
-                  <div className="flex items-center space-x-1 mt-4 text-sm">
+                  <div className="flex flex-col items-center space-y-1 mt-4 text-sm items-baseline">
                     {ghostListedBy && timeAfterGhostListedInDays ? (
                       <div className="px-2 py-2 bg-white/[.1] rounded-lg whitespace-nowrap">
-                        {`Ghost Listed by @${ghostListedBy} ${timeAfterGhostListedInDays} days ago`}
+                        Ghost Listed by{' '}
+                        <span className="font-bold">@{ghostListedBy}</span>{' '}
+                        {timeAfterGhostListedInDays} days ago
                       </div>
                     ) : (
                       ``
                     )}
-                    {onchainListedBy && timeAfterOnChainListedInDays ? (
+                    {onChainListedByString && timeAfterOnChainListedInDays ? (
                       <div className="px-2 py-2 bg-white/[.1] rounded-lg whitespace-nowrap">
-                        {`Listed by @${onchainListedBy} ${timeAfterOnChainListedInDays} days ago`}
+                        Listed by{' '}
+                        <span className="font-bold">
+                          {onChainListedByString}
+                        </span>{' '}
+                        {timeAfterOnChainListedInDays} days ago
                       </div>
                     ) : (
                       ``
