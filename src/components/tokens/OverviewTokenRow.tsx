@@ -308,7 +308,7 @@ export default function TokenRow({
         {isExpanded && (
           <div className="relative w-full ">
             <div className="flex flex-col">
-              <div className="flex flex-col items-center space-y-1 mt-4 pl-10 text-sm items-baseline">
+              <div className="pl-4 md:pl-0 flex flex-col items-center space-x-0 space-y-1 mt-4 text-sm items-baseline">
                 {token?.ghostListedBy && timeAfterGhostListedInDays ? (
                   <div className="px-2 py-2 bg-black/[.1] rounded-lg whitespace-nowrap">
                     Ghost Listed by
@@ -334,7 +334,7 @@ export default function TokenRow({
               {/* Didn't use Next image because can't do wildcard domain allow in next config file */}
               <a
                 href={`/i/${token?.listingId}`}
-                className="mt-4 px-4 md:px-0 cursor-pointer"
+                className="px-4 md:px-0 cursor-pointer"
                 target="_blank"
                 rel="noopener noreferrer"
               >
