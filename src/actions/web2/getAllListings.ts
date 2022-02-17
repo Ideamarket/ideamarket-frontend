@@ -18,6 +18,7 @@ export const getAllListings = async ({
   search,
   isVerifiedFilter,
   jwt,
+  categories, // string of categoryIds that is comma separated
 }) => {
   const filterTokensString =
     filterTokens && filterTokens?.length > 0 ? filterTokens?.join(',') : null
@@ -33,6 +34,7 @@ export const getAllListings = async ({
       earliestPricePointTs,
       search,
       verified: isVerifiedFilter,
+      categories,
     },
     headers: {
       Authorization: jwt ? `Bearer ${jwt}` : null,

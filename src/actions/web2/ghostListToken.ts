@@ -8,17 +8,29 @@ import client from 'lib/axios'
  * List a token onto the Ghost Market.
  * @param url -- normalized url of token
  * @param marketID -- id of market this token is being listed on. ID determined by data returned from subgraph
+ * @param categories -- array of strings representing category IDs to add to this new onchain listing (OPTIONAL)
  */
 export const ghostListToken = async (
   url: string,
   market: any,
-  jwtToken: string
+  jwtToken: string,
+  categories?: string[]
 ) => {
   const decodedValue = decodeURIComponent(url) // Decode so that no special characters are added to blockchain
+
+  const categoriesString =
+    categories && categories.length > 0 ? categories.join(',') : null
+
+  const optionalParams = { categories: categoriesString }
+
   try {
     const response = await client.post(
       `/listing/ghost`,
-      { value: decodedValue, marketId: market?.marketID },
+      {
+        value: decodedValue,
+        marketId: market?.marketID,
+        ...(categoriesString && optionalParams),
+      }, // If there is categoryId, then include it as key to send to API
       {
         headers: {
           Authorization: `Bearer ${jwtToken}`,

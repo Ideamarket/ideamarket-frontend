@@ -3,18 +3,15 @@ import { GlobalContext } from 'pages/_app'
 import Image from 'next/image'
 import ModalService from 'components/modals/ModalService'
 import CreateAccountModal from 'components/account/CreateAccountModal'
-import { CircleSpinner, WalletModal } from 'components'
 import A from 'components/A'
 import {
   ExternalLinkIcon,
-  GlobeAltIcon,
   PlusCircleIcon,
   XIcon,
 } from '@heroicons/react/outline'
 import useOnClickOutside from 'utils/useOnClickOutside'
 import { getURLMetaData } from 'actions/web2/getURLMetaData'
 import { useQuery } from 'react-query'
-import classNames from 'classnames'
 import { ghostListToken } from 'actions/web2/ghostListToken'
 import { getMarketFromURL } from 'utils/markets'
 import { useMarketStore } from 'store/markets'
@@ -37,6 +34,8 @@ import { queryDaiBalance } from 'store/daiStore'
 import { NETWORK } from 'store/networks'
 import { getValidURL } from 'actions/web2/getValidURL'
 import { addTrigger } from 'actions/web2/addTrigger'
+import ListMeContent from './ListMeContent'
+import { getCategories } from 'actions/web2/getCategories'
 
 const HomeHeader = ({
   setTradeOrListSuccessToggle,
@@ -55,6 +54,7 @@ const HomeHeader = ({
   const [isValidToken, setIsValidToken] = useState(false)
   const [isAlreadyGhostListed, setIsAlreadyGhostListed] = useState(false)
   const [isAlreadyOnChain, setIsAlreadyOnChain] = useState(false)
+  const [selectedCategories, setSelectedCategories] = useState([])
 
   const { interestManagerAVM: interestManagerAddress } =
     NETWORK.getDeployedAddresses()
@@ -149,13 +149,19 @@ const HomeHeader = ({
 
     mixpanel.track(`LIST_GHOST_${market.name.toUpperCase()}`)
 
-    const ghostListResponse = await ghostListToken(finalURL, market, jwtToken)
+    const ghostListResponse = await ghostListToken(
+      finalURL,
+      market,
+      jwtToken,
+      selectedCategories
+    )
 
     setIsListing(false)
     setFinalURL('')
     setURLInput('')
     setIsValidToken(false)
     setShowListingCards(false)
+    setSelectedCategories([])
 
     if (!ghostListResponse) {
       return // Do not show success modal if it was a failed ghost list
@@ -211,7 +217,7 @@ const HomeHeader = ({
         {
           onReceipt: async (receipt: any) => {
             const tokenID = receipt?.events?.NewToken?.returnValues[0]
-            await addTrigger(tokenID, market?.marketID)
+            await addTrigger(tokenID, market?.marketID, selectedCategories)
           },
         },
         finalTokenValue,
@@ -224,6 +230,7 @@ const HomeHeader = ({
       setURLInput('')
       setIsValidToken(false)
       setShowListingCards(false)
+      setSelectedCategories([])
       onTradeComplete(false, finalTokenValue, TRANSACTION_TYPES.NONE, market)
       return
     }
@@ -236,6 +243,7 @@ const HomeHeader = ({
     setIsListing(false)
     setFinalURL('')
     setURLInput('')
+    setSelectedCategories([])
     setIsValidToken(false)
     setShowListingCards(false)
     setTradeOrListSuccessToggle(!tradeOrListSuccessToggle)
@@ -245,6 +253,8 @@ const HomeHeader = ({
     [finalURL],
     getURLMetaData
   )
+
+  const { data: categoriesData } = useQuery([true], getCategories)
 
   return (
     <div className="px-6 pt-10 pb-40 text-center text-white font-inter bg-cover dark:text-gray-200 bg-top-mobile md:bg-top-desktop">
@@ -374,184 +384,22 @@ const HomeHeader = ({
               className="absolute left-0 flex flex-col w-full h-96 z-50 text-left font-inter"
               style={{ top: 64 }}
             >
-              <div className="w-full p-4 text-black bg-white rounded-lg shadow-2xl">
-                {isAlreadyGhostListed && !isAlreadyOnChain ? (
-                  <div className="font-bold">
-                    Listing Found on Ghost Market!
-                  </div>
-                ) : (
-                  <div className="flex items-center space-x-2 mb-4 text-lg">
-                    <div className="font-bold">Listing on</div>
-                    <div className="bg-gray-200 flex items-center rounded-lg px-2 py-1 text-sm">
-                      <GlobeAltIcon className="w-5 mr-1" />
-                      URLs
-                    </div>
-                    <div className="font-bold">Market</div>
-                  </div>
-                )}
-
-                <div className="bg-gray-200 flex items-center rounded-lg p-4 mt-2">
-                  {isValidToken && (
-                    <>
-                      {/* <GhostIcon className="w-6 h-6 mr-4" /> */}
-                      {/* Didn't use Next image because can't do wildcard domain allow in next config file */}
-                      <div className="flex flex-col w-full">
-                        <div className="leading-5">
-                          <div className="inline font-medium mr-1">
-                            {!isURLMetaDataLoading &&
-                            urlMetaData &&
-                            urlMetaData?.ogTitle
-                              ? urlMetaData.ogTitle
-                              : 'loading'}
-                          </div>
-                        </div>
-
-                        <a
-                          href={finalURL}
-                          className="text-brand-blue font-normal text-sm mt-1"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {finalURL?.substr(
-                            0,
-                            finalURL?.length > 60 ? 60 : finalURL?.length
-                          ) + (finalURL?.length > 60 ? '...' : '')}
-                        </a>
-                        <a
-                          href={finalURL}
-                          className="h-56 mb-4 cursor-pointer"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <img
-                            className="rounded-xl mt-4 h-full"
-                            src={
-                              !isURLMetaDataLoading &&
-                              urlMetaData &&
-                              urlMetaData?.ogImage
-                                ? urlMetaData.ogImage
-                                : '/gray.svg'
-                            }
-                            alt=""
-                            referrerPolicy="no-referrer"
-                          />
-                        </a>
-                        <div className="mt-4 text-gray-400 text-sm text-left leading-5">
-                          {!isURLMetaDataLoading &&
-                          urlMetaData &&
-                          urlMetaData?.ogDescription
-                            ? urlMetaData?.ogDescription.substr(
-                                0,
-                                urlMetaData?.ogDescription.length > 150
-                                  ? 150
-                                  : urlMetaData?.ogDescription.length
-                              ) +
-                              (urlMetaData?.ogDescription.length > 150
-                                ? '...'
-                                : '')
-                            : 'No description found'}
-                        </div>
-                      </div>
-                    </>
-                  )}
-                  {!isValidToken &&
-                    !isAlreadyGhostListed &&
-                    !isAlreadyOnChain && (
-                      <div className="text-red-400">
-                        {finalURL === ''
-                          ? 'Enter a URL to list'
-                          : 'INVALID URL'}
-                      </div>
-                    )}
-                  {isAlreadyOnChain && (
-                    <div className="text-red-400">
-                      THIS URL IS ALREADY LISTED ON-CHAIN
-                    </div>
-                  )}
-                </div>
-
-                {/* <div className="flex items-center mt-4 text-sm">
-                  <input
-                    type="checkbox"
-                    id="listAndBuyCheckbox"
-                    className="cursor-pointer"
-                    checked={isWantBuyChecked}
-                    onChange={(e) => {
-                      setIsWantBuyChecked(e.target.checked)
-                    }}
-                  />
-                  <label
-                    htmlFor="listAndBuyCheckbox"
-                    className={classNames(
-                      'ml-2 font-bold cursor-pointer',
-                      isWantBuyChecked
-                        ? 'text-brand-blue dark:text-blue-400'
-                        : 'text-black dark:text-gray-300'
-                    )}
-                  >
-                    I want to immediately buy this token
-                  </label>
-                </div> */}
-
-                {active ? (
-                  <div className="flex justify-between items-center space-x-4 mt-4">
-                    {!isAlreadyGhostListed && (
-                      <button
-                        onClick={onClickGhostList}
-                        disabled={!isValidToken || isListing}
-                        className={classNames(
-                          'flex flex-col justify-center items-center w-full h-20 rounded-lg',
-                          !isValidToken || isListing
-                            ? 'text-brand-gray-2 dark:text-gray-300 bg-brand-gray dark:bg-gray-500 cursor-default border-brand-gray'
-                            : 'text-white bg-brand-navy'
-                        )}
-                      >
-                        <div className="font-bold text-lg">
-                          List on Ghost Market
-                        </div>
-                        <div className="text-sm">Free & instant</div>
-                      </button>
-                    )}
-
-                    <button
-                      onClick={onClickOnChainList}
-                      disabled={!isValidToken || isListing}
-                      className={classNames(
-                        'flex flex-col justify-center items-center w-full h-20 font-bold rounded-lg',
-                        !isValidToken || isListing
-                          ? 'text-brand-gray-2 dark:text-gray-300 bg-brand-gray dark:bg-gray-500 cursor-default border-brand-gray'
-                          : 'text-white bg-blue-500 '
-                      )}
-                    >
-                      <div className="font-bold text-lg">List On-Chain</div>
-                      <div className="text-sm">
-                        Tradeable Ideamarket listing
-                      </div>
-                    </button>
-                  </div>
-                ) : (
-                  <button
-                    onClick={() =>
-                      ModalService.open(WalletModal, {}, () =>
-                        setShowListingCards(true)
-                      )
-                    }
-                    className="text-white bg-blue-500 flex flex-col justify-center items-center w-full h-20 mt-4 font-bold rounded-lg"
-                  >
-                    <div className="font-bold text-lg">CONNECT WALLET</div>
-                    <div className="text-sm opacity-75">
-                      to continue adding a listing
-                    </div>
-                  </button>
-                )}
-
-                {isListing && (
-                  <div className="flex items-center">
-                    <div>Listing in progress...</div>
-                    <CircleSpinner color="#0857e0" />
-                  </div>
-                )}
-              </div>
+              <ListMeContent
+                isAlreadyGhostListed={isAlreadyGhostListed}
+                isAlreadyOnChain={isAlreadyOnChain}
+                isValidToken={isValidToken}
+                isURLMetaDataLoading={isURLMetaDataLoading}
+                urlMetaData={urlMetaData}
+                finalURL={finalURL}
+                isWalletConnected={active}
+                isListing={isListing}
+                categoriesData={categoriesData}
+                selectedCategories={selectedCategories}
+                setSelectedCategories={setSelectedCategories}
+                onClickGhostList={onClickGhostList}
+                onClickOnChainList={onClickOnChainList}
+                setShowListingCards={setShowListingCards}
+              />
             </div>
           </div>
         )}

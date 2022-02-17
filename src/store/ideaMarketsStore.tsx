@@ -285,7 +285,8 @@ type Params = [
   filterTokens: string[],
   isVerifiedFilter: boolean,
   marketFilterType: string, // Value will be 'ghost', 'onchain', or 'both'
-  jwt: string
+  jwt: string,
+  categories: string[]
 ]
 
 export async function queryTokens(
@@ -309,6 +310,7 @@ export async function queryTokens(
     isVerifiedFilter,
     marketFilterType,
     jwt,
+    categories,
   ] = params
 
   const fromTs = Math.floor(Date.now() / 1000) - duration
@@ -352,6 +354,7 @@ export async function queryTokens(
     search,
     isVerifiedFilter,
     jwt,
+    categories,
   })
   // }
 
