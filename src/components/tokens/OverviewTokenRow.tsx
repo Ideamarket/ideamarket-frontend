@@ -40,6 +40,7 @@ import useAuth from 'components/account/useAuth'
 import { getSignedInWalletAddress } from 'lib/utils/web3-eth'
 import CreateAccountModal from 'components/account/CreateAccountModal'
 import { getTimeDifferenceIndays } from 'lib/utils/dateUtil'
+import { convertAccountName } from 'lib/utils/stringUtil'
 
 type Props = {
   token: any
@@ -185,25 +186,23 @@ export default function TokenRow({
 
     refetch()
   }
+
+  const { ghostListedBy, ghostListedAt, onchainListedAt, onchainListedBy } =
+    (token || {}) as any
+
   const timeAfterGhostListedInDays = useMemo(() => {
-    if (!token?.ghostListedAt) return null
-    const ghostListedAt = new Date(token?.ghostListedAt)
+    if (!ghostListedAt) return null
+    const ghostListedAtDate = new Date(ghostListedAt)
     const currentDate = new Date()
-    return getTimeDifferenceIndays(ghostListedAt, currentDate)
-  }, [token])
+    return getTimeDifferenceIndays(ghostListedAtDate, currentDate)
+  }, [ghostListedAt])
 
   const timeAfterOnChainListedInDays = useMemo(() => {
-    if (!token?.onchainListedAt) return null
-    const onchainListedAt = new Date(token?.onchainListedAt)
+    if (!onchainListedAt) return null
+    const onchainListedAtDate = new Date(onchainListedAt)
     const currentDate = new Date()
-    return getTimeDifferenceIndays(onchainListedAt, currentDate)
-  }, [token])
-
-  const onChainListedByString = token?.onchainListedBy
-    ? `${token?.onchainListedBy.slice(0, 6)}...${token?.onchainListedBy.slice(
-        -4
-      )}`
-    : ''
+    return getTimeDifferenceIndays(onchainListedAtDate, currentDate)
+  }, [onchainListedAt])
 
   return (
     <tr
@@ -309,21 +308,23 @@ export default function TokenRow({
           <div className="relative w-full ">
             <div className="flex flex-col">
               <div className="pl-4 md:pl-0 flex flex-col items-center space-x-0 space-y-1 mt-4 text-sm items-baseline">
-                {token?.ghostListedBy && timeAfterGhostListedInDays ? (
+                {ghostListedBy && timeAfterGhostListedInDays ? (
                   <div className="px-2 py-2 bg-black/[.1] rounded-lg whitespace-nowrap">
                     Ghost Listed by
                     <span className="font-bold">
-                      @{token?.ghostListedBy}
+                      {convertAccountName(ghostListedBy)}
                     </span>{' '}
                     {timeAfterGhostListedInDays} days ago
                   </div>
                 ) : (
                   ``
                 )}
-                {onChainListedByString && timeAfterOnChainListedInDays ? (
+                {onchainListedBy && timeAfterOnChainListedInDays ? (
                   <div className="px-2 py-2 bg-black/[.1] rounded-lg whitespace-nowrap">
                     Listed by{' '}
-                    <span className="font-bold">{onChainListedByString}</span>{' '}
+                    <span className="font-bold">
+                      {convertAccountName(onchainListedBy)}
+                    </span>{' '}
                     {timeAfterOnChainListedInDays} days ago
                   </div>
                 ) : (

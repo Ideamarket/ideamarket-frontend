@@ -56,6 +56,7 @@ import CreateAccountModal from 'components/account/CreateAccountModal'
 import { getSignedInWalletAddress } from 'lib/utils/web3-eth'
 import useAuth from 'components/account/useAuth'
 import { getTimeDifferenceIndays } from 'lib/utils/dateUtil'
+import { convertAccountName } from 'lib/utils/stringUtil'
 
 const DetailsSkeleton = () => (
   <div className="w-12 mx-auto bg-gray-400 rounded animate animate-pulse">
@@ -294,10 +295,6 @@ export default function TokenDetails({ rawTokenId }: { rawTokenId: string }) {
     return getTimeDifferenceIndays(onchainListedAtDate, currentDate)
   }, [onchainListedAt])
 
-  const onChainListedByString = onchainListedBy
-    ? `${onchainListedBy.slice(0, 6)}...${onchainListedBy.slice(-4)}`
-    : ''
-
   return (
     <>
       <ListingSEO
@@ -345,17 +342,19 @@ export default function TokenDetails({ rawTokenId }: { rawTokenId: string }) {
                     {ghostListedBy && timeAfterGhostListedInDays ? (
                       <div className="px-2 py-2 bg-white/[.1] rounded-lg whitespace-nowrap">
                         Ghost Listed by{' '}
-                        <span className="font-bold">@{ghostListedBy}</span>{' '}
+                        <span className="font-bold">
+                          {convertAccountName(ghostListedBy)}
+                        </span>{' '}
                         {timeAfterGhostListedInDays} days ago
                       </div>
                     ) : (
                       ``
                     )}
-                    {onChainListedByString && timeAfterOnChainListedInDays ? (
+                    {onchainListedBy && timeAfterOnChainListedInDays ? (
                       <div className="px-2 py-2 bg-white/[.1] rounded-lg whitespace-nowrap">
                         Listed by{' '}
                         <span className="font-bold">
-                          {onChainListedByString}
+                          {convertAccountName(onchainListedBy)}
                         </span>{' '}
                         {timeAfterOnChainListedInDays} days ago
                       </div>
