@@ -138,12 +138,15 @@ export const OverviewColumns = ({
           <div className="flex items-center space-x-2">
             <button
               className={classNames(
-                'flex justify-center items-center md:px-3 p-2 border-2 md:rounded-md text-sm font-semibold',
+                'flex justify-center items-center md:px-3 p-2 md:rounded-md text-sm font-semibold',
                 {
-                  'text-brand-blue dark:text-white bg-blue-100 border-blue-600 dark:bg-very-dark-blue':
+                  'text-brand-blue dark:text-white bg-blue-100 border-2 border-blue-600 dark:bg-very-dark-blue':
                     isURLSelected,
                 },
-                { 'text-brand-black dark:text-gray-50': !isURLSelected }
+                {
+                  'text-brand-black dark:text-gray-50 bg-white border':
+                    !isURLSelected,
+                }
               )}
               onClick={() => {
                 toggleMarket('URL')
@@ -154,12 +157,15 @@ export const OverviewColumns = ({
             </button>
             <button
               className={classNames(
-                'flex justify-center items-center md:px-3 p-2 border-2 md:rounded-md text-sm font-semibold',
+                'flex justify-center items-center md:px-3 p-2 md:rounded-md text-sm font-semibold',
                 {
-                  'text-brand-blue dark:text-white bg-blue-100 border-blue-600 dark:bg-very-dark-blue':
+                  'text-brand-blue dark:text-white bg-blue-100 border-2 border-blue-600 dark:bg-very-dark-blue':
                     isPeopleSelected,
                 },
-                { 'text-brand-black dark:text-gray-50': !isPeopleSelected }
+                {
+                  'text-brand-black dark:text-gray-50 bg-white border':
+                    !isPeopleSelected,
+                }
               )}
               onClick={() => {
                 toggleMarket('Twitter')

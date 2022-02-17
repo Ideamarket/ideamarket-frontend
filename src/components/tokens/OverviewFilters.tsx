@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { getMarketSpecificsByMarketName, useMarketStore } from 'store/markets'
+import { getMarketSpecificsByMarketName } from 'store/markets'
 import { ChevronDownIcon, StarIcon } from '@heroicons/react/solid'
 import {
   AdjustmentsIcon,
@@ -26,6 +26,8 @@ import IdeaverifyIconBlue from '../../assets/IdeaverifyIconBlue.svg'
 import { getIconVersion } from 'utils/icons'
 import { GhostIconBlack } from 'assets'
 import { useMixPanel } from 'utils/mixPanel'
+import { useQuery } from 'react-query'
+import { getCategories } from 'actions/web2/getCategories'
 
 type DropdownButtonProps = {
   filters: any
@@ -140,63 +142,18 @@ const FiltersButton = ({
     <button
       className={classNames(
         className,
-        'flex flex-grow md:flex-auto justify-center items-center md:px-3 p-2 border md:rounded-md text-sm font-semibold',
+        'flex justify-center items-center md:px-3 p-2 md:rounded-md text-sm font-semibold',
         {
-          'text-brand-blue dark:text-white bg-gray-100 dark:bg-very-dark-blue':
+          'text-brand-blue dark:text-white bg-blue-100 border-2 border-blue-600 dark:bg-very-dark-blue':
             isSelected,
         },
-        { 'text-brand-black dark:text-gray-50': !isSelected }
+        { 'text-brand-black dark:text-gray-50 border': !isSelected }
       )}
       onClick={() => {
         onClick(!isSelected)
       }}
     >
       <span>{label}</span>
-    </button>
-  )
-}
-
-type PlatformButtonProps = {
-  platform: any
-  isSelected: boolean
-  onClick: (platform: string) => void
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const PlatformButton = ({
-  platform,
-  isSelected,
-  onClick,
-}: PlatformButtonProps) => {
-  const marketSpecifics = getMarketSpecificsByMarketName(platform)
-  const { resolvedTheme } = useThemeMode()
-
-  return (
-    <button
-      className={classNames(
-        'h-10 flex flex-grow md:flex-auto justify-center items-center px-3 py-2 border md:rounded-md text-sm font-semibold',
-        platform === 'All' && 'rounded-l-md',
-        {
-          'text-brand-blue dark:text-white bg-gray-100 dark:bg-very-dark-blue':
-            isSelected,
-        },
-        { 'text-brand-black dark:text-gray-50': !isSelected }
-      )}
-      onClick={() => {
-        onClick(platform)
-      }}
-    >
-      {platform !== 'All' && (
-        <span
-          className={classNames(
-            marketSpecifics.getMarketName() === 'Wikipedia' ? 'mr-2' : 'mr-1',
-            'w-4 h-auto'
-          )}
-        >
-          {marketSpecifics.getMarketSVGTheme(resolvedTheme)}
-        </span>
-      )}
-      <span>{platform}</span>
     </button>
   )
 }
@@ -208,6 +165,7 @@ type OverviewFiltersProps = {
   isVerifiedFilterActive: boolean
   isStarredFilterActive: boolean
   isGhostOnlyActive: boolean
+  selectedCategories: string[]
   onMarketChanged: (set: Set<string>) => void
   setSelectedFilterId: (filterId: number) => void
   onColumnChanged: (set: Set<string>) => void
@@ -215,6 +173,7 @@ type OverviewFiltersProps = {
   setIsVerifiedFilterActive: (isActive: boolean) => void
   setIsStarredFilterActive: (isActive: boolean) => void
   setIsGhostOnlyActive: (isActive: boolean) => void
+  setSelectedCategories: (selectedCategories: string[]) => void
 }
 
 export const OverviewFilters = ({
@@ -224,6 +183,7 @@ export const OverviewFilters = ({
   isVerifiedFilterActive,
   isStarredFilterActive,
   isGhostOnlyActive,
+  selectedCategories,
   onMarketChanged,
   setSelectedFilterId,
   onColumnChanged,
@@ -231,6 +191,7 @@ export const OverviewFilters = ({
   setIsVerifiedFilterActive,
   setIsStarredFilterActive,
   setIsGhostOnlyActive,
+  setSelectedCategories,
 }: OverviewFiltersProps) => {
   const { mixpanel } = useMixPanel()
   const { resolvedTheme } = useThemeMode()
@@ -260,14 +221,25 @@ export const OverviewFilters = ({
     setSelectedFilterId(filterId)
   }
 
-  const markets = useMarketStore((state) =>
-    state.markets.map((m) => m?.market?.name)
-  )
+  /**
+   * This method is called when a category is clicked on home table.
+   * @param newClickedCategoryId -- Category ID of category just clicked
+   */
+  const onCategoryClicked = (newClickedCategoryId: string) => {
+    const isCatAlreadySelected =
+      selectedCategories.includes(newClickedCategoryId)
+    let newCategories = [...selectedCategories]
+    if (isCatAlreadySelected) {
+      newCategories = newCategories.filter(
+        (cat) => cat !== newClickedCategoryId
+      )
+    } else {
+      newCategories.push(newClickedCategoryId)
+    }
+    setSelectedCategories(newCategories)
+  }
 
-  useEffect(() => {
-    // toggleMarket method is dependent on CheckboxFilters.PLATFORMS.values
-    CheckboxFilters.PLATFORMS.values = ['All', ...markets]
-  }, [markets])
+  const { data: categoriesData } = useQuery([true], getCategories)
 
   const isURLSelected = selectedMarkets.has('URL')
   const isPeopleSelected = selectedMarkets.has('Twitter')
@@ -275,71 +247,18 @@ export const OverviewFilters = ({
 
   return (
     <div className="h-28 md:h-16 justify-center p-3 bg-white rounded-t-lg md:flex dark:bg-gray-700 gap-x-2 gap-y-2 md:justify-start">
-      {/* <div className="flex md:gap-x-2">
-        {CheckboxFilters.PLATFORMS.values
-          .sort((p1, p2) => {
-            // Sort so that All is first and then Wikipedia is 2nd. Minds is 3rd. Rest of order not controlled
-            if (p1 === 'All') return -1
-            if (p1 === 'Wikipedia' && p2 !== 'All') {
-              return -1
-            }
-            if (p1 === 'Minds' && p2 !== 'All' && p2 !== 'Wikipedia') {
-              return -1
-            }
-
-            return 1
-          })
-          .map((platform: string) => (
-            <PlatformButton
-              key={platform}
-              platform={platform}
-              isSelected={
-                selectedMarkets ? selectedMarkets.has(platform) : false
-              }
-              onClick={toggleMarket}
+      <div className="flex md:gap-x-2">
+        {categoriesData &&
+          categoriesData.map((cat: any) => (
+            <FiltersButton
+              className="hidden md:block"
+              label={cat.name}
+              isSelected={selectedCategories.includes(cat.id)}
+              onClick={() => onCategoryClicked(cat.id)}
+              key={cat.id}
             />
           ))}
-      </div> */}
-
-      <FiltersButton
-        className="hidden md:flex"
-        onClick={setIsVerifiedFilterActive}
-        isSelected={isVerifiedFilterActive}
-        label={getIconVersion('verify', resolvedTheme, isVerifiedFilterActive)}
-      />
-
-      <FiltersButton
-        className="hidden md:flex"
-        onClick={setIsStarredFilterActive}
-        isSelected={isStarredFilterActive}
-        label={<StarIcon className="w-5 h-5" />}
-      />
-
-      <DropdownButton
-        className="hidden md:flex"
-        filters={Object.values(MainFilters)}
-        name={
-          Object.values(MainFilters).find(
-            (filter) => filter.id === selectedFilterId
-          )?.value
-        }
-        selectedOptions={new Set([selectedFilterId])}
-        toggleOption={onFilterChanged}
-        dropdownType="buttons"
-        selectedFilterId={selectedFilterId}
-      />
-
-      <FiltersButton
-        className="hidden md:flex w-56 text-sm whitespace-nowrap"
-        onClick={setIsGhostOnlyActive}
-        isSelected={isGhostOnlyActive}
-        label={
-          <div>
-            <GhostIconBlack className="w-6 h-6" />
-            Ghost Listings
-          </div>
-        }
-      />
+      </div>
 
       <div className="flex w-full h-9 md:h-auto ml-auto">
         <OverviewSearchbar onNameSearchChanged={onNameSearchChanged} />
@@ -364,6 +283,20 @@ export const OverviewFilters = ({
           )} */}
         </button>
       </div>
+
+      <DropdownButton
+        className="hidden md:flex"
+        filters={Object.values(MainFilters)}
+        name={
+          Object.values(MainFilters).find(
+            (filter) => filter.id === selectedFilterId
+          )?.value
+        }
+        selectedOptions={new Set([selectedFilterId])}
+        toggleOption={onFilterChanged}
+        dropdownType="buttons"
+        selectedFilterId={selectedFilterId}
+      />
 
       <div className="md:hidden flex justify-between items-center space-x-2 mt-2">
         <button
@@ -401,6 +334,27 @@ export const OverviewFilters = ({
           <span>People</span>
         </button>
       </div>
+
+      <FiltersButton
+        className="hidden md:flex"
+        onClick={setIsVerifiedFilterActive}
+        isSelected={isVerifiedFilterActive}
+        label={getIconVersion('verify', resolvedTheme, isVerifiedFilterActive)}
+      />
+
+      <FiltersButton
+        className="hidden md:flex"
+        onClick={setIsStarredFilterActive}
+        isSelected={isStarredFilterActive}
+        label={<StarIcon className="w-5 h-5" />}
+      />
+
+      <FiltersButton
+        className="hidden md:flex text-sm whitespace-nowrap"
+        onClick={setIsGhostOnlyActive}
+        isSelected={isGhostOnlyActive}
+        label={<GhostIconBlack className="w-6 h-6" />}
+      />
 
       <DropdownButton
         className="hidden md:flex"

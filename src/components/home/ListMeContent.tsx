@@ -14,6 +14,7 @@ type Props = {
   isListing: boolean
   categoriesData: any[]
   selectedCategories: string[]
+  ghostCategories: any[]
   setSelectedCategories: (selectedCategories: string[]) => void
   onClickGhostList: () => void
   onClickOnChainList: () => void
@@ -34,6 +35,7 @@ const ListMeContent = ({
   isListing,
   categoriesData,
   selectedCategories,
+  ghostCategories,
   setSelectedCategories,
   onClickGhostList,
   onClickOnChainList,
@@ -168,22 +170,49 @@ const ListMeContent = ({
         <div className="mt-4 text-sm">
           <div className="text-black/[.5] font-semibold">CATEGORY TAGS</div>
           <div className="flex flex-wrap">
-            {categoriesData.map((category) => {
-              return (
-                <div
-                  onClick={() => onSelectCategory(category.id)}
-                  className={classNames(
-                    selectedCategories.includes(category.id)
-                      ? 'text-blue-500 bg-blue-100'
-                      : '',
-                    'border rounded-2xl px-2 py-1 cursor-pointer mr-2 mt-2'
-                  )}
-                >
-                  {category.name}
-                </div>
-              )
-            })}
+            {categoriesData
+              .filter(
+                (cat) =>
+                  !(
+                    ghostCategories &&
+                    ghostCategories.find((ghostCat) => ghostCat.id === cat.id)
+                  )
+              ) // If category is already ghost listed, do not display in list of selectable categories
+              .map((category) => {
+                return (
+                  <div
+                    onClick={() => onSelectCategory(category.id)}
+                    className={classNames(
+                      selectedCategories.includes(category.id)
+                        ? 'text-blue-500 bg-blue-100'
+                        : 'text-black',
+                      'border rounded-2xl px-2 py-1 cursor-pointer mr-2 mt-2'
+                    )}
+                  >
+                    {category.name}
+                  </div>
+                )
+              })}
           </div>
+          {ghostCategories &&
+            ghostCategories?.length > 0 &&
+            isAlreadyGhostListed &&
+            !isAlreadyOnChain && (
+              <div className="mt-2">
+                <div className="text-black/[.5]">
+                  Added by ghost lister, cannot change
+                </div>
+                <div className="flex flex-wrap">
+                  {ghostCategories.map((cat) => {
+                    return (
+                      <div className="border rounded-2xl px-2 py-1 mr-2 mt-2 bg-black/[.05] text-black">
+                        {cat.name}
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
         </div>
       )}
 

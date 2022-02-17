@@ -18,8 +18,10 @@ export const getAllListings = async ({
   search,
   isVerifiedFilter,
   jwt,
-  categories, // string of categoryIds that is comma separated
+  categories, // array of strings representing category IDs to add to this new onchain listing (OPTIONAL)
 }) => {
+  const categoriesString =
+    categories && categories.length > 0 ? categories.join(',') : null
   const filterTokensString =
     filterTokens && filterTokens?.length > 0 ? filterTokens?.join(',') : null
   const response = await client.get(`/listing`, {
@@ -34,7 +36,7 @@ export const getAllListings = async ({
       earliestPricePointTs,
       search,
       verified: isVerifiedFilter,
-      categories,
+      categories: categoriesString,
     },
     headers: {
       Authorization: jwt ? `Bearer ${jwt}` : null,

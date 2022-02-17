@@ -34,6 +34,7 @@ type Props = {
   orderBy: string
   orderDirection: string
   columnData: Array<any>
+  selectedCategories: string[]
   getColumn: (column: string) => boolean
   onOrderByChanged: (o: string, d: string) => void
   onTradeClicked: (token: IdeaToken, market: IdeaMarket) => void
@@ -51,6 +52,7 @@ export default function Table({
   orderBy,
   orderDirection,
   columnData,
+  selectedCategories,
   getColumn,
   onOrderByChanged,
   onTradeClicked,
@@ -114,6 +116,7 @@ export default function Table({
         isVerifiedFilterActive,
         isGhostOnlyActive ? 'ghost' : 'onchain',
         jwtToken,
+        selectedCategories,
       ],
     ],
     queryTokens,
@@ -176,6 +179,7 @@ export default function Table({
     isGhostOnlyActive,
     refetch,
     jwtToken,
+    selectedCategories,
   ])
 
   const isLoading =
@@ -220,7 +224,7 @@ export default function Table({
           <div className="overflow-x-scroll border-b border-t-4 border-gray-200 dark:border-gray-500 lg:overflow-x-visible">
             {/* table-fixed makes it so mobile table does not overflow and stays width defined here (w-full) */}
             <table className="table-fixed md:table-auto w-full">
-              <thead className="hidden md:table-header-group">
+              <thead className="hidden md:table-header-group border-b">
                 <tr className="z-40 lg:sticky md:top-28 sticky-safari">
                   <OverviewColumns
                     currentColumn={orderBy}

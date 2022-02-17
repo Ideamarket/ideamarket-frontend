@@ -35,6 +35,7 @@ const Home = ({ urlMarkets }: Props) => {
   const [nameSearch, setNameSearch] = useState('')
   const [orderBy, setOrderBy] = useState('dayChange')
   const [orderDirection, setOrderDirection] = useState<'desc' | 'asc'>('desc')
+  const [selectedCategories, setSelectedCategories] = useState([])
 
   const visibleColumns = getVisibleColumns(selectedColumns)
 
@@ -153,6 +154,7 @@ const Home = ({ urlMarkets }: Props) => {
     isVerifiedFilterActive,
     isStarredFilterActive,
     isGhostOnlyActive,
+    selectedCategories,
     onMarketChanged,
     setSelectedFilterId: onSelectedFilterByIdChanged,
     onColumnChanged,
@@ -160,6 +162,7 @@ const Home = ({ urlMarkets }: Props) => {
     setIsVerifiedFilterActive,
     setIsStarredFilterActive,
     setIsGhostOnlyActive: onGhostFilterClicked,
+    setSelectedCategories,
   }
 
   const tableProps = {
@@ -172,11 +175,13 @@ const Home = ({ urlMarkets }: Props) => {
     isStarredFilterActive,
     isGhostOnlyActive,
     columnData: visibleColumns,
+    selectedCategories,
     getColumn: (column) => selectedColumns.has(column),
     onOrderByChanged,
     onTradeClicked,
     onMarketChanged,
     tradeOrListSuccessToggle,
+    setSelectedCategories,
   }
   return (
     <>

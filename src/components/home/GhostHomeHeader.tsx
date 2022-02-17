@@ -55,6 +55,7 @@ const HomeHeader = ({
   const [isAlreadyGhostListed, setIsAlreadyGhostListed] = useState(false)
   const [isAlreadyOnChain, setIsAlreadyOnChain] = useState(false)
   const [selectedCategories, setSelectedCategories] = useState([])
+  const [ghostCategories, setGhostCategories] = useState([]) // The categories that were already selected by ghost lister (these are only displayed when converting from ghost to onchain listing)
 
   const { interestManagerAVM: interestManagerAddress } =
     NETWORK.getDeployedAddresses()
@@ -89,6 +90,7 @@ const HomeHeader = ({
     const typedURL = event.target.value
 
     setURLInput(typedURL)
+    setSelectedCategories([]) // Set selected categories to none if any input typed
 
     const canonical = await getValidURL(typedURL)
 
@@ -96,11 +98,17 @@ const HomeHeader = ({
 
     // console.log('market from typed URL==', market)  // Keep here for debug purposes
 
-    const { isValid, isAlreadyGhostListed, isAlreadyOnChain, finalTokenValue } =
-      await verifyTokenName(canonical, market, active)
+    const {
+      isValid,
+      isAlreadyGhostListed,
+      isAlreadyOnChain,
+      finalTokenValue,
+      ghostCategories,
+    } = await verifyTokenName(canonical, market, active)
 
     setFinalURL(canonical)
     setFinalTokenValue(finalTokenValue)
+    setGhostCategories(ghostCategories)
 
     setIsValidToken(isValid)
     setIsAlreadyGhostListed(isAlreadyGhostListed)
@@ -162,6 +170,7 @@ const HomeHeader = ({
     setIsValidToken(false)
     setShowListingCards(false)
     setSelectedCategories([])
+    setGhostCategories([])
 
     if (!ghostListResponse) {
       return // Do not show success modal if it was a failed ghost list
@@ -231,6 +240,7 @@ const HomeHeader = ({
       setIsValidToken(false)
       setShowListingCards(false)
       setSelectedCategories([])
+      setGhostCategories([])
       onTradeComplete(false, finalTokenValue, TRANSACTION_TYPES.NONE, market)
       return
     }
@@ -244,6 +254,7 @@ const HomeHeader = ({
     setFinalURL('')
     setURLInput('')
     setSelectedCategories([])
+    setGhostCategories([])
     setIsValidToken(false)
     setShowListingCards(false)
     setTradeOrListSuccessToggle(!tradeOrListSuccessToggle)
@@ -395,6 +406,7 @@ const HomeHeader = ({
                 isListing={isListing}
                 categoriesData={categoriesData}
                 selectedCategories={selectedCategories}
+                ghostCategories={ghostCategories}
                 setSelectedCategories={setSelectedCategories}
                 onClickGhostList={onClickGhostList}
                 onClickOnChainList={onClickOnChainList}

@@ -96,6 +96,7 @@ export type IdeaToken = {
   verified: boolean
   upVoted: boolean
   totalVotes: number
+  categories: string[]
 }
 
 export type IdeaTokenMarketPair = {
@@ -343,7 +344,7 @@ export async function queryTokens(
       : 'onchain'
 
   const L2Result = await getAllListings({
-    marketType, // TODO: make this dynamic based on filters
+    marketType,
     marketIds,
     skip,
     limit: num,
@@ -1162,6 +1163,7 @@ export function newApiResponseToIdeaToken(
     isL1,
     holder,
     verified: apiResponse?.verified,
+    categories: apiResponse?.categories,
   } as any
 
   return ret

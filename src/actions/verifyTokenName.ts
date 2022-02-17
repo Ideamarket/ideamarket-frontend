@@ -39,6 +39,8 @@ export default async function verifyTokenName(
     selectedMarket.marketID
   )
 
+  const ghostCategories = existingListing?.categories
+
   const isAlreadyGhostListed = Boolean(existingListing)
   const isAlreadyOnChain = existingListing?.isOnChain
 
@@ -50,5 +52,6 @@ export default async function verifyTokenName(
     isAlreadyGhostListed,
     isAlreadyOnChain,
     finalTokenValue,
+    ghostCategories,
   }
 }
