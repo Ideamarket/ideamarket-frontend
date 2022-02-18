@@ -1,7 +1,7 @@
 import { getLockingAPR } from 'lib/axios'
 import { GlobalContext } from 'pages/_app'
 import { useContext, useEffect, useState } from 'react'
-import { TiDeleteOutline } from 'react-icons/ti'
+import { XIcon } from '@heroicons/react/outline'
 import { formatNumber } from 'utils'
 
 const ImoNavbarTooltip = () => {
@@ -25,11 +25,11 @@ const ImoNavbarTooltip = () => {
         up to{' '}
         <span className="font-bold">{formatNumber(lockingAPR * 1.2)}% APR</span>
       </span>
-      <TiDeleteOutline
-        className="w-6 h-6 ml-6 cursor-pointer"
+      <XIcon
+        className="w-4 h-4 ml-2 cursor-pointer"
         onClick={() => setImoAdvVisibility(false)}
       />
-      <div className="absolute z-0 border-b-0 border-l-0 border-t-[10px] border-r-[10px] md:border-t-[20px] md:border-r-[20px] text-white transform left-0 md:left-1/2 top-1/2 md:-top-2 -translate-x-1/2 -translate-y-1/2 md:translate-y-0  rotate-45 border-brand-light-green"></div>
+      <div className="absolute z-[-1] border-b-0 border-l-0 border-t-[10px] border-r-[10px] md:border-t-[20px] md:border-r-[20px] text-white transform left-0 md:left-1/2 top-1/2 md:-top-2 -translate-x-1/2 -translate-y-1/2 md:translate-y-0  rotate-45 border-brand-light-green"></div>
     </div>
   )
 }
