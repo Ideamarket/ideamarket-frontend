@@ -531,24 +531,32 @@ export default function TokenRow({
         </td>
       )}
       {/* %Locked */}
-      {/* {getColumn('% Locked') && (
-        <td className={classNames(isExpanded ? 'pt-4' : 'py-4', "relative hidden pl-6 md:table-cell whitespace-nowrap align-baseline")}>
+      {getColumn('Locked') && (
+        <td
+          className={classNames(
+            isExpanded ? 'pt-4' : 'py-4',
+            'relative hidden pl-6 md:table-cell whitespace-nowrap align-baseline'
+          )}
+        >
           <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-300">
-            % Locked
+            Locked
           </p>
           <p
             className="text-base font-medium leading-4 uppercase tracking-tightest-2 text-very-dark-blue dark:text-gray-300"
-            title={parseFloat(token?.lockedPercentage) + ' %'}
+            title={'$' + token?.lockedAmount}
           >
-            {parseFloat(token?.lockedPercentage) * 100.0 > 0.0 ? (
-              Math.ceil(parseFloat(token?.lockedPercentage)) + ' %'
+            {parseFloat(token?.lockedAmount) > 0.0 ? (
+              `$` +
+              formatNumberWithCommasAsThousandsSerperator(
+                parseInt(token?.lockedAmount)
+              )
             ) : (
               <>&mdash;</>
             )}
           </p>
-          {pageLink}
+          {/* {pageLink} */}
         </td>
-      )} */}
+      )}
       {/* Year Income */}
       {/* {getColumn('1YR Income') && (
         <td

@@ -34,7 +34,7 @@ export const CheckboxFilters = {
     values: [
       'All',
       'Deposits',
-      // '% Locked',
+      'Locked',
       // '1YR Income',
       '24H Change',
       '7D Change',
