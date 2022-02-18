@@ -215,13 +215,13 @@ export default function Table({
 
   return (
     <div className="flex flex-col">
-      <div className="-my-2 overflow-x-auto lg:overflow-x-visible">
+      <div className="-my-2 overflow-x-auto">
         <div className="inline-block w-full py-2 align-middle">
-          <div className="overflow-x-scroll border-b border-t-4 border-gray-200 dark:border-gray-500 lg:overflow-x-visible">
+          <div className="overflow-x-scroll border-b border-t-4 border-gray-200 dark:border-gray-500">
             {/* table-fixed makes it so mobile table does not overflow and stays width defined here (w-full) */}
             <table className="table-fixed md:table-auto w-full">
               <thead className="hidden md:table-header-group">
-                <tr className="z-40 lg:sticky md:top-28 sticky-safari">
+                <tr className="z-40 lg:sticky sticky-safari">
                   <OverviewColumns
                     currentColumn={orderBy}
                     orderDirection={orderDirection}
