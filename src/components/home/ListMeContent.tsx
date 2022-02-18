@@ -168,7 +168,7 @@ const ListMeContent = ({
 
       {categoriesData && categoriesData?.length > 0 && (
         <div className="mt-4 text-sm">
-          <div className="text-black/[.5] font-semibold">CATEGORY TAGS</div>
+          <div className="text-black/[.5] font-semibold">TAGS</div>
           <div className="flex flex-wrap">
             {categoriesData
               .filter(
