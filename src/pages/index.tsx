@@ -183,7 +183,7 @@ const Home = ({ urlMarkets }: Props) => {
       <NextSeo title="Home" />
       <div className="overflow-x-hidden lg:overflow-x-visible bg-brand-gray dark:bg-gray-900">
         <GhostHomeHeader {...headerProps} />
-        <div className="mx-auto transform md:px-4 md:max-w-304 -translate-y-28 font-inter">
+        <div className="mx-auto transform md:px-4 md:max-w-336 -translate-y-28 font-inter">
           <OverviewFilters {...overviewFiltersProps} />
           <div className="bg-white border-brand-gray-3 dark:border-gray-500 rounded-b-xlg shadow-home">
             {/* selectedMarkets is empty on load. If none selected, it will have 1 element called 'None' */}

@@ -60,7 +60,7 @@ const defaultColumns = [
     value: 'lockedAmount',
     sortable: true,
     isOptional: true,
-    isSelectedAtStart: true,
+    isSelectedAtStart: false,
   },
   // {
   //   id: 8,

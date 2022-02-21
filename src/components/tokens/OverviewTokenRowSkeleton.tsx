@@ -48,13 +48,13 @@ export default function TokenRowSkeleton({
             <p className="w-10 h-4 bg-gray-400 rounded"></p>
           </td>
         )}
-        {/* %Locked
-        {getColumn('% Locked') && (
+        {/* %Locked */}
+        {getColumn('Locked') && (
           <td className="hidden px-6 py-4 md:table-cell whitespace-nowrap">
             <p className="w-10 h-4 bg-gray-400 rounded md:hidden"></p>
             <p className="w-10 h-4 mt-1 bg-gray-400 rounded"></p>
           </td>
-        )} */}
+        )}
         {/* Year Income */}
         {/* {getColumn('1YR Income') && (
           <td className="hidden px-6 py-4 md:table-cell whitespace-nowrap">

@@ -144,6 +144,7 @@ module.exports = {
         100: '25rem',
         150: '37.5rem',
         304: '76rem',
+        336: '84rem',
       },
       textOpacity: {
         ...defaultTheme.textOpacity,
