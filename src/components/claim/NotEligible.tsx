@@ -5,14 +5,17 @@ import React, { useCallback } from 'react'
 import { BreakdownPoint } from './EligibilityOutcome'
 
 import { WalletStatus } from 'components'
+import { AIRDROP_TYPES } from 'types/airdropTypes'
 // import { BreakdownPointCard } from './BreakdownPointCard'
 
 interface Props {
   setClaimStep: (any) => void
   breakdownByPoint?: BreakdownPoint[]
+  airdropType: AIRDROP_TYPES
 }
 export const NotEligible: React.FC<Props> = ({
   setClaimStep,
+  airdropType,
   // breakdownByPoint,
 }) => {
   const onChangeWallet = useCallback(() => {
@@ -28,8 +31,10 @@ export const NotEligible: React.FC<Props> = ({
             <OhnoIcon className="h-full inline ml-2" />
           </div>
           <div className="my-6 text-5xl font-extrabold font-gilroy-bold opacity-75">
-            You are <span className="text-red-700">NOT</span> eligible for an
-            airdrop!
+            You are <span className="text-red-700">NOT</span> eligible{' '}
+            {airdropType === AIRDROP_TYPES.LOCKING
+              ? 'to claim rewards'
+              : 'for an airdrop!'}
           </div>
           <div className="my-10 text-base font-light opacity-75">
             Kindly make sure that you connect with the wallet you've used to

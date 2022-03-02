@@ -14,6 +14,8 @@ const displayDescripton = (airdropType: AIRDROP_TYPES) => {
     return 'If you have participated on the Ideamarket protocol, you may be eligible to receive $IMO tokens. Click below to get started!'
   if (airdropType === AIRDROP_TYPES.TWITTER_VERIFICATION)
     return 'If you verified your twitter listing on Ideamarket over the follower threshold, you may be eligible to receive $IMO tokens. Click below to get started!'
+  if (airdropType === AIRDROP_TYPES.LOCKING)
+    return 'If you have had tokens locked during the first month rewards window (Feb 2 - March 2), you may be eligible to receive $IMO tokens. Click below to get started!'
 
   return 'If you are part of an eligible community, you may be able to recieve $IMO tokens. Click below to get started!'
 }

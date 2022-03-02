@@ -68,6 +68,7 @@ const EligibilityOutcome: React.FC<Props> = ({ setClaimStep, airdropType }) => {
         <NotEligible
           setClaimStep={setClaimStep}
           breakdownByPoint={breakdownByPoint}
+          airdropType={airdropType}
         />
       )}
     </div>

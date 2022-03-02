@@ -35,5 +35,6 @@
   "twitterVerifyMerkleDistributor": "0xB5Cc3be2dba60eABf13CA2a67B8881EE6f66a3Ba",
   "sushiStaking": "0xc63d478befc1a814Ec995Ed926587034eC7Ad46e",
   "lptoken": "0xE490A4517F1e8A1551ECb03aF5eB116C6Bbd450b",
-  "communityMerkleDistributor": "0x214a14850329Bec9fa577D4cE6e00b69dfD287d4"
+  "communityMerkleDistributor": "0x214a14850329Bec9fa577D4cE6e00b69dfD287d4",
+  "lockingMerkleDistributor": "0x214a14850329Bec9fa577D4cE6e00b69dfD287d4"
 }

@@ -103,6 +103,10 @@ export const getNavbarConfig = (mixPanel: any) => ({
           onClick: () =>
             router.push(`/claim/${AIRDROP_TYPES.TWITTER_VERIFICATION}`),
         },
+        {
+          name: 'First Month Locking Claim',
+          onClick: () => router.push(`/claim/${AIRDROP_TYPES.LOCKING}`),
+        },
       ],
     },
   ],

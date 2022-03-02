@@ -1,5 +1,6 @@
 import UserMerkleRoot from 'assets/merkle-root.json'
 import CommunityMerkleRoot from 'assets/community-merkle-root.json'
+import LockingMerkleRoot from 'assets/locking-merkle-root.json'
 import TwitterVerifyMerkleRoot from 'assets/twitter-verify-merkle-root.json'
 import BigNumber from 'bignumber.js'
 import BN from 'bn.js'
@@ -14,6 +15,9 @@ export const getMerkleRoot = (airdropType: AIRDROP_TYPES) => {
   }
   if (airdropType === AIRDROP_TYPES.COMMUNITY) {
     return CommunityMerkleRoot
+  }
+  if (airdropType === AIRDROP_TYPES.LOCKING) {
+    return LockingMerkleRoot
   }
   return TwitterVerifyMerkleRoot
 }
