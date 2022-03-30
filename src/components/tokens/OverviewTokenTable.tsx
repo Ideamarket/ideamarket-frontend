@@ -39,6 +39,7 @@ type Props = {
   getColumn: (column: string) => boolean
   onOrderByChanged: (o: string, d: string) => void
   onTradeClicked: (token: IdeaToken, market: IdeaMarket) => void
+  onRateClicked: (idt: IdeaToken, urlMetaData: any) => void
   onMarketChanged: (set: Set<string>) => void
   tradeOrListSuccessToggle: boolean
 }
@@ -57,6 +58,7 @@ export default function Table({
   getColumn,
   onOrderByChanged,
   onTradeClicked,
+  onRateClicked,
   onMarketChanged,
   tradeOrListSuccessToggle,
 }: Props) {
@@ -278,6 +280,7 @@ export default function Table({
                         compoundSupplyRate={compoundSupplyRate}
                         getColumn={getColumn}
                         onTradeClicked={onTradeClicked}
+                        onRateClicked={onRateClicked}
                         refetch={refetch}
                         lastElementRef={
                           tokenData?.length === index + 1

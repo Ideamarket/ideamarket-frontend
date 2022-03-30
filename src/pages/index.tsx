@@ -19,6 +19,7 @@ import {
   CheckboxFilters,
   SortOptions,
 } from 'components/tokens/utils/OverviewUtils'
+import RateModal from 'components/trade/RateModal'
 
 type Props = { urlMarkets?: string[] }
 
@@ -118,6 +119,19 @@ const Home = ({ urlMarkets }: Props) => {
     }
   }
 
+  const onRateClicked = (token: IdeaToken, urlMetaData: any) => {
+    const onClose = () => setTradeOrListSuccessToggle(!tradeOrListSuccessToggle)
+
+    if (!useWalletStore.getState().web3) {
+      setOnWalletConnectedCallback(() => () => {
+        ModalService.open(RateModal, { ideaToken: token, urlMetaData }, onClose)
+      })
+      ModalService.open(WalletModal)
+    } else {
+      ModalService.open(RateModal, { ideaToken: token, urlMetaData }, onClose)
+    }
+  }
+
   const onMarketChanged = (markets) => {
     localStorage.setItem('STORED_MARKETS', JSON.stringify([...markets]))
     setSelectedMarkets(markets)
@@ -179,6 +193,7 @@ const Home = ({ urlMarkets }: Props) => {
     getColumn: (column) => selectedColumns.has(column),
     onOrderByChanged,
     onTradeClicked,
+    onRateClicked,
     onMarketChanged,
     tradeOrListSuccessToggle,
     setSelectedCategories,

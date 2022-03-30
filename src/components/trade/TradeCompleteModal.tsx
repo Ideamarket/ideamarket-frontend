@@ -16,6 +16,7 @@ export enum TX_TYPES {
   CLAIM,
   STAKE,
   UNSTAKE,
+  RATE,
 }
 
 const tweetableTypes = [
@@ -27,6 +28,7 @@ const tweetableTypes = [
   TX_TYPES.GIFT,
   TX_TYPES.CLAIM,
   TX_TYPES.STAKE,
+  TX_TYPES.RATE,
 ]
 
 const getTweetTemplate = (transactionType: TX_TYPES, idtValue: string) => {
@@ -48,6 +50,8 @@ const getTweetTemplate = (transactionType: TX_TYPES, idtValue: string) => {
     tweetText = `Just claimed $IMO token airdrop on @ideamarket_io, the literal marketplace of ideas!`
   } else if (transactionType === TX_TYPES.STAKE) {
     tweetText = `Just staked $IMO tokens on @ideamarket_io, the literal marketplace of ideas!`
+  } else if (transactionType === TX_TYPES.RATE) {
+    tweetText = `Just rated ${idtValue} on @ideamarket_io, the literal marketplace of ideas!`
   }
 
   return encodeURIComponent(tweetText)
@@ -61,7 +65,8 @@ const getTweetUrl = (transactionType: TX_TYPES, listingId: string) => {
     transactionType === TX_TYPES.BUY ||
     transactionType === TX_TYPES.LOCK ||
     transactionType === TX_TYPES.UNLOCK ||
-    transactionType === TX_TYPES.GIFT
+    transactionType === TX_TYPES.GIFT ||
+    transactionType === TX_TYPES.RATE
   ) {
     tweetUrl = `https://ideamarket.io/i/${listingId}`
   } else if (transactionType === TX_TYPES.CLAIM) {
