@@ -54,6 +54,7 @@ type Props = {
   getColumn: (column: string) => any
   lastElementRef?: (node) => void
   onTradeClicked: (token: IdeaToken, market: IdeaMarket) => void
+  onRateClicked: (idt: IdeaToken, urlMetaData: any) => void
   refetch: () => any
 }
 
@@ -64,6 +65,7 @@ export default function TokenRow({
   compoundSupplyRate,
   getColumn,
   onTradeClicked,
+  onRateClicked,
   lastElementRef,
   refetch,
 }: Props) {
@@ -674,18 +676,30 @@ export default function TokenRow({
           </button>
 
           {isOnChain && (
+            // <button
+            //   onClick={(e) => {
+            //     e.stopPropagation()
+            //     onTradeClicked(token, market)
+            //     mixpanel.track('BUY_START', {
+            //       tokenName: token?.name,
+            //     })
+            //   }}
+            //   className="flex justify-center items-center w-20 h-10 text-base font-medium text-white border-2 rounded-lg bg-brand-blue dark:bg-gray-600 border-brand-blue dark:text-gray-300 tracking-tightest-2"
+            // >
+            //   <ArrowSmUpIcon className="w-6 h-6" />
+            //   <span className="mr-1">Buy</span>
+            // </button>
             <button
               onClick={(e) => {
                 e.stopPropagation()
-                onTradeClicked(token, market)
-                mixpanel.track('BUY_START', {
+                onRateClicked(token, urlMetaData)
+                mixpanel.track('HOME_ROW_RATE_START_CLICKED', {
                   tokenName: token?.name,
                 })
               }}
-              className="flex justify-center items-center w-20 h-10 text-base font-medium text-white border-2 rounded-lg bg-brand-blue dark:bg-gray-600 border-brand-blue dark:text-gray-300 tracking-tightest-2"
+              className="flex justify-center items-center w-20 h-10 text-base font-medium text-white border-2 rounded-lg bg-black dark:bg-gray-600 dark:text-gray-300 tracking-tightest-2"
             >
-              <ArrowSmUpIcon className="w-6 h-6" />
-              <span className="mr-1">Buy</span>
+              <span>Rate</span>
             </button>
           )}
         </div>
