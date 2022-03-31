@@ -26,28 +26,28 @@ export default function TokenRowSkeleton({
           </div>
         </td>
         {/* Price */}
-        <td className="hidden py-4 pl-6 md:table-cell whitespace-nowrap">
+        {/* <td className="hidden py-4 pl-6 md:table-cell whitespace-nowrap">
           <p className="w-8 h-4 bg-gray-400 rounded"></p>
-        </td>
+        </td> */}
         {/* 24H Change */}
-        {getColumn('24H Change') && (
+        {/* {getColumn('24H Change') && (
           <td className="hidden py-4 md:table-cell whitespace-nowrap">
             <p className="w-10 h-4 mt-1 bg-gray-400 rounded"></p>
           </td>
-        )}
+        )} */}
 
         {/* 7D Change */}
-        {getColumn('7D Change') && (
+        {/* {getColumn('7D Change') && (
           <td className="hidden py-4 md:table-cell whitespace-nowrap">
             <p className="w-10 h-4 mt-1 bg-gray-400 rounded"></p>
           </td>
-        )}
+        )} */}
         {/* Deposits */}
-        {getColumn('Deposits') && (
+        {/* {getColumn('Deposits') && (
           <td className="hidden py-4 md:table-cell whitespace-nowrap">
             <p className="w-10 h-4 bg-gray-400 rounded"></p>
           </td>
-        )}
+        )} */}
         {/* %Locked
         {getColumn('% Locked') && (
           <td className="hidden py-4 md:table-cell whitespace-nowrap">
@@ -69,10 +69,10 @@ export default function TokenRowSkeleton({
             <p className="w-10 h-4 mt-1 bg-gray-400 rounded"></p>
           </td>
         )} */}
-        {/* Buy Button */}
+        {/* Rate Button */}
         <td className="hidden py-4 text-center md:table-cell whitespace-nowrap">
           <button className="w-24 h-10 bg-gray-400 rounded-lg">
-            <span className="invisible">Trade</span>
+            <span className="invisible">Rate</span>
           </button>
         </td>
         {/* Buy Button mobile */}
@@ -80,12 +80,6 @@ export default function TokenRowSkeleton({
           <button className="w-16 px-2 py-1 bg-gray-400 rounded-lg">
             <span className="invisible">$0.00</span>
           </button>
-        </td>
-        {/* Chevron icon */}
-        <td className="hidden py-4 md:table-cell md:pl-3 md:pr-6 whitespace-nowrap">
-          <div className="flex items-center justify-center h-full">
-            <div className="w-5 h-5 bg-gray-400 rounded"></div>
-          </div>
         </td>
       </tr>
     </>

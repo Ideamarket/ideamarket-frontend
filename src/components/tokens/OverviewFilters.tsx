@@ -2,7 +2,7 @@ import classNames from 'classnames'
 import { getMarketSpecificsByMarketName } from 'store/markets'
 import { ChevronDownIcon, StarIcon } from '@heroicons/react/solid'
 import {
-  AdjustmentsIcon,
+  // AdjustmentsIcon,
   SparklesIcon,
   FireIcon,
   ArrowSmUpIcon,
@@ -11,9 +11,9 @@ import {
 import React, { useEffect, useRef, useState } from 'react'
 import { OverviewSearchbar } from './OverviewSearchbar'
 import {
-  CheckboxFilters,
+  // CheckboxFilters,
   SortOptions,
-  toggleColumnHelper,
+  // toggleColumnHelper,
   toggleMarketHelper,
 } from './utils/OverviewUtils'
 import useThemeMode from 'components/useThemeMode'
@@ -178,10 +178,10 @@ export const OverviewFilters = ({
     mixpanel.track('FILTER_PLATFORM', { platforms: marketName })
   }
 
-  const toggleColumn = (columnName: string) => {
-    const newSet = toggleColumnHelper(columnName, selectedColumns)
-    onColumnChanged(newSet)
-  }
+  // const toggleColumn = (columnName: string) => {
+  //   const newSet = toggleColumnHelper(columnName, selectedColumns)
+  //   onColumnChanged(newSet)
+  // }
 
   function onFilterChanged(filterId: number) {
     setSelectedFilterId(filterId)
@@ -275,13 +275,13 @@ export const OverviewFilters = ({
           }
         />
 
-        <DropdownButton
+        {/* <DropdownButton
           filters={CheckboxFilters.COLUMNS.values}
           name={<AdjustmentsIcon className="w-5 h-5" />}
           selectedOptions={selectedColumns}
           toggleOption={toggleColumn}
           dropdownType="columns"
-        />
+        /> */}
       </div>
 
       <OverviewFiltersMobile

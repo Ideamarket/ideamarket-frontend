@@ -16,11 +16,7 @@ import {
 } from 'utils'
 import { useTokenIconURL } from 'actions'
 import { useQuery } from 'react-query'
-import {
-  ArrowSmUpIcon,
-  ChevronDownIcon,
-  ChevronUpIcon,
-} from '@heroicons/react/solid'
+import { ArrowSmUpIcon } from '@heroicons/react/solid'
 import useThemeMode from 'components/useThemeMode'
 import Image from 'next/image'
 import BigNumber from 'bignumber.js'
@@ -29,7 +25,7 @@ import { useMixPanel } from 'utils/mixPanel'
 import { getRealTokenName } from 'utils/wikipedia'
 import { useContext, useEffect, useState, useMemo } from 'react'
 import { getURLMetaData } from 'actions/web2/getURLMetaData'
-import { GlobeAltIcon } from '@heroicons/react/outline'
+import { ChatIcon, GlobeAltIcon } from '@heroicons/react/outline'
 import { TrendingUpBlue, TrendingUpGray } from 'assets'
 import { deleteUpvoteListing } from 'actions/web2/deleteUpvoteListing'
 import { GlobalContext } from 'lib/GlobalContext'
@@ -45,12 +41,14 @@ import A from 'components/A'
 import { isETHAddress } from 'utils/addresses'
 import ListingContent from './ListingContent'
 import { getListingTypeFromIDTURL, LISTING_TYPE } from './utils/ListingUtils'
+import useOpinions from 'actions/useOpinions'
 
 type Props = {
   token: any
   market: IdeaMarket
   showMarketSVG: boolean
   compoundSupplyRate: number
+  tradeOrListSuccessToggle: boolean
   getColumn: (column: string) => any
   lastElementRef?: (node) => void
   onTradeClicked: (token: IdeaToken, market: IdeaMarket) => void
@@ -63,6 +61,7 @@ export default function TokenRow({
   market,
   showMarketSVG,
   compoundSupplyRate,
+  tradeOrListSuccessToggle,
   getColumn,
   onTradeClicked,
   onRateClicked,
@@ -74,7 +73,6 @@ export default function TokenRow({
 
   const { jwtToken, setOnWalletConnectedCallback } = useContext(GlobalContext)
 
-  const [isExpanded, setIsExpanded] = useState(false)
   const [isLocallyUpvoted, setIsLocallyUpvoted] = useState(token?.upVoted) // Used to make upvoting display instantly and not wait on API
   const [localTotalVotes, setLocalTotalVotes] = useState(token?.totalVotes) // Used to make upvoting display instantly and not wait on API
 
@@ -115,13 +113,14 @@ export default function TokenRow({
 
   const { loginByWallet } = useAuth()
 
+  const { avgRating, totalOpinions, totalComments } = useOpinions(
+    token?.address,
+    tradeOrListSuccessToggle
+  )
+
   useEffect(() => {
     setIsLocallyUpvoted(token?.upVoted)
     setLocalTotalVotes(token?.totalVotes)
-
-    // This makes tweet IDT expanded by default
-    const listingType = getListingTypeFromIDTURL(token?.url)
-    setIsExpanded(listingType === LISTING_TYPE.TWEET)
   }, [token])
 
   const { data: interestManagerTotalShares } = useQuery(
@@ -220,19 +219,6 @@ export default function TokenRow({
     <tr
       ref={lastElementRef}
       className="relative h-28 cursor-pointer md:table-row hover:bg-black/[.02] dark:hover:bg-gray-600"
-      onClick={() => {
-        setIsExpanded(!isExpanded)
-        // router.push(
-        //   `/i/${marketSpecifics.getMarketNameURLRepresentation()}/${marketSpecifics.getTokenNameURLRepresentation(
-        //     token?.name
-        //   )}`
-        // )
-
-        // mixpanel.track('VIEW_LISTING', {
-        //   market: marketSpecifics.getMarketNameURLRepresentation(),
-        //   tokenName: marketSpecifics.getTokenNameURLRepresentation(token?.name),
-        // })
-      }}
     >
       {/* Icon and Name */}
       <td
@@ -242,20 +228,6 @@ export default function TokenRow({
       >
         <div className="absolute left-5 md:left-6 top-7 md:top-11">
           <WatchingStar token={token} />
-        </div>
-
-        <div className="md:hidden absolute right-2 top-6">
-          {isExpanded ? (
-            <ChevronUpIcon
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="w-5 h-5 cursor-pointer text-gray-400"
-            />
-          ) : (
-            <ChevronDownIcon
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="w-5 h-5 cursor-pointer text-gray-400"
-            />
-          )}
         </div>
 
         <div className="relative flex items-center w-3/4 mx-auto md:w-full text-gray-900 dark:text-gray-200">
@@ -317,61 +289,59 @@ export default function TokenRow({
           )}
         </div>
 
-        {isExpanded && (
-          <div className="relative w-full ">
-            <div className="flex flex-col">
-              <div className="pl-4 md:pl-0 flex flex-col items-center space-x-0 space-y-1 mt-4 text-sm items-baseline">
-                {ghostListedBy && timeAfterGhostListedInDays && (
-                  <div className="px-2 py-2 bg-black/[.05] rounded-lg whitespace-nowrap">
-                    Ghost Listed by{' '}
-                    {isGhostListedByETHAddress ? (
-                      <A
-                        className="underline font-bold hover:text-blue-600"
-                        href={`https://arbiscan.io/address/${ghostListedBy}`}
-                      >
-                        {convertAccountName(ghostListedBy)}
-                      </A>
-                    ) : (
-                      <span className="font-bold">
-                        {convertAccountName(ghostListedBy)}
-                      </span>
-                    )}{' '}
-                    {timeAfterGhostListedInDays} days ago
-                  </div>
-                )}
-                {onchainListedBy && timeAfterOnChainListedInDays && (
-                  <div className="px-2 py-2 bg-black/[.05] rounded-lg whitespace-nowrap">
-                    Listed by{' '}
-                    {isOnchainListedByETHAddress ? (
-                      <A
-                        className="underline font-bold hover:text-blue-600"
-                        href={`https://arbiscan.io/address/${onchainListedBy}`}
-                      >
-                        {convertAccountName(onchainListedBy)}
-                      </A>
-                    ) : (
-                      <span className="font-bold">
-                        {convertAccountName(onchainListedBy)}
-                      </span>
-                    )}{' '}
-                    {timeAfterOnChainListedInDays} days ago
-                  </div>
-                )}
-              </div>
+        <div className="relative w-full ">
+          <div className="flex flex-col">
+            <div className="pl-4 md:pl-0 flex flex-col items-center space-x-0 space-y-1 mt-4 text-sm items-baseline">
+              {ghostListedBy && timeAfterGhostListedInDays && (
+                <div className="px-2 py-2 bg-black/[.05] rounded-lg whitespace-nowrap">
+                  Ghost Listed by{' '}
+                  {isGhostListedByETHAddress ? (
+                    <A
+                      className="underline font-bold hover:text-blue-600"
+                      href={`https://arbiscan.io/address/${ghostListedBy}`}
+                    >
+                      {convertAccountName(ghostListedBy)}
+                    </A>
+                  ) : (
+                    <span className="font-bold">
+                      {convertAccountName(ghostListedBy)}
+                    </span>
+                  )}{' '}
+                  {timeAfterGhostListedInDays} days ago
+                </div>
+              )}
+              {onchainListedBy && timeAfterOnChainListedInDays && (
+                <div className="px-2 py-2 bg-black/[.05] rounded-lg whitespace-nowrap">
+                  Listed by{' '}
+                  {isOnchainListedByETHAddress ? (
+                    <A
+                      className="underline font-bold hover:text-blue-600"
+                      href={`https://arbiscan.io/address/${onchainListedBy}`}
+                    >
+                      {convertAccountName(onchainListedBy)}
+                    </A>
+                  ) : (
+                    <span className="font-bold">
+                      {convertAccountName(onchainListedBy)}
+                    </span>
+                  )}{' '}
+                  {timeAfterOnChainListedInDays} days ago
+                </div>
+              )}
+            </div>
 
-              <div className="px-4 md:px-0">
-                <ListingContent
-                  ideaToken={token}
-                  page="HomePage"
-                  urlMetaData={urlMetaData}
-                  useMetaData={
-                    getListingTypeFromIDTURL(token?.url) !== LISTING_TYPE.TWEET
-                  }
-                />
-              </div>
+            <div className="px-4 md:px-0">
+              <ListingContent
+                ideaToken={token}
+                page="HomePage"
+                urlMetaData={urlMetaData}
+                useMetaData={
+                  getListingTypeFromIDTURL(token?.url) !== LISTING_TYPE.TWEET
+                }
+              />
             </div>
           </div>
-        )}
+        </div>
 
         <div className="md:hidden flex justify-between items-center text-center px-10 py-2 my-4 border-b border-t">
           <div>
@@ -471,7 +441,7 @@ export default function TokenRow({
         </div>
       </td> */}
       {/* Price */}
-      <td
+      {/* <td
         className={classNames(
           isExpanded ? 'pt-12' : 'pt-12 pb-7',
           'relative pl-6 hidden md:table-cell whitespace-nowrap align-top'
@@ -486,9 +456,9 @@ export default function TokenRow({
         >
           {isOnChain ? `$${formatNumber(token?.price)}` : <>&mdash;</>}
         </p>
-      </td>
+      </td> */}
       {/* 24H Change */}
-      {getColumn('24H Change') && (
+      {/* {getColumn('24H Change') && (
         <td
           className={classNames(
             isExpanded ? 'pt-12' : 'pt-12 pb-7',
@@ -518,9 +488,9 @@ export default function TokenRow({
             <>&mdash;</>
           )}
         </td>
-      )}
+      )} */}
       {/* 7D Change */}
-      {getColumn('7D Change') && (
+      {/* {getColumn('7D Change') && (
         <td
           className={classNames(
             isExpanded ? 'pt-12' : 'pt-12 pb-7',
@@ -550,9 +520,9 @@ export default function TokenRow({
             <>&mdash;</>
           )}
         </td>
-      )}
+      )} */}
       {/* Deposits */}
-      {getColumn('Deposits') && (
+      {/* {getColumn('Deposits') && (
         <td
           className={classNames(
             isExpanded ? 'pt-12' : 'pt-12 pb-7',
@@ -576,7 +546,7 @@ export default function TokenRow({
             )}
           </p>
         </td>
-      )}
+      )} */}
       {/* %Locked */}
       {/* {getColumn('% Locked') && (
         <td className={classNames(isExpanded ? 'pt-4' : 'py-4', "relative hidden md:table-cell whitespace-nowrap align-baseline")}>
@@ -646,15 +616,38 @@ export default function TokenRow({
       ) : (
         <></>
       )} */}
+
+      {/* Comments */}
+      <td className="relative pt-12 hidden md:table-cell whitespace-nowrap align-top">
+        <p
+          className="flex items-center font-medium leading-4 uppercase text-very-dark-blue dark:text-gray-300"
+          title={`${totalComments}`}
+        >
+          <ChatIcon className="w-4 mr-1" />
+          <span>
+            {formatNumberWithCommasAsThousandsSerperator(totalComments)}
+          </span>
+        </p>
+      </td>
+
+      {/* Rating */}
+      <td className="relative pt-11 hidden md:table-cell whitespace-nowrap align-top">
+        <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-300">
+          Rating
+        </p>
+        <div className="flex flex-col justify-start font-medium leading-5">
+          <span className="text-blue-600 dark:text-gray-300">
+            {formatNumber(avgRating)}
+          </span>
+          <span className="text-black/[.3] text-sm">
+            ({formatNumberWithCommasAsThousandsSerperator(totalOpinions)})
+          </span>
+        </div>
+      </td>
+
       {/* Buy Button and upvote button */}
-      <td
-        className={classNames(
-          isExpanded ? 'pt-8' : 'pt-8 pb-7',
-          'relative hidden text-center md:table-cell whitespace-nowrap align-top'
-        )}
-      >
-        <div className="flex space-x-2">
-          <button
+      <td className="relative pt-8 hidden text-center md:table-cell whitespace-nowrap align-top">
+        {/* <button
             onClick={(e) => {
               e.stopPropagation()
 
@@ -673,22 +666,10 @@ export default function TokenRow({
             ) : (
               <TrendingUpGray className="w-4 h-4" />
             )}
-          </button>
+          </button> */}
 
-          {isOnChain && (
-            // <button
-            //   onClick={(e) => {
-            //     e.stopPropagation()
-            //     onTradeClicked(token, market)
-            //     mixpanel.track('BUY_START', {
-            //       tokenName: token?.name,
-            //     })
-            //   }}
-            //   className="flex justify-center items-center w-20 h-10 text-base font-medium text-white border-2 rounded-lg bg-brand-blue dark:bg-gray-600 border-brand-blue dark:text-gray-300 tracking-tightest-2"
-            // >
-            //   <ArrowSmUpIcon className="w-6 h-6" />
-            //   <span className="mr-1">Buy</span>
-            // </button>
+        {isOnChain && (
+          <div className="flex space-x-2">
             <button
               onClick={(e) => {
                 e.stopPropagation()
@@ -697,33 +678,26 @@ export default function TokenRow({
                   tokenName: token?.name,
                 })
               }}
-              className="flex justify-center items-center w-20 h-10 text-base font-medium text-white border-2 rounded-lg bg-black dark:bg-gray-600 dark:text-gray-300 tracking-tightest-2"
+              className="flex justify-center items-center w-20 h-10 text-base font-medium text-white rounded-lg bg-black dark:bg-gray-600 dark:text-gray-300 tracking-tightest-2"
             >
               <span>Rate</span>
             </button>
-          )}
-        </div>
-      </td>
-      {/* Chevron icon desktop */}
-      <td
-        className={classNames(
-          isExpanded ? 'pt-12' : 'pt-12 pb-7',
-          'relative hidden pl-3 pr-6 text-sm text-gray-500 md:table-cell dark:text-gray-300 whitespace-nowrap align-baseline'
+
+            {/* <button
+              onClick={(e) => {
+                e.stopPropagation()
+                onTradeClicked(token, market)
+                mixpanel.track('BUY_START', {
+                  tokenName: token?.name,
+                })
+              }}
+              className="flex justify-center items-center w-20 h-10 text-base font-medium text-white rounded-lg bg-brand-blue dark:bg-gray-600 border-brand-blue dark:text-gray-300 tracking-tightest-2"
+            >
+              <ArrowSmUpIcon className="w-6 h-6" />
+              <span className="mr-1">Buy</span>
+            </button> */}
+          </div>
         )}
-      >
-        <div className="absolute right-1/3 top-7 md:top-11">
-          {isExpanded ? (
-            <ChevronUpIcon
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="w-5 h-5 cursor-pointer text-gray-400 hover:text-blue-500"
-            />
-          ) : (
-            <ChevronDownIcon
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="w-5 h-5 cursor-pointer text-gray-400 hover:text-blue-500"
-            />
-          )}
-        </div>
       </td>
     </tr>
   )

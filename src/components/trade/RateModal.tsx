@@ -7,7 +7,11 @@ import 'rc-slider/assets/index.css'
 import { useState } from 'react'
 import classNames from 'classnames'
 import { getMarketSpecificsByMarketName } from 'store/markets'
-import { useTransactionManager } from 'utils'
+import {
+  formatNumber,
+  formatNumberWithCommasAsThousandsSerperator,
+  useTransactionManager,
+} from 'utils'
 import rateIDT from 'actions/web3/rateIDT'
 import TxPending from './TxPending'
 import useOpinions from 'actions/useOpinions'
@@ -123,8 +127,12 @@ export default function RateModal({
           <div className="flex justify-between items-center mx-2 mb-1">
             <span className="font-bold">Rating</span>
             <div>
-              <span className="text-blue-600 font-bold mr-1">{avgRating}</span>
-              <span>({totalOpinions})</span>
+              <span className="text-blue-600 font-bold mr-1">
+                {formatNumber(avgRating)}
+              </span>
+              <span>
+                ({formatNumberWithCommasAsThousandsSerperator(totalOpinions)})
+              </span>
             </div>
           </div>
 

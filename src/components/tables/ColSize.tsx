@@ -36,7 +36,11 @@ const ColSize = ({ columnData, tableName }: Props) => {
           return '8%'
         case 'claimable':
           return '8%'
-        case 'totalVotes':
+        case 'comments':
+          return '8%'
+        case 'avgRating':
+          return '8%'
+        case 'txButtons':
           return '13%'
         case 'chevron':
           return '4%'

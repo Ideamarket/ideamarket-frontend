@@ -34,7 +34,7 @@ const Home = ({ urlMarkets }: Props) => {
   const [selectedMarkets, setSelectedMarkets] = useState(new Set([]))
   const [selectedColumns, setSelectedColumns] = useState(new Set([]))
   const [nameSearch, setNameSearch] = useState('')
-  const [orderBy, setOrderBy] = useState('dayChange')
+  const [orderBy, setOrderBy] = useState('avgRating')
   const [orderDirection, setOrderDirection] = useState<'desc' | 'asc'>('desc')
   const [selectedCategories, setSelectedCategories] = useState([])
 

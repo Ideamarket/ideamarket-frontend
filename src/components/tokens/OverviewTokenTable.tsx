@@ -231,8 +231,6 @@ export default function Table({
         onOrderByChanged('holders', 'desc')
       } else if (column === 'rank') {
         onOrderByChanged('rank', 'desc')
-      } else if (column === 'totalVotes') {
-        onOrderByChanged('totalVotes', 'desc')
       }
     }
   }
@@ -278,6 +276,7 @@ export default function Table({
                         market={marketsMap[marketID]}
                         showMarketSVG={false}
                         compoundSupplyRate={compoundSupplyRate}
+                        tradeOrListSuccessToggle={tradeOrListSuccessToggle}
                         getColumn={getColumn}
                         onTradeClicked={onTradeClicked}
                         onRateClicked={onRateClicked}

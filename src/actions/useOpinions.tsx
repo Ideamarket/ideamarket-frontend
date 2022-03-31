@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useWalletStore } from 'store/walletStore'
 import {
   getAvgRatingForIDT,
+  getTotalNumberOfComments,
   getTotalNumberOfOpinions,
 } from 'services/OpinionService'
 
@@ -11,8 +12,9 @@ export default function useOpinions(
   refreshToggle?: boolean // Used to refresh supply whenever needed
 ) {
   const [isLoading, setIsLoading] = useState(true)
-  const [avgRating, setAvgRating] = useState(undefined)
-  const [totalOpinions, setTotalOpinions] = useState(undefined)
+  const [avgRating, setAvgRating] = useState(0)
+  const [totalOpinions, setTotalOpinions] = useState(0)
+  const [totalComments, setTotalComments] = useState(0)
 
   const { web3, walletAddress, chainID } = useWalletStore((state) => ({
     web3: state.web3,
@@ -26,9 +28,11 @@ export default function useOpinions(
     async function run() {
       const avgRatingResult = await getAvgRatingForIDT(idtAddress)
       const totalOpinionsResult = await getTotalNumberOfOpinions(idtAddress)
+      const totalCommentsResult = await getTotalNumberOfComments(idtAddress)
       if (!isCancelled) {
-        setAvgRating(avgRatingResult)
+        setAvgRating(avgRatingResult as any)
         setTotalOpinions(totalOpinionsResult)
+        setTotalComments(totalCommentsResult)
         setIsLoading(false)
       }
     }
@@ -41,5 +45,5 @@ export default function useOpinions(
     }
   }, [idtAddress, web3, refreshToggle, walletAddress, chainID])
 
-  return { avgRating, totalOpinions, isLoading }
+  return { avgRating, totalOpinions, totalComments, isLoading }
 }
