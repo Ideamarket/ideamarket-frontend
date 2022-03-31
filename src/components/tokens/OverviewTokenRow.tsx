@@ -1,56 +1,21 @@
-import classNames from 'classnames'
-import { WalletModal, WatchingStar } from 'components'
-import { NETWORK } from 'store/networks'
-import { queryDaiBalance } from 'store/daiStore'
-import {
-  queryInterestManagerTotalShares,
-  IdeaMarket,
-  IdeaToken,
-} from 'store/ideaMarketsStore'
-import { getMarketSpecificsByMarketName } from 'store/markets'
+import { WatchingStar } from 'components'
+import { IdeaMarket, IdeaToken } from 'store/ideaMarketsStore'
 import {
   formatNumberWithCommasAsThousandsSerperator,
-  formatNumber,
-  bigNumberTenPow18,
-  bnToFloatString,
+  formatNumberInt,
 } from 'utils'
-import { useTokenIconURL } from 'actions'
 import { useQuery } from 'react-query'
-import {
-  ArrowSmUpIcon,
-  ChevronDownIcon,
-  ChevronUpIcon,
-} from '@heroicons/react/solid'
-import useThemeMode from 'components/useThemeMode'
-import Image from 'next/image'
-import BigNumber from 'bignumber.js'
-import IdeaverifyIconBlue from '../../assets/IdeaverifyIconBlue.svg'
-import { useMixPanel } from 'utils/mixPanel'
-import { getRealTokenName } from 'utils/wikipedia'
-import { useContext, useEffect, useState, useMemo } from 'react'
 import { getURLMetaData } from 'actions/web2/getURLMetaData'
-import { GlobeAltIcon } from '@heroicons/react/outline'
-import { TrendingUpBlue, TrendingUpGray } from 'assets'
-import { deleteUpvoteListing } from 'actions/web2/deleteUpvoteListing'
-import { GlobalContext } from 'lib/GlobalContext'
-import { upvoteListing } from 'actions/web2/upvoteListing'
-import { useWalletStore } from 'store/walletStore'
-import ModalService from 'components/modals/ModalService'
-import useAuth from 'components/account/useAuth'
-import { getSignedInWalletAddress } from 'lib/utils/web3-eth'
-import CreateAccountModal from 'components/account/CreateAccountModal'
-import { getTimeDifferenceIndays } from 'lib/utils/dateUtil'
-import { convertAccountName } from 'lib/utils/stringUtil'
-import A from 'components/A'
-import { isETHAddress } from 'utils/addresses'
+import { ChatIcon } from '@heroicons/react/outline'
 import ListingContent from './ListingContent'
 import { getListingTypeFromIDTURL, LISTING_TYPE } from './utils/ListingUtils'
+import A from 'components/A'
+import { convertAccountName } from 'lib/utils/stringUtil'
+import { getPublicProfile } from 'lib/axios'
+import Image from 'next/image'
 
 type Props = {
   token: any
-  market: IdeaMarket
-  showMarketSVG: boolean
-  compoundSupplyRate: number
   getColumn: (column: string) => any
   lastElementRef?: (node) => void
   onTradeClicked: (token: IdeaToken, market: IdeaMarket) => void
@@ -60,644 +25,240 @@ type Props = {
 
 export default function TokenRow({
   token,
-  market,
-  showMarketSVG,
-  compoundSupplyRate,
   getColumn,
   onTradeClicked,
   onRateClicked,
   lastElementRef,
   refetch,
 }: Props) {
-  const { mixpanel } = useMixPanel()
-  const marketSpecifics = getMarketSpecificsByMarketName(market.name)
-
-  const { jwtToken, setOnWalletConnectedCallback } = useContext(GlobalContext)
-
-  const [isExpanded, setIsExpanded] = useState(false)
-  const [isLocallyUpvoted, setIsLocallyUpvoted] = useState(token?.upVoted) // Used to make upvoting display instantly and not wait on API
-  const [localTotalVotes, setLocalTotalVotes] = useState(token?.totalVotes) // Used to make upvoting display instantly and not wait on API
-
   const { data: urlMetaData } = useQuery([token?.url], () =>
     getURLMetaData(token?.url)
   )
-  const { tokenIconURL, isLoading: isTokenIconLoading } = useTokenIconURL({
-    marketSpecifics,
-    tokenName: getRealTokenName(token?.name),
-  })
-  const { resolvedTheme } = useThemeMode()
 
-  const isOnChain = token?.isOnChain
+  const { minterAddress } = (token || {}) as any
 
-  const { onchainListedAt, onchainListedBy } = (token || {}) as any
-
-  const isOnchainListedByETHAddress = isETHAddress(onchainListedBy)
-
-  const timeAfterOnChainListedInDays = useMemo(() => {
-    if (!onchainListedAt) return null
-    const onchainListedAtDate = new Date(onchainListedAt)
-    const currentDate = new Date()
-    return getTimeDifferenceIndays(onchainListedAtDate, currentDate)
-  }, [onchainListedAt])
-
-  // const yearIncome = (
-  //   parseFloat(token?.marketCap) * compoundSupplyRate
-  // ).toFixed(2)
-
-  const { loginByWallet } = useAuth()
-
-  useEffect(() => {
-    setIsLocallyUpvoted(token?.upVoted)
-    setLocalTotalVotes(token?.totalVotes)
-
-    // This makes tweet IDT expanded by default
-    const listingType = getListingTypeFromIDTURL(token?.url)
-    setIsExpanded(listingType === LISTING_TYPE.TWEET)
-  }, [token])
-
-  const { data: interestManagerTotalShares } = useQuery(
-    'interest-manager-total-shares',
-    queryInterestManagerTotalShares
+  const { data: userDataForMinter } = useQuery<any>(
+    [`minterAddress-${minterAddress}`],
+    () =>
+      getPublicProfile({
+        username: null,
+        walletAddress: minterAddress,
+      })
   )
 
-  const interestManagerAddress =
-    NETWORK.getDeployedAddresses().interestManagerAVM
-  const { data: interestManagerDaiBalance } = useQuery(
-    ['interest-manager-dai-balance'],
-    () => queryDaiBalance(interestManagerAddress)
+  const displayUsernameOrWallet = convertAccountName(
+    userDataForMinter?.username || minterAddress
   )
-
-  const displayName =
-    urlMetaData && urlMetaData?.ogTitle
-      ? urlMetaData?.ogTitle
-      : marketSpecifics?.convertUserInputToTokenName(token?.url)
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const claimableIncome =
-    interestManagerTotalShares &&
-    interestManagerDaiBalance &&
-    isOnChain &&
-    token?.rawInvested
-      ? bnToFloatString(
-          new BigNumber(token?.rawInvested.toString())
-            .dividedBy(new BigNumber(interestManagerTotalShares.toString()))
-            .multipliedBy(new BigNumber(interestManagerDaiBalance.toString()))
-            .minus(new BigNumber(token?.rawMarketCap.toString())),
-          bigNumberTenPow18,
-          2
-        )
-      : '0'
-
-  const onLoginClicked = async () => {
-    if (useWalletStore.getState().web3) {
-      const signedWalletAddress = await getSignedInWalletAddress({
-        account: useWalletStore.getState().address,
-        library: useWalletStore.getState().web3,
-      })
-      await loginByWallet(signedWalletAddress)
-    }
-  }
-
-  const onUpvoteClicked = async () => {
-    if (!useWalletStore.getState().web3) {
-      setOnWalletConnectedCallback(() => () => {
-        // if jwtToken is not present, then popup modal and MM popup to ask user to create account or sign in
-        if (!jwtToken) {
-          onLoginClicked()
-          ModalService.open(CreateAccountModal, {})
-          return
-        }
-      })
-      ModalService.open(WalletModal)
-    } else {
-      // if jwtToken is not present, then popup modal and MM popup to ask user to create account or sign in
-      if (!jwtToken) {
-        onLoginClicked()
-        ModalService.open(CreateAccountModal, {})
-        return
-      }
-    }
-
-    const newUpvoteState = !token?.upVoted
-    setIsLocallyUpvoted(newUpvoteState)
-    const newTotalVotes = newUpvoteState
-      ? token?.totalVotes + 1
-      : token?.totalVotes - 1
-    setLocalTotalVotes(newTotalVotes)
-
-    let response = null
-    if (token?.upVoted) {
-      response = await deleteUpvoteListing(token?.listingId, jwtToken)
-      mixpanel.track('DELETED_UPVOTE', {
-        tokenName: token?.name,
-      })
-    } else {
-      response = await upvoteListing(token?.listingId, jwtToken)
-      mixpanel.track('UPVOTE', {
-        tokenName: token?.name,
-      })
-    }
-
-    // If upvote failed, then change local state back
-    if (!response) {
-      setIsLocallyUpvoted(!newUpvoteState)
-      setLocalTotalVotes(token?.totalVotes)
-    }
-
-    refetch()
-  }
+  const usernameOrWallet = userDataForMinter?.username || minterAddress
 
   return (
-    <tr
-      ref={lastElementRef}
-      className="relative h-28 cursor-pointer md:table-row hover:bg-black/[.02] dark:hover:bg-gray-600"
-      onClick={() => {
-        setIsExpanded(!isExpanded)
-        // router.push(
-        //   `/i/${marketSpecifics.getMarketNameURLRepresentation()}/${marketSpecifics.getTokenNameURLRepresentation(
-        //     token?.name
-        //   )}`
-        // )
-
-        // mixpanel.track('VIEW_LISTING', {
-        //   market: marketSpecifics.getMarketNameURLRepresentation(),
-        //   tokenName: marketSpecifics.getTokenNameURLRepresentation(token?.name),
-        // })
-      }}
-    >
-      {/* Icon and Name */}
-      <td
-        className={classNames(
-          'relative w-full py-4 md:py-8 md:table-cell md:col-span-3 md:pl-14 whitespace-nowrap md:w-1/3 lg:w-1/2 text-xs md:text-base  align-baseline'
-        )}
+    <>
+      {/* Desktop row */}
+      <div
+        ref={lastElementRef}
+        className="hidden relative md:block py-6 hover:bg-black/[.02]"
       >
-        <div className="absolute left-5 md:left-6 top-7 md:top-11">
-          <WatchingStar token={token} />
-        </div>
+        {/* Makes so entire row can be clicked to go to Post page */}
+        <a
+          href={`/post/${token?.tokenID}`}
+          className="absolute top-0 left-0 w-full h-full z-40"
+        >
+          <span className="invisible">Go to post page</span>
+        </a>
 
-        <div className="md:hidden absolute right-2 top-6">
-          {isExpanded ? (
-            <ChevronUpIcon
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="w-5 h-5 cursor-pointer text-gray-400"
-            />
-          ) : (
-            <ChevronDownIcon
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="w-5 h-5 cursor-pointer text-gray-400"
-            />
-          )}
-        </div>
-
-        <div className="relative flex items-center w-3/4 mx-auto md:w-full text-gray-900 dark:text-gray-200">
-          {showMarketSVG && marketSpecifics.getMarketSVGTheme(resolvedTheme)}
-          <div
-            className={classNames(
-              'flex-shrink-0 w-7.5 h-7.5',
-              showMarketSVG && 'ml-2'
-            )}
-          >
-            {isTokenIconLoading ? (
-              <div className="w-full h-full bg-gray-400 rounded-full animate-pulse"></div>
-            ) : !isOnChain || market?.name === 'URL' ? (
-              <GlobeAltIcon className="w-7" />
-            ) : (
-              <div className="relative w-full h-full rounded-full">
-                <Image
-                  src={tokenIconURL || '/gray.svg'}
-                  alt="token"
-                  layout="fill"
-                  objectFit="cover"
-                  className="rounded-full"
-                />
+        <div className="flex text-black">
+          {/* Icon and Name */}
+          <div className="w-[52%] relative pl-6 pr-10">
+            <div className="relative flex items-start w-3/4 mx-auto md:w-full text-gray-900 dark:text-gray-200">
+              <div className="mr-4">
+                <WatchingStar token={token} />
               </div>
-            )}
-          </div>
-          <div className="ml-4 text-base font-medium leading-5 truncate z-30">
-            {displayName && (
+
               <div>
-                <a
-                  href={`/i/${token?.listingId}`}
-                  onClick={(event) => event.stopPropagation()}
-                  className="text-xs md:text-base font-bold hover:underline"
-                >
-                  {displayName?.substr(
-                    0,
-                    displayName?.length > 50 ? 50 : displayName?.length
-                  ) + (displayName?.length > 50 ? '...' : '')}
-                </a>
-              </div>
-            )}
-            <a
-              href={token?.url}
-              className="text-xs md:text-sm text-brand-blue hover:underline"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {token?.url.substr(
-                0,
-                token?.url.length > 50 ? 50 : token?.url.length
-              ) + (token?.url.length > 50 ? '...' : '')}
-            </a>
-          </div>
-          {/* Desktop Verified Badge */}
-          {isOnChain && market?.name !== 'URL' && token?.verified && (
-            <div className="hidden md:inline w-5 h-5 ml-1.5 text-black dark:text-white">
-              <IdeaverifyIconBlue className="w-full h-full" />
-            </div>
-          )}
-        </div>
-
-        {isExpanded && (
-          <div className="relative w-full ">
-            <div className="flex flex-col">
-              <div className="pl-4 md:pl-0 flex flex-col items-center space-x-0 space-y-1 mt-4 text-sm items-baseline">
-                {onchainListedBy && timeAfterOnChainListedInDays && (
-                  <div className="px-2 py-2 bg-black/[.05] rounded-lg whitespace-nowrap">
-                    Listed by{' '}
-                    {isOnchainListedByETHAddress ? (
-                      <A
-                        className="underline font-bold hover:text-blue-600"
-                        href={`/u/${onchainListedBy}`}
-                      >
-                        {convertAccountName(onchainListedBy)}
-                      </A>
-                    ) : (
-                      <span className="font-bold">
-                        {convertAccountName(onchainListedBy)}
-                      </span>
-                    )}{' '}
-                    {timeAfterOnChainListedInDays} days ago
+                {minterAddress && (
+                  <div className="flex items-center pb-2 whitespace-nowrap">
+                    <div className="relative rounded-full w-6 h-6">
+                      <Image
+                        className="rounded-full"
+                        src={
+                          userDataForMinter?.profilePhoto ||
+                          '/DefaultProfilePicture.gif'
+                        }
+                        alt=""
+                        layout="fill"
+                        objectFit="cover"
+                      />
+                    </div>
+                    <A
+                      className="ml-2 font-bold hover:text-blue-600 z-50"
+                      href={`/u/${usernameOrWallet}`}
+                    >
+                      {displayUsernameOrWallet}
+                    </A>
                   </div>
                 )}
-              </div>
 
-              <div className="px-4 md:px-0">
-                <ListingContent
-                  ideaToken={token}
-                  page="HomePage"
-                  urlMetaData={urlMetaData}
-                  useMetaData={
-                    getListingTypeFromIDTURL(token?.url) !== LISTING_TYPE.TWEET
-                  }
-                />
+                <div className="pr-6">
+                  <ListingContent
+                    ideaToken={token}
+                    page="HomePage"
+                    urlMetaData={urlMetaData}
+                    useMetaData={
+                      getListingTypeFromIDTURL(token?.url) !==
+                        LISTING_TYPE.TWEET &&
+                      getListingTypeFromIDTURL(token?.url) !==
+                        LISTING_TYPE.TEXT_POST
+                    }
+                  />
+                </div>
               </div>
             </div>
           </div>
-        )}
 
-        <div className="md:hidden flex justify-between items-center text-center px-10 py-2 my-4 border-b border-t">
-          <div>
-            <div>Price</div>
-            <div>
-              {isOnChain ? `$${formatNumber(token?.price)}` : <>&mdash;</>}
-            </div>
-          </div>
-          <div>
-            <div>Deposits</div>
-            <div>
-              {parseFloat(token?.marketCap) > 0.0 ? (
-                `$` +
-                formatNumberWithCommasAsThousandsSerperator(
-                  parseInt(token?.marketCap)
+          {/* Average Rating */}
+          <div className="w-[16%]">
+            <div className="flex flex-col justify-start font-medium leading-5">
+              <span className="mb-1">
+                <span className="w-10 h-8 flex justify-center items-center rounded-lg bg-blue-100 text-blue-600 dark:text-gray-300 font-extrabold text-xl">
+                  {formatNumberInt(token?.averageRating)}
+                </span>
+              </span>
+              {/* <span className="text-black/[.3] text-sm">
+                (
+                {formatNumberWithCommasAsThousandsSerperator(
+                  token?.latestRatingsCount
+                )}
                 )
-              ) : (
-                <>&mdash;</>
+              </span> */}
+            </div>
+          </div>
+
+          {/* latestCommentsCount */}
+          <div className="w-[16%]">
+            <div className="flex items-center font-medium text-lg text-black">
+              <ChatIcon className="w-4 mr-1" />
+              {formatNumberWithCommasAsThousandsSerperator(
+                token?.latestCommentsCount
               )}
             </div>
           </div>
-          <div>
-            <div>7D Change</div>
-            <div>
-              {isOnChain ? (
-                <p
-                  className={classNames(
-                    'text-base font-medium leading-4 tracking-tightest-2 uppercase',
-                    parseFloat(token?.weeklyChange) >= 0.0
-                      ? 'text-brand-green'
-                      : 'text-brand-red'
-                  )}
-                >
-                  {parseFloat(token?.weeklyChange) >= 0.0
-                    ? `+ ${parseInt(token?.weeklyChange)}`
-                    : `- ${parseInt(token?.weeklyChange.slice(1))}`}
-                  %
-                </p>
-              ) : (
-                <>&mdash;</>
-              )}
+
+          {/* Composite Rating */}
+          {/* <div className="w-[12%] pt-12">
+            <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-300">
+              Composite Rating
+            </p>
+            <div className="font-medium leading-5">
+              68
             </div>
-          </div>
-        </div>
+          </div> */}
 
-        <div className="md:hidden">
-          <div className="flex justify-center space-x-2">
-            <button
-              onClick={(e) => {
-                e.stopPropagation()
+          {/* Market Interest */}
+          {/* <div className="w-[12%] pt-12">
+            <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-300">
+              Market Interest
+            </p>
+            <div className="flex flex-col justify-start font-medium leading-5">
+              $65,900
+            </div>
+          </div> */}
 
-                onUpvoteClicked()
-              }}
-              className={classNames(
-                isLocallyUpvoted
-                  ? 'text-blue-500 bg-blue-100'
-                  : 'text-gray-400 bg-black/[.05]',
-                'flex justify-center items-center space-x-2 w-20 h-10 text-base font-medium rounded-lg dark:bg-gray-600 dark:text-gray-300 hover:border-2 hover:border-blue-500'
-              )}
-            >
-              <span className="">{localTotalVotes}</span>
-              {isLocallyUpvoted ? (
-                <TrendingUpBlue className="w-4 h-4" />
-              ) : (
-                <TrendingUpGray className="w-4 h-4" />
-              )}
-            </button>
-
-            {isOnChain && (
+          {/* Rate Button */}
+          <div className="w-[16%]">
+            <div className="flex space-x-2">
               <button
                 onClick={(e) => {
                   e.stopPropagation()
-                  onTradeClicked(token, market)
-                  mixpanel.track('BUY_START', {
-                    tokenName: token?.name,
-                  })
+                  onRateClicked(token, urlMetaData)
                 }}
-                className="flex justify-center items-center w-20 h-10 text-base font-medium text-white border-2 rounded-lg bg-brand-blue dark:bg-gray-600 border-brand-blue dark:text-gray-300 tracking-tightest-2"
+                className="flex justify-center items-center w-20 h-10 text-base rounded-lg border-brand-blue text-white bg-brand-blue font-medium hover:bg-blue-800 z-50"
               >
-                <ArrowSmUpIcon className="w-6 h-6" />
-                <span className="mr-1">Buy</span>
+                <span>Rate</span>
               </button>
-            )}
+            </div>
           </div>
         </div>
-      </td>
-      {/* Mobile Verified Badge */}
-      {/* <td className="flex items-center justify-center py-4 text-sm leading-5 text-center text-black md:hidden dark:text-white md:table-cell whitespace-nowrap">
-        <div className="flex items-center justify-end h-full">
-          <div className="w-5 h-5">
-            {isOnChain &&
-              market?.name !== 'URL' &&
-              token?.verified && (
-                <IdeaverifyIconBlue className="w-full h-full" />
+      </div>
+
+      {/* Mobile row */}
+      <div ref={lastElementRef} className="md:hidden">
+        <div className="px-3 py-4">
+          {minterAddress && (
+            <div className="flex items-center pb-2 whitespace-nowrap">
+              <div className="relative rounded-full w-6 h-6">
+                <Image
+                  className="rounded-full"
+                  src={
+                    userDataForMinter?.profilePhoto ||
+                    '/DefaultProfilePicture.gif'
+                  }
+                  alt=""
+                  layout="fill"
+                  objectFit="cover"
+                />
+              </div>
+              <A
+                className="ml-2 font-bold text-black hover:text-blue-600"
+                href={`/u/${usernameOrWallet}`}
+              >
+                {displayUsernameOrWallet}
+              </A>
+            </div>
+          )}
+
+          <ListingContent
+            ideaToken={token}
+            page="HomePage"
+            urlMetaData={urlMetaData}
+            useMetaData={
+              getListingTypeFromIDTURL(token?.url) !== LISTING_TYPE.TWEET
+            }
+          />
+        </div>
+
+        <div className="flex justify-between items-start text-center px-10 py-4 border-b border-t">
+          <div>
+            <div className="font-semibold text-black/[.5]">Average Rating</div>
+            <div className="flex items-center">
+              <span className="text-blue-600 dark:text-gray-300 mr-1 font-extrabold text-xl">
+                {formatNumberInt(token?.averageRating)}
+              </span>
+              {/* <span className="text-black/[.3] text-sm">
+                (
+                {formatNumberWithCommasAsThousandsSerperator(
+                  token?.latestRatingsCount
+                )}
+                )
+              </span> */}
+            </div>
+          </div>
+          <div>
+            <div className="font-semibold text-black/[.5]">Comments</div>
+            <div className="flex items-center font-medium text-lg text-black">
+              <ChatIcon className="w-4 mr-1" />
+              {formatNumberWithCommasAsThousandsSerperator(
+                token?.latestCommentsCount
               )}
+            </div>
           </div>
         </div>
-      </td> */}
-      {/* Price */}
-      <td
-        className={classNames(
-          isExpanded ? 'pt-12' : 'pt-12 pb-7',
-          'relative pl-6 hidden md:table-cell whitespace-nowrap align-top'
-        )}
-      >
-        <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-300">
-          Price
-        </p>
-        <p
-          className="font-medium leading-4 uppercase tracking-tightest-2 text-very-dark-blue dark:text-gray-300"
-          title={'$' + token?.price}
-        >
-          {isOnChain ? `$${formatNumber(token?.price)}` : <>&mdash;</>}
-        </p>
-      </td>
-      {/* 24H Change */}
-      {getColumn('24H Change') && (
-        <td
-          className={classNames(
-            isExpanded ? 'pt-12' : 'pt-12 pb-7',
-            'relative hidden md:table-cell whitespace-nowrap align-top'
-          )}
-        >
-          {isOnChain ? (
-            <p
-              className={classNames(
-                'text-base font-medium leading-4 tracking-tightest-2 uppercase',
-                parseFloat(token?.dayChange) >= 0.0
-                  ? 'text-brand-green'
-                  : 'text-brand-red'
-              )}
-              title={`${
-                parseFloat(token?.dayChange) >= 0.0
-                  ? `+ ${parseInt(token?.dayChange)}`
-                  : `- ${parseInt(token?.dayChange?.slice(1))}`
-              }%`}
-            >
-              {parseFloat(token?.dayChange) >= 0.0
-                ? `+ ${parseInt(token?.dayChange)}`
-                : `- ${parseInt(token?.dayChange?.slice(1))}`}
-              %
-            </p>
-          ) : (
-            <>&mdash;</>
-          )}
-        </td>
-      )}
-      {/* 7D Change */}
-      {getColumn('7D Change') && (
-        <td
-          className={classNames(
-            isExpanded ? 'pt-12' : 'pt-12 pb-7',
-            'relative hidden md:table-cell whitespace-nowrap align-top'
-          )}
-        >
-          {isOnChain ? (
-            <p
-              className={classNames(
-                'text-base font-medium leading-4 tracking-tightest-2 uppercase',
-                parseFloat(token?.weeklyChange) >= 0.0
-                  ? 'text-brand-green'
-                  : 'text-brand-red'
-              )}
-              title={`${
-                parseFloat(token?.weeklyChange) >= 0.0
-                  ? `+ ${parseInt(token?.weeklyChange)}`
-                  : `- ${parseInt(token?.weeklyChange.slice(1))}`
-              }%`}
-            >
-              {parseFloat(token?.weeklyChange) >= 0.0
-                ? `+ ${parseInt(token?.weeklyChange)}`
-                : `- ${parseInt(token?.weeklyChange.slice(1))}`}
-              %
-            </p>
-          ) : (
-            <>&mdash;</>
-          )}
-        </td>
-      )}
-      {/* Deposits */}
-      {getColumn('Deposits') && (
-        <td
-          className={classNames(
-            isExpanded ? 'pt-12' : 'pt-12 pb-7',
-            'relative hidden md:table-cell whitespace-nowrap align-top'
-          )}
-        >
-          <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-300">
-            Deposits
-          </p>
-          <p
-            className="text-base font-medium leading-4 uppercase tracking-tightest-2 text-very-dark-blue dark:text-gray-300"
-            title={'$' + token?.marketCap}
-          >
-            {parseFloat(token?.marketCap) > 0.0 ? (
-              `$` +
-              formatNumberWithCommasAsThousandsSerperator(
-                parseInt(token?.marketCap)
-              )
-            ) : (
-              <>&mdash;</>
-            )}
-          </p>
-        </td>
-      )}
-      {/* %Locked */}
-      {/* {getColumn('% Locked') && (
-        <td className={classNames(isExpanded ? 'pt-4' : 'py-4', "relative hidden md:table-cell whitespace-nowrap align-baseline")}>
-          <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-300">
-            % Locked
-          </p>
-          <p
-            className="text-base font-medium leading-4 uppercase tracking-tightest-2 text-very-dark-blue dark:text-gray-300"
-            title={parseFloat(token?.lockedPercentage) + ' %'}
-          >
-            {parseFloat(token?.lockedPercentage) * 100.0 > 0.0 ? (
-              Math.ceil(parseFloat(token?.lockedPercentage)) + ' %'
-            ) : (
-              <>&mdash;</>
-            )}
-          </p>
-          {pageLink}
-        </td>
-      )} */}
-      {/* Year Income */}
-      {/* {getColumn('1YR Income') && (
-        <td
-          className={classNames(
-            isExpanded ? 'pt-4' : 'py-4',
-            'relative hidden md:table-cell whitespace-nowrap align-baseline'
-          )}
-        >
-          {isOnChain ? (
-            <p
-              className="text-base font-medium leading-4 uppercase tracking-tightest-2 text-very-dark-blue dark:text-gray-300"
-              title={'$' + yearIncome}
-            >
-              $
-              {formatNumberWithCommasAsThousandsSerperator(
-                parseInt(yearIncome)
-              )}
-            </p>
-          ) : (
-            <>&mdash;</>
-          )}
-          {pageLink}
-        </td>
-      )} */}
-      {/* Claimable Income */}
-      {/* {getColumn('Claimable Income') ? (
-        <td
-          className={classNames(
-            isExpanded ? 'pt-4' : 'py-4',
-            'relative hidden md:table-cell whitespace-nowrap align-baseline'
-          )}
-        >
-          {isOnChain ? (
-            <p
-              className="text-base font-medium leading-4 uppercase tracking-tightest-2 text-very-dark-blue dark:text-gray-300"
-              title={'$' + claimableIncome}
-            >
-              $
-              {formatNumberWithCommasAsThousandsSerperator(
-                parseInt(claimableIncome)
-              )}
-            </p>
-          ) : (
-            <>&mdash;</>
-          )}
-          {pageLink}
-        </td>
-      ) : (
-        <></>
-      )} */}
-      {/* Buy Button and upvote button */}
-      <td
-        className={classNames(
-          isExpanded ? 'pt-8' : 'pt-8 pb-7',
-          'relative hidden text-center md:table-cell whitespace-nowrap align-top'
-        )}
-      >
-        <div className="flex space-x-2">
+
+        <div className="flex justify-between items-center px-10 py-4 border-t">
+          <div className="">
+            <WatchingStar token={token} />
+          </div>
+
           <button
             onClick={(e) => {
               e.stopPropagation()
-
-              onUpvoteClicked()
+              onRateClicked(token, urlMetaData)
             }}
-            className={classNames(
-              isLocallyUpvoted
-                ? 'text-blue-500 bg-blue-100'
-                : 'text-gray-400 bg-black/[.05]',
-              'flex justify-center items-center space-x-2 w-20 h-10 text-base font-medium rounded-lg dark:bg-gray-600 dark:text-gray-300 hover:border-2 hover:border-blue-500'
-            )}
+            className="flex justify-center items-center w-20 h-10 text-base rounded-lg border-brand-blue text-white bg-brand-blue font-medium hover:bg-blue-800"
           >
-            <span className="">{localTotalVotes}</span>
-            {isLocallyUpvoted ? (
-              <TrendingUpBlue className="w-4 h-4" />
-            ) : (
-              <TrendingUpGray className="w-4 h-4" />
-            )}
+            <span>Rate</span>
           </button>
-
-          {isOnChain && (
-            // <button
-            //   onClick={(e) => {
-            //     e.stopPropagation()
-            //     onTradeClicked(token, market)
-            //     mixpanel.track('BUY_START', {
-            //       tokenName: token?.name,
-            //     })
-            //   }}
-            //   className="flex justify-center items-center w-20 h-10 text-base font-medium text-white border-2 rounded-lg bg-brand-blue dark:bg-gray-600 border-brand-blue dark:text-gray-300 tracking-tightest-2"
-            // >
-            //   <ArrowSmUpIcon className="w-6 h-6" />
-            //   <span className="mr-1">Buy</span>
-            // </button>
-            <button
-              onClick={(e) => {
-                e.stopPropagation()
-                onRateClicked(token, urlMetaData)
-                mixpanel.track('HOME_ROW_RATE_START_CLICKED', {
-                  tokenName: token?.name,
-                })
-              }}
-              className="flex justify-center items-center w-20 h-10 text-base font-medium text-white border-2 rounded-lg bg-black dark:bg-gray-600 dark:text-gray-300 tracking-tightest-2"
-            >
-              <span>Rate</span>
-            </button>
-          )}
         </div>
-      </td>
-      {/* Chevron icon desktop */}
-      <td
-        className={classNames(
-          isExpanded ? 'pt-12' : 'pt-12 pb-7',
-          'relative hidden pl-3 pr-6 text-sm text-gray-500 md:table-cell dark:text-gray-300 whitespace-nowrap align-baseline'
-        )}
-      >
-        <div className="absolute right-1/3 top-7 md:top-11">
-          {isExpanded ? (
-            <ChevronUpIcon
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="w-5 h-5 cursor-pointer text-gray-400 hover:text-blue-500"
-            />
-          ) : (
-            <ChevronDownIcon
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="w-5 h-5 cursor-pointer text-gray-400 hover:text-blue-500"
-            />
-          )}
-        </div>
-      </td>
-    </tr>
+      </div>
+    </>
   )
 }
