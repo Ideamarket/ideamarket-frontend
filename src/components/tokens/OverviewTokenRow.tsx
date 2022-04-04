@@ -41,7 +41,7 @@ import A from 'components/A'
 import { isETHAddress } from 'utils/addresses'
 import ListingContent from './ListingContent'
 import { getListingTypeFromIDTURL, LISTING_TYPE } from './utils/ListingUtils'
-import useOpinions from 'actions/useOpinions'
+import useOpinionsByIDTAddress from 'modules/ratings/hooks/useOpinionsByIDTAddress'
 
 type Props = {
   token: any
@@ -113,7 +113,7 @@ export default function TokenRow({
 
   const { loginByWallet } = useAuth()
 
-  const { avgRating, totalOpinions, totalComments } = useOpinions(
+  const { avgRating, totalOpinions, totalComments } = useOpinionsByIDTAddress(
     token?.address,
     tradeOrListSuccessToggle
   )

@@ -53,8 +53,7 @@ const ListingContent = ({
   return (
     <div
       className={classNames(
-        page === 'ListingPage' ? 'text-white' : 'text-black/[.5]',
-        'my-4'
+        page === 'ListingPage' ? 'text-white' : 'text-black/[.5]'
       )}
     >
       {/* Wikipedia listing content */}
@@ -84,17 +83,20 @@ const ListingContent = ({
           target="_blank"
           rel="noopener noreferrer"
         >
-          {/* Didn't use Next image because can't do wildcard domain allow in next config file */}
-          <img
-            className="rounded-xl mt-4 h-full md:h-56"
-            src={
-              urlMetaData && urlMetaData?.ogImage
-                ? urlMetaData.ogImage
-                : '/gray.svg'
-            }
-            alt=""
-            referrerPolicy="no-referrer"
-          />
+          {/* This wrapper div combined with object-cover keeps images in correct size */}
+          <div className="aspect-[16/9]">
+            {/* Didn't use Next image because can't do wildcard domain allow in next config file */}
+            <img
+              className="rounded-xl mt-4 h-full object-cover"
+              src={
+                urlMetaData && urlMetaData?.ogImage
+                  ? urlMetaData.ogImage
+                  : '/gray.svg'
+              }
+              alt=""
+              referrerPolicy="no-referrer"
+            />
+          </div>
           <div className="w-full my-4 text-sm text-left leading-5 whitespace-normal">
             {urlMetaData &&
               urlMetaData?.ogDescription &&

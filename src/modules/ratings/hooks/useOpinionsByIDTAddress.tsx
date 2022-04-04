@@ -4,10 +4,10 @@ import {
   getAvgRatingForIDT,
   getTotalNumberOfComments,
   getTotalNumberOfOpinions,
-} from 'services/OpinionService'
+} from '../services/OpinionService'
 
 /* Returns several data for opinions */
-export default function useOpinions(
+export default function useOpinionsByIDTAddress(
   idtAddress: string,
   refreshToggle?: boolean // Used to refresh supply whenever needed
 ) {

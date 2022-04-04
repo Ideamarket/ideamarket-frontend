@@ -1,5 +1,6 @@
 import getLatestOpinionsAboutAddress from 'actions/web3/getLatestOpinionsAboutAddress'
 import getOpinionsAboutAddress from 'actions/web3/getOpinionsAboutAddress'
+import getUsersOpinions from 'actions/web3/getUsersOpinions'
 
 /**
  * Get the average rating of all ratings onchain for this IDT
@@ -29,4 +30,21 @@ export const getTotalNumberOfComments = async (idtAddress: string) => {
     (opinion) => opinion?.comment?.length > 0
   )
   return opinionsWithComments?.length
+}
+
+/**
+ * Get users latest opinions (doesn't include duplicates from past)
+ */
+export const getUsersLatestOpinions = async (userAddress: string) => {
+  if (!userAddress || userAddress?.length <= 0) return []
+  const opinions = await getUsersOpinions(userAddress)
+  // Loop opinions. Each iteration add to temp object using address as keys. This works in getting latest opinions because last opinion is always the latest
+  const latestOpinions = {}
+  opinions?.forEach((opinion) => {
+    latestOpinions[opinion?.addy] = opinion
+  })
+
+  const finalResults = Object.values(latestOpinions)
+
+  return finalResults
 }
