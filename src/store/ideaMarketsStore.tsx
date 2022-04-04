@@ -24,6 +24,7 @@ import { useContractStore } from './contractStore'
 import { getOwnedListings } from 'actions/web2/getOwnedListings'
 import { getTrades } from 'actions/web2/getTrades'
 import { useWalletStore } from './walletStore'
+import getQuerySingleIDTByTokenAddress from './queries/getQuerySingleIDTByTokenAddress'
 
 const HTTP_GRAPHQL_ENDPOINT_L1 = L1_NETWORK.getSubgraphURL()
 const HTTP_GRAPHQL_ENDPOINT = NETWORK.getSubgraphURL()
@@ -62,6 +63,7 @@ export type IdeaToken = {
   address: string
   marketID: number
   marketName: string
+  market: any
   tokenID: number
   listingId: string
   name: string
@@ -208,6 +210,97 @@ const apiResponseToIdeaToken = (apiResponse) => {
     isL1: apiResponse.token.isL1,
     holder: apiResponse.token.holder,
   }
+}
+
+/**
+ * The goal of this is to create 1 IdeaToken format across entire frontend (even if subgraph returns different object formats for different queries)
+ * @param apiResponse -- Response from subgraph
+ * @returns object in form that should be consistent across entire frontend
+ */
+function subgraphResponseToIDT(apiResponse): IdeaToken {
+  const marketSpecifics = getMarketSpecificsByMarketName(
+    apiResponse?.market?.name
+  )
+  const url =
+    apiResponse?.market?.name === 'URL'
+      ? apiResponse?.name
+      : marketSpecifics?.getTokenURL(apiResponse?.name)
+
+  const ret = {
+    address: apiResponse.id,
+    market: apiResponse?.market,
+    tokenID: apiResponse.tokenID,
+    name: apiResponse.name,
+    url,
+    supply: apiResponse.supply
+      ? web3BNToFloatString(new BN(apiResponse.supply), bigNumberTenPow18, 2)
+      : undefined,
+    rawSupply: apiResponse.supply ? new BN(apiResponse.supply) : undefined,
+    holders: apiResponse.holders,
+    marketCap: apiResponse.marketCap
+      ? web3BNToFloatString(new BN(apiResponse.marketCap), bigNumberTenPow18, 2)
+      : undefined,
+    rawMarketCap: apiResponse.marketCap
+      ? new BN(apiResponse.marketCap)
+      : undefined,
+    rank: apiResponse.rank,
+    tokenOwner: apiResponse.tokenOwner ? apiResponse.tokenOwner : undefined,
+    daiInToken: apiResponse.daiInToken
+      ? web3BNToFloatString(
+          new BN(apiResponse.daiInToken),
+          bigNumberTenPow18,
+          2
+        )
+      : undefined,
+    rawDaiInToken: apiResponse.daiInToken
+      ? new BN(apiResponse.daiInToken)
+      : undefined,
+    invested: apiResponse.invested
+      ? web3BNToFloatString(new BN(apiResponse.invested), bigNumberTenPow18, 2)
+      : undefined,
+    rawInvested: apiResponse.invested
+      ? new BN(apiResponse.invested)
+      : undefined,
+    tokenInterestRedeemed: apiResponse.tokenInterestRedeemed
+      ? web3BNToFloatString(
+          new BN(apiResponse.tokenInterestRedeemed),
+          bigNumberTenPow18,
+          2
+        )
+      : undefined,
+    rawTokenInterestRedeemed: apiResponse.tokenInterestRedeemed
+      ? new BN(apiResponse.tokenInterestRedeemed)
+      : undefined,
+    latestPricePoint:
+      apiResponse.latestPricePoint &&
+      apiResponseToPricePoint(apiResponse.latestPricePoint),
+    earliestPricePoint:
+      apiResponse.earliestPricePoint &&
+      apiResponse.earliestPricePoint.length > 0 &&
+      apiResponseToPricePoint(apiResponse.earliestPricePoint[0]),
+    dayChange: apiResponse.dayChange
+      ? (parseFloat(apiResponse.dayChange) * 100).toFixed(2)
+      : undefined,
+    dayVolume: apiResponse.dayVolume
+      ? parseFloat(apiResponse.dayVolume).toFixed(2)
+      : undefined,
+    listedAt: apiResponse.listedAt,
+    lockedAmount: apiResponse.lockedAmount
+      ? web3BNToFloatString(
+          new BN(apiResponse.lockedAmount),
+          bigNumberTenPow18,
+          2
+        )
+      : undefined,
+    rawLockedAmount: apiResponse.lockedAmount
+      ? new BN(apiResponse.lockedAmount)
+      : undefined,
+    lockedPercentage: apiResponse.lockedPercentage
+      ? parseFloat(apiResponse.lockedPercentage).toFixed(2)
+      : '',
+  } as IdeaToken
+
+  return ret
 }
 
 const apiResponseToIdeaMarket = (apiResponse) => {
@@ -446,6 +539,22 @@ export async function querySingleToken(
     jwt,
   })
   return apiResponse ? newApiResponseToIdeaToken(apiResponse) : null
+}
+
+export async function querySingleIDTByTokenAddress(idtAddress: string) {
+  let subgraphResponse = null
+  try {
+    subgraphResponse = await request(
+      HTTP_GRAPHQL_ENDPOINT,
+      getQuerySingleIDTByTokenAddress(idtAddress)
+    )
+  } catch (error) {
+    console.error('getQuerySingleIDTByTokenAddress failed', error)
+  }
+
+  return subgraphResponse
+    ? subgraphResponseToIDT(subgraphResponse?.ideaTokens[0])
+    : null
 }
 
 export async function querySingleTokenByID(

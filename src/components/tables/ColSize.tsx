@@ -5,6 +5,7 @@ export enum TABLE_NAMES {
   HOME,
   ACCOUNT_HOLDINGS,
   ACCOUNT_TRADES,
+  RATINGS,
 }
 
 type Props = {
@@ -78,6 +79,21 @@ const ColSize = ({ columnData, tableName }: Props) => {
           return '10%'
         case 'date':
           return '9%'
+      }
+    } else if (tableName === TABLE_NAMES.RATINGS) {
+      switch (column.value) {
+        case 'name':
+          return '35%'
+        case 'userRating':
+          return '13%'
+        case 'avgRating':
+          return '13%'
+        case 'compositeRating':
+          return '13%'
+        case 'marketInterest':
+          return '13%'
+        case 'rateButton':
+          return '13%'
       }
     }
   }

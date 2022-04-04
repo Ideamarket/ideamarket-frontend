@@ -1,6 +1,6 @@
 import { flatten } from 'lodash'
 import classNames from 'classnames'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import { useInfiniteQuery } from 'react-query'
 import {
   OwnedTokenTableNew,
@@ -12,10 +12,19 @@ import {
   queryOwnedTokensMaybeMarket,
   queryMyTrades,
   useIdeaMarketsStore,
+  querySingleIDTByTokenAddress,
+  IdeaToken,
 } from 'store/ideaMarketsStore'
 import ModalService from 'components/modals/ModalService'
 import WalletFilters from './WalletFilters'
 import { useMarketStore } from 'store/markets'
+import RatingsTable from 'modules/ratings/components/RatingsTable'
+import {
+  getAvgRatingForIDT,
+  getUsersLatestOpinions,
+} from 'modules/ratings/services/OpinionService'
+import RateModal from 'components/trade/RateModal'
+import { GlobalContext } from 'lib/GlobalContext'
 
 const TOKENS_PER_PAGE = 10
 
@@ -43,14 +52,16 @@ export default function ProfileWallet({ userData }: Props) {
   const web3 = useWalletStore((state) => state)
   const address = useWalletStore((state) => state.address)
 
+  const { setOnWalletConnectedCallback } = useContext(GlobalContext)
+
   const [isVerifiedFilterActive, setIsVerifiedFilterActive] = useState(false)
   const [isStarredFilterActive, setIsStarredFilterActive] = useState(false)
   const [isLockedFilterActive, setIsLockedFilterActive] = useState(false)
   const [selectedMarkets, setSelectedMarkets] = useState(new Set([]))
   const [nameSearch, setNameSearch] = useState('')
 
-  const [table, setTable] = useState('holdings')
-  const [orderBy, setOrderBy] = useState('price')
+  const [table, setTable] = useState('ratings')
+  const [orderBy, setOrderBy] = useState('avgRating')
   const [orderDirection, setOrderDirection] = useState('desc')
 
   const watchingTokens = Object.keys(
@@ -61,6 +72,20 @@ export default function ProfileWallet({ userData }: Props) {
 
   const allMarkets = useMarketStore((state) => state.markets)
   const marketNames = allMarkets.map((m) => m?.market?.name)
+
+  const {
+    data: infiniteRatingsData,
+    isFetching: isRatingsDataLoading,
+    fetchNextPage: fetchMoreRatings,
+    refetch: refetchRatings,
+    hasNextPage: canFetchMoreRatings,
+  } = useInfiniteQuery(
+    ['ratings'],
+    ({ pageParam = 0 }) => ratingsQueryFunction(TOKENS_PER_PAGE, pageParam),
+    infiniteQueryConfig
+  )
+
+  const ratingPairs = flatten(infiniteRatingsData?.pages || [])
 
   const {
     data: infiniteOwnedData,
@@ -93,6 +118,7 @@ export default function ProfileWallet({ userData }: Props) {
   function refetch() {
     refetchOwned()
     refetchMyTrades()
+    refetchRatings()
   }
 
   useEffect(() => {
@@ -124,6 +150,34 @@ export default function ProfileWallet({ userData }: Props) {
     isLockedFilterActive,
     nameSearch,
   ])
+
+  async function ratingsQueryFunction(numTokens: number, skip: number = 0) {
+    const latestUserOpinions = await getUsersLatestOpinions(address)
+    // Add in the token here by doing subgraph call
+    const ratingsPairs = await Promise.all(
+      latestUserOpinions?.map(async (opinion: any) => {
+        const idt = await querySingleIDTByTokenAddress(opinion?.addy)
+        const avgRating = await getAvgRatingForIDT(opinion?.addy)
+        return { opinion: { ...opinion, avgRating }, idt }
+      })
+    )
+
+    if (orderBy === 'userRating') {
+      ratingsPairs?.sort((p1: any, p2: any) => {
+        return orderDirection === 'desc'
+          ? p2.opinion.rating - p1.opinion.rating
+          : p1.opinion.rating - p2.opinion.rating
+      })
+    } else if (orderBy === 'avgRating') {
+      ratingsPairs?.sort((p1: any, p2: any) => {
+        return orderDirection === 'desc'
+          ? p2.opinion.avgRating - p1.opinion.avgRating
+          : p1.opinion.avgRating - p2.opinion.avgRating
+      })
+    }
+
+    return ratingsPairs || []
+  }
 
   async function ownedQueryFunction(numTokens: number, skip: number = 0) {
     if (!allMarkets || allMarkets?.length <= 0) return []
@@ -188,10 +242,36 @@ export default function ProfileWallet({ userData }: Props) {
     setSelectedMarkets(markets)
   }
 
+  const onRateClicked = (token: IdeaToken, urlMetaData: any) => {
+    if (!useWalletStore.getState().web3) {
+      setOnWalletConnectedCallback(() => () => {
+        ModalService.open(RateModal, { ideaToken: token, urlMetaData }, refetch)
+      })
+      ModalService.open(WalletModal)
+    } else {
+      ModalService.open(RateModal, { ideaToken: token, urlMetaData }, refetch)
+    }
+  }
+
   return (
     <div className="w-full h-full mt-8 pb-20">
       <div className="flex flex-col justify-between sm:flex-row mb-0 md:mb-4">
         <div className="flex order-1 md:order-none">
+          <div
+            className={classNames(
+              table === 'ratings'
+                ? 'text-white'
+                : 'text-brand-gray text-opacity-60 cursor-pointer',
+              'text-lg font-semibold flex flex-col justify-end mb-2.5 pr-6 ml-auto'
+            )}
+            onClick={() => {
+              setTable('ratings')
+              setOrderBy('userRating')
+              setOrderDirection('desc')
+            }}
+          >
+            Ratings
+          </div>
           <div
             className={classNames(
               table === 'holdings'
@@ -252,6 +332,22 @@ export default function ProfileWallet({ userData }: Props) {
               </button>
             </div>
           )}
+          {table === 'ratings' &&
+            !selectedMarkets?.has('None') &&
+            web3 !== undefined && (
+              <RatingsTable
+                rawPairs={ratingPairs}
+                isPairsDataLoading={isRatingsDataLoading}
+                refetch={refetch}
+                canFetchMore={canFetchMoreRatings}
+                orderDirection={orderDirection}
+                orderBy={orderBy}
+                fetchMore={fetchMoreRatings}
+                headerClicked={headerClicked}
+                onRateClicked={onRateClicked}
+              />
+            )}
+
           {table === 'holdings' &&
             !selectedMarkets?.has('None') &&
             web3 !== undefined && (

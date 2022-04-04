@@ -14,7 +14,7 @@ import {
 } from 'utils'
 import rateIDT from 'actions/web3/rateIDT'
 import TxPending from './TxPending'
-import useOpinions from 'actions/useOpinions'
+import useOpinionsByIDTAddress from 'modules/ratings/hooks/useOpinionsByIDTAddress'
 
 const CustomSlider = Slider.createSliderWithTooltip(Slider)
 
@@ -46,7 +46,9 @@ export default function RateModal({
   const [inputRating, setInputRating] = useState(50)
   const [inputComment, setInputComment] = useState('')
 
-  const { avgRating, totalOpinions } = useOpinions(ideaToken?.address)
+  const { avgRating, totalOpinions } = useOpinionsByIDTAddress(
+    ideaToken?.address
+  )
 
   function onTradeComplete(
     isSuccess: boolean,
