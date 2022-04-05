@@ -114,7 +114,7 @@ export default function RatingsRow({
               {displayName && (
                 <div>
                   <a
-                    href={`/i/${ideaToken?.listingId}`}
+                    href={`/i/${ideaToken?.address}`}
                     onClick={(event) => event.stopPropagation()}
                     className="text-xs md:text-base font-bold hover:underline"
                   >

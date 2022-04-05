@@ -71,20 +71,22 @@ const ListingContent = ({
 
       {/* Tweet listing content */}
       {!showMetaData && listingType === LISTING_TYPE.TWEET && (
-        <blockquote className="twitter-tweet">
-          <a href={ideaToken?.url}>Loading tweet...</a>
-        </blockquote>
+        <div className="w-full">
+          <blockquote className="twitter-tweet">
+            <a href={ideaToken?.url}>Loading tweet...</a>
+          </blockquote>
+        </div>
       )}
 
       {showMetaData && (
         <a
-          href={`/i/${ideaToken?.listingId}`}
+          href={`/i/${ideaToken?.address}`}
           className="px-4 md:px-0 cursor-pointer"
           target="_blank"
           rel="noopener noreferrer"
         >
           {/* This wrapper div combined with object-cover keeps images in correct size */}
-          <div className="aspect-[16/9]">
+          <div className="aspect-[16/9] w-56">
             {/* Didn't use Next image because can't do wildcard domain allow in next config file */}
             <img
               className="rounded-xl mt-4 h-full object-cover"
