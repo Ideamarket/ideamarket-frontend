@@ -53,7 +53,8 @@ const ListingContent = ({
   return (
     <div
       className={classNames(
-        page === 'ListingPage' ? 'text-white' : 'text-black/[.5]'
+        page === 'ListingPage' ? 'text-black' : 'text-black/[.5]',
+        'w-full'
       )}
     >
       {/* Wikipedia listing content */}
@@ -71,7 +72,7 @@ const ListingContent = ({
 
       {/* Tweet listing content */}
       {!showMetaData && listingType === LISTING_TYPE.TWEET && (
-        <div className="w-full">
+        <div className="w-full -mt-3">
           <blockquote className="twitter-tweet">
             <a href={ideaToken?.url}>Loading tweet...</a>
           </blockquote>

@@ -1,4 +1,4 @@
-import { ChevronDownIcon, StarIcon } from '@heroicons/react/solid'
+import { StarIcon } from '@heroicons/react/solid'
 import {
   SparklesIcon,
   FireIcon,
@@ -6,20 +6,13 @@ import {
   QuestionMarkCircleIcon,
   GlobeAltIcon,
 } from '@heroicons/react/outline'
-import {
-  getSortOptionDisplayNameByID,
-  SortOptions,
-} from 'components/tokens/utils/OverviewUtils'
-import { useRef, useState } from 'react'
-import useOnClickOutside from 'utils/useOnClickOutside'
+// import useOnClickOutside from 'utils/useOnClickOutside'
 import classNames from 'classnames'
-import DropdownButtons from 'components/dropdowns/DropdownButtons'
 import SelectableButton, {
   JOINED_TYPES,
 } from 'components/buttons/SelectableButton'
-import { getIconVersion } from 'utils/icons'
+// import { getIconVersion } from 'utils/icons'
 import useThemeMode from 'components/useThemeMode'
-import { GhostIconBlack } from 'assets'
 import { OverviewSearchbar } from 'components/tokens/OverviewSearchbar'
 import { IMarketSpecifics } from 'store/markets'
 
@@ -61,14 +54,15 @@ const OverviewFiltersMobile = ({
   toggleMarket,
 }: Props) => {
   const { resolvedTheme } = useThemeMode()
-  const [isSortingDropdownOpen, setIsSortingDropdownOpen] = useState(false)
-  const ref = useRef()
-  useOnClickOutside(ref, () => setIsSortingDropdownOpen(false))
+  // const [isSortingDropdownOpen, setIsSortingDropdownOpen] = useState(false)
+  // const ref = useRef()
+  // useOnClickOutside(ref, () => setIsSortingDropdownOpen(false))
 
   /**
    * @param sortId -- id defined on frontend for sorting a certain way
    * @returns icon that is displayed for this specific sortId
    */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getSortByIcon = (filterId: number) => {
     switch (filterId) {
       case 1:
@@ -88,7 +82,7 @@ const OverviewFiltersMobile = ({
     <div className="md:hidden bg-white dark:bg-gray-700 rounded-t-xl">
       <div className="p-3 border-b-4">
         <div className="flex">
-          <div
+          {/* <div
             onClick={() => setIsSortingDropdownOpen(!isSortingDropdownOpen)}
             className="relative w-max flex items-center px-2 py-1 border rounded-l-md"
           >
@@ -111,9 +105,9 @@ const OverviewFiltersMobile = ({
                 toggleOption={toggleSortOption}
               />
             )}
-          </div>
+          </div> */}
 
-          <SelectableButton
+          {/* <SelectableButton
             onClick={setIsVerifiedFilterActive}
             isSelected={isVerifiedFilterActive}
             label={getIconVersion(
@@ -123,21 +117,13 @@ const OverviewFiltersMobile = ({
             )}
             joined={JOINED_TYPES.NONE}
             className="flex-grow" // Makes width grow to fit space
-          />
+          /> */}
 
           <SelectableButton
             onClick={setIsStarredFilterActive}
             isSelected={isStarredFilterActive}
             label={<StarIcon className="w-5 h-5" />}
             joined={JOINED_TYPES.NONE}
-            className="flex-grow"
-          />
-
-          <SelectableButton
-            onClick={setIsGhostOnlyActive}
-            isSelected={isGhostOnlyActive}
-            label={<GhostIconBlack className="w-6 h-6" />}
-            joined={JOINED_TYPES.L}
             className="flex-grow"
           />
         </div>

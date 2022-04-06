@@ -51,7 +51,7 @@ const SelectableButton = ({
           'text-brand-blue dark:text-white bg-blue-100 dark:bg-very-dark-blue':
             isSelected,
         },
-        { 'text-brand-black dark:text-gray-50 border': !isSelected }
+        { 'text-black dark:text-gray-50 border': !isSelected }
       )}
       onClick={() => {
         onClick(!isSelected)

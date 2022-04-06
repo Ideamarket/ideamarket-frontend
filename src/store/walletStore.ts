@@ -37,6 +37,7 @@ export async function setWeb3(web3, wallet) {
     web3.currentProvider.on('accountsChanged', handleWeb3Change)
   }
 
+  // Use ETH node provider from wallet that is free to init contracts
   initContractsFromWeb3(web3)
 
   const chainID = await web3.eth.getChainId()

@@ -197,6 +197,7 @@ const Home = ({ urlMarkets }: Props) => {
     onMarketChanged,
     tradeOrListSuccessToggle,
     setSelectedCategories,
+    setIsStarredFilterActive,
   }
   return (
     <>

@@ -194,7 +194,7 @@ export default function RatingsRow({
                   tokenName: ideaToken?.name,
                 })
               }}
-              className="flex justify-center items-center w-20 h-10 text-base font-medium text-white rounded-lg bg-black dark:bg-gray-600 dark:text-gray-300 tracking-tightest-2"
+              className="flex justify-center items-center w-20 h-10 text-base font-medium text-white rounded-lg bg-black/[.8] dark:bg-gray-600 dark:text-gray-300 tracking-tightest-2"
             >
               <span>Rate</span>
             </button>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useContractStore } from 'store/contractStore'
 import { useWalletStore } from 'store/walletStore'
 import {
   getAvgRatingForIDT,
@@ -11,6 +12,8 @@ export default function useOpinionsByIDTAddress(
   idtAddress: string,
   refreshToggle?: boolean // Used to refresh supply whenever needed
 ) {
+  const opinionBaseContract = useContractStore.getState().opinionBase
+
   const [isLoading, setIsLoading] = useState(true)
   const [avgRating, setAvgRating] = useState(0)
   const [totalOpinions, setTotalOpinions] = useState(0)
@@ -38,12 +41,19 @@ export default function useOpinionsByIDTAddress(
     }
 
     setIsLoading(true)
-    run()
+    if (idtAddress && opinionBaseContract) run()
 
     return () => {
       isCancelled = true
     }
-  }, [idtAddress, web3, refreshToggle, walletAddress, chainID])
+  }, [
+    idtAddress,
+    web3,
+    refreshToggle,
+    walletAddress,
+    chainID,
+    opinionBaseContract,
+  ])
 
   return { avgRating, totalOpinions, totalComments, isLoading }
 }

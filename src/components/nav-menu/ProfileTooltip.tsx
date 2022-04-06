@@ -12,6 +12,7 @@ import { GlobalContext } from 'lib/GlobalContext'
 import { BsFillBellFill } from 'react-icons/bs'
 import SpearkIcon from '../../assets/speaker.svg'
 import A from 'components/A'
+import { clearContracts } from 'store/contractStore'
 
 export const ProfileTooltip = () => {
   const { user, jwtToken } = useContext(GlobalContext)
@@ -29,6 +30,7 @@ export const ProfileTooltip = () => {
     await disconnectWalletConnector(connector)
 
     try {
+      clearContracts()
       await deactivate()
     } catch (ex) {
       console.log(ex)

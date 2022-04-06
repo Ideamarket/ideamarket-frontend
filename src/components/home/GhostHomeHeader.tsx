@@ -405,7 +405,7 @@ const HomeHeader = ({
             onFocus={onURLInputClicked}
             onChange={onURLTyped}
             value={urlInput}
-            placeholder="Paste a URL here to add a listing..."
+            placeholder="Add a listing here..."
           />
         </div>
         {showListingCards && (

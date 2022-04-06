@@ -42,6 +42,7 @@ type Props = {
   onRateClicked: (idt: IdeaToken, urlMetaData: any) => void
   onMarketChanged: (set: Set<string>) => void
   tradeOrListSuccessToggle: boolean
+  setIsStarredFilterActive: (isActive: boolean) => void
 }
 
 export default function Table({
@@ -61,6 +62,7 @@ export default function Table({
   onRateClicked,
   onMarketChanged,
   tradeOrListSuccessToggle,
+  setIsStarredFilterActive,
 }: Props) {
   const TOKENS_PER_PAGE = 10
 
@@ -251,8 +253,10 @@ export default function Table({
                     orderDirection={orderDirection}
                     columnData={columnData}
                     selectedMarkets={selectedMarkets}
+                    isStarredFilterActive={isStarredFilterActive}
                     columnClicked={columnClicked}
                     onMarketChanged={onMarketChanged}
+                    setIsStarredFilterActive={setIsStarredFilterActive}
                   />
                 </tr>
               </thead>

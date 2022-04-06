@@ -17,9 +17,8 @@ export default function WatchingStar({
 }) {
   const { mixpanel } = useMixPanel()
 
-  const watching = useIdeaMarketsStore(
-    (state) => state.watching[token.listingId]
-  )
+  // Notice how we are using tokenID here to track "Starred" tokens
+  const watching = useIdeaMarketsStore((state) => state.watching[token.tokenID])
 
   function onClick(e) {
     e.stopPropagation()
