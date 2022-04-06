@@ -42,6 +42,7 @@ import { isETHAddress } from 'utils/addresses'
 import ListingContent from './ListingContent'
 import { getListingTypeFromIDTURL, LISTING_TYPE } from './utils/ListingUtils'
 import useOpinionsByIDTAddress from 'modules/ratings/hooks/useOpinionsByIDTAddress'
+import { useRouter } from 'next/router'
 
 type Props = {
   token: any
@@ -70,6 +71,8 @@ export default function TokenRow({
 }: Props) {
   const { mixpanel } = useMixPanel()
   const marketSpecifics = getMarketSpecificsByMarketName(market.name)
+
+  const router = useRouter()
 
   const { jwtToken, setOnWalletConnectedCallback } = useContext(GlobalContext)
 
@@ -219,6 +222,9 @@ export default function TokenRow({
     <tr
       ref={lastElementRef}
       className="relative h-28 cursor-pointer md:table-row hover:bg-black/[.02] dark:hover:bg-gray-600"
+      onClick={() => {
+        router.push(`/i/${token?.address}`)
+      }}
     >
       {/* Icon and Name */}
       <td
@@ -283,7 +289,7 @@ export default function TokenRow({
                 {displayName && (
                   <div>
                     <a
-                      href={`/i/${token?.listingId}`}
+                      href={`/i/${token?.address}`}
                       onClick={(event) => event.stopPropagation()}
                       className="text-xs md:text-base font-bold hover:underline"
                     >

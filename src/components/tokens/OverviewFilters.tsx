@@ -12,16 +12,14 @@ import React, { useEffect, useRef, useState } from 'react'
 import { OverviewSearchbar } from './OverviewSearchbar'
 import {
   // CheckboxFilters,
-  SortOptions,
+  // SortOptions,
   // toggleColumnHelper,
   toggleMarketHelper,
 } from './utils/OverviewUtils'
-import useThemeMode from 'components/useThemeMode'
 import DropdownButtons from 'components/dropdowns/DropdownButtons'
 import DropdownCheckbox from 'components/dropdowns/DropdownCheckbox'
 import IdeaverifyIconBlue from '../../assets/IdeaverifyIconBlue.svg'
-import { getIconVersion } from 'utils/icons'
-import { GhostIconBlack } from 'assets'
+// import { getIconVersion } from 'utils/icons'
 import { useMixPanel } from 'utils/mixPanel'
 import { useQuery } from 'react-query'
 import { getCategories } from 'actions/web2/getCategories'
@@ -39,6 +37,7 @@ type DropdownButtonProps = {
 }
 
 // filters = options to appear in the dropdown
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const DropdownButton = ({
   filters,
   name,
@@ -160,7 +159,6 @@ export const OverviewFilters = ({
   setSelectedCategories,
 }: OverviewFiltersProps) => {
   const { mixpanel } = useMixPanel()
-  const { resolvedTheme } = useThemeMode()
 
   const toggleMarket = (marketName: string) => {
     let newSet = null
@@ -232,7 +230,7 @@ export const OverviewFilters = ({
           <OverviewSearchbar onNameSearchChanged={onNameSearchChanged} />
         </div>
 
-        <DropdownButton
+        {/* <DropdownButton
           filters={Object.values(SortOptions)}
           name={
             Object.values(SortOptions).find(
@@ -243,9 +241,9 @@ export const OverviewFilters = ({
           toggleOption={onFilterChanged}
           dropdownType="buttons"
           selectedFilterId={selectedFilterId}
-        />
+        /> */}
 
-        <SelectableButton
+        {/* <SelectableButton
           onClick={setIsVerifiedFilterActive}
           isSelected={isVerifiedFilterActive}
           label={getIconVersion(
@@ -253,15 +251,9 @@ export const OverviewFilters = ({
             resolvedTheme,
             isVerifiedFilterActive
           )}
-        />
+        /> */}
 
-        <SelectableButton
-          onClick={setIsStarredFilterActive}
-          isSelected={isStarredFilterActive}
-          label={<StarIcon className="w-5 h-5" />}
-        />
-
-        <SelectableButton
+        {/* <SelectableButton
           className="text-sm whitespace-nowrap"
           onClick={setIsGhostOnlyActive}
           isSelected={isGhostOnlyActive}
@@ -273,7 +265,7 @@ export const OverviewFilters = ({
               )}
             />
           }
-        />
+        /> */}
 
         {/* <DropdownButton
           filters={CheckboxFilters.COLUMNS.values}

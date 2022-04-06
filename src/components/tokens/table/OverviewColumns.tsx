@@ -20,14 +20,18 @@ import { GlobeAltIcon } from '@heroicons/react/outline'
 import { SortAscendingIcon, SortDescendingIcon } from '@heroicons/react/solid'
 import useThemeMode from 'components/useThemeMode'
 import { useMixPanel } from 'utils/mixPanel'
+import { StarIcon } from '@heroicons/react/solid'
+import SelectableButton from 'components/buttons/SelectableButton'
 
 type Props = {
   currentColumn: string
   orderDirection: string
   columnData: Array<any>
   selectedMarkets: Set<string>
+  isStarredFilterActive: boolean
   columnClicked: (column: string) => void
   onMarketChanged: (set: Set<string>) => void
+  setIsStarredFilterActive: (isActive: boolean) => void
 }
 
 function IncomeColumn() {
@@ -58,8 +62,10 @@ export const OverviewColumns = ({
   orderDirection,
   columnData,
   selectedMarkets,
+  isStarredFilterActive,
   columnClicked,
   onMarketChanged,
+  setIsStarredFilterActive,
 }: Props) => {
   const { mixpanel } = useMixPanel()
 
@@ -137,9 +143,18 @@ export const OverviewColumns = ({
       case 'name':
         return (
           <div className="flex items-center space-x-2">
+            <div className="-ml-2">
+              <SelectableButton
+                onClick={setIsStarredFilterActive}
+                isSelected={isStarredFilterActive}
+                label={<StarIcon className="w-5 h-5" />}
+                className="w-9 h-9"
+              />
+            </div>
+
             <button
               className={classNames(
-                'flex justify-center items-center md:px-3 p-3 md:rounded-md text-sm font-semibold',
+                'flex justify-center items-center h-9 md:px-3 md:rounded-md text-sm font-semibold',
                 {
                   'text-brand-blue dark:text-white bg-blue-100 dark:bg-very-dark-blue':
                     isURLSelected,
@@ -158,7 +173,7 @@ export const OverviewColumns = ({
             </button>
             <button
               className={classNames(
-                'flex justify-center items-center md:px-3 p-3 md:rounded-md text-sm font-semibold',
+                'flex justify-center items-center h-9 md:px-3 md:rounded-md text-sm font-semibold',
                 {
                   'text-brand-blue dark:text-white bg-blue-100 dark:bg-very-dark-blue':
                     isPeopleSelected,
