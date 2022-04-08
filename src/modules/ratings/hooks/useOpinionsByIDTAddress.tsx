@@ -3,7 +3,7 @@ import { useContractStore } from 'store/contractStore'
 import { useWalletStore } from 'store/walletStore'
 import {
   getAvgRatingForIDT,
-  getTotalNumberOfComments,
+  getTotalNumberOfLatestComments,
   getTotalNumberOfOpinions,
 } from '../services/OpinionService'
 
@@ -31,7 +31,7 @@ export default function useOpinionsByIDTAddress(
     async function run() {
       const avgRatingResult = await getAvgRatingForIDT(idtAddress)
       const totalOpinionsResult = await getTotalNumberOfOpinions(idtAddress)
-      const totalCommentsResult = await getTotalNumberOfComments(idtAddress)
+      const totalCommentsResult = await getTotalNumberOfLatestComments(idtAddress)
       if (!isCancelled) {
         setAvgRating(avgRatingResult as any)
         setTotalOpinions(totalOpinionsResult)

@@ -7,6 +7,7 @@ import { useContractStore } from 'store/contractStore'
 export default async function getLatestOpinionsAboutAddress(
   idtAddress: string
 ) {
+  if (!idtAddress) return []
   const opinionBaseContract = useContractStore.getState().opinionBase
   return await opinionBaseContract.methods
     .getLatestOpinionsAboutAddress(idtAddress)

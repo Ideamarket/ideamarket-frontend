@@ -22,10 +22,11 @@ export const getTotalNumberOfOpinions = async (idtAddress: string) => {
 }
 
 /**
- * Comments are optional, so not all opinions will have one
+ * Comments are optional, so not all opinions will have one.
+ * This retrieves only the LATEST comments. No duplicates.
  */
-export const getTotalNumberOfComments = async (idtAddress: string) => {
-  const opinions = await getOpinionsAboutAddress(idtAddress)
+export const getTotalNumberOfLatestComments = async (idtAddress: string) => {
+  const opinions = await getLatestOpinionsAboutAddress(idtAddress)
   const opinionsWithComments = opinions.filter(
     (opinion) => opinion?.comment?.length > 0
   )

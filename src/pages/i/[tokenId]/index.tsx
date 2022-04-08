@@ -1,5 +1,5 @@
-import { useQuery } from 'react-query'
-import { DefaultLayout, WalletModal, WatchingStar } from 'components'
+import { useQuery, useInfiniteQuery } from 'react-query'
+import { A, DefaultLayout, WalletModal, WatchingStar } from 'components'
 import {
   IdeaToken,
   queryMarket,
@@ -15,6 +15,7 @@ import {
   formatNumberWithCommasAsThousandsSerperator,
   web3BNToFloatString,
 } from 'utils'
+import { StarIcon } from '@heroicons/react/solid'
 import { ChatIcon, ShareIcon } from '@heroicons/react/outline'
 import { useBalance } from 'actions'
 import { useWeb3React } from '@web3-react/core'
@@ -24,12 +25,21 @@ import { GlobalContext } from 'lib/GlobalContext'
 // import { getTimeDifferenceIndays } from 'lib/utils/dateUtil'
 import { getMarketSpecificsByMarketName } from 'store/markets'
 import ListingContent from 'components/tokens/ListingContent'
+import { OverviewSearchbar } from 'components/tokens/OverviewSearchbar'
 import RateModal from 'components/trade/RateModal'
 import {
   getListingTypeFromIDTURL,
   LISTING_TYPE,
 } from 'components/tokens/utils/ListingUtils'
 import useOpinionsByIDTAddress from 'modules/ratings/hooks/useOpinionsByIDTAddress'
+import copy from 'copy-to-clipboard'
+import { getURL } from 'utils/seo-constants'
+import toast from 'react-hot-toast'
+import SelectableButton from 'components/buttons/SelectableButton'
+import getLatestOpinionsAboutAddress from 'actions/web3/getLatestOpinionsAboutAddress'
+import { flatten } from 'lodash'
+import { convertAccountName } from 'lib/utils/stringUtil'
+import OpinionTable from 'modules/ratings/components/ListingPage/OpinionTable'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const DetailsSkeleton = () => (
@@ -37,6 +47,24 @@ const DetailsSkeleton = () => (
     <span className="invisible">A</span>
   </div>
 )
+
+const TOKENS_PER_PAGE = 10
+
+const infiniteQueryConfig = {
+  getNextPageParam: (lastGroup, allGroups) => {
+    const morePagesExist = lastGroup?.length === TOKENS_PER_PAGE
+
+    if (!morePagesExist) {
+      return false
+    }
+
+    return allGroups.length * TOKENS_PER_PAGE
+  },
+  refetchOnMount: false,
+  refetchOnWindowFocus: false,
+  enabled: true,  // This apparently decides if data is loaded on page load or not
+  keepPreviousData: true,
+}
 
 const TokenDetails = ({ rawTokenId }: { rawTokenId: string }) => {
   const { account } = useWeb3React()
@@ -70,8 +98,30 @@ const TokenDetails = ({ rawTokenId }: { rawTokenId: string }) => {
     () => queryMarket(marketName)
   )
 
+  async function opinionsQueryFunction(numTokens: number, skip: number = 0) {
+    const latestOpinions = await getLatestOpinionsAboutAddress(token?.address)
+    return latestOpinions || []
+  }
+
+  const {
+    data: infiniteOpinionsData,
+    isFetching: isOpinionsDataLoading,
+    fetchNextPage: fetchMoreOpinions,
+    refetch: refetchOpinions,
+    hasNextPage: canFetchMoreOpinions,
+  } = useInfiniteQuery(
+    ['opinions', token],
+    ({ pageParam = 0 }) => opinionsQueryFunction(TOKENS_PER_PAGE, pageParam),
+    infiniteQueryConfig
+  )
+
+  const opinionPairs = flatten(infiniteOpinionsData?.pages || [])
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [tradeToggle, setTradeToggle] = useState(false) // Need toggle to reload balances after trade
+
+  const [isStarredFilterActive, setIsStarredFilterActive] = useState(false)
+  const [nameSearch, setNameSearch] = useState('')
 
   const [, ideaTokenBalanceBN] = useBalance(
     token?.address,
@@ -202,6 +252,12 @@ const TokenDetails = ({ rawTokenId }: { rawTokenId: string }) => {
   //   ModalService.open(VerifyModal, { market, token }, onClose)
   // }
 
+  const copyListingPageURL = () => {
+    const url = `${getURL()}/i/${token?.address}`
+    copy(url)
+    toast.success('Copied listing page URL')
+  }
+
   const onRateClicked = (token: IdeaToken, urlMetaData: any) => {
     if (!useWalletStore.getState().web3) {
       setOnWalletConnectedCallback(() => () => {
@@ -223,12 +279,13 @@ const TokenDetails = ({ rawTokenId }: { rawTokenId: string }) => {
         rawTokenName={rawTokenId}
       />
 
-      <div className="mt-10 mx-10">
+      <div className="mt-10 mx-5 md:mx-10">
         <div className="text-black/[.5]">Market / Listings</div>
 
-        <div className="flex items-start w-full mt-4">
+        {/* Desktop -- top section of listing page */}
+        <div className="hidden lg:flex items-start w-full mt-4">
           <div className="w-1/3">
-            <div className="w-48 rounded-lg border flex flex-col divide-y">
+            <div className="w-48 rounded-lg border-2 flex flex-col divide-y-2">
               {/* <div className="px-4 py-2 flex items-center">
                 <span className="w-1/2 text-xs">Composite Rating</span>
                 <span className="font-bold">97</span>
@@ -322,29 +379,253 @@ const TokenDetails = ({ rawTokenId }: { rawTokenId: string }) => {
                 e.stopPropagation()
                 onRateClicked(token, urlMetaData)
               }}
-              className="flex justify-center items-center w-40 h-10 text-base font-medium text-white rounded-lg bg-black/[.8] dark:bg-gray-600 dark:text-gray-300 tracking-tightest-2"
+              className="flex justify-center items-center w-48 h-10 text-base font-medium text-white rounded-lg bg-black/[.8] dark:bg-gray-600 dark:text-gray-300 tracking-tightest-2"
             >
               <span>Rate</span>
             </button>
 
-            <div className="flex justify-between items-center w-40 mt-2">
+            <div className="flex justify-between items-center space-x-2 w-48 mt-2">
               <button
                 onClick={(e) => {
                   e.stopPropagation()
-                  onRateClicked(token, urlMetaData)
+                  copyListingPageURL()
                 }}
-                className="flex justify-center items-center w-28 h-10 border text-black text-base font-medium text-white rounded-lg hover:bg-blue-500 hover:text-white dark:text-gray-300 tracking-tightest-2"
+                className="flex justify-center items-center w-[80%] h-10 border-2 text-black text-base font-medium text-white rounded-lg hover:bg-blue-500 hover:text-white dark:text-gray-300 tracking-tightest-2"
               >
                 <ShareIcon className="w-4 mr-2" />
                 <span className="mb-0.5">Share</span>
               </button>
 
-              <div className="flex justify-center items-center w-10 h-10 border rounded-lg">
+              <div className="flex justify-center items-center w-10 h-10 border-2 rounded-lg">
                 {token && <WatchingStar token={token} />}
               </div>
             </div>
           </div>
         </div>
+
+        {/* Tablet -- top section of listing page */}
+        <div className="hidden md:flex lg:hidden items-start w-full mt-4">
+          <div className="w-2/3 flex items-start">
+            {listingType === LISTING_TYPE.TWEET ? (
+              <ListingContent
+                ideaToken={token}
+                page="ListingPage"
+                urlMetaData={urlMetaData}
+                useMetaData={false}
+              />
+            ) : (
+              <>
+                {/* This wrapper div combined with object-cover keeps images in correct size */}
+                <div className="aspect-[16/9] w-36">
+                  {/* Didn't use Next image because can't do wildcard domain allow in next config file */}
+                  <img
+                    className="rounded-xl h-full object-cover"
+                    src={
+                      urlMetaData && urlMetaData?.ogImage
+                        ? urlMetaData.ogImage
+                        : '/gray.svg'
+                    }
+                    alt=""
+                    referrerPolicy="no-referrer"
+                  />
+                </div>
+
+                <div className="ml-4 text-base font-medium leading-5 truncate z-30">
+                  <div>
+                    <a
+                      href={`/i/${token?.address}`}
+                      onClick={(event) => event.stopPropagation()}
+                      className="text-xs md:text-base font-bold hover:underline"
+                    >
+                      {displayName?.substr(
+                        0,
+                        displayName?.length > 50 ? 50 : displayName?.length
+                      ) + (displayName?.length > 50 ? '...' : '')}
+                    </a>
+                  </div>
+                  <a
+                    href={token?.url}
+                    className="text-xs md:text-sm text-brand-blue hover:underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {token?.url.substr(
+                      0,
+                      token?.url.length > 50 ? 50 : token?.url.length
+                    ) + (token?.url.length > 50 ? '...' : '')}
+                  </a>
+                  <div className="w-96 mt-2 text-xs text-left text-black/[.5] leading-4 whitespace-normal">
+                    {urlMetaData &&
+                      urlMetaData?.ogDescription &&
+                      urlMetaData?.ogDescription.substr(
+                        0,
+                        urlMetaData?.ogDescription.length > 160
+                          ? 160
+                          : urlMetaData?.ogDescription.length
+                      ) +
+                        (urlMetaData?.ogDescription.length > 160 ? '...' : '')}
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+
+          <div className="w-1/3 flex flex-col items-end">
+            <div className="w-48 mb-2 rounded-lg border-2 flex flex-col divide-y-2">
+              {/* <div className="px-4 py-2 flex items-center">
+                <span className="w-1/2 text-xs">Composite Rating</span>
+                <span className="font-bold">97</span>
+              </div> */}
+              <div className="px-4 py-2 flex items-center">
+                <span className="w-1/2 text-xs">Average Rating</span>
+                <span className="font-bold">{avgRating}</span>
+              </div>
+              <div className="px-4 py-2 flex items-center">
+                <span className="w-1/2 text-xs">Comments</span>
+                <span className="flex items-center font-bold">
+                  <ChatIcon className="w-4 mr-1 mt-0.5" />
+                  {totalComments}
+                </span>
+              </div>
+              {/* <div className="px-4 py-2 flex items-center">
+                <span className="w-1/2 text-xs">Market Interest</span>
+                <span className="font-bold">$42,693</span>
+              </div> */}
+            </div>
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                onRateClicked(token, urlMetaData)
+              }}
+              className="flex justify-center items-center w-48 h-10 text-base font-medium text-white rounded-lg bg-black/[.8] dark:bg-gray-600 dark:text-gray-300 tracking-tightest-2"
+            >
+              <span>Rate</span>
+            </button>
+
+            <div className="flex justify-between items-center space-x-2 w-48 mt-2">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  copyListingPageURL()
+                }}
+                className="flex justify-center items-center w-[80%] h-10 border-2 text-black text-base font-medium text-white rounded-lg hover:bg-blue-500 hover:text-white dark:text-gray-300 tracking-tightest-2"
+              >
+                <ShareIcon className="w-4 mr-2" />
+                <span className="mb-0.5">Share</span>
+              </button>
+
+              <div className="flex justify-center items-center w-10 h-10 border-2 rounded-lg">
+                {token && <WatchingStar token={token} />}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile -- top section of listing page */}
+        <div className="md:hidden flex flex-col justify-center w-full mt-4">
+          <div>
+            {listingType === LISTING_TYPE.TWEET ? (
+              <ListingContent
+                ideaToken={token}
+                page="ListingPage"
+                urlMetaData={urlMetaData}
+                useMetaData={false}
+              />
+            ) : (
+              <>
+                {/* This wrapper div combined with object-cover keeps images in correct size */}
+                <div className="aspect-[16/9] w-36">
+                  {/* Didn't use Next image because can't do wildcard domain allow in next config file */}
+                  <img
+                    className="rounded-xl h-full object-cover"
+                    src={
+                      urlMetaData && urlMetaData?.ogImage
+                        ? urlMetaData.ogImage
+                        : '/gray.svg'
+                    }
+                    alt=""
+                    referrerPolicy="no-referrer"
+                  />
+                </div>
+
+                <div className="ml-4 text-base font-medium leading-5 truncate z-30">
+                  <div>
+                    <a
+                      href={`/i/${token?.address}`}
+                      onClick={(event) => event.stopPropagation()}
+                      className="text-xs md:text-base font-bold hover:underline"
+                    >
+                      {displayName?.substr(
+                        0,
+                        displayName?.length > 50 ? 50 : displayName?.length
+                      ) + (displayName?.length > 50 ? '...' : '')}
+                    </a>
+                  </div>
+                  <a
+                    href={token?.url}
+                    className="text-xs md:text-sm text-brand-blue hover:underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {token?.url.substr(
+                      0,
+                      token?.url.length > 50 ? 50 : token?.url.length
+                    ) + (token?.url.length > 50 ? '...' : '')}
+                  </a>
+                  <div className="w-96 mt-2 text-xs text-left text-black/[.5] leading-4 whitespace-normal">
+                    {urlMetaData &&
+                      urlMetaData?.ogDescription &&
+                      urlMetaData?.ogDescription.substr(
+                        0,
+                        urlMetaData?.ogDescription.length > 160
+                          ? 160
+                          : urlMetaData?.ogDescription.length
+                      ) +
+                        (urlMetaData?.ogDescription.length > 160 ? '...' : '')}
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+
+          <div className="flex flex-col items-end my-10">
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                onRateClicked(token, urlMetaData)
+              }}
+              className="flex justify-center items-center w-full h-10 text-base font-medium text-white rounded-lg bg-black/[.8] dark:bg-gray-600 dark:text-gray-300 tracking-tightest-2"
+            >
+              <span>Rate</span>
+            </button>
+
+            <div className="flex justify-between items-center space-x-2 w-full mt-2">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  copyListingPageURL()
+                }}
+                className="flex justify-center items-center w-[85%] h-10 border-2 text-black text-base font-medium text-white rounded-lg hover:bg-blue-500 hover:text-white dark:text-gray-300 tracking-tightest-2"
+              >
+                <ShareIcon className="w-4 mr-2" />
+                <span className="mb-0.5">Share</span>
+              </button>
+
+              <div className="flex justify-center items-center w-10 h-10 border-2 rounded-lg">
+                {token && <WatchingStar token={token} />}
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div className="md:mt-10 pb-20">
+          <div className="text-xl text-center text-black font-bold mb-4">Ratings</div>
+
+          <OpinionTable opinionPairs={opinionPairs} setNameSearch={setNameSearch} />
+
+        </div>
+
       </div>
     </>
 
@@ -660,7 +941,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 }
 
 TokenDetails.getLayout = (page: ReactElement) => (
-  <DefaultLayout bgColor="bg-[#F6F6F6] dark:bg-gray-900">{page}</DefaultLayout>
+  <DefaultLayout bgColor="bg-black/[.05] dark:bg-gray-900">{page}</DefaultLayout>
 )
 
 export default TokenDetails

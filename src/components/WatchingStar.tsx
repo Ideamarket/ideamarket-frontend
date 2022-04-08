@@ -6,7 +6,6 @@ import {
   useIdeaMarketsStore,
 } from 'store/ideaMarketsStore'
 import classNames from 'classnames'
-import { useMixPanel } from 'utils/mixPanel'
 
 export default function WatchingStar({
   token,
@@ -15,7 +14,6 @@ export default function WatchingStar({
   token: IdeaToken
   className?: any
 }) {
-  const { mixpanel } = useMixPanel()
 
   // Notice how we are using tokenID here to track "Starred" tokens
   const watching = useIdeaMarketsStore((state) => state.watching[token.tokenID])
@@ -23,11 +21,6 @@ export default function WatchingStar({
   function onClick(e) {
     e.stopPropagation()
     setIsWatching(token, !watching)
-
-    mixpanel.track(!watching ? 'FAVOURITED_LISTING' : 'UNFAVORITED_LISTING', {
-      tokenName: token.name,
-      tokenAddress: token.address,
-    })
   }
 
   if (watching) {
