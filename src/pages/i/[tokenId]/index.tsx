@@ -37,6 +37,7 @@ import toast from 'react-hot-toast'
 import getLatestOpinionsAboutAddress from 'actions/web3/getLatestOpinionsAboutAddress'
 import { flatten } from 'lodash'
 import OpinionTable from 'modules/ratings/components/ListingPage/OpinionTable'
+import classNames from 'classnames'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const DetailsSkeleton = () => (
@@ -136,6 +137,8 @@ const TokenDetails = ({ rawTokenId }: { rawTokenId: string }) => {
 
   const { setOnWalletConnectedCallback } = useContext(GlobalContext)
 
+  const [isScrolled, setIsScrolled] = useState(false)
+
   useEffect(() => {
     const initializeTwitterAPI = () => {
       // You can add this as script tag in <head>, but for some reason that way stopped working. But this works fine for now
@@ -152,14 +155,28 @@ const TokenDetails = ({ rawTokenId }: { rawTokenId: string }) => {
 
     initializeTwitterAPI()
 
-    return () => clearTimeout(timeout)
+    // Track using local state if page has been scrolled from top or not
+    const handleElementDisplay = () => {
+      const scrollAmount = window.scrollY || document.documentElement.scrollTop
+      if (scrollAmount > 0) setIsScrolled(true)
+      else setIsScrolled(false)
+    }
+
+    window.addEventListener('scroll', handleElementDisplay)
+
+    return () => {
+      clearTimeout(timeout)
+      window.removeEventListener('scroll', handleElementDisplay)
+    }
   }, [rawTokenId])
 
   const url = token?.url
 
   const { data: urlMetaData } = useQuery([url], () => getURLMetaData(url))
 
-  const { avgRating, totalComments } = useOpinionsByIDTAddress(token?.address)
+  const { avgRating, totalComments, totalOpinions } = useOpinionsByIDTAddress(
+    token?.address
+  )
 
   const displayName =
     urlMetaData && urlMetaData?.ogTitle
@@ -591,6 +608,35 @@ const TokenDetails = ({ rawTokenId }: { rawTokenId: string }) => {
           opinionPairs={opinionPairs}
           setNameSearch={setNameSearch}
         />
+      </div>
+
+      {/* Block at bottom of mobile screen before scroll */}
+      <div
+        className={classNames(
+          isScrolled ? 'hidden' : 'flex md:hidden',
+          // shadow = 1st num is horizontal shadow length. 2nd num is vertical shadow length. 3rd num is blur amount.
+          'md:hidden absolute bottom-0 left-0 right-0 flex items-center divide-x h-[12%] bg-white z-40 shadow-[0_-2px_10px_rgba(0,0,0,0.3)]'
+        )}
+      >
+        <div className="w-[50%] px-4 py-3 h-full">
+          <div className="font-semibold text-sm text-black/[.5]">
+            Average Rating
+          </div>
+          <div className="flex items-center">
+            <span className="text-blue-600 font-semibold text-xl mr-1">
+              {avgRating}
+            </span>
+            <span className="text-sm text-black/[.5]">({totalOpinions})</span>
+          </div>
+        </div>
+
+        <div className="w-[50%] px-4 py-3 h-full">
+          <div className="font-semibold text-sm text-black/[.5]">Comments</div>
+          <div className="flex items-center font-medium">
+            <ChatIcon className="w-4 mr-1 mt-0.5" />
+            {totalComments}
+          </div>
+        </div>
       </div>
     </>
   )

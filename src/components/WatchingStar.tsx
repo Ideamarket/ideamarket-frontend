@@ -14,7 +14,6 @@ export default function WatchingStar({
   token: IdeaToken
   className?: any
 }) {
-
   // Notice how we are using tokenID here to track "Starred" tokens
   const watching = useIdeaMarketsStore((state) => state.watching[token.tokenID])
 

@@ -31,7 +31,9 @@ export default function useOpinionsByIDTAddress(
     async function run() {
       const avgRatingResult = await getAvgRatingForIDT(idtAddress)
       const totalOpinionsResult = await getTotalNumberOfOpinions(idtAddress)
-      const totalCommentsResult = await getTotalNumberOfLatestComments(idtAddress)
+      const totalCommentsResult = await getTotalNumberOfLatestComments(
+        idtAddress
+      )
       if (!isCancelled) {
         setAvgRating(avgRatingResult as any)
         setTotalOpinions(totalOpinionsResult)
