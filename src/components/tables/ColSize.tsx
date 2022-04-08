@@ -6,6 +6,7 @@ export enum TABLE_NAMES {
   ACCOUNT_HOLDINGS,
   ACCOUNT_TRADES,
   RATINGS,
+  LISTING_PAGE_OPINIONS,
 }
 
 type Props = {

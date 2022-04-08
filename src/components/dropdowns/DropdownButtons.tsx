@@ -4,7 +4,6 @@ import {
   SparklesIcon,
   FireIcon,
   ArrowSmUpIcon,
-  QuestionMarkCircleIcon,
 } from '@heroicons/react/outline'
 import IdeaverifyIconBlue from '../../assets/IdeaverifyIconBlue.svg'
 import { useMixPanel } from 'utils/mixPanel'
@@ -30,7 +29,7 @@ const DropdownButtons = ({
       case 5:
         return <StarIcon className="w-4 h-4 mr-1" />
       default:
-        return <QuestionMarkCircleIcon className="w-4 h-4 mr-1" />
+        return <></>
     }
   }
 

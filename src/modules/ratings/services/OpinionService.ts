@@ -1,5 +1,4 @@
 import getLatestOpinionsAboutAddress from 'actions/web3/getLatestOpinionsAboutAddress'
-import getOpinionsAboutAddress from 'actions/web3/getOpinionsAboutAddress'
 import getUsersOpinions from 'actions/web3/getUsersOpinions'
 
 /**
