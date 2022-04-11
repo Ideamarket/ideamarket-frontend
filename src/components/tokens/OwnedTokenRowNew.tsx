@@ -76,7 +76,7 @@ export default function OwnedTokenRow({
       ref={lastElementRef}
       className="md:h-28 grid grid-cols-3 border-b cursor-pointer md:table-row hover:bg-black/[.02] border-brand-border-gray dark:hover:bg-gray-600 dark:border-gray-500 text-black"
       onClick={() => {
-        router.push(`/i/${ideaToken?.listingId}`)
+        router.push(`/i/${ideaToken?.address}`)
       }}
     >
       <td className="col-span-3 px-6 md:pl-6 md:pr-5 py-4 truncate whitespace-nowrap">

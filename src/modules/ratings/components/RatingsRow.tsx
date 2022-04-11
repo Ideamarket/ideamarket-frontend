@@ -10,7 +10,7 @@ import Image from 'next/image'
 import { useMixPanel } from 'utils/mixPanel'
 import { getRealTokenName } from 'utils/wikipedia'
 import { getURLMetaData } from 'actions/web2/getURLMetaData'
-import { GlobeAltIcon } from '@heroicons/react/outline'
+import { ChatIcon, GlobeAltIcon } from '@heroicons/react/outline'
 // import { getTimeDifferenceIndays } from 'lib/utils/dateUtil'
 // import { convertAccountName } from 'lib/utils/stringUtil'
 // import A from 'components/A'
@@ -73,7 +73,7 @@ export default function RatingsRow({
   //   return getTimeDifferenceIndays(onchainListedAtDate, currentDate)
   // }, [onchainListedAt])
 
-  const { avgRating, totalOpinions } = useOpinionsByIDTAddress(
+  const { avgRating, totalOpinions, totalComments } = useOpinionsByIDTAddress(
     ideaToken?.address
     // tradeOrListSuccessToggle
   )
@@ -84,15 +84,194 @@ export default function RatingsRow({
       : marketSpecifics?.convertUserInputToTokenName(ideaToken?.url)
 
   return (
-    <div>
-      <div className="flex text-black">
-        {/* Icon and Name */}
-        <div className="w-[40%] relative pl-6 pr-10 pt-8">
-          {/* <div className="absolute left-5 md:left-6 top-7 md:top-11">
-            <WatchingStar token={ideaToken} />
+    <>
+      {/* Desktop row */}
+      <div className="hidden md:block">
+        <div className="flex text-black">
+          {/* Icon and Name */}
+          <div className="w-[40%] relative pl-6 pr-10 pt-8">
+            <div className="relative flex items-center w-3/4 mx-auto md:w-full text-gray-900 dark:text-gray-200">
+              <div className="flex-shrink-0 w-7.5 h-7.5">
+                {isTokenIconLoading ? (
+                  <div className="w-full h-full bg-gray-400 rounded-full animate-pulse"></div>
+                ) : !isOnChain || ideaToken?.market?.name === 'URL' ? (
+                  <GlobeAltIcon className="w-7" />
+                ) : (
+                  <div className="relative w-full h-full rounded-full">
+                    <Image
+                      src={tokenIconURL || '/gray.svg'}
+                      alt="ideaToken"
+                      layout="fill"
+                      objectFit="cover"
+                      className="rounded-full"
+                    />
+                  </div>
+                )}
+              </div>
+              <div className="ml-4 text-base font-medium leading-5 truncate z-30">
+                {displayName && (
+                  <div>
+                    <a
+                      href={`/i/${ideaToken?.address}`}
+                      onClick={(event) => event.stopPropagation()}
+                      className="text-xs md:text-base font-bold hover:underline"
+                    >
+                      {displayName?.substr(
+                        0,
+                        displayName?.length > 50 ? 50 : displayName?.length
+                      ) + (displayName?.length > 50 ? '...' : '')}
+                    </a>
+                  </div>
+                )}
+                <a
+                  href={ideaToken?.url}
+                  className="text-xs md:text-sm text-brand-blue hover:underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {ideaToken?.url.substr(
+                    0,
+                    ideaToken?.url.length > 50 ? 50 : ideaToken?.url.length
+                  ) + (ideaToken?.url.length > 50 ? '...' : '')}
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* Rating By User */}
+          <div className="w-[20%] pt-12">
+            <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-300">
+              Rating By User
+            </p>
+            <div className="font-medium leading-5">{opinion?.rating}</div>
+          </div>
+
+          {/* Composite Rating */}
+          {/* <div className="w-[12%] pt-12">
+            <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-300">
+              Composite Rating
+            </p>
+            <div className="font-medium leading-5">
+              68
+            </div>
           </div> */}
 
-          <div className="relative flex items-center w-3/4 mx-auto md:w-full text-gray-900 dark:text-gray-200">
+          {/* Average Rating */}
+          <div className="w-[20%] pt-12">
+            <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-300">
+              Average Rating
+            </p>
+            <div className="flex flex-col justify-start font-medium leading-5">
+              <span className="text-blue-600 dark:text-gray-300">
+                {formatNumber(avgRating)}
+              </span>
+              <span className="text-black/[.3] text-sm">
+                ({formatNumberWithCommasAsThousandsSerperator(totalOpinions)})
+              </span>
+            </div>
+          </div>
+
+          {/* Market Interest */}
+          {/* <div className="w-[12%] pt-12">
+            <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-300">
+              Market Interest
+            </p>
+            <div className="flex flex-col justify-start font-medium leading-5">
+              $65,900
+            </div>
+          </div> */}
+
+          {/* Rate Button */}
+          <div className="w-[20%] pt-8">
+            <div className="flex space-x-2">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onRateClicked(ideaToken, urlMetaData)
+                  mixpanel.track('HOME_ROW_RATE_START_CLICKED', {
+                    tokenName: ideaToken?.name,
+                  })
+                }}
+                className="flex justify-center items-center w-20 h-10 text-base font-medium text-white rounded-lg bg-black/[.8] dark:bg-gray-600 dark:text-gray-300 tracking-tightest-2"
+              >
+                <span>Rate</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex w-full">
+          <div className="w-[40%] flex flex-col">
+            {/* <div className="pl-4 md:pl-0 flex flex-col items-center space-x-0 space-y-1 mt-4 text-sm items-baseline">
+              {ghostListedBy && timeAfterGhostListedInDays && (
+                <div className="px-2 py-2 bg-black/[.05] rounded-lg whitespace-nowrap">
+                  Ghost Listed by{' '}
+                  {isGhostListedByETHAddress ? (
+                    <A
+                      className="underline font-bold hover:text-blue-600"
+                      href={`https://arbiscan.io/address/${ghostListedBy}`}
+                    >
+                      {convertAccountName(ghostListedBy)}
+                    </A>
+                  ) : (
+                    <span className="font-bold">
+                      {convertAccountName(ghostListedBy)}
+                    </span>
+                  )}{' '}
+                  {timeAfterGhostListedInDays} days ago
+                </div>
+              )}
+              {onchainListedBy && timeAfterOnChainListedInDays && (
+                <div className="px-2 py-2 bg-black/[.05] rounded-lg whitespace-nowrap">
+                  Listed by{' '}
+                  {isOnchainListedByETHAddress ? (
+                    <A
+                      className="underline font-bold hover:text-blue-600"
+                      href={`https://arbiscan.io/address/${onchainListedBy}`}
+                    >
+                      {convertAccountName(onchainListedBy)}
+                    </A>
+                  ) : (
+                    <span className="font-bold">
+                      {convertAccountName(onchainListedBy)}
+                    </span>
+                  )}{' '}
+                  {timeAfterOnChainListedInDays} days ago
+                </div>
+              )}
+            </div> */}
+
+            <div className="px-6">
+              <ListingContent
+                ideaToken={ideaToken}
+                page="HomePage"
+                urlMetaData={urlMetaData}
+                useMetaData={
+                  getListingTypeFromIDTURL(ideaToken?.url) !==
+                  LISTING_TYPE.TWEET
+                }
+              />
+            </div>
+          </div>
+
+          {/* The user comment for this opinion */}
+          {opinion && opinion?.comment && opinion?.comment.length > 0 && (
+            <div className="w-[60%] mt-4">
+              <div className="bg-black/[.02] rounded-lg px-4 py-2 mr-10">
+                <div className="text-black/[.5] text-xs font-semibold mb-1">
+                  COMMENT BY USER
+                </div>
+                <div className="text-black text-sm">{opinion?.comment}</div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Mobile row */}
+      <div className="md:hidden">
+        <div className="w-full relative px-3 py-4">
+          <div className="relative flex items-center w-3/4 text-gray-900 dark:text-gray-200">
             <div className="flex-shrink-0 w-7.5 h-7.5">
               {isTokenIconLoading ? (
                 <div className="w-full h-full bg-gray-400 rounded-full animate-pulse"></div>
@@ -140,133 +319,65 @@ export default function RatingsRow({
           </div>
         </div>
 
-        {/* Rating By User */}
-        <div className="w-[20%] pt-12">
-          <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-300">
-            Rating By User
-          </p>
-          <div className="font-medium leading-5">{opinion?.rating}</div>
+        <div className="px-4">
+          <ListingContent
+            ideaToken={ideaToken}
+            page="MobileAccountPage"
+            urlMetaData={urlMetaData}
+            useMetaData={
+              getListingTypeFromIDTURL(ideaToken?.url) !== LISTING_TYPE.TWEET
+            }
+          />
         </div>
 
-        {/* Composite Rating */}
-        {/* <div className="w-[12%] pt-12">
-          <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-300">
-            Composite Rating
-          </p>
-          <div className="font-medium leading-5">
-            68
-          </div>
-        </div> */}
-
-        {/* Average Rating */}
-        <div className="w-[20%] pt-12">
-          <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-300">
-            Average Rating
-          </p>
-          <div className="flex flex-col justify-start font-medium leading-5">
-            <span className="text-blue-600 dark:text-gray-300">
-              {formatNumber(avgRating)}
-            </span>
-            <span className="text-black/[.3] text-sm">
-              ({formatNumberWithCommasAsThousandsSerperator(totalOpinions)})
-            </span>
-          </div>
-        </div>
-
-        {/* Market Interest */}
-        {/* <div className="w-[12%] pt-12">
-          <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-300">
-            Market Interest
-          </p>
-          <div className="flex flex-col justify-start font-medium leading-5">
-            $65,900
-          </div>
-        </div> */}
-
-        {/* Rate Button */}
-        <div className="w-[20%] pt-8">
-          <div className="flex space-x-2">
-            <button
-              onClick={(e) => {
-                e.stopPropagation()
-                onRateClicked(ideaToken, urlMetaData)
-                mixpanel.track('HOME_ROW_RATE_START_CLICKED', {
-                  tokenName: ideaToken?.name,
-                })
-              }}
-              className="flex justify-center items-center w-20 h-10 text-base font-medium text-white rounded-lg bg-black/[.8] dark:bg-gray-600 dark:text-gray-300 tracking-tightest-2"
-            >
-              <span>Rate</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div className="flex w-full">
-        <div className="w-[40%] flex flex-col">
-          {/* <div className="pl-4 md:pl-0 flex flex-col items-center space-x-0 space-y-1 mt-4 text-sm items-baseline">
-            {ghostListedBy && timeAfterGhostListedInDays && (
-              <div className="px-2 py-2 bg-black/[.05] rounded-lg whitespace-nowrap">
-                Ghost Listed by{' '}
-                {isGhostListedByETHAddress ? (
-                  <A
-                    className="underline font-bold hover:text-blue-600"
-                    href={`https://arbiscan.io/address/${ghostListedBy}`}
-                  >
-                    {convertAccountName(ghostListedBy)}
-                  </A>
-                ) : (
-                  <span className="font-bold">
-                    {convertAccountName(ghostListedBy)}
-                  </span>
-                )}{' '}
-                {timeAfterGhostListedInDays} days ago
-              </div>
-            )}
-            {onchainListedBy && timeAfterOnChainListedInDays && (
-              <div className="px-2 py-2 bg-black/[.05] rounded-lg whitespace-nowrap">
-                Listed by{' '}
-                {isOnchainListedByETHAddress ? (
-                  <A
-                    className="underline font-bold hover:text-blue-600"
-                    href={`https://arbiscan.io/address/${onchainListedBy}`}
-                  >
-                    {convertAccountName(onchainListedBy)}
-                  </A>
-                ) : (
-                  <span className="font-bold">
-                    {convertAccountName(onchainListedBy)}
-                  </span>
-                )}{' '}
-                {timeAfterOnChainListedInDays} days ago
-              </div>
-            )}
-          </div> */}
-
-          <div className="px-6">
-            <ListingContent
-              ideaToken={ideaToken}
-              page="HomePage"
-              urlMetaData={urlMetaData}
-              useMetaData={
-                getListingTypeFromIDTURL(ideaToken?.url) !== LISTING_TYPE.TWEET
-              }
-            />
-          </div>
-        </div>
-
-        {/* The user comment for this opinion */}
-        {opinion && opinion?.comment && opinion?.comment.length > 0 && (
-          <div className="w-[60%] mt-4">
-            <div className="bg-black/[.02] rounded-lg px-4 py-2 mr-10">
-              <div className="text-black/[.5] text-xs font-semibold mb-1">
-                COMMENT BY USER
-              </div>
-              <div className="text-black text-sm">{opinion?.comment}</div>
+        <div className="flex justify-between items-start text-center px-10 py-4 border-b border-t">
+          <div>
+            <div className="font-semibold text-black/[.5]">Average Rating</div>
+            <div className="flex items-center">
+              <span className="text-blue-600 dark:text-gray-300 mr-1 text-lg font-semibold">
+                {formatNumber(avgRating)}
+              </span>
+              <span className="text-black/[.3] text-sm">
+                ({formatNumberWithCommasAsThousandsSerperator(totalOpinions)})
+              </span>
             </div>
           </div>
-        )}
+          <div>
+            <div className="font-semibold text-black/[.5]">Comments</div>
+            <div className="flex items-center font-medium text-lg text-black">
+              <ChatIcon className="w-4 mr-1" />
+              {formatNumberWithCommasAsThousandsSerperator(totalComments)}
+            </div>
+          </div>
+        </div>
+
+        {/* Rating and comment */}
+        <div className="flex items-start p-3 m-3 bg-black/[.02] rounded-lg">
+          <div className="w-10 h-8 mr-3 flex justify-center items-center rounded-lg bg-blue-100 text-blue-600 font-semibold">
+            {opinion?.rating}
+          </div>
+
+          <div className="w-[85%] font-medium text-black">
+            {opinion?.comment}
+          </div>
+        </div>
+
+        <div className="flex justify-center items-center px-10 py-4 border-t">
+          {/* <div className="">
+            <WatchingStar token={token} />
+          </div> */}
+
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              onRateClicked(ideaToken, urlMetaData)
+            }}
+            className="flex justify-center items-center w-20 h-10 text-base font-medium text-white rounded-lg bg-black/[.8] dark:bg-gray-600 dark:text-gray-300 tracking-tightest-2"
+          >
+            <span>Rate</span>
+          </button>
+        </div>
       </div>
-    </div>
+    </>
   )
 }

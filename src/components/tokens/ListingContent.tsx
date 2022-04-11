@@ -82,7 +82,7 @@ const ListingContent = ({
       {showMetaData && (
         <a
           href={`/i/${ideaToken?.address}`}
-          className="px-4 md:px-0 cursor-pointer"
+          className="cursor-pointer"
           target="_blank"
           rel="noopener noreferrer"
         >

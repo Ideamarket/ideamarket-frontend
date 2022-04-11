@@ -115,14 +115,8 @@ export default function RatingsTable({
   return (
     <div className="flex flex-col">
       <div className="-my-2 overflow-x-auto">
-        <div className="inline-block min-w-full py-2 align-middle">
+        <div className="inline-block w-full py-2 align-middle">
           <div className="overflow-hidden dark:border-gray-500">
-            {/* <table className="table-fixed w-full divide-y divide-gray-200 dark:divide-gray-500"> */}
-            {/* <ColSize
-                columnData={headers}
-                tableName={TABLE_NAMES.RATINGS}
-              /> */}
-
             <div className="hidden md:flex h-24">
               {headers.map((header) => (
                 <div
@@ -161,7 +155,7 @@ export default function RatingsTable({
                 </div>
               ))}
             </div>
-            <div className="bg-white divide-y divide-gray-200 dark:bg-gray-700 dark:divide-gray-500">
+            <div className="bg-white divide-y-[6px] dark:bg-gray-700">
               {!isPairsDataLoading &&
                 rawPairs &&
                 rawPairs.map((pair: any, index) => (
@@ -182,7 +176,6 @@ export default function RatingsTable({
                   ))
                 : null}
             </div>
-            {/* </table> */}
           </div>
         </div>
       </div>
