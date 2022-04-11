@@ -81,54 +81,14 @@ const OverviewFiltersMobile = ({
   return (
     <div className="md:hidden bg-white dark:bg-gray-700 rounded-t-xl">
       <div className="p-3 border-b-4">
-        <div className="flex">
-          {/* <div
-            onClick={() => setIsSortingDropdownOpen(!isSortingDropdownOpen)}
-            className="relative w-max flex items-center px-2 py-1 border rounded-l-md"
-          >
-            <span className="mr-1 text-sm text-black/[.5] font-semibold dark:text-white whitespace-nowrap">
-              Sort by:
-            </span>
-            <span className="text-sm text-blue-500 font-semibold flex items-center">
-              <span>{getSortByIcon(selectedSortOptionID)}</span>
-              <span>{getSortOptionDisplayNameByID(selectedSortOptionID)}</span>
-            </span>
-            <span>
-              <ChevronDownIcon className="h-5" />
-            </span>
-
-            {isSortingDropdownOpen && (
-              <DropdownButtons
-                container={ref}
-                filters={Object.values(SortOptions)}
-                selectedOptions={new Set([selectedSortOptionID])}
-                toggleOption={toggleSortOption}
-              />
-            )}
-          </div> */}
-
-          {/* <SelectableButton
-            onClick={setIsVerifiedFilterActive}
-            isSelected={isVerifiedFilterActive}
-            label={getIconVersion(
-              'verify',
-              resolvedTheme,
-              isVerifiedFilterActive
-            )}
-            joined={JOINED_TYPES.NONE}
-            className="flex-grow" // Makes width grow to fit space
-          /> */}
-
+        <div className="flex space-x-2 w-full h-10">
           <SelectableButton
             onClick={setIsStarredFilterActive}
             isSelected={isStarredFilterActive}
             label={<StarIcon className="w-5 h-5" />}
             joined={JOINED_TYPES.NONE}
-            className="flex-grow"
+            className="rounded-lg"
           />
-        </div>
-
-        <div className="w-full h-9 mt-3">
           <OverviewSearchbar onNameSearchChanged={onNameSearchChanged} />
         </div>
       </div>

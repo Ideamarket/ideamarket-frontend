@@ -174,10 +174,6 @@ const TokenDetails = ({ rawTokenId }: { rawTokenId: string }) => {
 
   const { data: urlMetaData } = useQuery([url], () => getURLMetaData(url))
 
-  const { avgRating, totalComments, totalOpinions } = useOpinionsByIDTAddress(
-    token?.address
-  )
-
   const displayName =
     urlMetaData && urlMetaData?.ogTitle
       ? urlMetaData?.ogTitle
@@ -272,13 +268,13 @@ const TokenDetails = ({ rawTokenId }: { rawTokenId: string }) => {
               </div> */}
               <div className="px-4 py-2 flex items-center">
                 <span className="w-1/2 text-xs">Average Rating</span>
-                <span className="font-bold">{avgRating}</span>
+                <span className="font-bold">{token?.averageRating}</span>
               </div>
               <div className="px-4 py-2 flex items-center">
                 <span className="w-1/2 text-xs">Comments</span>
                 <span className="flex items-center font-bold">
                   <ChatIcon className="w-4 mr-1 mt-0.5" />
-                  {totalComments}
+                  {token?.latestCommentsCount}
                 </span>
               </div>
               {/* <div className="px-4 py-2 flex items-center">
@@ -458,13 +454,13 @@ const TokenDetails = ({ rawTokenId }: { rawTokenId: string }) => {
               </div> */}
               <div className="px-4 py-2 flex items-center">
                 <span className="w-1/2 text-xs">Average Rating</span>
-                <span className="font-bold">{avgRating}</span>
+                <span className="font-bold">{token?.averageRating}</span>
               </div>
               <div className="px-4 py-2 flex items-center">
                 <span className="w-1/2 text-xs">Comments</span>
                 <span className="flex items-center font-bold">
                   <ChatIcon className="w-4 mr-1 mt-0.5" />
-                  {totalComments}
+                  {token?.latestCommentsCount}
                 </span>
               </div>
               {/* <div className="px-4 py-2 flex items-center">
@@ -624,9 +620,11 @@ const TokenDetails = ({ rawTokenId }: { rawTokenId: string }) => {
           </div>
           <div className="flex items-center">
             <span className="text-blue-600 font-semibold text-xl mr-1">
-              {avgRating}
+              {token?.averageRating}
             </span>
-            <span className="text-sm text-black/[.5]">({totalOpinions})</span>
+            <span className="text-sm text-black/[.5]">
+              ({token?.latestRatingsCount})
+            </span>
           </div>
         </div>
 
@@ -634,7 +632,7 @@ const TokenDetails = ({ rawTokenId }: { rawTokenId: string }) => {
           <div className="font-semibold text-sm text-black/[.5]">Comments</div>
           <div className="flex items-center font-medium">
             <ChatIcon className="w-4 mr-1 mt-0.5" />
-            {totalComments}
+            {token?.latestCommentsCount}
           </div>
         </div>
       </div>

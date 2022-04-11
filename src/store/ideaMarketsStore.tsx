@@ -96,6 +96,9 @@ export type IdeaToken = {
   upVoted: boolean
   totalVotes: number
   categories: string[]
+  averageRating: number
+  latestCommentsCount: number
+  latestRatingsCount: number
 }
 
 export type IdeaTokenMarketPair = {
@@ -1267,6 +1270,9 @@ export function newApiResponseToIdeaToken(
     holder,
     verified: apiResponse?.verified,
     categories: apiResponse?.categories,
+    averageRating: apiResponse?.averageRating,
+    latestCommentsCount: apiResponse?.latestCommentsCount,
+    latestRatingsCount: apiResponse?.latestRatingsCount,
   } as any
 
   return ret
