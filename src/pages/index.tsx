@@ -15,11 +15,9 @@ import {
   startingOptionalColumns,
 } from 'components/home/utils'
 import { GhostHomeHeader } from 'components'
-import {
-  CheckboxFilters,
-  SortOptions,
-} from 'components/tokens/utils/OverviewUtils'
+import { CheckboxFilters } from 'components/tokens/utils/OverviewUtils'
 import RateModal from 'components/trade/RateModal'
+import { SortOptionsHomeTable } from 'utils/tables'
 
 type Props = { urlMarkets?: string[] }
 
@@ -27,14 +25,13 @@ const Home = ({ urlMarkets }: Props) => {
   // After trade or list success, the token data needs to be refetched. This toggle does that.
   const [tradeOrListSuccessToggle, setTradeOrListSuccessToggle] =
     useState(false)
-  const [selectedFilterId, setSelectedFilterId] = useState(SortOptions.HOT.id)
   const [isVerifiedFilterActive, setIsVerifiedFilterActive] = useState(false)
   const [isStarredFilterActive, setIsStarredFilterActive] = useState(false)
   const [isGhostOnlyActive, setIsGhostOnlyActive] = useState(false)
   const [selectedMarkets, setSelectedMarkets] = useState(new Set([]))
   const [selectedColumns, setSelectedColumns] = useState(new Set([]))
   const [nameSearch, setNameSearch] = useState('')
-  const [orderBy, setOrderBy] = useState('avgRating')
+  const [orderBy, setOrderBy] = useState(SortOptionsHomeTable.AVG_RATING.value)
   const [orderDirection, setOrderDirection] = useState<'desc' | 'asc'>('desc')
   const [selectedCategories, setSelectedCategories] = useState([])
 
@@ -75,35 +72,13 @@ const Home = ({ urlMarkets }: Props) => {
   }, [markets])
 
   const onNameSearchChanged = (nameSearch) => {
-    setSelectedFilterId(SortOptions.TOP.id)
+    setOrderBy(SortOptionsHomeTable.AVG_RATING.value)
     setNameSearch(nameSearch)
   }
 
   const onOrderByChanged = (orderBy: string, direction: string) => {
     setOrderBy(orderBy)
     setOrderDirection(direction as any)
-    if (orderBy === 'dayChange' && direction === 'desc') {
-      setSelectedFilterId(SortOptions.HOT.id)
-    } else if (orderBy === 'listedAt' && direction === 'desc') {
-      setSelectedFilterId(SortOptions.NEW.id)
-    } else {
-      setSelectedFilterId(SortOptions.TOP.id)
-    }
-  }
-
-  const onSelectedFilterByIdChanged = (filterId: number) => {
-    setSelectedFilterId(filterId)
-
-    if (filterId === SortOptions.HOT.id) {
-      setOrderBy('dayChange')
-      setOrderDirection('desc')
-    } else if (filterId === SortOptions.TOP.id) {
-      setOrderBy('price')
-      setOrderDirection('desc')
-    } else if (filterId === SortOptions.NEW.id) {
-      setOrderBy('listedAt')
-      setOrderDirection('desc')
-    }
   }
 
   const onTradeClicked = (token: IdeaToken, market: IdeaMarket) => {
@@ -162,7 +137,7 @@ const Home = ({ urlMarkets }: Props) => {
   }
 
   const overviewFiltersProps = {
-    selectedFilterId,
+    orderBy,
     selectedMarkets,
     selectedColumns,
     isVerifiedFilterActive,
@@ -170,7 +145,7 @@ const Home = ({ urlMarkets }: Props) => {
     isGhostOnlyActive,
     selectedCategories,
     onMarketChanged,
-    setSelectedFilterId: onSelectedFilterByIdChanged,
+    setOrderBy,
     onColumnChanged,
     onNameSearchChanged,
     setIsVerifiedFilterActive,
@@ -184,7 +159,6 @@ const Home = ({ urlMarkets }: Props) => {
     orderBy,
     orderDirection,
     selectedMarkets,
-    selectedFilterId,
     isVerifiedFilterActive,
     isStarredFilterActive,
     isGhostOnlyActive,

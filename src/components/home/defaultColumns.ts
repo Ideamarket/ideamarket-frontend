@@ -1,3 +1,5 @@
+import { SortOptionsHomeTable } from 'utils/tables'
+
 const defaultColumns = [
   // {
   //   id: 1,
@@ -84,7 +86,7 @@ const defaultColumns = [
     id: 11,
     name: 'Average Rating',
     content: 'Average Rating',
-    value: 'avgRating',
+    value: SortOptionsHomeTable.AVG_RATING.value,
     sortable: true,
     isOptional: false,
     isSelectedAtStart: true,
@@ -93,7 +95,7 @@ const defaultColumns = [
     id: 10,
     name: 'Comments',
     content: 'Comments',
-    value: 'comments',
+    value: SortOptionsHomeTable.COMMENTS.value,
     sortable: true,
     isOptional: false,
     isSelectedAtStart: true,

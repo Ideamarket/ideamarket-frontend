@@ -20,14 +20,13 @@ import { useIdeaMarketsStore } from 'store/ideaMarketsStore'
 import TokenRow from './OverviewTokenRow'
 import TokenRowSkeleton from './OverviewTokenRowSkeleton'
 import { OverviewColumns } from './table/OverviewColumns'
-import { SortOptions } from './utils/OverviewUtils'
 import { flatten } from 'utils/lodash'
 import { GlobalContext } from 'lib/GlobalContext'
-import ColSize, { TABLE_NAMES } from 'components/tables/ColSize'
+import ColSize from 'components/tables/ColSize'
+import { SortOptionsHomeTable, TABLE_NAMES } from 'utils/tables'
 
 type Props = {
   selectedMarkets: Set<string>
-  selectedFilterId: number
   isVerifiedFilterActive: boolean
   isStarredFilterActive: boolean
   isGhostOnlyActive: boolean
@@ -47,7 +46,6 @@ type Props = {
 
 export default function Table({
   selectedMarkets,
-  selectedFilterId,
   isVerifiedFilterActive,
   isStarredFilterActive,
   isGhostOnlyActive,
@@ -111,10 +109,7 @@ export default function Table({
       TOKENS_PER_PAGE,
       WEEK_SECONDS,
       orderBy,
-      selectedFilterId === SortOptions.HOT.id ||
-      selectedFilterId === SortOptions.NEW.id
-        ? 'desc'
-        : orderDirection,
+      orderDirection,
       nameSearch,
       filterTokens,
       isVerifiedFilterActive,
@@ -129,10 +124,7 @@ export default function Table({
           TOKENS_PER_PAGE,
           WEEK_SECONDS,
           orderBy,
-          selectedFilterId === SortOptions.HOT.id ||
-          selectedFilterId === SortOptions.NEW.id
-            ? 'desc'
-            : orderDirection,
+          orderDirection,
           nameSearch,
           filterTokens,
           isVerifiedFilterActive,
@@ -190,7 +182,6 @@ export default function Table({
     }
   }, [
     markets,
-    selectedFilterId,
     isVerifiedFilterActive,
     isStarredFilterActive,
     filterTokens?.length, // Need this to detect change in starred tokens. Otherwise, you click a star and it shows no tokens if starred filter is on
@@ -231,8 +222,10 @@ export default function Table({
         onOrderByChanged('lockedAmount', 'desc')
       } else if (column === 'holders') {
         onOrderByChanged('holders', 'desc')
-      } else if (column === 'rank') {
-        onOrderByChanged('rank', 'desc')
+      } else if (column === SortOptionsHomeTable.AVG_RATING.value) {
+        onOrderByChanged(SortOptionsHomeTable.AVG_RATING.value, 'desc')
+      } else if (column === SortOptionsHomeTable.COMMENTS.value) {
+        onOrderByChanged(SortOptionsHomeTable.COMMENTS.value, 'desc')
       }
     }
   }

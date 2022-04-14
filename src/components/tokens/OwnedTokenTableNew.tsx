@@ -1,12 +1,13 @@
 import classNames from 'classnames'
 import { Tooltip } from 'components'
 import A from 'components/A'
-import ColSize, { TABLE_NAMES } from 'components/tables/ColSize'
+import ColSize from 'components/tables/ColSize'
 import { useCallback, useRef, MutableRefObject } from 'react'
 import { IdeaTokenMarketPair } from 'store/ideaMarketsStore'
 import OwnedTokenRowNew from './OwnedTokenRowNew'
 import OwnedTokenRowSkeleton from './OwnedTokenRowSkeleton'
 import { SortAscendingIcon, SortDescendingIcon } from '@heroicons/react/solid'
+import { TABLE_NAMES } from 'utils/tables'
 
 type Header = {
   title: string

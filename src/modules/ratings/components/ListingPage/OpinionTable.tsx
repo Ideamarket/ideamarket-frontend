@@ -3,21 +3,19 @@ import { A } from 'components'
 import { convertAccountName } from 'lib/utils/stringUtil'
 import DropdownButtons from 'components/dropdowns/DropdownButtons'
 import { useEffect, useRef, useState } from 'react'
-import {
-  getSortOptionDisplayNameByID,
-  SortOptions,
-} from 'modules/ratings/utils/OpinionUtils'
 import { ChevronDownIcon } from '@heroicons/react/solid'
+import {
+  getSortOptionDisplayNameByValue,
+  SortOptionsListingPageOpinions,
+  TABLE_NAMES,
+} from 'utils/tables'
 
 type DropdownButtonProps = {
   toggleOption: (value: any) => void
-  selectedFilterId?: number
+  orderBy?: string
 }
 
-const DropdownButton = ({
-  toggleOption,
-  selectedFilterId,
-}: DropdownButtonProps) => {
+const DropdownButton = ({ toggleOption, orderBy }: DropdownButtonProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const container = useRef(null)
 
@@ -45,7 +43,10 @@ const DropdownButton = ({
         Sort by:
       </span>
       <span className="text-sm text-blue-500 font-semibold flex items-center">
-        {getSortOptionDisplayNameByID(selectedFilterId)}
+        {getSortOptionDisplayNameByValue(
+          orderBy,
+          TABLE_NAMES.LISTING_PAGE_OPINIONS
+        )}
       </span>
       <span>
         <ChevronDownIcon className="h-5" />
@@ -54,8 +55,8 @@ const DropdownButton = ({
       {isDropdownOpen && (
         <DropdownButtons
           container={container}
-          filters={Object.values(SortOptions)}
-          selectedOptions={new Set([selectedFilterId])}
+          filters={Object.values(SortOptionsListingPageOpinions)}
+          selectedOptions={new Set([orderBy])}
           toggleOption={toggleOption}
         />
       )}
@@ -69,16 +70,16 @@ type Props = {
 }
 
 const OpinionTable = ({ opinionPairs, setNameSearch }: Props) => {
-  const [selectedFilterId, setSelectedFilterId] = useState(
-    SortOptions.RATING.id
+  const [orderBy, setOrderBy] = useState(
+    SortOptionsListingPageOpinions.RATING.value
   )
 
   return (
     <>
       {/* Desktop and tablet table */}
-      <div className="hidden md:block rounded-lg w-full max-w-304 shadow-lg">
+      <div className="hidden md:block rounded-xl w-full shadow-lg">
         {/* Table header */}
-        <div className="rounded-lg bg-black/[.02] flex items-center w-full h-16 text-black/[.5] font-semibold text-xs">
+        <div className="rounded-xl bg-[#FAFAFA] flex items-center w-full h-16 text-black/[.5] font-semibold text-xs">
           <div className="w-[26%] pl-3">
             <span>USER</span>
           </div>
@@ -117,7 +118,7 @@ const OpinionTable = ({ opinionPairs, setNameSearch }: Props) => {
 
                 <div className="w-[60%] flex items-center pr-3">
                   {opinion?.comment && (
-                    <div className="w-full px-3 py-2 bg-black/[.02] rounded-lg">
+                    <div className="w-full px-3 py-2 bg-[#FAFAFA] rounded-lg">
                       {opinion?.comment}
                     </div>
                   )}
@@ -134,9 +135,9 @@ const OpinionTable = ({ opinionPairs, setNameSearch }: Props) => {
         <div className="flex items-center w-full h-16 p-3 border-b-[6px]">
           <DropdownButton
             toggleOption={(newSelectedFilterId) =>
-              setSelectedFilterId(newSelectedFilterId)
+              setOrderBy(newSelectedFilterId)
             }
-            selectedFilterId={selectedFilterId}
+            orderBy={orderBy}
           />
 
           <div className="w-full h-9 ml-2">

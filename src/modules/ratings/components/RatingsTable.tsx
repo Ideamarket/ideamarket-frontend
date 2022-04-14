@@ -5,6 +5,7 @@ import { IdeaToken, IdeaTokenMarketPair } from 'store/ideaMarketsStore'
 import { SortAscendingIcon, SortDescendingIcon } from '@heroicons/react/solid'
 import RatingsRow from './RatingsRow'
 import RatingsRowSkeleton from './RatingsRowSkeleton'
+import { SortOptionsAccountOpinions } from 'utils/tables'
 
 type Header = {
   title: string
@@ -20,7 +21,7 @@ const headers: Header[] = [
   },
   {
     title: 'Rating By User',
-    value: 'userRating',
+    value: SortOptionsAccountOpinions.RATING.value,
     sortable: true,
   },
   // {
@@ -30,7 +31,7 @@ const headers: Header[] = [
   // },
   {
     title: 'Average Rating',
-    value: 'avgRating',
+    value: SortOptionsAccountOpinions.AVG_RATING.value,
     sortable: true,
   },
   // {
@@ -97,11 +98,11 @@ export default function RatingsTable({
     switch (column.value) {
       case 'name':
         return 'w-[40%] pl-6 pr-24'
-      case 'userRating':
+      case SortOptionsAccountOpinions.RATING.value:
         return 'w-[20%]'
       // case 'compositeRating':
       //   return 'w-[12%]'
-      case 'avgRating':
+      case SortOptionsAccountOpinions.AVG_RATING.value:
         return 'w-[20%]'
       // case 'marketInterest':
       //   return 'w-[12%]'

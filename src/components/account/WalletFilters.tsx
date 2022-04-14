@@ -1,61 +1,20 @@
-import { GlobeAltIcon } from '@heroicons/react/outline'
-import { LockClosedIcon, StarIcon } from '@heroicons/react/solid'
-import classNames from 'classnames'
-import { OverviewSearchbar } from 'components/tokens/OverviewSearchbar'
 import {
-  CheckboxFilters,
-  toggleMarketHelper,
-  // toggleMarketHelper,
-} from 'components/tokens/utils/OverviewUtils'
-import useThemeMode from 'components/useThemeMode'
-import { useEffect } from 'react'
-import { getMarketSpecificsByMarketName, useMarketStore } from 'store/markets'
-import { useMixPanel } from 'utils/mixPanel'
-
-type PlatformButtonProps = {
-  platform: any
-  isSelected: boolean
-  onClick: (platform: string) => void
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const PlatformButton = ({
-  platform,
-  isSelected,
-  onClick,
-}: PlatformButtonProps) => {
-  const marketSpecifics = getMarketSpecificsByMarketName(platform)
-  const { resolvedTheme } = useThemeMode()
-
-  return (
-    <button
-      className={classNames(
-        'h-10 flex flex-grow md:flex-auto justify-center items-center px-3 py-2 border md:rounded-md text-sm font-semibold',
-        platform === 'All' && 'rounded-l-md',
-        {
-          'text-brand-blue dark:text-white bg-gray-100 dark:bg-very-dark-blue':
-            isSelected,
-        },
-        { 'text-brand-black dark:text-gray-50': !isSelected }
-      )}
-      onClick={() => {
-        onClick(platform)
-      }}
-    >
-      {platform !== 'All' && (
-        <span
-          className={classNames(
-            marketSpecifics.getMarketName() === 'Wikipedia' ? 'mr-2' : 'mr-1',
-            'w-4 h-auto'
-          )}
-        >
-          {marketSpecifics.getMarketSVGTheme(resolvedTheme)}
-        </span>
-      )}
-      <span>{platform}</span>
-    </button>
-  )
-}
+  LockClosedIcon,
+  StarIcon,
+  ChevronDownIcon,
+} from '@heroicons/react/solid'
+import classNames from 'classnames'
+import DropdownButtons from 'components/dropdowns/DropdownButtons'
+import { OverviewSearchbar } from 'components/tokens/OverviewSearchbar'
+import { CheckboxFilters } from 'components/tokens/utils/OverviewUtils'
+import { useEffect, useRef, useState } from 'react'
+import { useMarketStore } from 'store/markets'
+import {
+  getSortOptionDisplayNameByValue,
+  SortOptionsAccountOpinions,
+  TABLE_NAMES,
+} from 'utils/tables'
+import useOnClickOutside from 'utils/useOnClickOutside'
 
 type FiltersButtonProps = {
   isSelected: boolean
@@ -91,47 +50,39 @@ const FiltersButton = ({
 }
 
 type Props = {
+  table: TABLE_NAMES
   selectedMarkets: Set<string>
   isVerifiedFilterActive: boolean
   isStarredFilterActive: boolean
   isLockedFilterActive: boolean
   nameSearch: string
+  orderBy: string
   onMarketChanged: (set: Set<string>) => void
   onNameSearchChanged: (value: string) => void
   setIsVerifiedFilterActive: (isActive: boolean) => void
   setIsStarredFilterActive: (isActive: boolean) => void
   setIsLockedFilterActive: (isActive: boolean) => void
+  setOrderBy: (value: string) => void
 }
 
 const WalletFilters = ({
+  table,
   selectedMarkets,
   isVerifiedFilterActive,
   isStarredFilterActive,
   isLockedFilterActive,
   nameSearch,
+  orderBy,
   onMarketChanged,
   onNameSearchChanged,
   setIsVerifiedFilterActive,
   setIsStarredFilterActive,
   setIsLockedFilterActive,
+  setOrderBy,
 }: Props) => {
-  const { mixpanel } = useMixPanel()
-
-  const toggleMarket = (marketName: string) => {
-    let newSet = null
-    if (marketName === 'URL') {
-      newSet = toggleMarketHelper('URL', selectedMarkets)
-      newSet = toggleMarketHelper('Minds', newSet)
-      newSet = toggleMarketHelper('Substack', newSet)
-      newSet = toggleMarketHelper('Showtime', newSet)
-      newSet = toggleMarketHelper('Wikipedia', newSet)
-    } else {
-      newSet = toggleMarketHelper(marketName, selectedMarkets)
-    }
-
-    onMarketChanged(newSet)
-    mixpanel.track('FILTER_PLATFORM', { platforms: marketName })
-  }
+  const [isSortingDropdownOpen, setIsSortingDropdownOpen] = useState(false)
+  const ref = useRef()
+  useOnClickOutside(ref, () => setIsSortingDropdownOpen(false))
 
   const markets = useMarketStore((state) =>
     state.markets.map((m) => m?.market?.name)
@@ -142,84 +93,8 @@ const WalletFilters = ({
     CheckboxFilters.PLATFORMS.values = ['All', ...markets]
   }, [markets])
 
-  const twitterMarketSpecifics = getMarketSpecificsByMarketName('Twitter')
-  const { resolvedTheme } = useThemeMode()
-
-  const isURLSelected = selectedMarkets.has('URL')
-  const isPeopleSelected = selectedMarkets.has('Twitter')
-
   return (
     <div className="justify-center p-3 bg-white rounded-t-lg text-black md:flex dark:bg-gray-700 gap-x-2 gap-y-2 md:justify-start lg:overflow-x-visible">
-      {/* <div className="flex md:gap-x-2">
-        {CheckboxFilters.PLATFORMS.values
-          .sort((p1, p2) => {
-            // Sort so that All is first and then Wikipedia is 2nd. Rest of order not controlled
-            if (p1 === 'All') return -1
-            if (p1 === 'Wikipedia' && p2 !== 'All') {
-              return -1
-            }
-
-            return 1
-          })
-          .map((platform: string) => (
-            <PlatformButton
-              key={platform}
-              platform={platform}
-              isSelected={
-                selectedMarkets ? selectedMarkets.has(platform) : false
-              }
-              onClick={toggleMarket}
-            />
-          ))}
-      </div> */}
-
-      {/* <FiltersButton
-        className="hidden md:flex"
-        onClick={setIsVerifiedFilterActive}
-        isSelected={isVerifiedFilterActive}
-        label={getIconVersion('verify', resolvedTheme, isVerifiedFilterActive)}
-      /> */}
-
-      <div className="flex justify-between items-center space-x-2">
-        <button
-          className={classNames(
-            'w-1/2 md:w-auto h-10 flex justify-center items-center md:px-3 p-2 rounded-md text-sm font-semibold',
-            {
-              'text-brand-blue dark:text-white bg-blue-100 dark:bg-very-dark-blue':
-                isURLSelected,
-            },
-            { 'text-brand-black dark:text-gray-50 border': !isURLSelected }
-          )}
-          onClick={() => {
-            toggleMarket('URL')
-          }}
-        >
-          <GlobeAltIcon className="w-5 mr-1" />
-          <span>URLs</span>
-        </button>
-        <button
-          className={classNames(
-            'w-1/2 md:w-auto h-10 flex justify-center items-center md:px-3 p-2 rounded-md text-sm font-semibold',
-            {
-              'text-brand-blue dark:text-white bg-blue-100 dark:bg-very-dark-blue':
-                isPeopleSelected,
-            },
-            { 'text-brand-black dark:text-gray-50 border': !isPeopleSelected }
-          )}
-          onClick={() => {
-            toggleMarket('Twitter')
-          }}
-        >
-          <span className="w-5 mr-1">
-            {twitterMarketSpecifics?.getMarketSVGTheme(
-              resolvedTheme,
-              isPeopleSelected
-            )}
-          </span>
-          <span>Users</span>
-        </button>
-      </div>
-
       <FiltersButton
         className="hidden md:flex"
         onClick={setIsStarredFilterActive}
@@ -234,23 +109,36 @@ const WalletFilters = ({
         label={<LockClosedIcon className="w-5 h-5" />}
       />
 
-      <div className="flex w-full h-9 md:h-auto mt-2 ml-auto md:mt-0">
+      <div className="w-full h-auto">
+        {/* Start of dropdown button that only shows on mobile Account Opinion table */}
+        {table === TABLE_NAMES.ACCOUNT_OPINIONS && (
+          <div
+            onClick={() => setIsSortingDropdownOpen(!isSortingDropdownOpen)}
+            className="relative w-full flex md:hidden justify-center items-center px-2 py-1 mb-1 ml-auto border rounded-md"
+          >
+            <span className="mr-1 text-sm text-black/[.5] font-semibold dark:text-white whitespace-nowrap">
+              Sort by:
+            </span>
+            <span className="text-sm text-blue-500 font-semibold flex items-center">
+              {/* <span>{getSortByIcon(selectedSortOptionID)}</span> */}
+              <span>{getSortOptionDisplayNameByValue(orderBy, table)}</span>
+            </span>
+            <span>
+              <ChevronDownIcon className="h-5" />
+            </span>
+
+            {isSortingDropdownOpen && (
+              <DropdownButtons
+                container={ref}
+                filters={Object.values(SortOptionsAccountOpinions)}
+                selectedOptions={new Set([orderBy])}
+                toggleOption={setOrderBy}
+              />
+            )}
+          </div>
+        )}
+
         <OverviewSearchbar onNameSearchChanged={onNameSearchChanged} />
-        {/* <button
-          className="flex items-center justify-center p-2 ml-2 text-sm font-semibold border rounded-md md:hidden"
-          onClick={() => {
-            ModalService.open(OverviewFiltersModal, {
-              isVerifiedFilterActive,
-              isStarredFilterActive,
-              selectedFilterId,
-              setIsVerifiedFilterActive,
-              setIsStarredFilterActive,
-              setSelectedFilterId,
-            })
-          }}
-        >
-          <span>Filters</span>
-        </button> */}
       </div>
 
       {/* <DropdownButton

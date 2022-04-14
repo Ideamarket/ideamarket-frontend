@@ -22,10 +22,12 @@ import { useMarketStore } from 'store/markets'
 import RatingsTable from 'modules/ratings/components/RatingsTable'
 import {
   getAvgRatingForIDT,
+  getTotalNumberOfLatestComments,
   getUsersLatestOpinions,
 } from 'modules/ratings/services/OpinionService'
 import RateModal from 'components/trade/RateModal'
 import { GlobalContext } from 'lib/GlobalContext'
+import { SortOptionsAccountOpinions, TABLE_NAMES } from 'utils/tables'
 
 const TOKENS_PER_PAGE = 10
 
@@ -65,8 +67,10 @@ export default function ProfileWallet({ walletState, userData }: Props) {
   const [lockedTokenTotalValue, setLockedTokensTotalValue] = useState('0.00')
   const [purchaseTotalValue, setPurchaseTotalValue] = useState('0.00')
 
-  const [table, setTable] = useState('ratings')
-  const [orderBy, setOrderBy] = useState('avgRating')
+  const [table, setTable] = useState(TABLE_NAMES.ACCOUNT_OPINIONS)
+  const [orderBy, setOrderBy] = useState(
+    SortOptionsAccountOpinions.RATING.value
+  )
   const [orderDirection, setOrderDirection] = useState('desc')
 
   const watchingTokens = Object.keys(
@@ -163,21 +167,30 @@ export default function ProfileWallet({ walletState, userData }: Props) {
       latestUserOpinions?.map(async (opinion: any) => {
         const idt = await querySingleIDTByTokenAddress(opinion?.addy)
         const avgRating = await getAvgRatingForIDT(opinion?.addy)
-        return { opinion: { ...opinion, avgRating }, idt }
+        const latestCommentsCount = await getTotalNumberOfLatestComments(
+          opinion?.addy
+        )
+        return { opinion: { ...opinion, avgRating, latestCommentsCount }, idt }
       })
     )
 
-    if (orderBy === 'userRating') {
+    if (orderBy === SortOptionsAccountOpinions.RATING.value) {
       ratingsPairs?.sort((p1: any, p2: any) => {
         return orderDirection === 'desc'
           ? p2.opinion.rating - p1.opinion.rating
           : p1.opinion.rating - p2.opinion.rating
       })
-    } else if (orderBy === 'avgRating') {
+    } else if (orderBy === SortOptionsAccountOpinions.AVG_RATING.value) {
       ratingsPairs?.sort((p1: any, p2: any) => {
         return orderDirection === 'desc'
           ? p2.opinion.avgRating - p1.opinion.avgRating
           : p1.opinion.avgRating - p2.opinion.avgRating
+      })
+    } else if (orderBy === SortOptionsAccountOpinions.COMMENTS.value) {
+      ratingsPairs?.sort((p1: any, p2: any) => {
+        return orderDirection === 'desc'
+          ? p2.opinion.latestCommentsCount - p1.opinion.latestCommentsCount
+          : p1.opinion.latestCommentsCount - p2.opinion.latestCommentsCount
       })
     }
 
@@ -270,17 +283,17 @@ export default function ProfileWallet({ walletState, userData }: Props) {
   return (
     <div className="w-full h-full mt-8 pb-20">
       <div className="flex flex-col justify-between sm:flex-row mb-0 md:mb-4">
-        <div className="flex order-1 md:order-none">
+        <div className="flex order-1 md:order-none mx-4">
           <div
             className={classNames(
-              table === 'ratings'
+              table === TABLE_NAMES.ACCOUNT_OPINIONS
                 ? 'text-white'
                 : 'text-brand-gray text-opacity-60 cursor-pointer',
-              'text-lg font-semibold flex flex-col justify-end mb-2.5 pr-6 ml-auto'
+              'text-lg font-semibold flex flex-col justify-end mb-2.5 pr-6 mr-auto'
             )}
             onClick={() => {
-              setTable('ratings')
-              setOrderBy('userRating')
+              setTable(TABLE_NAMES.ACCOUNT_OPINIONS)
+              setOrderBy(SortOptionsAccountOpinions.RATING.value)
               setOrderDirection('desc')
             }}
           >
@@ -288,33 +301,33 @@ export default function ProfileWallet({ walletState, userData }: Props) {
           </div>
           <div
             className={classNames(
-              table === 'holdings'
+              table === TABLE_NAMES.ACCOUNT_HOLDINGS
                 ? 'text-white'
                 : 'text-brand-gray text-opacity-60 cursor-pointer',
-              'text-lg font-semibold flex flex-col justify-end mb-2.5 pr-6 ml-auto'
+              'text-lg font-semibold flex flex-col justify-end mb-2.5 pr-6 mr-auto'
             )}
             onClick={() => {
-              setTable('holdings')
+              setTable(TABLE_NAMES.ACCOUNT_HOLDINGS)
               setOrderBy('price')
               setOrderDirection('desc')
             }}
           >
-            Wallet Holdings
+            Wallet
           </div>
           <div
             className={classNames(
-              table === 'trades'
+              table === TABLE_NAMES.ACCOUNT_TRADES
                 ? 'text-white'
                 : 'text-brand-gray text-opacity-60 cursor-pointer',
               'text-lg font-semibold flex flex-col justify-end mb-2.5 mr-auto'
             )}
             onClick={() => {
-              setTable('trades')
+              setTable(TABLE_NAMES.ACCOUNT_TRADES)
               setOrderBy('date')
               setOrderDirection('desc')
             }}
           >
-            Trades History
+            Trades
           </div>
         </div>
         <div className="flex mb-6 md:mb-0">
@@ -367,16 +380,19 @@ export default function ProfileWallet({ walletState, userData }: Props) {
 
       <div className="bg-white border rounded-md dark:bg-gray-700 dark:border-gray-500 border-brand-border-gray ">
         <WalletFilters
+          table={table}
           selectedMarkets={selectedMarkets}
           isVerifiedFilterActive={isVerifiedFilterActive}
           isStarredFilterActive={isStarredFilterActive}
           isLockedFilterActive={isLockedFilterActive}
           nameSearch={nameSearch}
+          orderBy={orderBy}
           onMarketChanged={onMarketChanged}
           onNameSearchChanged={setNameSearch}
           setIsVerifiedFilterActive={setIsVerifiedFilterActive}
           setIsStarredFilterActive={setIsStarredFilterActive}
           setIsLockedFilterActive={setIsLockedFilterActive}
+          setOrderBy={setOrderBy}
         />
         <div className="border-t border-brand-border-gray dark:border-gray-500 shadow-home ">
           {!web3 && (
@@ -392,7 +408,7 @@ export default function ProfileWallet({ walletState, userData }: Props) {
               </button>
             </div>
           )}
-          {table === 'ratings' &&
+          {table === TABLE_NAMES.ACCOUNT_OPINIONS &&
             !selectedMarkets?.has('None') &&
             web3 !== undefined && (
               <RatingsTable
@@ -408,7 +424,7 @@ export default function ProfileWallet({ walletState, userData }: Props) {
               />
             )}
 
-          {table === 'holdings' &&
+          {table === TABLE_NAMES.ACCOUNT_HOLDINGS &&
             !selectedMarkets?.has('None') &&
             web3 !== undefined && (
               <OwnedTokenTableNew
@@ -423,7 +439,7 @@ export default function ProfileWallet({ walletState, userData }: Props) {
               />
             )}
 
-          {table === 'trades' &&
+          {table === TABLE_NAMES.ACCOUNT_TRADES &&
             !selectedMarkets?.has('None') &&
             web3 !== undefined && (
               <MyTradesTableNew

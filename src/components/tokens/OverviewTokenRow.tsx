@@ -10,21 +10,17 @@ import {
 import { getMarketSpecificsByMarketName } from 'store/markets'
 import {
   formatNumberWithCommasAsThousandsSerperator,
-  formatNumber,
   bigNumberTenPow18,
   bnToFloatString,
+  formatNumberInt,
 } from 'utils'
-import { useTokenIconURL } from 'actions'
 import { useQuery } from 'react-query'
-import useThemeMode from 'components/useThemeMode'
-import Image from 'next/image'
 import BigNumber from 'bignumber.js'
 import IdeaverifyIconBlue from '../../assets/IdeaverifyIconBlue.svg'
 import { useMixPanel } from 'utils/mixPanel'
-import { getRealTokenName } from 'utils/wikipedia'
 import { useMemo } from 'react'
 import { getURLMetaData } from 'actions/web2/getURLMetaData'
-import { ChatIcon, GlobeAltIcon } from '@heroicons/react/outline'
+import { ChatIcon } from '@heroicons/react/outline'
 import { getTimeDifferenceIndays } from 'lib/utils/dateUtil'
 import { convertAccountName } from 'lib/utils/stringUtil'
 import A from 'components/A'
@@ -66,26 +62,12 @@ export default function TokenRow({
   const { data: urlMetaData } = useQuery([token?.url], () =>
     getURLMetaData(token?.url)
   )
-  const { tokenIconURL, isLoading: isTokenIconLoading } = useTokenIconURL({
-    marketSpecifics,
-    tokenName: getRealTokenName(token?.name),
-  })
-  const { resolvedTheme } = useThemeMode()
 
   const isOnChain = token?.isOnChain
 
-  const { ghostListedBy, ghostListedAt, onchainListedAt, onchainListedBy } =
-    (token || {}) as any
+  const { onchainListedAt, onchainListedBy } = (token || {}) as any
 
-  const isGhostListedByETHAddress = isETHAddress(ghostListedBy)
   const isOnchainListedByETHAddress = isETHAddress(onchainListedBy)
-
-  const timeAfterGhostListedInDays = useMemo(() => {
-    if (!ghostListedAt) return null
-    const ghostListedAtDate = new Date(ghostListedAt)
-    const currentDate = new Date()
-    return getTimeDifferenceIndays(ghostListedAtDate, currentDate)
-  }, [ghostListedAt])
 
   const timeAfterOnChainListedInDays = useMemo(() => {
     if (!onchainListedAt) return null
@@ -150,7 +132,7 @@ export default function TokenRow({
           {getListingTypeFromIDTURL(token?.url) === LISTING_TYPE.TWEET ? (
             <>
               {onchainListedBy && timeAfterOnChainListedInDays && (
-                <div className="px-2 py-2 mt-1 bg-black/[.05] rounded-lg whitespace-nowrap">
+                <div className="px-2 py-2 mt-1 rounded-lg whitespace-nowrap">
                   Listed by{' '}
                   {isOnchainListedByETHAddress ? (
                     <A
@@ -170,31 +152,7 @@ export default function TokenRow({
             </>
           ) : (
             <>
-              {showMarketSVG &&
-                marketSpecifics.getMarketSVGTheme(resolvedTheme)}
-              <div
-                className={classNames(
-                  'flex-shrink-0 w-7.5 h-7.5',
-                  showMarketSVG && 'ml-2'
-                )}
-              >
-                {isTokenIconLoading ? (
-                  <div className="w-full h-full bg-gray-400 rounded-full animate-pulse"></div>
-                ) : !isOnChain || market?.name === 'URL' ? (
-                  <GlobeAltIcon className="w-7" />
-                ) : (
-                  <div className="relative w-full h-full rounded-full">
-                    <Image
-                      src={tokenIconURL || '/gray.svg'}
-                      alt="token"
-                      layout="fill"
-                      objectFit="cover"
-                      className="rounded-full"
-                    />
-                  </div>
-                )}
-              </div>
-              <div className="ml-4 text-base font-medium leading-5 truncate z-30">
+              <div className="text-base font-medium leading-5 truncate z-30">
                 {displayName && (
                   <div>
                     <a
@@ -233,29 +191,22 @@ export default function TokenRow({
 
         <div className="relative w-full ">
           <div className="flex flex-col">
+            <div className="px-4 md:px-0 md:w-[80%] mt-4">
+              <ListingContent
+                ideaToken={token}
+                page="HomePage"
+                urlMetaData={urlMetaData}
+                useMetaData={
+                  getListingTypeFromIDTURL(token?.url) !== LISTING_TYPE.TWEET
+                }
+              />
+            </div>
+
             <div className="pl-4 md:pl-0 flex flex-col items-center space-x-0 space-y-1 mt-4 text-sm items-baseline">
-              {ghostListedBy && timeAfterGhostListedInDays && (
-                <div className="px-2 py-2 bg-black/[.05] rounded-lg whitespace-nowrap">
-                  Ghost Listed by{' '}
-                  {isGhostListedByETHAddress ? (
-                    <A
-                      className="underline font-bold hover:text-blue-600"
-                      href={`https://arbiscan.io/address/${ghostListedBy}`}
-                    >
-                      {convertAccountName(ghostListedBy)}
-                    </A>
-                  ) : (
-                    <span className="font-bold">
-                      {convertAccountName(ghostListedBy)}
-                    </span>
-                  )}{' '}
-                  {timeAfterGhostListedInDays} days ago
-                </div>
-              )}
               {getListingTypeFromIDTURL(token?.url) !== LISTING_TYPE.TWEET &&
                 onchainListedBy &&
                 timeAfterOnChainListedInDays && (
-                  <div className="px-2 py-2 bg-black/[.05] rounded-lg whitespace-nowrap">
+                  <div className="py-2 rounded-lg whitespace-nowrap">
                     Listed by{' '}
                     {isOnchainListedByETHAddress ? (
                       <A
@@ -273,17 +224,6 @@ export default function TokenRow({
                   </div>
                 )}
             </div>
-
-            <div className="px-4 md:px-0 md:w-[80%]">
-              <ListingContent
-                ideaToken={token}
-                page="HomePage"
-                urlMetaData={urlMetaData}
-                useMetaData={
-                  getListingTypeFromIDTURL(token?.url) !== LISTING_TYPE.TWEET
-                }
-              />
-            </div>
           </div>
         </div>
 
@@ -291,8 +231,8 @@ export default function TokenRow({
           <div>
             <div className="font-semibold text-black/[.5]">Average Rating</div>
             <div className="flex items-center">
-              <span className="text-blue-600 dark:text-gray-300 mr-1 text-lg font-semibold">
-                {formatNumber(token?.averageRating)}
+              <span className="text-blue-600 dark:text-gray-300 mr-1 font-extrabold text-xl">
+                {formatNumberInt(token?.averageRating)}
               </span>
               <span className="text-black/[.3] text-sm">
                 (
@@ -339,8 +279,10 @@ export default function TokenRow({
           Rating
         </p>
         <div className="flex flex-col justify-start font-medium leading-5">
-          <span className="text-blue-600 dark:text-gray-300">
-            {formatNumber(token?.averageRating)}
+          <span className="mb-1">
+            <span className="w-10 h-8 flex justify-center items-center rounded-lg bg-blue-100 text-blue-600 dark:text-gray-300 font-extrabold text-xl">
+              {formatNumberInt(token?.averageRating)}
+            </span>
           </span>
           <span className="text-black/[.3] text-sm">
             (

@@ -12,6 +12,7 @@ import { ClipboardCopyIcon } from '@heroicons/react/outline'
 import copy from 'copy-to-clipboard'
 import { getURL } from 'utils/seo-constants'
 import toast from 'react-hot-toast'
+import A from 'components/A'
 
 interface Props {
   userData?: any
@@ -51,107 +52,205 @@ const ProfileGeneralInfo: React.FC<Props> = ({ userData }) => {
 
   return (
     <>
-      <div className="md:hidden opacity-75 text-right text-xs mb-3">
-        <div>"Don't tell me what you believe — show me your portfolio."</div>
-        <div>—Nassim Nicholas Taleb</div>
-      </div>
+      {/* Desktop top section of account page */}
+      <div className="hidden md:block">
+        <div className="text-base opacity-50 mb-4">My Profile</div>
 
-      <div className="flex justify-between mb-6">
-        <span className="text-base opacity-50">My Profile</span>
-
-        <div className="flex items-center justify-items-end space-x-3">
-          <div className="hidden md:block opacity-75 text-right text-sm">
-            <div>
-              "Don't tell me what you believe — show me your portfolio."
+        <div className="flex justify-between mb-6">
+          {/* User image/name/bio/address and email prompt if haven't provided it yet */}
+          <div className="mb-10">
+            <div className="relative w-20 h-20 mb-4 rounded-full bg-gray-400 overflow-hidden">
+              {profilePhoto && (
+                <Image
+                  src={profilePhoto}
+                  alt="Workflow logo"
+                  layout="fill"
+                  objectFit="cover"
+                  className="rounded-full"
+                />
+              )}
             </div>
-            <div>—Nassim Nicholas Taleb</div>
-          </div>
 
-          <button
-            type="button"
-            onClick={copyProfileURL}
-            className="flex justify-center items-center space-x-1 h-10 px-2 font-medium hover:bg-white border-2 rounded-lg text-white hover:text-blue-600 dark:bg-gray-600 border-white dark:text-gray-300"
-          >
-            <span>Share</span>
-            <ClipboardCopyIcon className="w-6 h-6" />
-          </button>
+            <div className="text-lg">{username}</div>
 
-          {!isPublicProfile && isUserSignedIn && (
-            <div
-              className="flex items-center cursor-pointer opacity-75 text-xs"
-              onClick={onClickSettings}
-            >
-              <BiCog className="w-6 h-6" />
-              <span className="ml-1">Settings</span>
+            <div className="text-xs opacity-70 max-w-[15rem] mt-1">
+              {bio || ''}
             </div>
-          )}
-        </div>
-      </div>
-      <div className="flex justify-between items-center mb-10 flex-col md:flex-row">
-        <div className="flex items-center w-full md:w-auto">
-          <div className="relative w-20 h-20 rounded-full bg-gray-400 overflow-hidden">
-            {Boolean(profilePhoto) && (
-              <Image
-                src={profilePhoto}
-                alt="Workflow logo"
-                layout="fill"
-                objectFit="cover"
-                className="rounded-full"
-              />
-            )}
-          </div>
-          <div className="ml-6 font-sans">
-            <p className="text-lg">{username}</p>
-            <p className="text-xs opacity-70 max-w-[15rem] mt-1">{bio || ''}</p>
-          </div>
-        </div>
-        <div className="flex flex-col font-inter w-full md:w-auto my-8 md:my-0">
-          {address ? (
-            <>
-              <div className="flex opacity-70 items-center">
+
+            {address && (
+              <div className="flex items-center space-x-1 text-sm">
                 <BiWallet className="w-5 h-5" />
-                <span className="uppercase text-xs ml-1 font-medium">
-                  Eth Address
-                </span>
+                <A href={`https://arbiscan.io/address/${address}`} className="">
+                  {`${address?.slice(0, 10)}...${address?.slice(-8)}`}
+                </A>
               </div>
-              <span className="text-sm mt-2 font-normal">
-                {`${address?.slice(0, 10)}...${address?.slice(-8)}`}
-              </span>
-            </>
-          ) : (
-            ''
-          )}
-        </div>
-        {isUserSignedIn && !email && (
-          <div className="flex flex-col w-full md:w-auto">
-            <div className="flex opacity-70 items-center">
-              <MdOutlineEmail className="w-5 h-5" />
-              <span className="uppercase text-xs ml-1 font-medium">
-                Email Address
-              </span>
-            </div>
+            )}
 
-            <div className="bg-brand-blue rounded-lg font-bold my-2">
-              <div
-                onClick={onClickSettings}
-                className="rounded-lg p-4 bg-white flex cursor-pointer"
-              >
-                <span className="text-brand-blue m-auto font-sf-compact-medium tracking-wider text-sm">
-                  Connect Email
-                </span>
-              </div>
-              <div className="p-2 text-xs flex flex-col">
-                <div className="flex">
-                  <span className="ml-1">
-                    <BsFillBellFill className="w-4 h-4 text-yellow-1" /> receive
-                    notificaions, updates <br />
-                    and announcements <SpearkIcon className="w-4 h-4" />
+            {isUserSignedIn && !email && (
+              <div className="flex flex-col w-full md:w-auto">
+                <div className="flex opacity-70 items-center">
+                  <MdOutlineEmail className="w-5 h-5" />
+                  <span className="uppercase text-xs ml-1 font-medium">
+                    Email Address
                   </span>
                 </div>
+
+                <div className="bg-brand-blue rounded-lg font-bold my-2">
+                  <div
+                    onClick={onClickSettings}
+                    className="rounded-lg p-4 bg-white flex cursor-pointer"
+                  >
+                    <span className="text-brand-blue m-auto font-sf-compact-medium tracking-wider text-sm">
+                      Connect Email
+                    </span>
+                  </div>
+                  <div className="p-2 text-xs flex flex-col">
+                    <div className="flex">
+                      <span className="ml-1">
+                        <BsFillBellFill className="w-4 h-4 text-yellow-1" />{' '}
+                        receive notificaions, updates <br />
+                        and announcements <SpearkIcon className="w-4 h-4" />
+                      </span>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
+            )}
           </div>
-        )}
+
+          {/* Right side of top section on desktop */}
+
+          <div className="w-48">
+            <div className="pt-3 mb-2 border rounded-lg">
+              <div className="px-3 italic font-light text-white/[.7] text-xs leading-tight">
+                "Don't tell me what you believe, show me your portfolio."
+              </div>
+              <div className="px-3 text-right my-2 text-xs">
+                —Nassim Nicholas Taleb
+              </div>
+
+              <button
+                type="button"
+                onClick={copyProfileURL}
+                className="flex justify-center items-center space-x-1 w-full h-10 px-2 bg-white hover:bg-white/[.7] rounded-lg text-black dark:bg-gray-600 dark:text-gray-300"
+              >
+                <ClipboardCopyIcon className="w-6 h-6" />
+                <span>Share</span>
+              </button>
+            </div>
+
+            {!isPublicProfile && isUserSignedIn && (
+              <button
+                type="button"
+                className="flex justify-center items-center space-x-1 w-full h-10 px-2 bg-white/[.15] hover:bg-white/[.1] rounded-lg text-white"
+                onClick={onClickSettings}
+              >
+                <BiCog className="w-6 h-6" />
+                <span>Settings</span>
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile top section of account page */}
+      <div className="block md:hidden max-w-[17rem] mx-auto">
+        <div className="text-base opacity-50 mb-4">My Profile</div>
+
+        <div className="mb-6">
+          {/* User image/name/bio/address and email prompt if haven't provided it yet */}
+          <div className="mb-10">
+            <div className="relative w-20 h-20 mb-4 mx-auto rounded-full bg-gray-400 overflow-hidden">
+              {profilePhoto && (
+                <Image
+                  src={profilePhoto}
+                  alt="Workflow logo"
+                  layout="fill"
+                  objectFit="cover"
+                  className="rounded-full"
+                />
+              )}
+            </div>
+
+            <div className="text-lg text-center">{username}</div>
+
+            <div className="text-xs text-center opacity-70 max-w-[15rem] mt-1">
+              {bio || ''}
+            </div>
+
+            {address && (
+              <div className="flex justify-center items-center space-x-1 text-sm">
+                <BiWallet className="w-5 h-5" />
+                <A href={`https://arbiscan.io/address/${address}`} className="">
+                  {`${address?.slice(0, 10)}...${address?.slice(-8)}`}
+                </A>
+              </div>
+            )}
+
+            {isUserSignedIn && !email && (
+              <div className="flex flex-col w-full mx-auto">
+                <div className="flex opacity-70 items-center">
+                  <MdOutlineEmail className="w-5 h-5" />
+                  <span className="uppercase text-xs ml-1 font-medium">
+                    Email Address
+                  </span>
+                </div>
+
+                <div className="bg-brand-blue rounded-lg font-bold my-2">
+                  <div
+                    onClick={onClickSettings}
+                    className="rounded-lg p-4 bg-white flex cursor-pointer"
+                  >
+                    <span className="text-brand-blue m-auto font-sf-compact-medium tracking-wider text-sm">
+                      Connect Email
+                    </span>
+                  </div>
+                  <div className="p-2 text-xs flex flex-col">
+                    <div className="flex">
+                      <span className="ml-1">
+                        <BsFillBellFill className="w-4 h-4 text-yellow-1" />{' '}
+                        receive notificaions, updates <br />
+                        and announcements <SpearkIcon className="w-4 h-4" />
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Mobile: quote/share/settings */}
+          <div className="w-full">
+            <div className="pt-3 mb-2 border rounded-lg">
+              <div className="px-3 italic font-light text-white/[.7] text-xs leading-tight">
+                "Don't tell me what you believe, show me your portfolio."
+              </div>
+              <div className="px-3 text-right my-2 text-xs">
+                —Nassim Nicholas Taleb
+              </div>
+
+              <button
+                type="button"
+                onClick={copyProfileURL}
+                className="flex justify-center items-center space-x-1 w-full h-10 px-2 bg-white hover:bg-white/[.7] rounded-lg text-black dark:bg-gray-600 dark:text-gray-300"
+              >
+                <ClipboardCopyIcon className="w-6 h-6" />
+                <span>Share</span>
+              </button>
+            </div>
+
+            {!isPublicProfile && isUserSignedIn && (
+              <button
+                type="button"
+                className="flex justify-center items-center space-x-1 w-full h-10 px-2 bg-white/[.15] hover:bg-white/[.1] rounded-lg text-white"
+                onClick={onClickSettings}
+              >
+                <BiCog className="w-6 h-6" />
+                <span>Settings</span>
+              </button>
+            )}
+          </div>
+        </div>
       </div>
     </>
   )

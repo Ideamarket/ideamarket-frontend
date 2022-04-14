@@ -1,23 +1,27 @@
-import { StarIcon } from '@heroicons/react/solid'
+import { StarIcon, ChevronDownIcon } from '@heroicons/react/solid'
 import {
   SparklesIcon,
   FireIcon,
   ArrowSmUpIcon,
   QuestionMarkCircleIcon,
-  GlobeAltIcon,
 } from '@heroicons/react/outline'
-// import useOnClickOutside from 'utils/useOnClickOutside'
-import classNames from 'classnames'
+import useOnClickOutside from 'utils/useOnClickOutside'
 import SelectableButton, {
   JOINED_TYPES,
 } from 'components/buttons/SelectableButton'
 // import { getIconVersion } from 'utils/icons'
-import useThemeMode from 'components/useThemeMode'
 import { OverviewSearchbar } from 'components/tokens/OverviewSearchbar'
 import { IMarketSpecifics } from 'store/markets'
+import DropdownButtons from 'components/dropdowns/DropdownButtons'
+import { useRef, useState } from 'react'
+import {
+  getSortOptionDisplayNameByValue,
+  SortOptionsHomeTable,
+  TABLE_NAMES,
+} from 'utils/tables'
 
 type Props = {
-  selectedSortOptionID: number
+  orderBy: string
   isVerifiedFilterActive: boolean
   isStarredFilterActive: boolean
   isGhostOnlyActive: boolean
@@ -26,7 +30,7 @@ type Props = {
   isURLSelected: boolean
   isPeopleSelected: boolean
   twitterMarketSpecifics: IMarketSpecifics
-  toggleSortOption: (sortOptionID: number) => void
+  setOrderBy: (value: string) => void
   onNameSearchChanged: (value: string) => void
   setIsVerifiedFilterActive: (isActive: boolean) => void
   setIsStarredFilterActive: (isActive: boolean) => void
@@ -36,7 +40,7 @@ type Props = {
 }
 
 const OverviewFiltersMobile = ({
-  selectedSortOptionID,
+  orderBy,
   isVerifiedFilterActive,
   isStarredFilterActive,
   isGhostOnlyActive,
@@ -45,7 +49,7 @@ const OverviewFiltersMobile = ({
   isURLSelected,
   isPeopleSelected,
   twitterMarketSpecifics,
-  toggleSortOption,
+  setOrderBy,
   onNameSearchChanged,
   setIsVerifiedFilterActive,
   setIsStarredFilterActive,
@@ -53,10 +57,9 @@ const OverviewFiltersMobile = ({
   onCategoryClicked,
   toggleMarket,
 }: Props) => {
-  const { resolvedTheme } = useThemeMode()
-  // const [isSortingDropdownOpen, setIsSortingDropdownOpen] = useState(false)
-  // const ref = useRef()
-  // useOnClickOutside(ref, () => setIsSortingDropdownOpen(false))
+  const [isSortingDropdownOpen, setIsSortingDropdownOpen] = useState(false)
+  const ref = useRef()
+  useOnClickOutside(ref, () => setIsSortingDropdownOpen(false))
 
   /**
    * @param sortId -- id defined on frontend for sorting a certain way
@@ -81,7 +84,7 @@ const OverviewFiltersMobile = ({
   return (
     <div className="md:hidden bg-white dark:bg-gray-700 rounded-t-xl">
       <div className="p-3 border-b-4">
-        <div className="flex space-x-2 w-full h-10">
+        <div className="flex justify-between space-x-2 w-full h-10 mb-2">
           <SelectableButton
             onClick={setIsStarredFilterActive}
             isSelected={isStarredFilterActive}
@@ -89,12 +92,39 @@ const OverviewFiltersMobile = ({
             joined={JOINED_TYPES.NONE}
             className="rounded-lg"
           />
-          <OverviewSearchbar onNameSearchChanged={onNameSearchChanged} />
+          <div
+            onClick={() => setIsSortingDropdownOpen(!isSortingDropdownOpen)}
+            className="relative w-full flex justify-center items-center px-2 py-1 ml-auto border rounded-md"
+          >
+            <span className="mr-1 text-sm text-black/[.5] font-semibold dark:text-white whitespace-nowrap">
+              Sort by:
+            </span>
+            <span className="text-sm text-blue-500 font-semibold flex items-center">
+              {/* <span>{getSortByIcon(selectedSortOptionID)}</span> */}
+              <span>
+                {getSortOptionDisplayNameByValue(orderBy, TABLE_NAMES.HOME)}
+              </span>
+            </span>
+            <span>
+              <ChevronDownIcon className="h-5" />
+            </span>
+
+            {isSortingDropdownOpen && (
+              <DropdownButtons
+                container={ref}
+                filters={Object.values(SortOptionsHomeTable)}
+                selectedOptions={new Set([orderBy])}
+                toggleOption={setOrderBy}
+              />
+            )}
+          </div>
         </div>
+
+        <OverviewSearchbar onNameSearchChanged={onNameSearchChanged} />
       </div>
 
       <div className="p-3 flex items-center overflow-x-scroll">
-        <div className="flex items-center space-x-2 pr-2 border-r-2">
+        {/* <div className="flex items-center space-x-2 pr-2 border-r-2">
           <button
             className={classNames(
               'h-10 flex justify-center items-center md:px-3 p-2 rounded-md text-sm font-semibold',
@@ -132,7 +162,7 @@ const OverviewFiltersMobile = ({
             </span>
             <span>Users</span>
           </button>
-        </div>
+        </div> */}
 
         <div className="flex gap-x-2 pl-2">
           {categoriesData &&

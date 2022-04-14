@@ -13,6 +13,7 @@ import { ReactElement, useContext, useEffect, useState } from 'react'
 import {
   bigNumberTenPow18,
   calculateCurrentPriceBN,
+  formatNumberInt,
   formatNumberWithCommasAsThousandsSerperator,
   web3BNToFloatString,
 } from 'utils'
@@ -247,7 +248,7 @@ const TokenDetails = ({ rawTokenId }: { rawTokenId: string }) => {
   const listingType = getListingTypeFromIDTURL(token?.url)
 
   return (
-    <>
+    <div className=" mx-auto">
       <ListingSEO
         tokenName={tokenName}
         rawMarketName={marketName}
@@ -255,132 +256,11 @@ const TokenDetails = ({ rawTokenId }: { rawTokenId: string }) => {
       />
 
       {/* Start of top section of listing page */}
-      <div className="mt-10 mx-5 md:mx-10">
+      <div className="max-w-[50rem] mt-10 mx-5 md:mx-auto">
         <div className="text-black/[.5]">Market / Listings</div>
 
-        {/* Desktop -- top section of listing page */}
-        <div className="hidden lg:flex items-start w-full mt-4">
-          <div className="w-1/3">
-            <div className="w-48 rounded-lg border-2 flex flex-col divide-y-2">
-              {/* <div className="px-4 py-2 flex items-center">
-                <span className="w-1/2 text-xs">Composite Rating</span>
-                <span className="font-bold">97</span>
-              </div> */}
-              <div className="px-4 py-2 flex items-center">
-                <span className="w-1/2 text-xs">Average Rating</span>
-                <span className="font-bold">{token?.averageRating}</span>
-              </div>
-              <div className="px-4 py-2 flex items-center">
-                <span className="w-1/2 text-xs">Comments</span>
-                <span className="flex items-center font-bold">
-                  <ChatIcon className="w-4 mr-1 mt-0.5" />
-                  {token?.latestCommentsCount}
-                </span>
-              </div>
-              {/* <div className="px-4 py-2 flex items-center">
-                <span className="w-1/2 text-xs">Market Interest</span>
-                <span className="font-bold">$42,693</span>
-              </div> */}
-            </div>
-          </div>
-
-          <div className="w-1/3 flex items-start">
-            {listingType === LISTING_TYPE.TWEET ? (
-              <ListingContent
-                ideaToken={token}
-                page="ListingPage"
-                urlMetaData={urlMetaData}
-                useMetaData={false}
-              />
-            ) : (
-              <>
-                {/* This wrapper div combined with object-cover keeps images in correct size */}
-                <div className="aspect-[16/9] w-36">
-                  {/* Didn't use Next image because can't do wildcard domain allow in next config file */}
-                  <img
-                    className="rounded-xl h-full object-cover"
-                    src={
-                      urlMetaData && urlMetaData?.ogImage
-                        ? urlMetaData.ogImage
-                        : '/gray.svg'
-                    }
-                    alt=""
-                    referrerPolicy="no-referrer"
-                  />
-                </div>
-
-                <div className="ml-4 text-base font-medium leading-5 truncate z-30">
-                  <div>
-                    <a
-                      href={`/i/${token?.address}`}
-                      onClick={(event) => event.stopPropagation()}
-                      className="text-xs md:text-base font-bold hover:underline"
-                    >
-                      {displayName?.substr(
-                        0,
-                        displayName?.length > 50 ? 50 : displayName?.length
-                      ) + (displayName?.length > 50 ? '...' : '')}
-                    </a>
-                  </div>
-                  <a
-                    href={token?.url}
-                    className="text-xs md:text-sm text-brand-blue hover:underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {token?.url.substr(
-                      0,
-                      token?.url.length > 50 ? 50 : token?.url.length
-                    ) + (token?.url.length > 50 ? '...' : '')}
-                  </a>
-                  <div className="w-96 mt-2 text-xs text-left text-black/[.5] leading-4 whitespace-normal">
-                    {urlMetaData &&
-                      urlMetaData?.ogDescription &&
-                      urlMetaData?.ogDescription.substr(
-                        0,
-                        urlMetaData?.ogDescription.length > 160
-                          ? 160
-                          : urlMetaData?.ogDescription.length
-                      ) +
-                        (urlMetaData?.ogDescription.length > 160 ? '...' : '')}
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
-
-          <div className="w-1/3 flex flex-col items-end">
-            <button
-              onClick={(e) => {
-                e.stopPropagation()
-                onRateClicked(token, urlMetaData)
-              }}
-              className="flex justify-center items-center w-48 h-10 text-base font-medium text-white rounded-lg bg-black/[.8] dark:bg-gray-600 dark:text-gray-300 tracking-tightest-2"
-            >
-              <span>Rate</span>
-            </button>
-
-            <div className="flex justify-between items-center space-x-2 w-48 mt-2">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation()
-                  copyListingPageURL()
-                }}
-                className="flex justify-center items-center w-[80%] h-10 border-2 text-black text-base font-medium text-white rounded-lg hover:bg-blue-500 hover:text-white dark:text-gray-300 tracking-tightest-2"
-              >
-                <ShareIcon className="w-4 mr-2" />
-                <span className="mb-0.5">Share</span>
-              </button>
-
-              <div className="flex justify-center items-center w-10 h-10 border-2 rounded-lg">
-                {token && <WatchingStar token={token} />}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Tablet -- top section of listing page */}
-        <div className="hidden md:flex lg:hidden items-start w-full mt-4">
+        {/* Desktop and tablet -- top section of listing page */}
+        <div className="hidden md:flex items-start w-full mt-4">
           <div className="w-2/3 flex items-start">
             {listingType === LISTING_TYPE.TWEET ? (
               <ListingContent
@@ -454,7 +334,9 @@ const TokenDetails = ({ rawTokenId }: { rawTokenId: string }) => {
               </div> */}
               <div className="px-4 py-2 flex items-center">
                 <span className="w-1/2 text-xs">Average Rating</span>
-                <span className="font-bold">{token?.averageRating}</span>
+                <span className="font-bold">
+                  {formatNumberInt(token?.averageRating)}
+                </span>
               </div>
               <div className="px-4 py-2 flex items-center">
                 <span className="w-1/2 text-xs">Comments</span>
@@ -595,7 +477,7 @@ const TokenDetails = ({ rawTokenId }: { rawTokenId: string }) => {
         </div>
       </div>
 
-      <div className="md:mt-10 mx-0 md:mx-5 lg:mx-10 pb-20">
+      <div className="max-w-[80rem] md:mt-10 mx-0 md:mx-5 lg:mx-auto pb-20">
         <div className="text-xl text-center text-black font-bold mb-4">
           Ratings
         </div>
@@ -620,7 +502,7 @@ const TokenDetails = ({ rawTokenId }: { rawTokenId: string }) => {
           </div>
           <div className="flex items-center">
             <span className="text-blue-600 font-semibold text-xl mr-1">
-              {token?.averageRating}
+              {formatNumberInt(token?.averageRating)}
             </span>
             <span className="text-sm text-black/[.5]">
               ({token?.latestRatingsCount})
@@ -636,7 +518,7 @@ const TokenDetails = ({ rawTokenId }: { rawTokenId: string }) => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   )
 }
 
@@ -649,9 +531,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 }
 
 TokenDetails.getLayout = (page: ReactElement) => (
-  <DefaultLayout bgColor="bg-black/[.05] dark:bg-gray-900">
-    {page}
-  </DefaultLayout>
+  <DefaultLayout bgColor="bg-[#F6F6F6] dark:bg-gray-900">{page}</DefaultLayout>
 )
 
 export default TokenDetails

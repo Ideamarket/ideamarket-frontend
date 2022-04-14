@@ -87,8 +87,7 @@ const ListingContent = ({
           rel="noopener noreferrer"
         >
           {/* This wrapper div combined with object-cover keeps images in correct size */}
-          <div className="aspect-[16/9] w-56">
-            {/* Didn't use Next image because can't do wildcard domain allow in next config file */}
+          {/* <div className="aspect-[16/9] w-48">
             <img
               className="rounded-xl mt-4 h-full object-cover"
               src={
@@ -99,8 +98,8 @@ const ListingContent = ({
               alt=""
               referrerPolicy="no-referrer"
             />
-          </div>
-          <div className="w-full my-4 text-sm text-left leading-5 whitespace-normal">
+          </div> */}
+          <div className="w-full text-sm text-left leading-5 whitespace-normal">
             {urlMetaData &&
               urlMetaData?.ogDescription &&
               urlMetaData.ogDescription}

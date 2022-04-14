@@ -14,12 +14,8 @@ import {
   formatNumberWithCommasAsThousandsSerperator,
   bnToFloatString,
 } from 'utils'
-import { getMarketSpecificsByMarketName, useMarketStore } from 'store/markets'
-import { toggleMarketHelper } from '../utils/OverviewUtils'
-import { GlobeAltIcon } from '@heroicons/react/outline'
+import { useMarketStore } from 'store/markets'
 import { SortAscendingIcon, SortDescendingIcon } from '@heroicons/react/solid'
-import useThemeMode from 'components/useThemeMode'
-import { useMixPanel } from 'utils/mixPanel'
 import { StarIcon } from '@heroicons/react/solid'
 import SelectableButton from 'components/buttons/SelectableButton'
 
@@ -67,8 +63,6 @@ export const OverviewColumns = ({
   onMarketChanged,
   setIsStarredFilterActive,
 }: Props) => {
-  const { mixpanel } = useMixPanel()
-
   const { data: interestManagerTotalShares } = useQuery(
     'interest-manager-total-shares',
     queryInterestManagerTotalShares
@@ -84,8 +78,7 @@ export const OverviewColumns = ({
   const marketObjects = useMarketStore((state) => state.markets)
   const markets = marketObjects.map((m) => m.market)
 
-  const twitterMarketSpecifics = getMarketSpecificsByMarketName('Twitter')
-  const { resolvedTheme } = useThemeMode()
+  // const twitterMarketSpecifics = getMarketSpecificsByMarketName('Twitter')
 
   let allPlatformsEarnedBN = new BigNumber('0')
   const platformEarnedPairs = [] // { name, earned } -- name = platform name, earned = amount platform earned
@@ -119,25 +112,25 @@ export const OverviewColumns = ({
     allPlatformsEarnedBN = allPlatformsEarnedBN.plus(platformEarnedBN)
   })
 
-  const toggleMarket = (marketName: string) => {
-    let newSet = null
-    if (marketName === 'URL') {
-      newSet = toggleMarketHelper('URL', selectedMarkets)
-      newSet = toggleMarketHelper('Minds', newSet)
-      newSet = toggleMarketHelper('Substack', newSet)
-      newSet = toggleMarketHelper('Showtime', newSet)
-      newSet = toggleMarketHelper('Wikipedia', newSet)
-    } else {
-      newSet = toggleMarketHelper(marketName, selectedMarkets)
-    }
+  // const toggleMarket = (marketName: string) => {
+  //   let newSet = null
+  //   if (marketName === 'URL') {
+  //     newSet = toggleMarketHelper('URL', selectedMarkets)
+  //     newSet = toggleMarketHelper('Minds', newSet)
+  //     newSet = toggleMarketHelper('Substack', newSet)
+  //     newSet = toggleMarketHelper('Showtime', newSet)
+  //     newSet = toggleMarketHelper('Wikipedia', newSet)
+  //   } else {
+  //     newSet = toggleMarketHelper(marketName, selectedMarkets)
+  //   }
 
-    onMarketChanged(newSet)
-    mixpanel.track('FILTER_PLATFORM', { platforms: marketName })
-  }
+  //   onMarketChanged(newSet)
+  //   mixpanel.track('FILTER_PLATFORM', { platforms: marketName })
+  // }
 
   function getColumnContent(column) {
-    const isURLSelected = selectedMarkets.has('URL')
-    const isPeopleSelected = selectedMarkets.has('Twitter')
+    // const isURLSelected = selectedMarkets.has('URL')
+    // const isPeopleSelected = selectedMarkets.has('Twitter')
 
     switch (column.value) {
       case 'name':
@@ -152,7 +145,7 @@ export const OverviewColumns = ({
               />
             </div>
 
-            <button
+            {/* <button
               className={classNames(
                 'flex justify-center items-center h-9 md:px-3 md:rounded-md text-sm font-semibold',
                 {
@@ -194,7 +187,7 @@ export const OverviewColumns = ({
                 )}
               </span>
               <span>Users</span>
-            </button>
+            </button> */}
           </div>
         )
       case 'income':

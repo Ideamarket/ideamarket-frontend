@@ -1,25 +1,3 @@
-export const SortOptions = {
-  TOP: {
-    id: 1,
-    value: 'Top',
-  },
-  HOT: {
-    id: 2,
-    value: 'Hot',
-  },
-  NEW: {
-    id: 3,
-    value: 'New',
-  },
-}
-
-export const getSortOptionDisplayNameByID = (sortOptionID: number) => {
-  const displayName = Object.values(SortOptions).find(
-    (option) => option.id === sortOptionID
-  ).value
-  return displayName
-}
-
 export const CheckboxFilters = {
   PLATFORMS: {
     id: 1,
