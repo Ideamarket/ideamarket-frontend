@@ -2,15 +2,11 @@
 import { IdeaToken } from 'store/ideaMarketsStore'
 import {
   formatNumberWithCommasAsThousandsSerperator,
-  formatNumber,
+  formatNumberInt,
 } from 'utils'
-import { useTokenIconURL } from 'actions'
 import { useQuery } from 'react-query'
-import Image from 'next/image'
-import { useMixPanel } from 'utils/mixPanel'
-import { getRealTokenName } from 'utils/wikipedia'
 import { getURLMetaData } from 'actions/web2/getURLMetaData'
-import { ChatIcon, GlobeAltIcon } from '@heroicons/react/outline'
+import { ChatIcon } from '@heroicons/react/outline'
 // import { getTimeDifferenceIndays } from 'lib/utils/dateUtil'
 // import { convertAccountName } from 'lib/utils/stringUtil'
 // import A from 'components/A'
@@ -38,7 +34,6 @@ export default function RatingsRow({
   onRateClicked,
   lastElementRef,
 }: Props) {
-  const { mixpanel } = useMixPanel()
   const marketSpecifics = getMarketSpecificsByMarketName(
     ideaToken?.market?.name
   )
@@ -46,25 +41,11 @@ export default function RatingsRow({
   const { data: urlMetaData } = useQuery([ideaToken?.url], () =>
     getURLMetaData(ideaToken?.url)
   )
-  const { tokenIconURL, isLoading: isTokenIconLoading } = useTokenIconURL({
-    marketSpecifics,
-    tokenName: getRealTokenName(ideaToken?.name),
-  })
 
-  const isOnChain = ideaToken?.isOnChain
-
-  // const { ghostListedBy, ghostListedAt, onchainListedAt, onchainListedBy } =
+  // const { onchainListedAt, onchainListedBy } =
   //   (ideaToken || {}) as any
 
-  // const isGhostListedByETHAddress = isETHAddress(ghostListedBy)
   // const isOnchainListedByETHAddress = isETHAddress(onchainListedBy)
-
-  // const timeAfterGhostListedInDays = useMemo(() => {
-  //   if (!ghostListedAt) return null
-  //   const ghostListedAtDate = new Date(ghostListedAt)
-  //   const currentDate = new Date()
-  //   return getTimeDifferenceIndays(ghostListedAtDate, currentDate)
-  // }, [ghostListedAt])
 
   // const timeAfterOnChainListedInDays = useMemo(() => {
   //   if (!onchainListedAt) return null
@@ -86,29 +67,12 @@ export default function RatingsRow({
   return (
     <>
       {/* Desktop row */}
-      <div className="hidden md:block">
+      <div className="hidden md:block py-6">
         <div className="flex text-black">
           {/* Icon and Name */}
-          <div className="w-[40%] relative pl-6 pr-10 pt-8">
+          <div className="w-[40%] relative pl-6 pr-10">
             <div className="relative flex items-center w-3/4 mx-auto md:w-full text-gray-900 dark:text-gray-200">
-              <div className="flex-shrink-0 w-7.5 h-7.5">
-                {isTokenIconLoading ? (
-                  <div className="w-full h-full bg-gray-400 rounded-full animate-pulse"></div>
-                ) : !isOnChain || ideaToken?.market?.name === 'URL' ? (
-                  <GlobeAltIcon className="w-7" />
-                ) : (
-                  <div className="relative w-full h-full rounded-full">
-                    <Image
-                      src={tokenIconURL || '/gray.svg'}
-                      alt="ideaToken"
-                      layout="fill"
-                      objectFit="cover"
-                      className="rounded-full"
-                    />
-                  </div>
-                )}
-              </div>
-              <div className="ml-4 text-base font-medium leading-5 truncate z-30">
+              <div className="text-base font-medium leading-5 truncate z-30">
                 {displayName && (
                   <div>
                     <a
@@ -139,7 +103,7 @@ export default function RatingsRow({
           </div>
 
           {/* Rating By User */}
-          <div className="w-[20%] pt-12">
+          <div className="w-[20%]">
             <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-300">
               Rating By User
             </p>
@@ -157,13 +121,12 @@ export default function RatingsRow({
           </div> */}
 
           {/* Average Rating */}
-          <div className="w-[20%] pt-12">
-            <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-300">
-              Average Rating
-            </p>
+          <div className="w-[20%]">
             <div className="flex flex-col justify-start font-medium leading-5">
-              <span className="text-blue-600 dark:text-gray-300">
-                {formatNumber(avgRating)}
+              <span className="mb-1">
+                <span className="w-10 h-8 flex justify-center items-center rounded-lg bg-blue-100 text-blue-600 dark:text-gray-300 font-extrabold text-xl">
+                  {formatNumberInt(avgRating)}
+                </span>
               </span>
               <span className="text-black/[.3] text-sm">
                 ({formatNumberWithCommasAsThousandsSerperator(totalOpinions)})
@@ -182,15 +145,12 @@ export default function RatingsRow({
           </div> */}
 
           {/* Rate Button */}
-          <div className="w-[20%] pt-8">
+          <div className="w-[20%]">
             <div className="flex space-x-2">
               <button
                 onClick={(e) => {
                   e.stopPropagation()
                   onRateClicked(ideaToken, urlMetaData)
-                  mixpanel.track('HOME_ROW_RATE_START_CLICKED', {
-                    tokenName: ideaToken?.name,
-                  })
                 }}
                 className="flex justify-center items-center w-20 h-10 text-base font-medium text-white rounded-lg bg-black/[.8] dark:bg-gray-600 dark:text-gray-300 tracking-tightest-2"
               >
@@ -203,24 +163,6 @@ export default function RatingsRow({
         <div className="flex w-full">
           <div className="w-[40%] flex flex-col">
             {/* <div className="pl-4 md:pl-0 flex flex-col items-center space-x-0 space-y-1 mt-4 text-sm items-baseline">
-              {ghostListedBy && timeAfterGhostListedInDays && (
-                <div className="px-2 py-2 bg-black/[.05] rounded-lg whitespace-nowrap">
-                  Ghost Listed by{' '}
-                  {isGhostListedByETHAddress ? (
-                    <A
-                      className="underline font-bold hover:text-blue-600"
-                      href={`https://arbiscan.io/address/${ghostListedBy}`}
-                    >
-                      {convertAccountName(ghostListedBy)}
-                    </A>
-                  ) : (
-                    <span className="font-bold">
-                      {convertAccountName(ghostListedBy)}
-                    </span>
-                  )}{' '}
-                  {timeAfterGhostListedInDays} days ago
-                </div>
-              )}
               {onchainListedBy && timeAfterOnChainListedInDays && (
                 <div className="px-2 py-2 bg-black/[.05] rounded-lg whitespace-nowrap">
                   Listed by{' '}
@@ -270,26 +212,9 @@ export default function RatingsRow({
 
       {/* Mobile row */}
       <div className="md:hidden">
-        <div className="w-full relative px-3 py-4">
+        <div className="w-full relative px-3 pt-4">
           <div className="relative flex items-center w-3/4 text-gray-900 dark:text-gray-200">
-            <div className="flex-shrink-0 w-7.5 h-7.5">
-              {isTokenIconLoading ? (
-                <div className="w-full h-full bg-gray-400 rounded-full animate-pulse"></div>
-              ) : !isOnChain || ideaToken?.market?.name === 'URL' ? (
-                <GlobeAltIcon className="w-7" />
-              ) : (
-                <div className="relative w-full h-full rounded-full">
-                  <Image
-                    src={tokenIconURL || '/gray.svg'}
-                    alt="ideaToken"
-                    layout="fill"
-                    objectFit="cover"
-                    className="rounded-full"
-                  />
-                </div>
-              )}
-            </div>
-            <div className="ml-4 text-base font-medium leading-5 truncate z-30">
+            <div className="text-base font-medium leading-5 truncate z-30">
               {displayName && (
                 <div>
                   <a
@@ -319,7 +244,7 @@ export default function RatingsRow({
           </div>
         </div>
 
-        <div className="px-4">
+        <div className="px-3 py-4">
           <ListingContent
             ideaToken={ideaToken}
             page="MobileAccountPage"
@@ -334,8 +259,8 @@ export default function RatingsRow({
           <div>
             <div className="font-semibold text-black/[.5]">Average Rating</div>
             <div className="flex items-center">
-              <span className="text-blue-600 dark:text-gray-300 mr-1 text-lg font-semibold">
-                {formatNumber(avgRating)}
+              <span className="text-blue-600 dark:text-gray-300 mr-1 font-extrabold text-xl">
+                {formatNumberInt(avgRating)}
               </span>
               <span className="text-black/[.3] text-sm">
                 ({formatNumberWithCommasAsThousandsSerperator(totalOpinions)})

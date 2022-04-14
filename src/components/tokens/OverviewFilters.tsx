@@ -1,24 +1,7 @@
-import classNames from 'classnames'
 import { getMarketSpecificsByMarketName } from 'store/markets'
-import { ChevronDownIcon, StarIcon } from '@heroicons/react/solid'
-import {
-  // AdjustmentsIcon,
-  SparklesIcon,
-  FireIcon,
-  ArrowSmUpIcon,
-  QuestionMarkCircleIcon,
-} from '@heroicons/react/outline'
-import React, { useEffect, useRef, useState } from 'react'
+import React from 'react'
 import { OverviewSearchbar } from './OverviewSearchbar'
-import {
-  // CheckboxFilters,
-  // SortOptions,
-  // toggleColumnHelper,
-  toggleMarketHelper,
-} from './utils/OverviewUtils'
-import DropdownButtons from 'components/dropdowns/DropdownButtons'
-import DropdownCheckbox from 'components/dropdowns/DropdownCheckbox'
-import IdeaverifyIconBlue from '../../assets/IdeaverifyIconBlue.svg'
+import { toggleMarketHelper } from './utils/OverviewUtils'
 // import { getIconVersion } from 'utils/icons'
 import { useMixPanel } from 'utils/mixPanel'
 import { useQuery } from 'react-query'
@@ -26,113 +9,16 @@ import { getCategories } from 'actions/web2/getCategories'
 import OverviewFiltersMobile from 'components/home/OverviewFiltersMobile'
 import SelectableButton from 'components/buttons/SelectableButton'
 
-type DropdownButtonProps = {
-  filters: any
-  name: any
-  selectedOptions: any
-  toggleOption: (value: any) => void
-  className?: string
-  dropdownType?: string
-  selectedFilterId?: number
-}
-
-// filters = options to appear in the dropdown
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const DropdownButton = ({
-  filters,
-  name,
-  selectedOptions,
-  toggleOption,
-  className,
-  dropdownType = 'checkbox',
-  selectedFilterId,
-}: DropdownButtonProps) => {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
-  const container = useRef(null)
-
-  const DropdownProps = {
-    container,
-    filters,
-    selectedOptions,
-    toggleOption,
-  }
-
-  const getButtonIcon = (filterId: number) => {
-    switch (filterId) {
-      case 1:
-        return <ArrowSmUpIcon className="w-4 h-4 stroke-current" />
-      case 2:
-        return <FireIcon className="w-4 h-4 mr-1" />
-      case 3:
-        return <SparklesIcon className="w-4 h-4 mr-1" />
-      case 4:
-        return <IdeaverifyIconBlue className="w-5 h-5 mr-1" />
-      case 5:
-        return <StarIcon className="w-4 h-4 mr-1" />
-      default:
-        return <QuestionMarkCircleIcon className="w-4 h-4 mr-1" />
-    }
-  }
-
-  function handleClickOutside(event) {
-    const value = container.current
-    if (value && !value.contains(event.target)) {
-      setIsDropdownOpen(false)
-    }
-  }
-
-  useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside)
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [])
-
-  return (
-    <div
-      className={classNames(
-        className,
-        dropdownType !== 'columns' ? 'pl-3' : 'pl-2',
-        `relative flex items-center p-1 border rounded-md pr-1 font-semibold text-sm text-brand-black dark:text-gray-50 cursor-pointer `
-      )}
-      onMouseOver={() => {
-        setIsDropdownOpen(true)
-      }}
-      onMouseLeave={() => {
-        setIsDropdownOpen(false)
-      }}
-    >
-      {dropdownType === 'buttons' && (
-        <div className="flex">
-          <span className="mr-1 text-xs text-gray-500 dark:text-white whitespace-nowrap">
-            Sort by:
-          </span>
-          {getButtonIcon(selectedFilterId)}
-        </div>
-      )}
-      <span className="mr-1">{name}</span>
-      {dropdownType !== 'columns' && <ChevronDownIcon className="h-5" />}
-      {isDropdownOpen && dropdownType === 'buttons' && (
-        <DropdownButtons {...DropdownProps} />
-      )}
-      {isDropdownOpen && dropdownType !== 'buttons' && (
-        <DropdownCheckbox {...DropdownProps} />
-      )}
-    </div>
-  )
-}
-
 type OverviewFiltersProps = {
-  selectedFilterId: number
+  orderBy: string
   selectedMarkets: Set<string>
   selectedColumns: Set<string>
   isVerifiedFilterActive: boolean
   isStarredFilterActive: boolean
   isGhostOnlyActive: boolean
   selectedCategories: string[]
+  setOrderBy: (value: string) => void
   onMarketChanged: (set: Set<string>) => void
-  setSelectedFilterId: (filterId: number) => void
   onColumnChanged: (set: Set<string>) => void
   onNameSearchChanged: (value: string) => void
   setIsVerifiedFilterActive: (isActive: boolean) => void
@@ -142,15 +28,15 @@ type OverviewFiltersProps = {
 }
 
 export const OverviewFilters = ({
-  selectedFilterId,
+  orderBy,
   selectedMarkets,
   selectedColumns,
   isVerifiedFilterActive,
   isStarredFilterActive,
   isGhostOnlyActive,
   selectedCategories,
+  setOrderBy,
   onMarketChanged,
-  setSelectedFilterId,
   onColumnChanged,
   onNameSearchChanged,
   setIsVerifiedFilterActive,
@@ -180,10 +66,6 @@ export const OverviewFilters = ({
   //   const newSet = toggleColumnHelper(columnName, selectedColumns)
   //   onColumnChanged(newSet)
   // }
-
-  function onFilterChanged(filterId: number) {
-    setSelectedFilterId(filterId)
-  }
 
   /**
    * This method is called when a category is clicked on home table.
@@ -226,22 +108,9 @@ export const OverviewFilters = ({
             ))}
         </div>
 
-        <div className="flex w-full h-9 md:h-auto ml-auto">
+        <div className="flex w-52 h-9 md:h-auto ml-auto">
           <OverviewSearchbar onNameSearchChanged={onNameSearchChanged} />
         </div>
-
-        {/* <DropdownButton
-          filters={Object.values(SortOptions)}
-          name={
-            Object.values(SortOptions).find(
-              (filter) => filter.id === selectedFilterId
-            )?.value
-          }
-          selectedOptions={new Set([selectedFilterId])}
-          toggleOption={onFilterChanged}
-          dropdownType="buttons"
-          selectedFilterId={selectedFilterId}
-        /> */}
 
         {/* <SelectableButton
           onClick={setIsVerifiedFilterActive}
@@ -251,20 +120,6 @@ export const OverviewFilters = ({
             resolvedTheme,
             isVerifiedFilterActive
           )}
-        /> */}
-
-        {/* <SelectableButton
-          className="text-sm whitespace-nowrap"
-          onClick={setIsGhostOnlyActive}
-          isSelected={isGhostOnlyActive}
-          label={
-            <GhostIconBlack
-              className={classNames(
-                isGhostOnlyActive && 'stroke-blue-500',
-                'w-6 h-6'
-              )}
-            />
-          }
         /> */}
 
         {/* <DropdownButton
@@ -277,7 +132,7 @@ export const OverviewFilters = ({
       </div>
 
       <OverviewFiltersMobile
-        selectedSortOptionID={selectedFilterId}
+        orderBy={orderBy}
         isVerifiedFilterActive={isVerifiedFilterActive}
         isStarredFilterActive={isStarredFilterActive}
         isGhostOnlyActive={isGhostOnlyActive}
@@ -286,7 +141,7 @@ export const OverviewFilters = ({
         isURLSelected={isURLSelected}
         isPeopleSelected={isPeopleSelected}
         twitterMarketSpecifics={twitterMarketSpecifics}
-        toggleSortOption={onFilterChanged}
+        setOrderBy={setOrderBy}
         onNameSearchChanged={onNameSearchChanged}
         setIsVerifiedFilterActive={setIsVerifiedFilterActive}
         setIsStarredFilterActive={setIsStarredFilterActive}

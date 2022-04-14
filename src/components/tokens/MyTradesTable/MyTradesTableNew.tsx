@@ -1,10 +1,11 @@
 import classNames from 'classnames'
-import ColSize, { TABLE_NAMES } from 'components/tables/ColSize'
+import ColSize from 'components/tables/ColSize'
 import { useCallback, useRef, MutableRefObject } from 'react'
 import { IdeaTokenTrade } from 'store/ideaMarketsStore'
 import { MyTradesRowNew, MyTradesRowSkeleton } from './components'
 import headers from './headers'
 import { SortAscendingIcon, SortDescendingIcon } from '@heroicons/react/solid'
+import { TABLE_NAMES } from 'utils/tables'
 
 type MyTradesTableProps = {
   rawPairs: IdeaTokenTrade[]

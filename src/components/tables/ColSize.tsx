@@ -1,13 +1,10 @@
 import useBreakpoint from 'use-breakpoint'
 import { BREAKPOINTS } from 'utils/constants'
-
-export enum TABLE_NAMES {
-  HOME,
-  ACCOUNT_HOLDINGS,
-  ACCOUNT_TRADES,
-  RATINGS,
-  LISTING_PAGE_OPINIONS,
-}
+import {
+  SortOptionsAccountOpinions,
+  SortOptionsHomeTable,
+  TABLE_NAMES,
+} from 'utils/tables'
 
 type Props = {
   columnData: Array<any>
@@ -38,9 +35,9 @@ const ColSize = ({ columnData, tableName }: Props) => {
           return '8%'
         case 'claimable':
           return '8%'
-        case 'comments':
+        case SortOptionsHomeTable.COMMENTS.value:
           return '8%'
-        case 'avgRating':
+        case SortOptionsHomeTable.AVG_RATING.value:
           return '8%'
         case 'txButtons':
           return '13%'
@@ -81,13 +78,13 @@ const ColSize = ({ columnData, tableName }: Props) => {
         case 'date':
           return '9%'
       }
-    } else if (tableName === TABLE_NAMES.RATINGS) {
+    } else if (tableName === TABLE_NAMES.ACCOUNT_OPINIONS) {
       switch (column.value) {
         case 'name':
           return '35%'
-        case 'userRating':
+        case SortOptionsAccountOpinions.RATING.value:
           return '13%'
-        case 'avgRating':
+        case SortOptionsAccountOpinions.AVG_RATING.value:
           return '13%'
         case 'compositeRating':
           return '13%'
