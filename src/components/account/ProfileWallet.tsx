@@ -156,7 +156,9 @@ export default function ProfileWallet({ userData }: Props) {
   ])
 
   async function ratingsQueryFunction(numTokens: number, skip: number = 0) {
-    const latestUserOpinions = await getUsersLatestOpinions(address)
+    const latestUserOpinions = await getUsersLatestOpinions(
+      userData?.walletAddress
+    )
     // Add in the token here by doing subgraph call
     const ratingsPairs = await Promise.all(
       latestUserOpinions?.map(async (opinion: any) => {

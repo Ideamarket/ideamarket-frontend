@@ -13,6 +13,7 @@ import { BsFillBellFill } from 'react-icons/bs'
 import SpearkIcon from '../../assets/speaker.svg'
 import A from 'components/A'
 import { clearContracts } from 'store/contractStore'
+import A from 'components/A'
 
 export const ProfileTooltip = () => {
   const { user, jwtToken } = useContext(GlobalContext)
