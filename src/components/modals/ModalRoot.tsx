@@ -40,6 +40,10 @@ export default function ModalRoot() {
 
       setModalList(newModalList)
     })
+
+    ModalService.on('closeAll', () => {
+      setModalList([])
+    })
   }, [])
 
   return (

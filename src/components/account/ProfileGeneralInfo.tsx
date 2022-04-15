@@ -3,52 +3,74 @@ import ModalService from 'components/modals/ModalService'
 import Image from 'next/image'
 import ProfileSettingsModal from './ProfileSettingsModal'
 import { BiCog, BiWallet } from 'react-icons/bi'
-import { MdOutlineEmail } from 'react-icons/md'
 import { BsFillBellFill } from 'react-icons/bs'
 import SpearkIcon from '../../assets/speaker.svg'
-import { GlobalContext } from 'lib/GlobalContext'
-import { useWeb3React } from '@web3-react/core'
 import { ClipboardCopyIcon } from '@heroicons/react/outline'
 import copy from 'copy-to-clipboard'
 import { getURL } from 'utils/seo-constants'
 import toast from 'react-hot-toast'
 import A from 'components/A'
+import { useWeb3React } from '@web3-react/core'
+import { getSignedInWalletAddress } from 'lib/utils/web3-eth'
+import useAuth from './useAuth'
+import CreateAccountModal from './CreateAccountModal'
+import { GlobalContext } from 'lib/GlobalContext'
 
 interface Props {
   userData?: any
 }
 
 const ProfileGeneralInfo: React.FC<Props> = ({ userData }) => {
-  const {
-    user: {
-      bio,
-      profilePhoto: connectedProfilePhoto,
-      username: connectedUsername,
-      email,
-      walletAddress,
-    },
-  } = useContext(GlobalContext)
-  const { account } = useWeb3React()
+  const { account, active, library } = useWeb3React()
 
-  const onClickSettings = () => {
+  const { jwtToken } = useContext(GlobalContext)
+
+  const { loginByWallet } = useAuth()
+
+  const onLoginClicked = async () => {
+    if (active) {
+      const signedWalletAddress = await getSignedInWalletAddress({
+        account,
+        library,
+      })
+      return await loginByWallet(signedWalletAddress)
+    }
+
+    return null
+  }
+
+  const onClickSettings = async () => {
+    // if jwtToken is not present, then popup modal and MM popup to ask user to create account or sign in
+    if (!jwtToken) {
+      ModalService.open(CreateAccountModal, {})
+      const isLoginSuccess = await onLoginClicked()
+      ModalService.closeAll() // Get weird errors without this due to modal being closed inside CreateAccountModal in useEffect
+      if (isLoginSuccess) {
+        ModalService.open(ProfileSettingsModal)
+      }
+
+      return
+    }
+
     ModalService.open(ProfileSettingsModal)
   }
 
   const copyProfileURL = () => {
-    const url = userData
-      ? `${getURL()}/u/${userData?.username}`
-      : `${getURL()}/u/${connectedUsername}`
+    const url = `${getURL()}/u/${
+      userData && userData?.username
+        ? userData?.username
+        : userData?.walletAddress
+    }`
     copy(url)
     toast.success('Copied profile URL')
   }
 
-  const isPublicProfile = userData // Is this a public profile being viewed
-  const isUserSignedIn = walletAddress // If there is a user wallet address, then someone is signed in
-  const username = isPublicProfile ? userData?.username : connectedUsername
-  const address = isPublicProfile ? userData?.walletAddress : account
-  const profilePhoto = isPublicProfile
-    ? userData?.profilePhoto
-    : connectedProfilePhoto
+  // If true, then show settings button so wallet owners can change their settings
+  const isConnectedWalletSameAsPublicWallet =
+    userData &&
+    userData?.walletAddress &&
+    account &&
+    userData?.walletAddress === account
 
   return (
     <>
@@ -60,9 +82,9 @@ const ProfileGeneralInfo: React.FC<Props> = ({ userData }) => {
           {/* User image/name/bio/address and email prompt if haven't provided it yet */}
           <div className="mb-10">
             <div className="relative w-20 h-20 mb-4 rounded-full bg-gray-400 overflow-hidden">
-              {profilePhoto && (
+              {userData?.profilePhoto && (
                 <Image
-                  src={profilePhoto}
+                  src={userData?.profilePhoto}
                   alt="Workflow logo"
                   layout="fill"
                   objectFit="cover"
@@ -71,30 +93,29 @@ const ProfileGeneralInfo: React.FC<Props> = ({ userData }) => {
               )}
             </div>
 
-            <div className="text-lg">{username}</div>
+            <div className="text-xl font-bold">{userData?.username}</div>
 
             <div className="text-xs opacity-70 max-w-[15rem] mt-1">
-              {bio || ''}
+              {userData?.bio || ''}
             </div>
 
-            {address && (
+            {userData?.walletAddress && (
               <div className="flex items-center space-x-1 text-sm">
                 <BiWallet className="w-5 h-5" />
-                <A href={`https://arbiscan.io/address/${address}`} className="">
-                  {`${address?.slice(0, 10)}...${address?.slice(-8)}`}
+                <A
+                  href={`https://arbiscan.io/address/${userData?.walletAddress}`}
+                  className=""
+                >
+                  {`${userData?.walletAddress?.slice(
+                    0,
+                    10
+                  )}...${userData?.walletAddress?.slice(-8)}`}
                 </A>
               </div>
             )}
 
-            {isUserSignedIn && !email && (
-              <div className="flex flex-col w-full md:w-auto">
-                <div className="flex opacity-70 items-center">
-                  <MdOutlineEmail className="w-5 h-5" />
-                  <span className="uppercase text-xs ml-1 font-medium">
-                    Email Address
-                  </span>
-                </div>
-
+            {isConnectedWalletSameAsPublicWallet && !userData?.email && (
+              <div className="flex flex-col mt-1">
                 <div className="bg-brand-blue rounded-lg font-bold my-2">
                   <div
                     onClick={onClickSettings}
@@ -139,7 +160,7 @@ const ProfileGeneralInfo: React.FC<Props> = ({ userData }) => {
               </button>
             </div>
 
-            {!isPublicProfile && isUserSignedIn && (
+            {isConnectedWalletSameAsPublicWallet && (
               <button
                 type="button"
                 className="flex justify-center items-center space-x-1 w-full h-10 px-2 bg-white/[.15] hover:bg-white/[.1] rounded-lg text-white"
@@ -161,9 +182,9 @@ const ProfileGeneralInfo: React.FC<Props> = ({ userData }) => {
           {/* User image/name/bio/address and email prompt if haven't provided it yet */}
           <div className="mb-10">
             <div className="relative w-20 h-20 mb-4 mx-auto rounded-full bg-gray-400 overflow-hidden">
-              {profilePhoto && (
+              {userData?.profilePhoto && (
                 <Image
-                  src={profilePhoto}
+                  src={userData?.profilePhoto}
                   alt="Workflow logo"
                   layout="fill"
                   objectFit="cover"
@@ -172,30 +193,31 @@ const ProfileGeneralInfo: React.FC<Props> = ({ userData }) => {
               )}
             </div>
 
-            <div className="text-lg text-center">{username}</div>
-
-            <div className="text-xs text-center opacity-70 max-w-[15rem] mt-1">
-              {bio || ''}
+            <div className="text-xl font-bold text-center">
+              {userData?.username}
             </div>
 
-            {address && (
+            <div className="text-xs text-center opacity-70 max-w-[15rem] mt-1">
+              {userData?.bio || ''}
+            </div>
+
+            {userData?.walletAddress && (
               <div className="flex justify-center items-center space-x-1 text-sm">
                 <BiWallet className="w-5 h-5" />
-                <A href={`https://arbiscan.io/address/${address}`} className="">
-                  {`${address?.slice(0, 10)}...${address?.slice(-8)}`}
+                <A
+                  href={`https://arbiscan.io/address/${userData?.walletAddress}`}
+                  className=""
+                >
+                  {`${userData?.walletAddress?.slice(
+                    0,
+                    10
+                  )}...${userData?.walletAddress?.slice(-8)}`}
                 </A>
               </div>
             )}
 
-            {isUserSignedIn && !email && (
-              <div className="flex flex-col w-full mx-auto">
-                <div className="flex opacity-70 items-center">
-                  <MdOutlineEmail className="w-5 h-5" />
-                  <span className="uppercase text-xs ml-1 font-medium">
-                    Email Address
-                  </span>
-                </div>
-
+            {isConnectedWalletSameAsPublicWallet && !userData?.email && (
+              <div className="flex flex-col w-full mx-auto mt-1">
                 <div className="bg-brand-blue rounded-lg font-bold my-2">
                   <div
                     onClick={onClickSettings}
@@ -239,7 +261,7 @@ const ProfileGeneralInfo: React.FC<Props> = ({ userData }) => {
               </button>
             </div>
 
-            {!isPublicProfile && isUserSignedIn && (
+            {isConnectedWalletSameAsPublicWallet && (
               <button
                 type="button"
                 className="flex justify-center items-center space-x-1 w-full h-10 px-2 bg-white/[.15] hover:bg-white/[.1] rounded-lg text-white"

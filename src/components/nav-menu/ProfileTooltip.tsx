@@ -1,8 +1,7 @@
-import { IdentificationIcon, MailIcon } from '@heroicons/react/solid'
+import { MailIcon } from '@heroicons/react/solid'
 import { IoIosWallet } from 'react-icons/io'
 import { BiCog } from 'react-icons/bi'
 import { IoMdExit } from 'react-icons/io'
-import Link from 'next/link'
 import ModalService from 'components/modals/ModalService'
 import ProfileSettingsModal from 'components/account/ProfileSettingsModal'
 import { disconnectWalletConnector } from 'wallets/connectors'
@@ -13,16 +12,16 @@ import { GlobalContext } from 'lib/GlobalContext'
 import { BsFillBellFill } from 'react-icons/bs'
 import SpearkIcon from '../../assets/speaker.svg'
 import { clearContracts } from 'store/contractStore'
+import A from 'components/A'
 
-export const ProfileTooltip = ({
-  onLoginClicked,
-}: {
-  onLoginClicked: () => void
-}) => {
+export const ProfileTooltip = () => {
   const { user, jwtToken } = useContext(GlobalContext)
   const { active, connector, deactivate } = useWeb3React()
 
   const isSignedIn = active && jwtToken
+
+  const userNameOrWallet =
+    user && user.username ? user.username : user?.walletAddress
 
   const onClickSettings = () => {
     ModalService.open(ProfileSettingsModal)
@@ -41,15 +40,6 @@ export const ProfileTooltip = ({
 
   return (
     <div className="flex flex-col w-32 md:w-64 dark:text-black">
-      {!isSignedIn && (
-        <div
-          onClick={() => onLoginClicked()}
-          className="cursor-pointer flex items-center py-3 px-4 hover:bg-brand-gray"
-        >
-          <IdentificationIcon className="w-6 h-6 text-gray-400" />
-          <div className="ml-2">Create Account</div>
-        </div>
-      )}
       {isSignedIn && !Boolean(user.email) && (
         <>
           <div
@@ -69,12 +59,14 @@ export const ProfileTooltip = ({
           </div>
         </>
       )}
-      <Link href="/account">
+
+      <A href={`/u/${userNameOrWallet}`}>
         <div className="cursor-pointer flex items-center py-3 px-4 border-t border-gray-100 hover:bg-brand-gray">
           <IoIosWallet className="w-6 h-6  text-gray-400" />
           <span className="ml-2 font-medium">Wallet/Profile</span>
         </div>
-      </Link>
+      </A>
+
       {isSignedIn && (
         <div
           className="cursor-pointer flex items-center py-3 px-4 border-t border-gray-100 hover:bg-brand-gray"

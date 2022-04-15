@@ -17,13 +17,14 @@ const NavItem = ({ menuItem }) => {
 
   return (
     <div className="relative">
-      <div
+      <A
         className="inline-flex px-4 py-2 text-lg leading-5 text-white transition duration-150 ease-in-out bg-transparent rounded-md shadow-sm cursor-pointer md:justify-center hover:text-gray-500 active:text-gray-800"
         onClick={onMenuItemClick}
+        href={menuItem?.href}
       >
         <span>{menuItem.name}</span>
         {menuItem.subMenu && <ChevronDownIcon className="w-5 h-5" />}
-      </div>
+      </A>
       {menuItem.name === '$IMO' && <ImoNavbarTooltip />}
       {menuItem.subMenu && (
         <div

@@ -74,7 +74,7 @@ export default function ProfileSettingsModal({ close }: { close: () => void }) {
     try {
       const response = await updateAccount({ requestBody, token: jwtToken })
       if (response.data?.success && response.data?.data) {
-        setUser(response.data.data)
+        setUser(response.data.data.account)
       } else {
         throw new Error('Failed to update')
       }
@@ -238,18 +238,6 @@ export default function ProfileSettingsModal({ close }: { close: () => void }) {
                     type: 'set-username',
                     payload: event.target.value,
                   })
-                }
-              />
-            </div>
-            <div className="flex flex-col w-full mt-2">
-              <p className="ml-2 text-sm text-black text-opacity-50">
-                Display name
-              </p>
-              <input
-                className="pl-2 w-full h-10 leading-tight border rounded appearance-none focus:outline-none focus:bg-white dark:focus:bg-gray-700"
-                value={name}
-                onChange={(event) =>
-                  dispatch({ type: 'set-name', payload: event.target.value })
                 }
               />
             </div>

@@ -8,12 +8,8 @@ const client = axios.create({
 
 export default client
 
-export const registerAccount = ({ signedWalletAddress }) =>
-  client.post(`/account`, {
-    signedWalletAddress,
-  })
 export const loginAccount = ({ signedWalletAddress }) =>
-  client.post(`/account/authenticate`, {
+  client.post(`/account/signIn`, {
     signedWalletAddress,
   })
 
@@ -60,19 +56,25 @@ export const checkAccountEmailVerificationCode = ({ token, code, email }) =>
     }
   )
 
-export const getPublicProfile = async ({ username }) => {
-  try {
-    const response = await client.get(
-      `/account/publicProfile?username=${username}`,
-      {
-        headers: {
-          // TODO: pass in token if there is one
-          // Authorization: `Bearer ${token}`,
-        },
-      }
-    )
+export const getPublicProfile = async ({ username, walletAddress }) => {
+  if (!username && !walletAddress) return null
 
-    return response?.data?.data
+  try {
+    const response = await client.get(`/account/publicProfile`, {
+      params: {
+        username,
+        walletAddress,
+      },
+      headers: {
+        // TODO: pass in token if there is one
+        // Authorization: `Bearer ${token}`,
+      },
+    })
+
+    // If no user data returned, then at least return object with walletAddress that we already knew (if it was passed in)
+    return response?.data?.data?.account
+      ? response?.data?.data?.account
+      : { walletAddress }
   } catch (error) {
     console.error(`getPublicProfile for ${username} failed`)
     return null

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import Image from 'next/image'
 import NProgress from 'nprogress'
 import { getNavbarConfig } from './constants'
@@ -8,21 +8,19 @@ import { WalletStatusWithConnectButton } from 'components'
 import MobileNavItems from './MobileNavItems'
 import NavItem from './NavItem'
 import NavThemeButton from './NavThemeButton'
-import { useMixPanel } from 'utils/mixPanel'
 import { ProfileTooltip } from './ProfileTooltip'
 import { useWeb3React } from '@web3-react/core'
-import useAuth from 'components/account/useAuth'
-import { getSignedInWalletAddress } from 'lib/utils/web3-eth'
+import { GlobalContext } from 'lib/GlobalContext'
 
 const NavMenu = () => {
+  const { user } = useContext(GlobalContext)
   const router = useRouter()
-  const { active, account, library } = useWeb3React()
+  const { active } = useWeb3React()
   const [isMobileNavOpen, setMobileNavOpen] = useState(false)
   const [visibility, setVisibility] = useState<Boolean>(false)
   const [timerId, setTimerId] = useState(null)
-  const { mixpanel } = useMixPanel()
 
-  const navbarConfig = getNavbarConfig(mixpanel)
+  const navbarConfig = getNavbarConfig(user)
 
   useEffect(() => {
     NProgress.configure({ trickleSpeed: 100 })
@@ -51,20 +49,6 @@ const NavMenu = () => {
   const onMouseEnter = () => {
     timerId && clearTimeout(timerId)
     active && setVisibility(true)
-  }
-
-  const { loginByWallet } = useAuth()
-
-  const onLoginClicked = async () => {
-    mixpanel.track('ADD_ACCOUNT_START')
-
-    if (active) {
-      const signedWalletAddress = await getSignedInWalletAddress({
-        account,
-        library,
-      })
-      await loginByWallet(signedWalletAddress)
-    }
   }
 
   useEffect(() => {
@@ -119,7 +103,7 @@ const NavMenu = () => {
             </div>
             {visibility && (
               <div className="absolute top-0 mt-8 right-0 p-3 mb-1 text-sm rounded-xl shadow bg-white overflow-hidden">
-                <ProfileTooltip onLoginClicked={onLoginClicked} />
+                <ProfileTooltip />
               </div>
             )}
           </div>
@@ -140,7 +124,7 @@ const NavMenu = () => {
               <WalletStatusWithConnectButton />
               {visibility && (
                 <div className="absolute top-0 mt-10 right-0 mb-1 text-sm rounded-xl shadow bg-white overflow-hidden">
-                  <ProfileTooltip onLoginClicked={onLoginClicked} />
+                  <ProfileTooltip />
                 </div>
               )}
             </div>
@@ -148,7 +132,7 @@ const NavMenu = () => {
           {/* Desktop END */}
         </nav>
       </div>
-      <MobileNavItems isMobileNavOpen={isMobileNavOpen} />
+      <MobileNavItems isMobileNavOpen={isMobileNavOpen} user={user} />
     </div>
   )
 }

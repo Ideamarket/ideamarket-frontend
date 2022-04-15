@@ -1,17 +1,15 @@
 import { Transition } from '@headlessui/react'
-import { useMixPanel } from 'utils/mixPanel'
 import { getNavbarConfig } from './constants'
 import NavItem from './NavItem'
 import NavThemeButton from './NavThemeButton'
 
 type Props = {
   isMobileNavOpen: boolean
+  user: any
 }
 
-const MobileNavItems = ({ isMobileNavOpen }: Props) => {
-  const { mixpanel } = useMixPanel()
-
-  let navbarConfig = getNavbarConfig(mixpanel)
+const MobileNavItems = ({ isMobileNavOpen, user }: Props) => {
+  let navbarConfig = getNavbarConfig(user)
 
   return (
     <Transition

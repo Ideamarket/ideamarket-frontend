@@ -1,7 +1,7 @@
 import router from 'next/router'
 import { AIRDROP_TYPES } from 'types/airdropTypes'
 
-export const getNavbarConfig = (mixPanel: any) => ({
+export const getNavbarConfig = (user: any) => ({
   menu: [
     {
       name: 'Start',
@@ -13,21 +13,18 @@ export const getNavbarConfig = (mixPanel: any) => ({
               'https://docs.ideamarket.io/user-guide/tutorial',
               '_blank'
             )
-            mixPanel.track('LINK_TUTORIAL')
           },
         },
         {
           name: 'Whitepaper',
           onClick: () => {
             window.open('https://docs.ideamarket.io/', '_blank')
-            mixPanel.track('LINK_WHITEPAPER')
           },
         },
         {
           name: 'Buy Arb-ETH with credit/debit',
           onClick: () => {
             window.open('https://arbitrum.banxa.com', '_blank')
-            mixPanel.track('LINK_BUY_ARB_ETH')
           },
         },
         // {
@@ -68,7 +65,6 @@ export const getNavbarConfig = (mixPanel: any) => ({
           name: 'Swag Shop',
           onClick: () => {
             window.open('https://ideamarket-io.myshopify.com', '_blank')
-            mixPanel.track('LINK_SHOW')
           },
         },
       ],
@@ -83,7 +79,6 @@ export const getNavbarConfig = (mixPanel: any) => ({
               'https://arbiscan.io/address/0xB41bd4C99dA73510d9e081C5FADBE7A27Ac1F814',
               '_blank'
             )
-            mixPanel.track('GO_TO_TOKEN_ON_BLOCK_EXPLORER')
           },
         },
         {
@@ -115,9 +110,11 @@ export const getNavbarConfig = (mixPanel: any) => ({
     },
     {
       name: 'My Profile',
+      href: `/u/${user && user.username ? user.username : user?.walletAddress}`,
       onClick: () => {
-        router.push('/account')
-        mixPanel.track('GO_TO_MY_PROFILE')
+        router.push(
+          `/u/${user && user.username ? user.username : user?.walletAddress}`
+        )
       },
     },
   ],
