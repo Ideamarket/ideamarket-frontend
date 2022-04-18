@@ -250,7 +250,16 @@ export default function TradeInterface({
 
   const { data: rawLockedPairs, refetch: refetchLocked } = useQuery(
     ['locked-tokens', ideaToken?.address, account, 0, 100, null, null],
-    () => queryLockedAmounts(ideaToken?.address, account, 0, 100, null, null)
+    () =>
+      queryLockedAmounts(
+        ideaToken?.address,
+        account,
+        0,
+        100,
+        null,
+        null,
+        ideaToken?.isL1
+      )
   )
 
   const unlockablePairs = rawLockedPairs
@@ -567,7 +576,7 @@ export default function TradeInterface({
    */
   const onUnlockClicked = async () => {
     const untils = unlockablePairs.map((pair) => pair.lockedUntil)
-    const args = [ideaToken?.address, untils]
+    const args = [ideaToken?.address, untils, ideaToken?.isL1]
 
     try {
       await txManager.executeTx('Unlock', unlockIDT, ...args)

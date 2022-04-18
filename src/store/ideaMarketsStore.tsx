@@ -16,7 +16,7 @@ import {
   getQueryTokenBalances,
   getQueryBalancesOfHolders,
 } from './queries'
-import { NETWORK, L1_NETWORK } from 'store/networks'
+import { NETWORK, L1_NETWORK, getL1Network } from 'store/networks'
 import { getAllListings } from 'actions/web2/getAllListings'
 import { getMarketSpecificsByMarketName } from './markets'
 import { getSingleListing } from 'actions/web2/getSingleListing'
@@ -24,6 +24,7 @@ import { useContractStore } from './contractStore'
 import { getOwnedListings } from 'actions/web2/getOwnedListings'
 import { getTrades } from 'actions/web2/getTrades'
 import getQuerySingleIDTByTokenAddress from './queries/getQuerySingleIDTByTokenAddress'
+import { useWalletStore } from './walletStore'
 
 const HTTP_GRAPHQL_ENDPOINT_L1 = L1_NETWORK.getSubgraphURL()
 const HTTP_GRAPHQL_ENDPOINT = NETWORK.getSubgraphURL()
@@ -910,7 +911,8 @@ export async function queryLockedAmounts(
   skip: number,
   num: number,
   orderBy: string,
-  orderDirection: string
+  orderDirection: string,
+  isL1: boolean
 ): Promise<LockedAmount[]> {
   if (!tokenAddress || !ownerAddress) {
     return []
@@ -919,7 +921,7 @@ export async function queryLockedAmounts(
   let result = null
   try {
     result = await request(
-      HTTP_GRAPHQL_ENDPOINT,
+      isL1 ? HTTP_GRAPHQL_ENDPOINT_L1 : HTTP_GRAPHQL_ENDPOINT,
       getQueryLockedAmounts(
         tokenAddress.toLowerCase(),
         ownerAddress.toLowerCase(),
@@ -933,18 +935,37 @@ export async function queryLockedAmounts(
     console.error('getQueryLockedAmounts failed', error)
   }
 
-  const ideaTokenVault = useContractStore.getState().ideaTokenVaultContract
+  const ideaTokenVaultL2 = useContractStore.getState().ideaTokenVaultContract
+
+  const l1Network = getL1Network(NETWORK)
+  const deployedAddressesL1 = l1Network.getDeployedAddresses()
+  const abisL1 = l1Network.getDeployedABIs()
+  const web3L1 = useWalletStore.getState().web3
+
+  const ideaTokenVaultContractL1 = new web3L1.eth.Contract(
+    abisL1.ideaTokenVault as any,
+    deployedAddressesL1.ideaTokenVault,
+    { from: web3L1.eth.defaultAccount }
+  )
 
   let blockchainLockedEntries = []
   try {
     // Need to get lockedAmounts from blockchain bc subgraph data is not updated after unlocking contract called. This is bc no event is being emitted from contract. Changing contract now would take a lot of time, so can't do now.
-    blockchainLockedEntries = await ideaTokenVault.methods
-      .getLockedEntries(
-        tokenAddress,
-        ownerAddress,
-        100 // TODO: make bigger # if people start locking more than 100 times at once
-      )
-      .call()
+    blockchainLockedEntries = isL1
+      ? await ideaTokenVaultContractL1.methods
+          .getLockedEntries(
+            tokenAddress,
+            ownerAddress,
+            100 // TODO: make bigger # if people start locking more than 100 times at once
+          )
+          .call()
+      : await ideaTokenVaultL2.methods
+          .getLockedEntries(
+            tokenAddress,
+            ownerAddress,
+            100 // TODO: make bigger # if people start locking more than 100 times at once
+          )
+          .call()
   } catch (error) {
     console.error('getLockedEntries blockchain method call failed', error)
   }
