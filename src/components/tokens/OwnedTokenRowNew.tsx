@@ -212,7 +212,7 @@ export default function OwnedTokenRow({
           type="button"
           onClick={(e) => {
             e.stopPropagation()
-            isL1 && (!lockedAmount || lockedAmount === 0)
+            isL1
               ? router.push('/bridge')
               : ModalService.open(
                   TradeModal,
@@ -226,9 +226,7 @@ export default function OwnedTokenRow({
           }}
           className="w-16 h-10 mr-4 text-base font-medium text-white border-2 rounded-lg bg-brand-blue dark:bg-gray-600 border-brand-blue dark:text-gray-300"
         >
-          <span>
-            {isL1 && (!lockedAmount || lockedAmount === 0) ? 'Bridge' : 'Lock'}
-          </span>
+          <span>{isL1 ? 'Bridge' : 'Lock'}</span>
         </button>
       </td>
       <td className="px-4 md:pl-0 md:pr-5 py-4 whitespace-nowrap">

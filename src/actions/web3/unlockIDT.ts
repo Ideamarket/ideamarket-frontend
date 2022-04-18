@@ -1,7 +1,6 @@
 import { useWalletStore } from 'store/walletStore'
 import { useContractStore } from 'store/contractStore'
 import { getL1Network, NETWORK } from 'store/networks'
-import Web3 from 'web3'
 
 /**
  * Withdraw IDT that are currently locked so they are no longer locked.
@@ -19,12 +18,12 @@ export default function unlockIDT(
   const l1Network = getL1Network(NETWORK)
   const deployedAddressesL1 = l1Network.getDeployedAddresses()
   const abisL1 = l1Network.getDeployedABIs()
-  const web3L1 = new Web3(l1Network.getRPCURL())
+  const web3L1 = useWalletStore.getState().web3
 
   const ideaTokenVaultContractL1 = new web3L1.eth.Contract(
     abisL1.ideaTokenVault as any,
     deployedAddressesL1.ideaTokenVault,
-    { from: userAddress }
+    { from: web3L1.eth.defaultAccount }
   )
 
   return isL1

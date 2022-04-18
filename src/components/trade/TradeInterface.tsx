@@ -576,7 +576,7 @@ export default function TradeInterface({
    */
   const onUnlockClicked = async () => {
     const untils = unlockablePairs.map((pair) => pair.lockedUntil)
-    const args = [ideaToken?.address, untils, ideaToken?.isL1, account]
+    const args = [ideaToken?.address, untils, ideaToken?.isL1]
 
     try {
       await txManager.executeTx('Unlock', unlockIDT, ...args)
