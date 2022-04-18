@@ -11,12 +11,10 @@ import { L1TokenTable, Footer, DefaultLayout, WalletModal } from 'components'
 import { GlobalContext } from './_app'
 import ModalService from 'components/modals/ModalService'
 import Wand from '../assets/wand.svg'
-import { useMixPanel } from 'utils/mixPanel'
 import TxPending from 'components/trade/TxPending'
 import { isETHAddress } from 'utils/addresses'
 
 export default function Bridge() {
-  const { mixpanel } = useMixPanel()
   const l1Network = getL1Network(NETWORK)
   const { setRequiredNetwork } = useContext(GlobalContext)
   useEffect(() => {
@@ -72,8 +70,6 @@ export default function Bridge() {
         selectedPair.token.tokenID,
         l2Recipient
       )
-
-      mixpanel.track('BRIDGE_COMPLETED')
     } catch (ex) {
       console.log(ex)
       return
@@ -219,7 +215,10 @@ export default function Bridge() {
                       to 20 minutes for the tokens to be available on L2.
                     </div>
                   </div>
-                  <L1TokenTable setSelectedPair={setSelectedPair} />
+                  <L1TokenTable
+                    l2Recipient={l2Recipient}
+                    setSelectedPair={setSelectedPair}
+                  />
                 </>
               )}
             </div>

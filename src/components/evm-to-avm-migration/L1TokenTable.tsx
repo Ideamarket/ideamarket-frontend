@@ -1,7 +1,10 @@
 import classNames from 'classnames'
 import { useQuery } from 'react-query'
-import { IdeaTokenMarketPair, queryTokensHeld } from 'store/ideaMarketsStore'
-import { useWalletStore } from 'store/walletStore'
+import {
+  IdeaTokenMarketPair,
+  queryOwnedTokensMaybeMarket,
+} from 'store/ideaMarketsStore'
+import { useMarketStore } from 'store/markets'
 import { formatNumber } from 'utils'
 import L1TokenTableRow from './L1TokenTableRow'
 
@@ -26,15 +29,32 @@ const headers: Header[] = [
 ]
 
 export default function L1TokenTable({
+  l2Recipient,
   setSelectedPair,
 }: {
+  l2Recipient: string
   setSelectedPair: (pair: IdeaTokenMarketPair) => void
 }) {
-  const address = useWalletStore((state) => state.address)
+  const allMarkets = useMarketStore((state) => state.markets)
+  const filteredMarkets = allMarkets.map((m) => m?.market)
 
-  const { data: rawPairs, isLoading } = useQuery(['l1-tokens', address], () =>
-    queryTokensHeld(address)
+  const { data: rawPairs, isLoading } = useQuery(
+    ['l1-tokens', l2Recipient, allMarkets],
+    () =>
+      queryOwnedTokensMaybeMarket(
+        l2Recipient,
+        filteredMarkets,
+        100,
+        0,
+        'price',
+        'desc',
+        [],
+        '',
+        false
+      )
   )
+
+  const l1Holdings = rawPairs?.holdings?.filter((pair) => pair.token.isL1)
 
   if (!rawPairs) {
     return <></>
@@ -67,13 +87,9 @@ export default function L1TokenTable({
                     'loading'
                   ) : (
                     <>
-                      {rawPairs.map((pair) => (
+                      {l1Holdings?.map((pair) => (
                         <L1TokenTableRow
-                          key={
-                            pair.token.tokenID.toString() +
-                            '-' +
-                            pair.market.marketID.toString()
-                          }
+                          key={pair.address}
                           pair={pair}
                           balance={formatNumber(pair.balance)}
                           setSelectedPair={setSelectedPair}

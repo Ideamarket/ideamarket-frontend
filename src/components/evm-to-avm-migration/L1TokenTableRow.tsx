@@ -1,16 +1,18 @@
 import classNames from 'classnames'
-import { IdeaTokenMarketPair } from 'store/ideaMarketsStore'
 import { getMarketSpecificsByMarketName } from 'store/markets'
 import { useTokenIconURL } from 'actions'
+import ModalService from 'components/modals/ModalService'
+import TradeModal from 'components/trade/TradeModal'
+import { TX_TYPES } from 'components/trade/TradeCompleteModal'
 
 export default function L1TokenTableRow({
   pair,
   balance,
   setSelectedPair,
 }: {
-  pair: IdeaTokenMarketPair
+  pair: any
   balance: string
-  setSelectedPair: (pair: IdeaTokenMarketPair) => void
+  setSelectedPair: (pair: any) => void
 }) {
   const { token, market } = pair
   const marketSpecifics = getMarketSpecificsByMarketName(market.name)
@@ -60,11 +62,27 @@ export default function L1TokenTableRow({
             Balance
           </p>
           <p
-            className="text-base font-medium leading-4 uppercase tracking-tightest-2 text-very-dark-blue"
+            className="inline-block text-base font-medium leading-4 uppercase tracking-tightest-2 text-very-dark-blue"
             title={balance}
           >
             {balance}
           </p>
+          {pair?.lockedAmount && pair?.lockedAmount > 0 && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation()
+                ModalService.open(TradeModal, {
+                  ideaToken: token,
+                  market,
+                  startingTradeType: TX_TYPES.LOCK,
+                })
+              }}
+              className="w-16 h-10 ml-4 text-base font-medium text-white border-2 rounded-lg bg-brand-blue dark:bg-gray-600 border-brand-blue dark:text-gray-300"
+            >
+              <span>Lock</span>
+            </button>
+          )}
         </td>
       </tr>
     </>
