@@ -66,14 +66,17 @@ const DropdownButton = ({ toggleOption, orderBy }: DropdownButtonProps) => {
 
 type Props = {
   opinionPairs: any[]
+  orderBy: string
+  setOrderBy: (value: string) => void
   setNameSearch: (value: string) => void
 }
 
-const OpinionTable = ({ opinionPairs, setNameSearch }: Props) => {
-  const [orderBy, setOrderBy] = useState(
-    SortOptionsListingPageOpinions.RATING.value
-  )
-
+const OpinionTable = ({
+  opinionPairs,
+  orderBy,
+  setOrderBy,
+  setNameSearch,
+}: Props) => {
   return (
     <>
       {/* Desktop and tablet table */}

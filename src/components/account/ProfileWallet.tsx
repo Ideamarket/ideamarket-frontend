@@ -156,28 +156,28 @@ export default function ProfileWallet({ userData }: Props) {
   ])
 
   async function ratingsQueryFunction(numTokens: number, skip: number = 0) {
-    const latestUserOpinions = await getUsersLatestOpinions(
-      userData?.walletAddress
-    )
+    const latestUserOpinions = await getUsersLatestOpinions({
+      walletAddress: userData?.walletAddress,
+      skip,
+      limit: numTokens,
+      orderBy,
+      orderDirection,
+    })
     // Add in the token here by doing subgraph call
+    // TODO: backend may support this eventually, so no longer have to do all these API calls
     const ratingsPairs = await Promise.all(
       latestUserOpinions?.map(async (opinion: any) => {
-        const idt = await querySingleIDTByTokenAddress(opinion?.addy)
-        const avgRating = await getAvgRatingForIDT(opinion?.addy)
+        const idt = await querySingleIDTByTokenAddress(opinion?.tokenAddress)
+        const avgRating = await getAvgRatingForIDT(opinion?.tokenAddress)
         const latestCommentsCount = await getTotalNumberOfLatestComments(
-          opinion?.addy
+          opinion?.tokenAddress
         )
         return { opinion: { ...opinion, avgRating, latestCommentsCount }, idt }
       })
     )
 
-    if (orderBy === SortOptionsAccountOpinions.RATING.value) {
-      ratingsPairs?.sort((p1: any, p2: any) => {
-        return orderDirection === 'desc'
-          ? p2.opinion.rating - p1.opinion.rating
-          : p1.opinion.rating - p2.opinion.rating
-      })
-    } else if (orderBy === SortOptionsAccountOpinions.AVG_RATING.value) {
+    // TODO: remove these once backend support sorting by them
+    if (orderBy === SortOptionsAccountOpinions.AVG_RATING.value) {
       ratingsPairs?.sort((p1: any, p2: any) => {
         return orderDirection === 'desc'
           ? p2.opinion.avgRating - p1.opinion.avgRating

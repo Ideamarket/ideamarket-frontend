@@ -1,5 +1,6 @@
+import { getOpinionsByIDT } from 'actions/web2/getOpinionsByIDT'
+import { getOpinionsByWallet } from 'actions/web2/getOpinionsByWallet'
 import getLatestOpinionsAboutAddress from 'actions/web3/getLatestOpinionsAboutAddress'
-import getUsersOpinions from 'actions/web3/getUsersOpinions'
 
 /**
  * Get the average rating of all ratings onchain for this IDT
@@ -35,16 +36,45 @@ export const getTotalNumberOfLatestComments = async (idtAddress: string) => {
 /**
  * Get users latest opinions (doesn't include duplicates from past)
  */
-export const getUsersLatestOpinions = async (userAddress: string) => {
-  if (!userAddress || userAddress?.length <= 0) return []
-  const opinions = await getUsersOpinions(userAddress)
-  // Loop opinions. Each iteration add to temp object using address as keys. This works in getting latest opinions because last opinion is always the latest
-  const latestOpinions = {}
-  opinions?.forEach((opinion) => {
-    latestOpinions[opinion?.addy] = opinion
+export const getUsersLatestOpinions = async ({
+  walletAddress,
+  skip,
+  limit,
+  orderBy,
+  orderDirection,
+}) => {
+  if (!walletAddress || walletAddress?.length <= 0) return []
+  const opinions = await getOpinionsByWallet({
+    walletAddress,
+    latest: true,
+    skip,
+    limit,
+    orderBy,
+    orderDirection,
   })
 
-  const finalResults = Object.values(latestOpinions)
+  return opinions
+}
 
-  return finalResults
+/**
+ * Get latest opinions on this IDT (doesn't include duplicates from past)
+ */
+export const getIDTsLatestOpinions = async ({
+  tokenAddress,
+  skip,
+  limit,
+  orderBy,
+  orderDirection,
+}) => {
+  if (!tokenAddress || tokenAddress?.length <= 0) return []
+  const opinions = await getOpinionsByIDT({
+    tokenAddress,
+    latest: true,
+    skip,
+    limit,
+    orderBy,
+    orderDirection,
+  })
+
+  return opinions
 }

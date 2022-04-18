@@ -21,7 +21,7 @@ export function recoverAddresses({
  * Returns whether address is valid or not
  */
 export function isAddressValid(address: string) {
-  return web3.utils.isAddress(address)
+  return web3 && address ? web3.utils.isAddress(address) : false
 }
 
 export const getSignedInWalletAddress = async ({ account, library }) => {
