@@ -39,6 +39,9 @@ import getLatestOpinionsAboutAddress from 'actions/web3/getLatestOpinionsAboutAd
 import { flatten } from 'lodash'
 import OpinionTable from 'modules/ratings/components/ListingPage/OpinionTable'
 import classNames from 'classnames'
+import { getOpinionsByIDT } from 'actions/web2/getOpinionsByIDT'
+import { getIDTsLatestOpinions } from 'modules/ratings/services/OpinionService'
+import { SortOptionsListingPageOpinions } from 'utils/tables'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const DetailsSkeleton = () => (
@@ -97,8 +100,19 @@ const TokenDetails = ({ rawTokenId }: { rawTokenId: string }) => {
     () => queryMarket(marketName)
   )
 
+  const [orderBy, setOrderBy] = useState(
+    SortOptionsListingPageOpinions.RATING.value
+  )
+  const [orderDirection, setOrderDirection] = useState('desc')
+
   async function opinionsQueryFunction(numTokens: number, skip: number = 0) {
-    const latestOpinions = await getLatestOpinionsAboutAddress(token?.address)
+    const latestOpinions = await getIDTsLatestOpinions({
+      tokenAddress: token?.address,
+      skip,
+      limit: numTokens,
+      orderBy,
+      orderDirection,
+    })
     return latestOpinions || []
   }
 
@@ -256,7 +270,7 @@ const TokenDetails = ({ rawTokenId }: { rawTokenId: string }) => {
       />
 
       {/* Start of top section of listing page */}
-      <div className="max-w-[50rem] mt-10 mx-5 md:mx-auto">
+      <div className="max-w-[50rem] mt-10 px-5 md:mx-auto">
         <div className="text-black/[.5]">Market / Listings</div>
 
         {/* Desktop and tablet -- top section of listing page */}
@@ -477,13 +491,15 @@ const TokenDetails = ({ rawTokenId }: { rawTokenId: string }) => {
         </div>
       </div>
 
-      <div className="max-w-[80rem] md:mt-10 mx-0 md:mx-5 lg:mx-auto pb-20">
+      <div className="max-w-[78rem] md:mt-10 mx-0 md:mx-5 xl:mx-auto pb-20">
         <div className="text-xl text-center text-black font-bold mb-4">
           Ratings
         </div>
 
         <OpinionTable
           opinionPairs={opinionPairs}
+          orderBy={orderBy}
+          setOrderBy={setOrderBy}
           setNameSearch={setNameSearch}
         />
       </div>

@@ -20,7 +20,13 @@ export default function useOpinionsByUserAddress(
     let isCancelled = false
 
     async function run() {
-      const latestUserOpinionsResult = await getUsersLatestOpinions(userAddress)
+      const latestUserOpinionsResult = await getUsersLatestOpinions({
+        walletAddress: userAddress,
+        skip: 0,
+        limit: 100,
+        orderBy: 'rating',
+        orderDirection: 'desc',
+      })
       if (!isCancelled) {
         setLatestUserOpinions(latestUserOpinionsResult as any)
         setIsLoading(false)

@@ -18,6 +18,7 @@ import { useMarketStore } from 'store/markets'
 import { SortAscendingIcon, SortDescendingIcon } from '@heroicons/react/solid'
 import { StarIcon } from '@heroicons/react/solid'
 import SelectableButton from 'components/buttons/SelectableButton'
+import { SortOptionsHomeTable } from 'utils/tables'
 
 type Props = {
   currentColumn: string
@@ -215,6 +216,14 @@ export const OverviewColumns = ({
             7D
             <br />
             Change
+          </>
+        )
+      case SortOptionsHomeTable.AVG_RATING.value:
+        return (
+          <>
+            Average
+            <br />
+            Rating
           </>
         )
       default:
