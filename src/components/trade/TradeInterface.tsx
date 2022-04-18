@@ -250,7 +250,16 @@ export default function TradeInterface({
 
   const { data: rawLockedPairs, refetch: refetchLocked } = useQuery(
     ['locked-tokens', ideaToken?.address, account, 0, 100, null, null],
-    () => queryLockedAmounts(ideaToken?.address, account, 0, 100, null, null)
+    () =>
+      queryLockedAmounts(
+        ideaToken?.address,
+        account,
+        0,
+        100,
+        null,
+        null,
+        ideaToken?.isL1
+      )
   )
 
   const unlockablePairs = rawLockedPairs

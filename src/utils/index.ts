@@ -145,6 +145,7 @@ export function formatNumberInt(number: string | number): string {
 export function formatNumberWithCommasAsThousandsSerperator(
   number: string | number
 ): string {
+  if (!number) return '—'
   return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 }
 

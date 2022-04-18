@@ -182,11 +182,13 @@ export function initContractsFromWeb3(web3: Web3) {
     { from: web3.eth.defaultAccount }
   )
 
-  const opinionBase = new web3.eth.Contract(
-    abis.opinionBase as any,
-    deployedAddresses.opinionBase,
-    { from: web3.eth.defaultAccount }
-  )
+  const opinionBase = deployedAddresses.opinionBase
+    ? new web3.eth.Contract(
+        abis.opinionBase as any,
+        deployedAddresses.opinionBase,
+        { from: web3.eth.defaultAccount }
+      )
+    : null
 
   useContractStore.setState({
     factoryContract: factoryContract,

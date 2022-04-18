@@ -17,14 +17,14 @@ import {
   getQueryBalancesOfHolders,
 } from './queries'
 import { NETWORK, L1_NETWORK, getL1Network } from 'store/networks'
-import { getAllListings } from 'actions/web2/getAllListings'
 import { getMarketSpecificsByMarketName } from './markets'
 import { getSingleListing } from 'actions/web2/getSingleListing'
 import { useContractStore } from './contractStore'
 import { getOwnedListings } from 'actions/web2/getOwnedListings'
 import { getTrades } from 'actions/web2/getTrades'
-import { useWalletStore } from './walletStore'
 import getQuerySingleIDTByTokenAddress from './queries/getQuerySingleIDTByTokenAddress'
+import Web3 from 'web3'
+import getAllPosts from 'actions/web2/getAllPosts'
 
 const HTTP_GRAPHQL_ENDPOINT_L1 = L1_NETWORK.getSubgraphURL()
 const HTTP_GRAPHQL_ENDPOINT = NETWORK.getSubgraphURL()
@@ -100,6 +100,24 @@ export type IdeaToken = {
   averageRating: number
   latestCommentsCount: number
   latestRatingsCount: number
+}
+
+export type IdeamarketPost = {
+  contractAddress: string // Contract address the NFT is stored in
+  tokenID: number // tokenID of this NFT
+  minterAddress: string // Person that minted the NFT
+  content: string
+  categories: string[]
+  imageLink: string
+  isURL: boolean
+  url: string
+  blockHeight: number
+
+  averageRating: number
+  totalRatingsCount: number
+  latestRatingsCount: number
+  totalCommentsCount: number
+  latestCommentsCount: number
 }
 
 export type IdeaTokenMarketPair = {
@@ -407,122 +425,65 @@ export async function queryMyTokensMaybeMarket(
   )
 }
 
+/**
+ * Format data fetched from API so that the format is consistent across entire frontend
+ */
+const formatApiResponseToPost = (apiPost: any): IdeamarketPost => {
+  return {
+    contractAddress: apiPost?.contractAddress,
+    tokenID: apiPost?.tokenID,
+    minterAddress: apiPost?.minterAddress,
+    content: apiPost?.content,
+    categories: apiPost?.categories,
+    imageLink: apiPost?.imageLink,
+    isURL: apiPost?.isURL,
+    url: apiPost?.isURL ? apiPost?.content : '', // If there is a URL that was listed, it will be in content variable
+    blockHeight: apiPost?.blockHeight,
+
+    averageRating: apiPost?.averageRating,
+    totalRatingsCount: apiPost?.totalRatingsCount,
+    latestRatingsCount: apiPost?.latestRatingsCount,
+    totalCommentsCount: apiPost?.totalCommentsCount,
+    latestCommentsCount: apiPost?.latestCommentsCount,
+  }
+}
+
 type Params = [
-  markets: IdeaMarket[],
-  num: number,
-  duration: number,
+  limit: number,
   orderBy: string,
   orderDirection: string,
-  search: string,
+  categories: string[],
   filterTokens: string[],
-  isVerifiedFilter: boolean,
-  marketFilterType: string, // Value will be 'ghost', 'onchain', or 'both'
-  jwt: string,
-  categories: string[]
+  search: string
 ]
 
-export async function queryTokens(
+/**
+ * Call API to get all posts and then convert data to format consistent across entire frontend
+ */
+export async function queryPosts(
   params: Params,
   skip = 0
-): Promise<IdeaToken[]> {
+): Promise<IdeamarketPost[]> {
   if (!params) {
     return []
   }
 
-  const [
-    markets,
-    num,
-    duration,
-    orderBy,
-    orderDirection,
-    search,
-    filterTokens,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isVerifiedFilter,
-    marketFilterType,
-    jwt,
-    categories,
-  ] = params
+  const [limit, orderBy, orderDirection, categories, filterTokens, search] =
+    params
 
-  const fromTs = Math.floor(Date.now() / 1000) - duration
-  const marketIds = markets.map((market) => market.marketID).join()
-
-  // if (search.length >= 2) {
-  // L2Result = (
-  //   await request(
-  //     HTTP_GRAPHQL_ENDPOINT,
-  //     getQueryTokenNameTextSearch(
-  //       marketIds,
-  //       skip,
-  //       num,
-  //       fromTs,
-  //       orderBy,
-  //       orderDirection,
-  //       search,
-  //       filterTokens,
-  //       isVerifiedFilter
-  //     )
-  //   )
-  // ).tokenNameSearch
-  // } else {
-
-  const marketType =
-    marketFilterType === 'both'
-      ? null
-      : marketFilterType === 'ghost'
-      ? 'ghost'
-      : 'onchain'
-
-  const L2Result = await getAllListings({
-    marketType,
-    marketIds,
+  const allPosts = await getAllPosts({
     skip,
-    limit: num,
+    limit,
     orderBy,
     orderDirection,
-    filterTokens,
-    earliestPricePointTs: fromTs,
-    search,
-    isVerifiedFilter,
-    jwt,
     categories,
+    filterTokens,
+    search,
   })
-  // }
-
-  // const finalResult = await Promise.all(
-  //   L2Result.map(async (token) => {
-  //     const l1Token = await querySingleToken(
-  //       'token',
-  //       token?.market?.name,
-  //       token?.name,
-  //       true
-  //     )
-  //     let l1LockedAmount = '0'
-  //     if (l1Token) {
-  //       l1LockedAmount = l1Token.lockedAmount
-  //     }
-  //     const l2LockedAmount = web3BNToFloatString(
-  //       new BN(token.lockedAmount),
-  //       bigNumberTenPow18,
-  //       2
-  //     )
-  //     const supply = web3BNToFloatString(
-  //       new BN(token.supply),
-  //       bigNumberTenPow18,
-  //       2
-  //     )
-  //     const lockedPercentage = (
-  //       ((+l1LockedAmount + +l2LockedAmount) / +supply) *
-  //       100
-  //     ).toString()
-
-  //     return { ...token, lockedPercentage }
-  //   })
-  // )
 
   return await Promise.all(
-    L2Result.map(async (token) => {
-      return await querySingleToken(null, null, null, token?.listingId, jwt)
+    allPosts.map(async (post) => {
+      return formatApiResponseToPost(post)
     })
   )
 }
@@ -911,13 +872,12 @@ export async function queryLockedAmounts(
   skip: number,
   num: number,
   orderBy: string,
-  orderDirection: string
+  orderDirection: string,
+  isL1: boolean
 ): Promise<LockedAmount[]> {
   if (!tokenAddress || !ownerAddress) {
     return []
   }
-
-  const isL1 = useWalletStore.getState().chainID === 1
 
   let result = null
   try {
@@ -936,11 +896,12 @@ export async function queryLockedAmounts(
     console.error('getQueryLockedAmounts failed', error)
   }
 
-  const ideaTokenVault = useContractStore.getState().ideaTokenVaultContract
+  const ideaTokenVaultL2 = useContractStore.getState().ideaTokenVaultContract
+
   const l1Network = getL1Network(NETWORK)
   const deployedAddressesL1 = l1Network.getDeployedAddresses()
   const abisL1 = l1Network.getDeployedABIs()
-  const web3L1 = useWalletStore.getState().web3
+  const web3L1 = new Web3(l1Network.getRPCURL())
 
   const ideaTokenVaultContractL1 = new web3L1.eth.Contract(
     abisL1.ideaTokenVault as any,
@@ -953,10 +914,18 @@ export async function queryLockedAmounts(
     // Need to get lockedAmounts from blockchain bc subgraph data is not updated after unlocking contract called. This is bc no event is being emitted from contract. Changing contract now would take a lot of time, so can't do now.
     blockchainLockedEntries = isL1
       ? await ideaTokenVaultContractL1.methods
-          .getLockedEntries(tokenAddress, ownerAddress, 100)
+          .getLockedEntries(
+            tokenAddress,
+            ownerAddress,
+            100 // TODO: make bigger # if people start locking more than 100 times at once
+          )
           .call()
-      : await ideaTokenVault.methods
-          .getLockedEntries(tokenAddress, ownerAddress, 100)
+      : await ideaTokenVaultL2.methods
+          .getLockedEntries(
+            tokenAddress,
+            ownerAddress,
+            100 // TODO: make bigger # if people start locking more than 100 times at once
+          )
           .call()
   } catch (error) {
     console.error('getLockedEntries blockchain method call failed', error)
@@ -1030,14 +999,14 @@ export async function queryMyTrades(
   }
 }
 
-export function setIsWatching(token: IdeaToken, watching: boolean): void {
-  const address = token.tokenID
+export function setIsWatching(token: any, watching: boolean): void {
+  const tokenID = token.tokenID
 
   setNestedState((s: State) => {
     if (watching) {
-      s.watching[address] = true
+      s.watching[tokenID] = true
     } else {
-      delete s.watching[address]
+      delete s.watching[tokenID]
     }
   })
 
@@ -1183,7 +1152,7 @@ export function newApiResponseToIdeaToken(
     : marketSpecifics?.convertUserInputToTokenName(url)
 
   const ret = {
-    address: web3TokenData?.id,
+    address: web3TokenData ? web3TokenData?.id : apiResponse?.onchainId,
     marketID: apiResponse?.marketId,
     marketName: apiResponse?.marketName,
     tokenID: apiResponse?.onchainId, // web3 token ID
