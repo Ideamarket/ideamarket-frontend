@@ -24,7 +24,7 @@ import { useContractStore } from './contractStore'
 import { getOwnedListings } from 'actions/web2/getOwnedListings'
 import { getTrades } from 'actions/web2/getTrades'
 import getQuerySingleIDTByTokenAddress from './queries/getQuerySingleIDTByTokenAddress'
-import { useWalletStore } from './walletStore'
+import Web3 from 'web3'
 
 const HTTP_GRAPHQL_ENDPOINT_L1 = L1_NETWORK.getSubgraphURL()
 const HTTP_GRAPHQL_ENDPOINT = NETWORK.getSubgraphURL()
@@ -940,7 +940,7 @@ export async function queryLockedAmounts(
   const l1Network = getL1Network(NETWORK)
   const deployedAddressesL1 = l1Network.getDeployedAddresses()
   const abisL1 = l1Network.getDeployedABIs()
-  const web3L1 = useWalletStore.getState().web3
+  const web3L1 = new Web3(l1Network.getRPCURL())
 
   const ideaTokenVaultContractL1 = new web3L1.eth.Contract(
     abisL1.ideaTokenVault as any,
