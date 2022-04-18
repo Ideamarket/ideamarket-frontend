@@ -24,7 +24,7 @@ export default function unlockIDT(
   const ideaTokenVaultContractL1 = new web3L1.eth.Contract(
     abisL1.ideaTokenVault as any,
     deployedAddressesL1.ideaTokenVault,
-    { from: web3L1.eth.defaultAccount }
+    { from: userAddress }
   )
 
   return isL1
