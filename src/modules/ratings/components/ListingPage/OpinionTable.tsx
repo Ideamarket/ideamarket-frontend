@@ -109,9 +109,9 @@ const OpinionTable = ({
                 <div className="w-[26%] flex items-center pl-3">
                   <A
                     className="underline font-bold hover:text-blue-600"
-                    href={`https://arbiscan.io/address/${opinion?.author}`}
+                    href={`https://arbiscan.io/address/${opinion?.ratedBy}`}
                   >
-                    {convertAccountName(opinion?.author)}
+                    {convertAccountName(opinion?.ratedBy)}
                   </A>
                 </div>
 
@@ -160,9 +160,9 @@ const OpinionTable = ({
                 <div className="mb-2">
                   <A
                     className="underline font-bold hover:text-blue-600"
-                    href={`https://arbiscan.io/address/${opinion?.author}`}
+                    href={`https://arbiscan.io/address/${opinion?.ratedBy}`}
                   >
-                    {convertAccountName(opinion?.author)}
+                    {convertAccountName(opinion?.ratedBy)}
                   </A>
                 </div>
 
