@@ -16,7 +16,7 @@ export const getOpinionsByIDT = async ({
   if (!tokenAddress || tokenAddress?.length <= 0) return []
   try {
     const params = {
-      walletAddress: tokenAddress.toLowerCase(),
+      tokenAddress: tokenAddress.toLowerCase(),
       latest,
       skip,
       limit,
