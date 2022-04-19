@@ -6,15 +6,15 @@ import { getPublicProfile } from 'lib/axios'
 import { ReactElement } from 'react'
 import { useQuery } from 'react-query'
 import { isAddressValid } from 'lib/utils/web3-eth'
+import { useRouter } from 'next/router'
 
-type Props = {
-  username: string // This can be DB username or onchain wallet address
-}
+const PublicProfile = () => {
+  const router = useRouter()
+  const { username } = router.query // This can be DB username or onchain wallet address
 
-const PublicProfile = ({ username }: Props) => {
   const { data: userData } = useQuery<any>([{ username }], () =>
     getPublicProfile({
-      username: isAddressValid(username) ? null : username,
+      username: isAddressValid(username as string) ? null : username,
       walletAddress: username,
     })
   )
@@ -30,16 +30,6 @@ const PublicProfile = ({ username }: Props) => {
       </div>
     </div>
   )
-}
-
-export const getServerSideProps = async (context) => {
-  const { query } = context
-
-  return {
-    props: {
-      username: query.username,
-    },
-  }
 }
 
 PublicProfile.getLayout = (page: ReactElement) => (
