@@ -20,11 +20,7 @@ import ModalService from 'components/modals/ModalService'
 import WalletFilters from './WalletFilters'
 import { useMarketStore } from 'store/markets'
 import RatingsTable from 'modules/ratings/components/RatingsTable'
-import {
-  getAvgRatingForIDT,
-  getTotalNumberOfLatestComments,
-  getUsersLatestOpinions,
-} from 'modules/ratings/services/OpinionService'
+import { getUsersLatestOpinions } from 'modules/ratings/services/OpinionService'
 import RateModal from 'components/trade/RateModal'
 import { GlobalContext } from 'lib/GlobalContext'
 import { SortOptionsAccountOpinions, TABLE_NAMES } from 'utils/tables'
@@ -168,32 +164,12 @@ export default function ProfileWallet({ userData }: Props) {
       orderDirection,
     })
     // Add in the token here by doing subgraph call
-    // TODO: backend may support this eventually, so no longer have to do all these API calls
     const ratingsPairs = await Promise.all(
       latestUserOpinions?.map(async (opinion: any) => {
         const idt = await querySingleIDTByTokenAddress(opinion?.tokenAddress)
-        const avgRating = await getAvgRatingForIDT(opinion?.tokenAddress)
-        const latestCommentsCount = await getTotalNumberOfLatestComments(
-          opinion?.tokenAddress
-        )
-        return { opinion: { ...opinion, avgRating, latestCommentsCount }, idt }
+        return { opinion, idt }
       })
     )
-
-    // TODO: remove these once backend support sorting by them
-    if (orderBy === SortOptionsAccountOpinions.AVG_RATING.value) {
-      ratingsPairs?.sort((p1: any, p2: any) => {
-        return orderDirection === 'desc'
-          ? p2.opinion.avgRating - p1.opinion.avgRating
-          : p1.opinion.avgRating - p2.opinion.avgRating
-      })
-    } else if (orderBy === SortOptionsAccountOpinions.COMMENTS.value) {
-      ratingsPairs?.sort((p1: any, p2: any) => {
-        return orderDirection === 'desc'
-          ? p2.opinion.latestCommentsCount - p1.opinion.latestCommentsCount
-          : p1.opinion.latestCommentsCount - p2.opinion.latestCommentsCount
-      })
-    }
 
     return ratingsPairs || []
   }

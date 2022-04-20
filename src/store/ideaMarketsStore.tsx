@@ -447,25 +447,6 @@ export async function queryTokens(
   const fromTs = Math.floor(Date.now() / 1000) - duration
   const marketIds = markets.map((market) => market.marketID).join()
 
-  // if (search.length >= 2) {
-  // L2Result = (
-  //   await request(
-  //     HTTP_GRAPHQL_ENDPOINT,
-  //     getQueryTokenNameTextSearch(
-  //       marketIds,
-  //       skip,
-  //       num,
-  //       fromTs,
-  //       orderBy,
-  //       orderDirection,
-  //       search,
-  //       filterTokens,
-  //       isVerifiedFilter
-  //     )
-  //   )
-  // ).tokenNameSearch
-  // } else {
-
   const marketType =
     marketFilterType === 'both'
       ? null
@@ -487,42 +468,10 @@ export async function queryTokens(
     jwt,
     categories,
   })
-  // }
-
-  // const finalResult = await Promise.all(
-  //   L2Result.map(async (token) => {
-  //     const l1Token = await querySingleToken(
-  //       'token',
-  //       token?.market?.name,
-  //       token?.name,
-  //       true
-  //     )
-  //     let l1LockedAmount = '0'
-  //     if (l1Token) {
-  //       l1LockedAmount = l1Token.lockedAmount
-  //     }
-  //     const l2LockedAmount = web3BNToFloatString(
-  //       new BN(token.lockedAmount),
-  //       bigNumberTenPow18,
-  //       2
-  //     )
-  //     const supply = web3BNToFloatString(
-  //       new BN(token.supply),
-  //       bigNumberTenPow18,
-  //       2
-  //     )
-  //     const lockedPercentage = (
-  //       ((+l1LockedAmount + +l2LockedAmount) / +supply) *
-  //       100
-  //     ).toString()
-
-  //     return { ...token, lockedPercentage }
-  //   })
-  // )
 
   return await Promise.all(
     L2Result.map(async (token) => {
-      return await querySingleToken(null, null, null, token?.listingId, jwt)
+      return newApiResponseToIdeaToken(token)
     })
   )
 }

@@ -11,7 +11,6 @@ import { ChatIcon } from '@heroicons/react/outline'
 // import { convertAccountName } from 'lib/utils/stringUtil'
 // import A from 'components/A'
 // import { isETHAddress } from 'utils/addresses'
-import useOpinionsByIDTAddress from 'modules/ratings/hooks/useOpinionsByIDTAddress'
 import ListingContent from 'components/tokens/ListingContent'
 import {
   getListingTypeFromIDTURL,
@@ -53,11 +52,6 @@ export default function RatingsRow({
   //   const currentDate = new Date()
   //   return getTimeDifferenceIndays(onchainListedAtDate, currentDate)
   // }, [onchainListedAt])
-
-  const { avgRating, totalOpinions, totalComments } = useOpinionsByIDTAddress(
-    ideaToken?.address
-    // tradeOrListSuccessToggle
-  )
 
   const displayName =
     urlMetaData && urlMetaData?.ogTitle
@@ -125,11 +119,15 @@ export default function RatingsRow({
             <div className="flex flex-col justify-start font-medium leading-5">
               <span className="mb-1">
                 <span className="w-10 h-8 flex justify-center items-center rounded-lg bg-blue-100 text-blue-600 dark:text-gray-300 font-extrabold text-xl">
-                  {formatNumberInt(avgRating)}
+                  {formatNumberInt(opinion?.averageRating)}
                 </span>
               </span>
               <span className="text-black/[.3] text-sm">
-                ({formatNumberWithCommasAsThousandsSerperator(totalOpinions)})
+                (
+                {formatNumberWithCommasAsThousandsSerperator(
+                  opinion?.latestRatingsCount
+                )}
+                )
               </span>
             </div>
           </div>
@@ -260,10 +258,14 @@ export default function RatingsRow({
             <div className="font-semibold text-black/[.5]">Average Rating</div>
             <div className="flex items-center">
               <span className="text-blue-600 dark:text-gray-300 mr-1 font-extrabold text-xl">
-                {formatNumberInt(avgRating)}
+                {formatNumberInt(opinion?.averageRating)}
               </span>
               <span className="text-black/[.3] text-sm">
-                ({formatNumberWithCommasAsThousandsSerperator(totalOpinions)})
+                (
+                {formatNumberWithCommasAsThousandsSerperator(
+                  opinion?.latestRatingsCount
+                )}
+                )
               </span>
             </div>
           </div>
@@ -271,7 +273,9 @@ export default function RatingsRow({
             <div className="font-semibold text-black/[.5]">Comments</div>
             <div className="flex items-center font-medium text-lg text-black">
               <ChatIcon className="w-4 mr-1" />
-              {formatNumberWithCommasAsThousandsSerperator(totalComments)}
+              {formatNumberWithCommasAsThousandsSerperator(
+                opinion?.latestCommentsCount
+              )}
             </div>
           </div>
         </div>
