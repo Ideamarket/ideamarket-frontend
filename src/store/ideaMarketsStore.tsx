@@ -988,7 +988,7 @@ export async function queryMyTrades(
 }
 
 export function setIsWatching(token: IdeaToken, watching: boolean): void {
-  const address = token.tokenID
+  const address = token.address
 
   setNestedState((s: State) => {
     if (watching) {
@@ -1140,7 +1140,7 @@ export function newApiResponseToIdeaToken(
     : marketSpecifics?.convertUserInputToTokenName(url)
 
   const ret = {
-    address: web3TokenData?.id,
+    address: web3TokenData ? web3TokenData?.id : apiResponse?.onchainId,
     marketID: apiResponse?.marketId,
     marketName: apiResponse?.marketName,
     tokenID: apiResponse?.onchainId, // web3 token ID

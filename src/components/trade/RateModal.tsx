@@ -20,15 +20,6 @@ const CustomSlider = Slider.createSliderWithTooltip(Slider)
 
 const sliderMarks = {
   0: '0',
-  10: '10',
-  20: '20',
-  30: '30',
-  40: '40',
-  50: '50',
-  60: '60',
-  70: '70',
-  80: '80',
-  90: '90',
   100: '100',
 }
 
@@ -96,7 +87,7 @@ export default function RateModal({
   return (
     <Modal close={close}>
       <div className="w-full md:w-136 mx-auto bg-white dark:bg-gray-700 rounded-xl">
-        <div className="px-6 py-4 bg-gray-200 text-base font-medium leading-5 truncate">
+        <div className="px-6 py-4 bg-black/[.05] text-base font-medium leading-5 truncate">
           {displayName && (
             <div>
               <a
@@ -125,7 +116,6 @@ export default function RateModal({
         </div>
 
         <div className="px-6 py-4">
-          <div className="font-bold text-3xl mb-7">Rate</div>
           <div className="flex justify-between items-center mx-2 mb-1">
             <span className="font-bold">Rating</span>
             <div>
@@ -139,10 +129,7 @@ export default function RateModal({
           </div>
 
           <div className="px-4 py-2 border rounded-lg">
-            <div className="flex justify-between items-center mb-12">
-              <span className="text-black/[0.3] font-semibold">
-                Your Rating
-              </span>
+            <div className="flex justify-end items-center mb-12">
               <span className="text-xl font-bold">{inputRating}</span>
             </div>
 
@@ -157,7 +144,7 @@ export default function RateModal({
               min={0}
               max={100}
               tipFormatter={(value) => {
-                return `test ${value}`
+                return `${value}`
               }}
             />
           </div>
