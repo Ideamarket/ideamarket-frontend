@@ -15,7 +15,7 @@ export default function WatchingStar({
   className?: any
 }) {
   // Notice how we are using tokenID here to track "Starred" tokens
-  const watching = useIdeaMarketsStore((state) => state.watching[token.tokenID])
+  const watching = useIdeaMarketsStore((state) => state.watching[token.address])
 
   function onClick(e) {
     e.stopPropagation()
