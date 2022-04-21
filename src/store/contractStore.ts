@@ -25,7 +25,9 @@ type State = {
   lptoken: any
   drippingIMOSourceContract: any
   twitterVerifyMerkleDistributor: any
-  opinionBase: any
+  addressOpinionBase: any
+  nftOpinionBase: any
+  ideamarketPosts: any
 }
 
 export const useContractStore = create<State>((set) => ({
@@ -46,7 +48,9 @@ export const useContractStore = create<State>((set) => ({
   lptoken: undefined,
   drippingIMOSourceContract: undefined,
   twitterVerifyMerkleDistributor: undefined,
-  opinionBase: undefined,
+  addressOpinionBase: undefined,
+  nftOpinionBase: undefined,
+  ideamarketPosts: undefined,
 }))
 
 export function clearContracts() {
@@ -68,7 +72,9 @@ export function clearContracts() {
     lptoken: undefined,
     drippingIMOSourceContract: undefined,
     twitterVerifyMerkleDistributor: undefined,
-    opinionBase: undefined,
+    addressOpinionBase: undefined,
+    nftOpinionBase: undefined,
+    ideamarketPosts: undefined,
   })
 }
 
@@ -182,10 +188,26 @@ export function initContractsFromWeb3(web3: Web3) {
     { from: web3.eth.defaultAccount }
   )
 
-  const opinionBase = deployedAddresses.opinionBase
+  const addressOpinionBase = deployedAddresses.addressOpinionBase
     ? new web3.eth.Contract(
-        abis.opinionBase as any,
-        deployedAddresses.opinionBase,
+        abis.addressOpinionBase as any,
+        deployedAddresses.addressOpinionBase,
+        { from: web3.eth.defaultAccount }
+      )
+    : null
+
+  const nftOpinionBase = deployedAddresses.nftOpinionBase
+    ? new web3.eth.Contract(
+        abis.nftOpinionBase as any,
+        deployedAddresses.nftOpinionBase,
+        { from: web3.eth.defaultAccount }
+      )
+    : null
+
+  const ideamarketPosts = deployedAddresses.ideamarketPosts
+    ? new web3.eth.Contract(
+        abis.ideamarketPosts as any,
+        deployedAddresses.ideamarketPosts,
         { from: web3.eth.defaultAccount }
       )
     : null
@@ -208,7 +230,9 @@ export function initContractsFromWeb3(web3: Web3) {
     lptoken: lptoken,
     drippingIMOSourceContract: drippingIMOSourceContract,
     twitterVerifyMerkleDistributor: twitterVerifyMerkleDistributor,
-    opinionBase: opinionBase,
+    addressOpinionBase: addressOpinionBase,
+    nftOpinionBase: nftOpinionBase,
+    ideamarketPosts: ideamarketPosts,
   })
 }
 

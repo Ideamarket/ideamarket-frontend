@@ -8,8 +8,8 @@ export default async function getLatestOpinionsAboutAddress(
   idtAddress: string
 ) {
   if (!idtAddress) return []
-  const opinionBaseContract = useContractStore.getState().opinionBase
-  return await opinionBaseContract.methods
+  const addressOpinionBase = useContractStore.getState().addressOpinionBase
+  return await addressOpinionBase.methods
     .getLatestOpinionsAboutAddress(idtAddress)
     .call()
 }

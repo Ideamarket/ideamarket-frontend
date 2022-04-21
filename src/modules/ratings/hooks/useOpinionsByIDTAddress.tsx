@@ -12,7 +12,7 @@ export default function useOpinionsByIDTAddress(
   idtAddress: string,
   refreshToggle?: boolean // Used to refresh supply whenever needed
 ) {
-  const opinionBaseContract = useContractStore.getState().opinionBase
+  const addressOpinionBase = useContractStore.getState().addressOpinionBase
 
   const [isLoading, setIsLoading] = useState(true)
   const [avgRating, setAvgRating] = useState(0)
@@ -43,7 +43,7 @@ export default function useOpinionsByIDTAddress(
     }
 
     setIsLoading(true)
-    if (idtAddress && opinionBaseContract) run()
+    if (idtAddress && addressOpinionBase) run()
 
     return () => {
       isCancelled = true
@@ -54,7 +54,7 @@ export default function useOpinionsByIDTAddress(
     refreshToggle,
     walletAddress,
     chainID,
-    opinionBaseContract,
+    addressOpinionBase,
   ])
 
   return { avgRating, totalOpinions, totalComments, isLoading }

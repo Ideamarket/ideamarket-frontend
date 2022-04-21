@@ -5,8 +5,8 @@ import { useContractStore } from 'store/contractStore'
  * @param idtAddress -- address of IDT that has been rated
  */
 export default async function getOpinionsAboutAddress(idtAddress: string) {
-  const opinionBaseContract = useContractStore.getState().opinionBase
-  return await opinionBaseContract.methods
+  const addressOpinionBase = useContractStore.getState().addressOpinionBase
+  return await addressOpinionBase.methods
     .getOpinionsAboutAddress(idtAddress)
     .call()
 }
