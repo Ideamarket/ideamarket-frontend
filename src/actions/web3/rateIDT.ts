@@ -10,8 +10,8 @@ export default function rateIDT(
   rating: number,
   comment: string
 ) {
-  const opinionBaseContract = useContractStore.getState().opinionBase
-  return opinionBaseContract.methods
+  const addressOpinionBase = useContractStore.getState().addressOpinionBase
+  return addressOpinionBase.methods
     .writeOpinion(idtAddress, rating, comment)
     .send()
 }

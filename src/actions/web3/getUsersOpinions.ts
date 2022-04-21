@@ -5,6 +5,6 @@ import { useContractStore } from 'store/contractStore'
  */
 export default async function getUsersOpinions(userAddress: string) {
   if (!userAddress || userAddress?.length <= 0) return []
-  const opinionBaseContract = useContractStore.getState().opinionBase
-  return await opinionBaseContract.methods.getUsersOpinions(userAddress).call()
+  const addressOpinionBase = useContractStore.getState().addressOpinionBase
+  return await addressOpinionBase.methods.getUsersOpinions(userAddress).call()
 }
