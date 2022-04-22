@@ -103,7 +103,7 @@ const defaultColumns = [
   {
     id: 12,
     name: 'TX Buttons',
-    content: '',
+    content: 'Rate',
     value: 'txButtons',
     sortable: false,
     isOptional: false,

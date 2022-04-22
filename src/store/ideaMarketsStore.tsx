@@ -102,6 +102,16 @@ export type IdeaToken = {
   latestRatingsCount: number
 }
 
+export type IdeamarketPost = {
+  minter: string
+  content: string
+  categories: string[]
+  imageLink: string
+  isURL: boolean
+  urlContent: string
+  blockHeight: number
+}
+
 export type IdeaTokenMarketPair = {
   token: IdeaToken
   market: IdeaMarket
@@ -475,6 +485,65 @@ export async function queryTokens(
     })
   )
 }
+
+/**
+ * Format data fetched from API so that the format is consistent across entire frontend
+ */
+// const formatApiResponseToPost = (apiPost: any): IdeamarketPost => {
+//   return {
+//     minter: apiPost?.minter,
+//     content: apiPost?.content,
+//     categories: apiPost?.categories,
+//     imageLink: apiPost?.imageLink,
+//     isURL: apiPost?.isURL,
+//     urlContent: apiPost?.urlContent,
+//     blockHeight: apiPost?.blockHeight,
+//   }
+// }
+
+/**
+ * Call API to get all posts and then convert data to format consistent across entire frontend
+ */
+// export async function queryPosts(
+//   params: Params,
+//   skip = 0
+// ): Promise<IdeamarketPost[]> {
+//   if (!params) {
+//     return []
+//   }
+
+//   const [
+//     markets,
+//     num,
+//     duration,
+//     orderBy,
+//     orderDirection,
+//     search,
+//     filterTokens,
+//     isVerifiedFilter,
+//     marketFilterType,
+//     jwt,
+//     categories,
+//   ] = params
+
+//   const fromTs = Math.floor(Date.now() / 1000) - duration
+//   const marketIds = markets.map((market) => market.marketID).join()
+
+//   const marketType =
+//     marketFilterType === 'both'
+//       ? null
+//       : marketFilterType === 'ghost'
+//       ? 'ghost'
+//       : 'onchain'
+
+//   const allPosts = await getAllPosts()
+
+//   return await Promise.all(
+//     allPosts.map(async (post) => {
+//       return formatApiResponseToPost(post)
+//     })
+//   )
+// }
 
 export async function querySingleToken(
   value: string,
