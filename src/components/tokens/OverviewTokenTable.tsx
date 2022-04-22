@@ -22,8 +22,7 @@ import TokenRowSkeleton from './OverviewTokenRowSkeleton'
 import { OverviewColumns } from './table/OverviewColumns'
 import { flatten } from 'utils/lodash'
 import { GlobalContext } from 'lib/GlobalContext'
-import ColSize from 'components/tables/ColSize'
-import { SortOptionsHomeTable, TABLE_NAMES } from 'utils/tables'
+import { SortOptionsHomeTable } from 'utils/tables'
 
 type Props = {
   selectedMarkets: Set<string>
@@ -168,6 +167,8 @@ export default function Table({
 
   const tokenData = flatten(infiniteData?.pages || [])
 
+  console.log('tokenData==', tokenData)
+
   useEffect(() => {
     const fetch = async () => {
       const markets = (await refetchMarkets()) as any
@@ -232,73 +233,134 @@ export default function Table({
 
   return (
     <div className="flex flex-col">
-      <div className="-my-2 overflow-x-auto lg:overflow-x-visible">
+      <div className="-my-2 overflow-x-auto">
         <div className="inline-block w-full py-2 align-middle">
-          <div className="overflow-x-scroll border-b border-t-4 border-gray-200 dark:border-gray-500 lg:overflow-x-visible">
-            {/* table-fixed makes it so mobile table does not overflow and stays width defined here (w-full) */}
-            <table className="table-fixed w-full">
-              <ColSize columnData={columnData} tableName={TABLE_NAMES.HOME} />
-
-              <thead className="hidden h-24 md:table-header-group border-b-4">
-                <tr className="z-40 lg:sticky md:top-28 sticky-safari">
-                  <OverviewColumns
-                    currentColumn={orderBy}
-                    orderDirection={orderDirection}
-                    columnData={columnData}
-                    selectedMarkets={selectedMarkets}
-                    isStarredFilterActive={isStarredFilterActive}
-                    columnClicked={columnClicked}
-                    onMarketChanged={onMarketChanged}
-                    setIsStarredFilterActive={setIsStarredFilterActive}
-                  />
-                </tr>
-              </thead>
-              <tbody className="w-full bg-white divide-y-4 divide-black/[0.05] dark:bg-gray-700 dark:divide-gray-500">
-                {(tokenData as any[]).map((token, index) => {
-                  const marketID = token?.marketID
-                  if (
-                    isStarredFilterActive &&
-                    filterTokens &&
-                    filterTokens?.length <= 0
-                  ) {
-                    // If starred filter is active, but no starred tokens, then show none. Have to do this because passing nothing to API causes it to fetch all tokens
-                    return null
-                  }
-                  // Only load the rows if a market is found and 2nd condition
-                  if (marketsMap[marketID]) {
-                    return (
-                      <TokenRow
-                        key={index}
-                        token={token}
-                        market={marketsMap[marketID]}
-                        showMarketSVG={false}
-                        compoundSupplyRate={compoundSupplyRate}
-                        tradeOrListSuccessToggle={tradeOrListSuccessToggle}
-                        getColumn={getColumn}
-                        onTradeClicked={onTradeClicked}
-                        onRateClicked={onRateClicked}
-                        refetch={refetch}
-                        lastElementRef={
-                          tokenData?.length === index + 1
-                            ? lastElementRef
-                            : null
-                        }
-                      />
-                    )
-                  }
-
+          <div className="overflow-hidden dark:border-gray-500">
+            <div className="hidden md:flex h-24">
+              <OverviewColumns
+                orderBy={orderBy}
+                orderDirection={orderDirection}
+                columnData={columnData}
+                selectedMarkets={selectedMarkets}
+                isStarredFilterActive={isStarredFilterActive}
+                columnClicked={columnClicked}
+                onMarketChanged={onMarketChanged}
+                setIsStarredFilterActive={setIsStarredFilterActive}
+              />
+            </div>
+            <div className="bg-white divide-y-[6px] dark:bg-gray-700">
+              {(tokenData as any[]).map((token, index) => {
+                const marketID = token?.marketID
+                if (
+                  isStarredFilterActive &&
+                  filterTokens &&
+                  filterTokens?.length <= 0
+                ) {
+                  // If starred filter is active, but no starred tokens, then show none. Have to do this because passing nothing to API causes it to fetch all tokens
                   return null
-                })}
-                {isLoading
-                  ? Array.from(Array(TOKENS_PER_PAGE).keys()).map((token) => (
-                      <TokenRowSkeleton key={token} getColumn={getColumn} />
-                    ))
-                  : null}
-              </tbody>
-            </table>
+                }
+                // Only load the rows if a market is found and 2nd condition
+                if (marketsMap[marketID]) {
+                  return (
+                    <TokenRow
+                      key={index}
+                      token={token}
+                      market={marketsMap[marketID]}
+                      showMarketSVG={false}
+                      compoundSupplyRate={compoundSupplyRate}
+                      tradeOrListSuccessToggle={tradeOrListSuccessToggle}
+                      getColumn={getColumn}
+                      onTradeClicked={onTradeClicked}
+                      onRateClicked={onRateClicked}
+                      refetch={refetch}
+                      lastElementRef={
+                        tokenData?.length === index + 1 ? lastElementRef : null
+                      }
+                    />
+                  )
+                }
+
+                return null
+              })}
+              {isLoading
+                ? Array.from(Array(TOKENS_PER_PAGE).keys()).map((token) => (
+                    <TokenRowSkeleton key={token} getColumn={getColumn} />
+                  ))
+                : null}
+            </div>
           </div>
         </div>
       </div>
     </div>
+
+    // <div className="flex flex-col">
+    //   <div className="-my-2 overflow-x-auto lg:overflow-x-visible">
+    //     <div className="inline-block w-full py-2 align-middle">
+    //       <div className="overflow-x-scroll border-b border-t-4 border-gray-200 dark:border-gray-500 lg:overflow-x-visible">
+    //         {/* table-fixed makes it so mobile table does not overflow and stays width defined here (w-full) */}
+    //         <table className="table-fixed w-full">
+    //           <ColSize columnData={columnData} tableName={TABLE_NAMES.HOME} />
+
+    //           <thead className="hidden h-24 md:table-header-group border-b-4">
+    //             <tr className="z-40 lg:sticky md:top-28 sticky-safari">
+    //               <OverviewColumns
+    //                 currentColumn={orderBy}
+    //                 orderDirection={orderDirection}
+    //                 columnData={columnData}
+    //                 selectedMarkets={selectedMarkets}
+    //                 isStarredFilterActive={isStarredFilterActive}
+    //                 columnClicked={columnClicked}
+    //                 onMarketChanged={onMarketChanged}
+    //                 setIsStarredFilterActive={setIsStarredFilterActive}
+    //               />
+    //             </tr>
+    //           </thead>
+    //           <tbody className="w-full bg-white divide-y-4 divide-black/[0.05] dark:bg-gray-700 dark:divide-gray-500">
+    //             {(tokenData as any[]).map((token, index) => {
+    //               const marketID = token?.marketID
+    //               if (
+    //                 isStarredFilterActive &&
+    //                 filterTokens &&
+    //                 filterTokens?.length <= 0
+    //               ) {
+    //                 // If starred filter is active, but no starred tokens, then show none. Have to do this because passing nothing to API causes it to fetch all tokens
+    //                 return null
+    //               }
+    //               // Only load the rows if a market is found and 2nd condition
+    //               if (marketsMap[marketID]) {
+    //                 return (
+    //                   <TokenRow
+    //                     key={index}
+    //                     token={token}
+    //                     market={marketsMap[marketID]}
+    //                     showMarketSVG={false}
+    //                     compoundSupplyRate={compoundSupplyRate}
+    //                     tradeOrListSuccessToggle={tradeOrListSuccessToggle}
+    //                     getColumn={getColumn}
+    //                     onTradeClicked={onTradeClicked}
+    //                     onRateClicked={onRateClicked}
+    //                     refetch={refetch}
+    //                     lastElementRef={
+    //                       tokenData?.length === index + 1
+    //                         ? lastElementRef
+    //                         : null
+    //                     }
+    //                   />
+    //                 )
+    //               }
+
+    //               return null
+    //             })}
+    //             {isLoading
+    //               ? Array.from(Array(TOKENS_PER_PAGE).keys()).map((token) => (
+    //                   <TokenRowSkeleton key={token} getColumn={getColumn} />
+    //                 ))
+    //               : null}
+    //           </tbody>
+    //         </table>
+    //       </div>
+    //     </div>
+    //   </div>
+    // </div>
   )
 }

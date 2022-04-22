@@ -1,4 +1,4 @@
-// import { WatchingStar } from 'components'
+import { WatchingStar } from 'components'
 import { IdeaToken } from 'store/ideaMarketsStore'
 import {
   formatNumberWithCommasAsThousandsSerperator,
@@ -66,6 +66,10 @@ export default function RatingsRow({
           {/* Icon and Name */}
           <div className="w-[40%] relative pl-6 pr-10">
             <div className="relative flex items-center w-3/4 mx-auto md:w-full text-gray-900 dark:text-gray-200">
+              <div className="mr-4">
+                <WatchingStar token={ideaToken} />
+              </div>
+
               <div className="text-base font-medium leading-5 truncate z-30">
                 {displayName && (
                   <div>
@@ -159,7 +163,7 @@ export default function RatingsRow({
         </div>
 
         <div className="flex w-full">
-          <div className="w-[40%] flex flex-col">
+          <div className="w-[40%] flex flex-col pl-8 pr-10">
             {/* <div className="pl-4 md:pl-0 flex flex-col items-center space-x-0 space-y-1 mt-4 text-sm items-baseline">
               {onchainListedBy && timeAfterOnChainListedInDays && (
                 <div className="px-2 py-2 bg-black/[.05] rounded-lg whitespace-nowrap">
@@ -291,10 +295,10 @@ export default function RatingsRow({
           </div>
         </div>
 
-        <div className="flex justify-center items-center px-10 py-4 border-t">
-          {/* <div className="">
-            <WatchingStar token={token} />
-          </div> */}
+        <div className="flex justify-between items-center px-10 py-4 border-t">
+          <div className="">
+            <WatchingStar token={ideaToken} />
+          </div>
 
           <button
             onClick={(e) => {
