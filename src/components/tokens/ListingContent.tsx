@@ -4,7 +4,6 @@ import TwitterProfileDesktopContent from 'components/listing-page/TwitterProfile
 import TwitterProfileMobileContent from 'components/listing-page/TwitterProfileMobileContent'
 import WikiContent from 'components/listing-page/WikiContent'
 import { ReactElement, useEffect } from 'react'
-import { IdeaToken } from 'store/ideaMarketsStore'
 import { getMarketSpecificsByMarketName } from 'store/markets'
 import { getListingTypeFromIDTURL, LISTING_TYPE } from './utils/ListingUtils'
 
@@ -14,7 +13,7 @@ const ListingContent = ({
   urlMetaData,
   useMetaData = false,
 }: {
-  ideaToken: IdeaToken
+  ideaToken: any
   page: string // The page this component is being used on
   urlMetaData?: any
   useMetaData?: boolean // Show meta data from URL instead of anything else
@@ -50,6 +49,11 @@ const ListingContent = ({
     return () => clearTimeout(timeout)
   }, [listingType])
 
+  const generalURLDisplayName =
+    urlMetaData && urlMetaData?.ogTitle
+      ? urlMetaData?.ogTitle
+      : marketSpecifics?.convertUserInputToTokenName(ideaToken?.url)
+
   return (
     <div
       className={classNames(
@@ -57,6 +61,57 @@ const ListingContent = ({
         'w-full'
       )}
     >
+      {/* GENERAL_URL listing content (OG title and URL shown) */}
+      {!showMetaData && listingType === LISTING_TYPE.GENERAL_URL && (
+        <div className="pb-2 text-base font-medium leading-5 truncate z-30 whitespace-normal">
+          {generalURLDisplayName && (
+            <div>
+              <a
+                href={`/i/${ideaToken?.address}`}
+                onClick={(event) => event.stopPropagation()}
+                className="w-full text-xs md:text-base font-bold hover:underline"
+              >
+                {generalURLDisplayName?.substr(
+                  0,
+                  generalURLDisplayName?.length > 50 ? 50 : generalURLDisplayName?.length
+                ) + (generalURLDisplayName?.length > 50 ? '...' : '')}
+              </a>
+            </div>
+          )}
+          {/* Display the URL */}
+          <a
+            href={ideaToken?.url}
+            className="text-xs md:text-sm text-brand-blue hover:underline"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {ideaToken?.url.substr(
+              0,
+              ideaToken?.url.length > 50 ? 50 : ideaToken?.url.length
+            ) + (ideaToken?.url.length > 50 ? '...' : '')}
+          </a>
+
+          <a
+            href={`/i/${ideaToken?.address}`}
+            className="cursor-pointer"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className="w-full text-sm text-left leading-5 whitespace-normal">
+              {urlMetaData &&
+                urlMetaData?.ogDescription &&
+                urlMetaData.ogDescription}
+            </div>
+          </a>
+
+        </div>
+      )}
+
+      {/* Text post listing content */}
+      {!showMetaData && listingType === LISTING_TYPE.TEXT_POST && (
+        <div>{ideaToken?.content}</div>
+      )}
+
       {/* Wikipedia listing content */}
       {!showMetaData && listingType === LISTING_TYPE.WIKI && (
         <WikiContent wikiTitle={ideaToken?.name} />
@@ -80,31 +135,46 @@ const ListingContent = ({
       )}
 
       {showMetaData && (
-        <a
-          href={`/i/${ideaToken?.address}`}
-          className="cursor-pointer"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {/* This wrapper div combined with object-cover keeps images in correct size */}
-          {/* <div className="aspect-[16/9] w-48">
-            <img
-              className="rounded-xl mt-4 h-full object-cover"
-              src={
-                urlMetaData && urlMetaData?.ogImage
-                  ? urlMetaData.ogImage
-                  : '/gray.svg'
-              }
-              alt=""
-              referrerPolicy="no-referrer"
-            />
-          </div> */}
-          <div className="w-full text-sm text-left leading-5 whitespace-normal">
-            {urlMetaData &&
-              urlMetaData?.ogDescription &&
-              urlMetaData.ogDescription}
-          </div>
-        </a>
+        <>
+          {generalURLDisplayName && (
+            <div>
+              <a
+                href={`/i/${ideaToken?.address}`}
+                onClick={(event) => event.stopPropagation()}
+                className="w-full text-xs md:text-base font-bold hover:underline"
+              >
+                {generalURLDisplayName?.substr(
+                  0,
+                  generalURLDisplayName?.length > 50 ? 50 : generalURLDisplayName?.length
+                ) + (generalURLDisplayName?.length > 50 ? '...' : '')}
+              </a>
+            </div>
+          )}
+          {/* Display the URL */}
+          <a
+            href={ideaToken?.url}
+            className="text-xs md:text-sm text-brand-blue hover:underline"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {ideaToken?.url.substr(
+              0,
+              ideaToken?.url.length > 50 ? 50 : ideaToken?.url.length
+            ) + (ideaToken?.url.length > 50 ? '...' : '')}
+          </a>
+          <a
+            href={`/i/${ideaToken?.address}`}
+            className="cursor-pointer"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className="w-full text-sm text-left leading-5 whitespace-normal">
+              {urlMetaData &&
+                urlMetaData?.ogDescription &&
+                urlMetaData.ogDescription}
+            </div>
+          </a>
+        </>
       )}
     </div>
   )

@@ -24,11 +24,11 @@ export const getOpinionsByWallet = async ({
       orderDirection,
     }
 
-    const response = await client.get(`/opinion/wallet`, {
+    const response = await client.get(`/opinion/address/wallet`, {
       params,
     })
 
-    return response?.data?.data?.opinions
+    return response?.data?.data?.addressOpinions
   } catch (error) {
     console.error(
       `Could not get opinions for this wallet: ${walletAddress}`,

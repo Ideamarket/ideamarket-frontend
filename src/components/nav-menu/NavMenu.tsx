@@ -11,6 +11,9 @@ import NavThemeButton from './NavThemeButton'
 import { ProfileTooltip } from './ProfileTooltip'
 import { useWeb3React } from '@web3-react/core'
 import { GlobalContext } from 'lib/GlobalContext'
+import { PencilIcon } from '@heroicons/react/outline'
+import ModalService from 'components/modals/ModalService'
+import NewPostModal from 'components/NewPostModal'
 
 const NavMenu = () => {
   const { user } = useContext(GlobalContext)
@@ -84,6 +87,7 @@ const NavMenu = () => {
             className="flex items-center cursor-pointer ml-auto mr-auto md:ml-0 md:mr-0"
             onClick={() => router.push('/')}
           >
+
             <div className="relative w-10 h-8">
               <Image
                 src="/logo.png"
@@ -92,9 +96,19 @@ const NavMenu = () => {
                 objectFit="contain"
               />
             </div>
-            <span className="w-auto h-full text-2xl leading-none text-white md:text-3xl">
+
+            <span className="w-auto h-full mr-4 text-2xl leading-none text-white md:text-3xl">
               Ideamarket
             </span>
+
+            {/* Desktop START */}
+            <div className="relative items-center justify-center hidden md:flex">
+              {navbarConfig.menu.map((menuItem, i) => (
+                <NavItem menuItem={menuItem} key={i} />
+              ))}
+            </div>
+            {/* Desktop END */}
+
           </div>
 
           <div className="flex md:hidden">
@@ -108,14 +122,18 @@ const NavMenu = () => {
             )}
           </div>
 
-          {/* Desktop START */}
-          <div className="relative items-center justify-center hidden md:flex">
-            {navbarConfig.menu.map((menuItem, i) => (
-              <NavItem menuItem={menuItem} key={i} />
-            ))}
-          </div>
-          <div className="hidden md:flex">
+          <div className="hidden md:flex items-center">
+
+            <button
+              onClick={() => ModalService.open(NewPostModal)}
+              className="flex items-center space-x-2 h-9 bg-gradient-to-br from-brand-blue-1 to-brand-blue-2 text-white text-sm font-semibold px-3 py-1 mr-4 rounded-lg"
+            >
+              <span>New Post</span>
+              <PencilIcon className="w-3" />
+            </button>
+
             <NavThemeButton />
+
             <div
               className="flex"
               onMouseEnter={onMouseEnter}
@@ -129,10 +147,12 @@ const NavMenu = () => {
               )}
             </div>
           </div>
-          {/* Desktop END */}
+
         </nav>
       </div>
+
       <MobileNavItems isMobileNavOpen={isMobileNavOpen} user={user} />
+
     </div>
   )
 }

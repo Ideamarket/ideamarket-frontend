@@ -3,11 +3,11 @@ import React from 'react'
 import { OverviewSearchbar } from './OverviewSearchbar'
 import { toggleMarketHelper } from './utils/OverviewUtils'
 // import { getIconVersion } from 'utils/icons'
-import { useMixPanel } from 'utils/mixPanel'
 import { useQuery } from 'react-query'
-import { getCategories } from 'actions/web2/getCategories'
 import OverviewFiltersMobile from 'components/home/OverviewFiltersMobile'
 import SelectableButton from 'components/buttons/SelectableButton'
+import getAllCategories from 'actions/web3/getAllCategories'
+import { useContractStore } from 'store/contractStore'
 
 type OverviewFiltersProps = {
   orderBy: string
@@ -44,7 +44,7 @@ export const OverviewFilters = ({
   setIsGhostOnlyActive,
   setSelectedCategories,
 }: OverviewFiltersProps) => {
-  const { mixpanel } = useMixPanel()
+  const ideamarketPosts = useContractStore.getState().ideamarketPosts
 
   const toggleMarket = (marketName: string) => {
     let newSet = null
@@ -59,34 +59,28 @@ export const OverviewFilters = ({
     }
 
     onMarketChanged(newSet)
-    mixpanel.track('FILTER_PLATFORM', { platforms: marketName })
   }
-
-  // const toggleColumn = (columnName: string) => {
-  //   const newSet = toggleColumnHelper(columnName, selectedColumns)
-  //   onColumnChanged(newSet)
-  // }
 
   /**
    * This method is called when a category is clicked on home table.
-   * @param newClickedCategoryId -- Category ID of category just clicked
+   * @param newClickedCategory -- Category just clicked
    */
-  const onCategoryClicked = (newClickedCategoryId: string) => {
+  const onCategoryClicked = (newClickedCategory: string) => {
     const isCatAlreadySelected =
-      selectedCategories.includes(newClickedCategoryId)
+      selectedCategories.includes(newClickedCategory)
     let newCategories = [...selectedCategories]
     if (isCatAlreadySelected) {
       newCategories = newCategories.filter(
-        (cat) => cat !== newClickedCategoryId
+        (cat) => cat !== newClickedCategory
       )
     } else {
-      newCategories.push(newClickedCategoryId)
+      newCategories.push(newClickedCategory)
     }
     setSelectedCategories(newCategories)
   }
 
-  const { data: categoriesData } = useQuery([true], () =>
-    getCategories({ enabled: true })
+  const { data: categoriesData } = useQuery(["all-categories", Boolean(ideamarketPosts)], () =>
+    getAllCategories()
   )
 
   const isURLSelected = selectedMarkets.has('URL')
@@ -100,10 +94,10 @@ export const OverviewFilters = ({
           {categoriesData &&
             categoriesData.map((cat: any) => (
               <SelectableButton
-                label={`#${cat.name}`}
-                isSelected={selectedCategories.includes(cat.id)}
-                onClick={() => onCategoryClicked(cat.id)}
-                key={cat.id}
+                label={`#${cat}`}
+                isSelected={selectedCategories.includes(cat)}
+                onClick={() => onCategoryClicked(cat)}
+                key={cat}
               />
             ))}
         </div>

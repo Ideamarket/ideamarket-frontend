@@ -168,10 +168,10 @@ const OverviewFiltersMobile = ({
           {categoriesData &&
             categoriesData.map((cat: any) => (
               <SelectableButton
-                label={`#${cat.name}`}
-                isSelected={selectedCategories.includes(cat.id)}
-                onClick={() => onCategoryClicked(cat.id)}
-                key={cat.id}
+                label={`#${cat}`}
+                isSelected={selectedCategories.includes(cat)}
+                onClick={() => onCategoryClicked(cat)}
+                key={cat}
               />
             ))}
         </div>

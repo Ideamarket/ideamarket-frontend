@@ -108,14 +108,5 @@ export const getNavbarConfig = (user: any) => ({
         },
       ],
     },
-    {
-      name: 'My Profile',
-      href: `/u/${user && user.username ? user.username : user?.walletAddress}`,
-      onClick: () => {
-        router.push(
-          `/u/${user && user.username ? user.username : user?.walletAddress}`
-        )
-      },
-    },
   ],
 })
