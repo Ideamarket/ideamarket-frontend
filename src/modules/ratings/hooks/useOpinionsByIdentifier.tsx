@@ -3,16 +3,21 @@ import { useContractStore } from 'store/contractStore'
 import { useWalletStore } from 'store/walletStore'
 import {
   getAvgRatingForIDT,
-  getTotalNumberOfLatestComments,
-  getTotalNumberOfOpinions,
+  getAvgRatingForNFT,
+  getLatestCommentsCountForIDT,
+  getLatestCommentsCountForNFT,
+  getLatestRatingsCountForIDT,
+  getLatestRatingsCountForNFT,
 } from '../services/OpinionService'
 
-/* Returns several data for opinions */
-export default function useOpinionsByIDTAddress(
-  idtAddress: string,
-  refreshToggle?: boolean // Used to refresh supply whenever needed
-) {
+/* Returns several data for opinions. For NFTs, tokenId is used. For ERC20, idtAddress is used */
+export default function useOpinionsByIdentifier({
+  idtAddress,
+  tokenId,
+  refreshToggle = false, // Used to refresh supply whenever needed
+}) {
   const addressOpinionBase = useContractStore.getState().addressOpinionBase
+  const nftOpinionBase = useContractStore.getState().nftOpinionBase
 
   const [isLoading, setIsLoading] = useState(true)
   const [avgRating, setAvgRating] = useState(0)
@@ -29,11 +34,9 @@ export default function useOpinionsByIDTAddress(
     let isCancelled = false
 
     async function run() {
-      const avgRatingResult = await getAvgRatingForIDT(idtAddress)
-      const totalOpinionsResult = await getTotalNumberOfOpinions(idtAddress)
-      const totalCommentsResult = await getTotalNumberOfLatestComments(
-        idtAddress
-      )
+      const avgRatingResult = idtAddress ? await getAvgRatingForIDT(idtAddress) : await getAvgRatingForNFT(tokenId)
+      const totalOpinionsResult = idtAddress ? await getLatestRatingsCountForIDT(idtAddress) : await getLatestRatingsCountForNFT(tokenId)
+      const totalCommentsResult = idtAddress ? await getLatestCommentsCountForIDT(idtAddress) : await getLatestCommentsCountForNFT(tokenId)
       if (!isCancelled) {
         setAvgRating(avgRatingResult as any)
         setTotalOpinions(totalOpinionsResult)
@@ -43,19 +46,12 @@ export default function useOpinionsByIDTAddress(
     }
 
     setIsLoading(true)
-    if (idtAddress && addressOpinionBase) run()
+    if ((idtAddress || tokenId) && addressOpinionBase && nftOpinionBase) run()
 
     return () => {
       isCancelled = true
     }
-  }, [
-    idtAddress,
-    web3,
-    refreshToggle,
-    walletAddress,
-    chainID,
-    addressOpinionBase,
-  ])
+  }, [idtAddress, tokenId, web3, refreshToggle, walletAddress, chainID, addressOpinionBase, nftOpinionBase])
 
   return { avgRating, totalOpinions, totalComments, isLoading }
 }

@@ -1,4 +1,5 @@
 import { Transition } from '@headlessui/react'
+import A from 'components/A'
 import { getNavbarConfig } from './constants'
 import NavItem from './NavItem'
 import NavThemeButton from './NavThemeButton'
@@ -26,6 +27,14 @@ const MobileNavItems = ({ isMobileNavOpen, user }: Props) => {
         {navbarConfig.menu.map((menuItem, i) => (
           <NavItem menuItem={menuItem} key={i} />
         ))}
+
+        <A
+          className="inline-flex px-4 py-2 text-lg leading-5 text-white transition duration-150 ease-in-out bg-transparent rounded-md shadow-sm cursor-pointer md:justify-center hover:text-gray-500 active:text-gray-800"
+          href={`/u/${user && user.username ? user.username : user?.walletAddress}`}
+        >
+          <span>My Profile</span>
+        </A>
+
         <div className="flex px-1 mt-5">
           <NavThemeButton />
         </div>

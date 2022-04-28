@@ -31,7 +31,7 @@ import {
   getListingTypeFromIDTURL,
   LISTING_TYPE,
 } from 'components/tokens/utils/ListingUtils'
-import useOpinionsByIDTAddress from 'modules/ratings/hooks/useOpinionsByIDTAddress'
+import useOpinionsByIdentifier from 'modules/ratings/hooks/useOpinionsByIdentifier'
 import copy from 'copy-to-clipboard'
 import { getURL } from 'utils/seo-constants'
 import toast from 'react-hot-toast'

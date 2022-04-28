@@ -17,15 +17,21 @@ export default async function getAllPosts() {
     (_, i) => i + 1
   )
 
-  const allPosts = Promise.all(
-    arrayOf1ToSupply.map(async (tokenId) => {
-      const ideamarketPost = await ideamarketPosts.methods
-        .getPost(tokenId)
-        .call()
-      // Doing spread because contract returns an array of arrays
-      return { ...ideamarketPost }
-    })
-  )
+  try {
+    const allPosts = Promise.all(
+      arrayOf1ToSupply.map(async (tokenId) => {
+        const ideamarketPost = await ideamarketPosts.methods
+          .getPost(tokenId)
+          .call()
+        // Doing spread because contract returns an array of arrays
+        return { ...ideamarketPost, tokenId }
+      })
+    )
 
-  return allPosts
+    return allPosts
+  } catch(error) {
+    console.error('ideamarketPosts.methods.getPost(tokenId) failed')
+    return null
+  }
+
 }

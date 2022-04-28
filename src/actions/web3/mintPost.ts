@@ -1,42 +1,34 @@
 import { useContractStore } from 'store/contractStore'
-import { NETWORK } from 'store/networks'
-
-type Props = {
-  content: string
-  categoryTags: string[]
-  imageLink: string
-  isURL: boolean
-  web2Content: string
-}
+import { useWalletStore } from 'store/walletStore'
 
 /**
  * Mint a new post (URL or text post) onchain.
  * https://github.com/Ideamarket/blockchain-of-opinions/blob/a741391dd5bc1689923fe2a2bd5a96e7fb8bd524/contracts/IdeamarketPosts.sol#L38
  */
-export default async function mintPost({
-  content,
-  categoryTags = [],
-  imageLink,
-  isURL,
-  web2Content,
-}: Props) {
+export default function mintPost(
+  content: string,
+  categoryTags: string[],
+  imageLink: string,
+  isURL: boolean,
+  urlContent: string,
+) {
   const ideamarketPosts = useContractStore.getState().ideamarketPosts
-  const deployedAddresses = NETWORK.getDeployedAddresses()
+  const connectedAddress = useWalletStore.getState().address
 
-  if (!ideamarketPosts || !deployedAddresses) {
-    console.error(`ideamarketPosts or deployedAddresses not set correctly`)
+  if (!ideamarketPosts) {
+    console.error(`ideamarketPosts not set correctly`)
     return null
   }
 
   try {
-    return await ideamarketPosts.methods
+    return ideamarketPosts.methods
       .mint(
         content,
         categoryTags,
         imageLink,
         isURL,
-        web2Content,
-        deployedAddresses.ideamarketPosts
+        urlContent,
+        connectedAddress
       )
       .send()
   } catch (error) {

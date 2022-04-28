@@ -24,11 +24,11 @@ export const getOpinionsByIDT = async ({
       orderDirection,
     }
 
-    const response = await client.get(`/opinion/token`, {
+    const response = await client.get(`/opinion/address`, {
       params,
     })
 
-    return response?.data?.data?.opinions
+    return response?.data?.data?.addressOpinions
   } catch (error) {
     console.error(
       `Could not get opinions for this token: ${tokenAddress}`,

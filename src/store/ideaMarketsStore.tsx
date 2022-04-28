@@ -25,6 +25,7 @@ import { getOwnedListings } from 'actions/web2/getOwnedListings'
 import { getTrades } from 'actions/web2/getTrades'
 import getQuerySingleIDTByTokenAddress from './queries/getQuerySingleIDTByTokenAddress'
 import Web3 from 'web3'
+import getAllPosts from 'actions/web3/getAllPosts'
 
 const HTTP_GRAPHQL_ENDPOINT_L1 = L1_NETWORK.getSubgraphURL()
 const HTTP_GRAPHQL_ENDPOINT = NETWORK.getSubgraphURL()
@@ -103,12 +104,13 @@ export type IdeaToken = {
 }
 
 export type IdeamarketPost = {
+  tokenId: number
   minter: string
   content: string
   categories: string[]
   imageLink: string
   isURL: boolean
-  urlContent: string
+  url: string
   blockHeight: number
 }
 
@@ -489,61 +491,62 @@ export async function queryTokens(
 /**
  * Format data fetched from API so that the format is consistent across entire frontend
  */
-// const formatApiResponseToPost = (apiPost: any): IdeamarketPost => {
-//   return {
-//     minter: apiPost?.minter,
-//     content: apiPost?.content,
-//     categories: apiPost?.categories,
-//     imageLink: apiPost?.imageLink,
-//     isURL: apiPost?.isURL,
-//     urlContent: apiPost?.urlContent,
-//     blockHeight: apiPost?.blockHeight,
-//   }
-// }
+const formatApiResponseToPost = (apiPost: any): IdeamarketPost => {
+  return {
+    tokenId: apiPost?.tokenId,
+    minter: apiPost?.minter,
+    content: apiPost?.content,
+    categories: apiPost?.categories,
+    imageLink: apiPost?.imageLink,
+    isURL: apiPost?.isURL,
+    url: apiPost?.isURL ? apiPost?.content : '',  // If there is a URL that was listed, it will be in content variable
+    blockHeight: apiPost?.blockHeight,
+  }
+}
 
 /**
  * Call API to get all posts and then convert data to format consistent across entire frontend
  */
-// export async function queryPosts(
-//   params: Params,
-//   skip = 0
-// ): Promise<IdeamarketPost[]> {
-//   if (!params) {
-//     return []
-//   }
+export async function queryPosts(
+  params: Params,
+  skip = 0
+): Promise<IdeamarketPost[]> {
+  if (!params) {
+    return []
+  }
 
-//   const [
-//     markets,
-//     num,
-//     duration,
-//     orderBy,
-//     orderDirection,
-//     search,
-//     filterTokens,
-//     isVerifiedFilter,
-//     marketFilterType,
-//     jwt,
-//     categories,
-//   ] = params
+  const [
+    markets,
+    num,
+    duration,
+    orderBy,
+    orderDirection,
+    search,
+    filterTokens,
+    isVerifiedFilter,
+    marketFilterType,
+    jwt,
+    categories,
+  ] = params
 
-//   const fromTs = Math.floor(Date.now() / 1000) - duration
-//   const marketIds = markets.map((market) => market.marketID).join()
+  const fromTs = Math.floor(Date.now() / 1000) - duration
+  const marketIds = markets.map((market) => market.marketID).join()
 
-//   const marketType =
-//     marketFilterType === 'both'
-//       ? null
-//       : marketFilterType === 'ghost'
-//       ? 'ghost'
-//       : 'onchain'
+  const marketType =
+    marketFilterType === 'both'
+      ? null
+      : marketFilterType === 'ghost'
+      ? 'ghost'
+      : 'onchain'
 
-//   const allPosts = await getAllPosts()
+  const allPosts = await getAllPosts()
 
-//   return await Promise.all(
-//     allPosts.map(async (post) => {
-//       return formatApiResponseToPost(post)
-//     })
-//   )
-// }
+  return await Promise.all(
+    allPosts.map(async (post) => {
+      return formatApiResponseToPost(post)
+    })
+  )
+}
 
 export async function querySingleToken(
   value: string,

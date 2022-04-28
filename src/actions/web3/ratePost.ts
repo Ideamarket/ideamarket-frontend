@@ -7,7 +7,7 @@ import { NETWORK } from 'store/networks'
  * @param tokenId -- tokenId of NFT that is being rated
  * @param rating -- 0-100 inclusive, except 50
  */
-export default async function ratePost(
+export default function ratePost(
   tokenId: number,
   rating: number,
   comment: string
@@ -26,7 +26,7 @@ export default async function ratePost(
   }
 
   try {
-    return await nftOpinionBase.methods
+    return nftOpinionBase.methods
       .writeOpinion(deployedAddresses.ideamarketPosts, tokenId, rating, comment)
       .send()
   } catch (error) {

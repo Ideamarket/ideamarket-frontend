@@ -1,4 +1,3 @@
-import { IdeaToken } from 'store/ideaMarketsStore'
 import { Modal } from 'components'
 import ModalService from 'components/modals/ModalService'
 import TradeCompleteModal, { TX_TYPES } from './TradeCompleteModal'
@@ -14,7 +13,13 @@ import {
 } from 'utils'
 import rateIDT from 'actions/web3/rateIDT'
 import TxPending from './TxPending'
-import useOpinionsByIDTAddress from 'modules/ratings/hooks/useOpinionsByIDTAddress'
+import useOpinionsByIdentifier from 'modules/ratings/hooks/useOpinionsByIdentifier'
+import ratePost from 'actions/web3/ratePost'
+import { convertAccountName } from 'lib/utils/stringUtil'
+import A from 'components/A'
+import { useQuery } from 'react-query'
+import { getPublicProfile } from 'lib/axios'
+import Image from 'next/image'
 
 const CustomSlider = Slider.createSliderWithTooltip(Slider)
 
@@ -29,7 +34,7 @@ export default function RateModal({
   urlMetaData,
 }: {
   close: () => void
-  ideaToken: IdeaToken
+  ideaToken: any
   urlMetaData: any
 }) {
   const txManager = useTransactionManager()
@@ -37,9 +42,10 @@ export default function RateModal({
   const [inputRating, setInputRating] = useState(50)
   const [inputComment, setInputComment] = useState('')
 
-  const { avgRating, totalOpinions } = useOpinionsByIDTAddress(
-    ideaToken?.address
-  )
+  const { avgRating, totalOpinions } = useOpinionsByIdentifier({
+    idtAddress: ideaToken?.address || null,
+    tokenId: ideaToken?.tokenId || null,
+  })
 
   function onTradeComplete(
     isSuccess: boolean,
@@ -57,10 +63,13 @@ export default function RateModal({
   }
 
   const onRateClicked = async () => {
-    const ratingArgs = [ideaToken.address, inputRating, inputComment]
+    const isNFT = !ideaToken.address // If there is not a token address, then it is NFT
 
     try {
-      await txManager.executeTx('Rate', rateIDT, ...ratingArgs)
+      const web3TxMethod = isNFT ? ratePost : rateIDT
+      // tokenId , rating, comment
+      const ratingArgs = [isNFT ? ideaToken?.tokenId : ideaToken.address, inputRating, inputComment]
+      await txManager.executeTx('Rate', web3TxMethod, ...ratingArgs)
     } catch (ex) {
       console.log(ex)
       onTradeComplete(
@@ -84,35 +93,78 @@ export default function RateModal({
       ? urlMetaData?.ogTitle
       : marketSpecifics?.convertUserInputToTokenName(ideaToken?.url)
 
+  const { minter } = (ideaToken || {}) as any
+
+  const { data: userDataForMinter } = useQuery<any>([`minter-${minter}`], () =>
+    getPublicProfile({
+      username: null,
+      walletAddress: minter,
+    })
+  )
+
+  const displayUsernameOrWallet = convertAccountName(userDataForMinter?.username || minter)
+  const usernameOrWallet = userDataForMinter?.username || minter
+
   return (
     <Modal close={close}>
       <div className="w-full md:w-136 mx-auto bg-white dark:bg-gray-700 rounded-xl">
+
         <div className="px-6 py-4 bg-black/[.05] text-base font-medium leading-5 truncate">
-          {displayName && (
-            <div>
-              <a
-                href={`/i/${ideaToken?.listingId}`}
-                onClick={(event) => event.stopPropagation()}
-                className="text-xs md:text-base font-bold hover:underline"
+
+          {/* Display minter image, username/wallet */}
+          {minter && (
+            <div className="flex items-center pb-2 whitespace-nowrap">
+              <div className="relative rounded-full w-6 h-6">
+                <Image
+                  className="rounded-full"
+                  src={userDataForMinter?.profilePhoto || '/DefaultProfilePicture.gif'}
+                  alt=""
+                  layout="fill"
+                  objectFit="cover"
+                />
+              </div>
+              <A
+                className="ml-2 font-bold hover:text-blue-600"
+                href={`/u/${usernameOrWallet}`}
               >
-                {displayName?.substr(
-                  0,
-                  displayName?.length > 50 ? 50 : displayName?.length
-                ) + (displayName?.length > 50 ? '...' : '')}
-              </a>
+                {displayUsernameOrWallet}
+              </A>
             </div>
           )}
-          <a
-            href={ideaToken?.url}
-            className="text-xs md:text-sm text-brand-blue hover:underline"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {ideaToken?.url.substr(
-              0,
-              ideaToken?.url.length > 50 ? 50 : ideaToken?.url.length
-            ) + (ideaToken?.url.length > 50 ? '...' : '')}
-          </a>
+
+          {/* Show meta data for URLs and content for text posts */}
+          {!ideaToken?.isURL ? (
+            <div>{ideaToken?.content}</div>
+          ): (
+            <>
+              {displayName && (
+                <div>
+                  <a
+                    href={`/i/${ideaToken?.listingId}`}
+                    onClick={(event) => event.stopPropagation()}
+                    className="text-xs md:text-base font-bold hover:underline"
+                  >
+                    {displayName?.substr(
+                      0,
+                      displayName?.length > 50 ? 50 : displayName?.length
+                    ) + (displayName?.length > 50 ? '...' : '')}
+                  </a>
+                </div>
+              )}
+              <a
+                href={ideaToken?.url}
+                className="text-xs md:text-sm text-brand-blue hover:underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {ideaToken?.url.substr(
+                  0,
+                  ideaToken?.url.length > 50 ? 50 : ideaToken?.url.length
+                ) + (ideaToken?.url.length > 50 ? '...' : '')}
+              </a>
+            </>
+          )}
+
         </div>
 
         <div className="px-6 py-4">

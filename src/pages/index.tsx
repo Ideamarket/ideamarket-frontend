@@ -14,7 +14,7 @@ import {
   getVisibleColumns,
   startingOptionalColumns,
 } from 'components/home/utils'
-import { GhostHomeHeader } from 'components'
+import { HomeHeader } from 'components'
 import { CheckboxFilters } from 'components/tokens/utils/OverviewUtils'
 import RateModal from 'components/trade/RateModal'
 import { SortOptionsHomeTable } from 'utils/tables'
@@ -131,11 +131,6 @@ const Home = ({ urlMarkets }: Props) => {
     setIsGhostOnlyActive(isActive)
   }
 
-  const headerProps = {
-    setTradeOrListSuccessToggle,
-    tradeOrListSuccessToggle,
-  }
-
   const overviewFiltersProps = {
     orderBy,
     selectedMarkets,
@@ -177,7 +172,7 @@ const Home = ({ urlMarkets }: Props) => {
     <>
       <NextSeo title="Home" />
       <div className="overflow-x-hidden lg:overflow-x-visible bg-brand-gray dark:bg-gray-900">
-        <GhostHomeHeader {...headerProps} />
+        <HomeHeader />
         <div className="mx-auto transform md:px-4 md:max-w-304 -translate-y-28 font-inter">
           <OverviewFilters {...overviewFiltersProps} />
           <div className="bg-white border-brand-gray-3 dark:border-gray-500 rounded-b-xlg shadow-home">

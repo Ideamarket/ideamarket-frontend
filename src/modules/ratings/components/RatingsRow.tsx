@@ -1,4 +1,4 @@
-import { WatchingStar } from 'components'
+import { A, WatchingStar } from 'components'
 import { IdeaToken } from 'store/ideaMarketsStore'
 import {
   formatNumberWithCommasAsThousandsSerperator,
@@ -17,9 +17,12 @@ import {
   LISTING_TYPE,
 } from 'components/tokens/utils/ListingUtils'
 import { getMarketSpecificsByMarketName } from 'store/markets'
+import { getPublicProfile } from 'lib/axios'
+import { convertAccountName } from 'lib/utils/stringUtil'
+import Image from 'next/image'
 
 type Props = {
-  ideaToken: IdeaToken
+  ideaToken: any
   opinion: any
   refetch: () => void
   onRateClicked: (idt: IdeaToken, urlMetaData: any) => void
@@ -40,6 +43,18 @@ export default function RatingsRow({
   const { data: urlMetaData } = useQuery([ideaToken?.url], () =>
     getURLMetaData(ideaToken?.url)
   )
+
+  const { minter } = (ideaToken || {}) as any
+
+  const { data: userDataForMinter } = useQuery<any>([`minter-${minter}`], () =>
+    getPublicProfile({
+      username: null,
+      walletAddress: minter,
+    })
+  )
+
+  const displayUsernameOrWallet = convertAccountName(userDataForMinter?.username || minter)
+  const usernameOrWallet = userDataForMinter?.username || minter
 
   // const { onchainListedAt, onchainListedBy } =
   //   (ideaToken || {}) as any
@@ -65,151 +80,142 @@ export default function RatingsRow({
         <div className="flex text-black">
           {/* Icon and Name */}
           <div className="w-[40%] relative pl-6 pr-10">
-            <div className="relative flex items-center w-3/4 mx-auto md:w-full text-gray-900 dark:text-gray-200">
+            <div className="relative flex items-start w-3/4 mx-auto md:w-full text-gray-900 dark:text-gray-200">
+
               <div className="mr-4">
                 <WatchingStar token={ideaToken} />
               </div>
 
-              <div className="text-base font-medium leading-5 truncate z-30">
-                {displayName && (
-                  <div>
-                    <a
-                      href={`/i/${ideaToken?.address}`}
-                      onClick={(event) => event.stopPropagation()}
-                      className="text-xs md:text-base font-bold hover:underline"
-                    >
-                      {displayName?.substr(
-                        0,
-                        displayName?.length > 50 ? 50 : displayName?.length
-                      ) + (displayName?.length > 50 ? '...' : '')}
-                    </a>
-                  </div>
-                )}
-                <a
-                  href={ideaToken?.url}
-                  className="text-xs md:text-sm text-brand-blue hover:underline"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {ideaToken?.url.substr(
-                    0,
-                    ideaToken?.url.length > 50 ? 50 : ideaToken?.url.length
-                  ) + (ideaToken?.url.length > 50 ? '...' : '')}
-                </a>
+              <div className="grow text-base font-medium leading-5 truncate z-30">
+
+                <div className="pr-6">
+
+                  {minter && (
+                    <div className="flex items-center pb-2 whitespace-nowrap">
+                      <div className="relative rounded-full w-6 h-6">
+                        <Image
+                          className="rounded-full"
+                          src={userDataForMinter?.profilePhoto || '/DefaultProfilePicture.gif'}
+                          alt=""
+                          layout="fill"
+                          objectFit="cover"
+                        />
+                      </div>
+                      <A
+                        className="ml-2 font-bold hover:text-blue-600"
+                        href={`/u/${usernameOrWallet}`}
+                      >
+                        {displayUsernameOrWallet}
+                      </A>
+                    </div>
+                  )}
+
+                  <ListingContent
+                    ideaToken={ideaToken}
+                    page="HomePage"
+                    urlMetaData={urlMetaData}
+                    useMetaData={
+                      getListingTypeFromIDTURL(ideaToken?.url) !==
+                      LISTING_TYPE.TWEET && getListingTypeFromIDTURL(ideaToken?.url) !==
+                      LISTING_TYPE.TEXT_POST
+                    }
+                  />
+
+                </div>
+
               </div>
             </div>
           </div>
 
-          {/* Rating By User */}
-          <div className="w-[20%]">
-            <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-300">
-              Rating By User
-            </p>
-            <div className="font-medium leading-5">{opinion?.rating}</div>
-          </div>
+          <div className="w-[60%]">
 
-          {/* Composite Rating */}
-          {/* <div className="w-[12%] pt-12">
-            <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-300">
-              Composite Rating
-            </p>
-            <div className="font-medium leading-5">
-              68
-            </div>
-          </div> */}
+            <div className="flex w-full">
 
-          {/* Average Rating */}
-          <div className="w-[20%]">
-            <div className="flex flex-col justify-start font-medium leading-5">
-              <span className="mb-1">
-                <span className="w-10 h-8 flex justify-center items-center rounded-lg bg-blue-100 text-blue-600 dark:text-gray-300 font-extrabold text-xl">
-                  {formatNumberInt(opinion?.averageRating)}
-                </span>
-              </span>
-              <span className="text-black/[.3] text-sm">
-                (
-                {formatNumberWithCommasAsThousandsSerperator(
-                  opinion?.latestRatingsCount
-                )}
-                )
-              </span>
-            </div>
-          </div>
+              {/* Rating By User */}
+              <div className="w-[20%] grow">
+                <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-300">
+                  Rating By User
+                </p>
+                <div className="font-medium leading-5">{opinion?.rating}</div>
+              </div>
 
-          {/* Market Interest */}
-          {/* <div className="w-[12%] pt-12">
-            <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-300">
-              Market Interest
-            </p>
-            <div className="flex flex-col justify-start font-medium leading-5">
-              $65,900
-            </div>
-          </div> */}
+              {/* Composite Rating */}
+              {/* <div className="w-[12%] pt-12">
+                <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-300">
+                  Composite Rating
+                </p>
+                <div className="font-medium leading-5">
+                  68
+                </div>
+              </div> */}
 
-          {/* Rate Button */}
-          <div className="w-[20%]">
-            <div className="flex space-x-2">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation()
-                  onRateClicked(ideaToken, urlMetaData)
-                }}
-                className="flex justify-center items-center w-20 h-10 text-base font-medium text-white rounded-lg bg-black/[.8] dark:bg-gray-600 dark:text-gray-300 tracking-tightest-2"
-              >
-                <span>Rate</span>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex w-full">
-          <div className="w-[40%] flex flex-col pl-8 pr-10">
-            {/* <div className="pl-4 md:pl-0 flex flex-col items-center space-x-0 space-y-1 mt-4 text-sm items-baseline">
-              {onchainListedBy && timeAfterOnChainListedInDays && (
-                <div className="px-2 py-2 bg-black/[.05] rounded-lg whitespace-nowrap">
-                  Listed by{' '}
-                  {isOnchainListedByETHAddress ? (
-                    <A
-                      className="underline font-bold hover:text-blue-600"
-                      href={`https://arbiscan.io/address/${onchainListedBy}`}
-                    >
-                      {convertAccountName(onchainListedBy)}
-                    </A>
-                  ) : (
-                    <span className="font-bold">
-                      {convertAccountName(onchainListedBy)}
+              {/* Average Rating */}
+              <div className="w-[20%] grow">
+                <div className="flex flex-col justify-start font-medium leading-5">
+                  <span className="mb-1">
+                    <span className="w-10 h-8 flex justify-center items-center rounded-lg bg-blue-100 text-blue-600 dark:text-gray-300 font-extrabold text-xl">
+                      {formatNumberInt(opinion?.averageRating)}
                     </span>
-                  )}{' '}
-                  {timeAfterOnChainListedInDays} days ago
+                  </span>
+                  <span className="text-black/[.3] text-sm">
+                    (
+                    {formatNumberWithCommasAsThousandsSerperator(
+                      opinion?.latestRatingsCount
+                    )}
+                    )
+                  </span>
+                </div>
+              </div>
+
+              {/* Market Interest */}
+              {/* <div className="w-[12%] pt-12">
+                <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-300">
+                  Market Interest
+                </p>
+                <div className="flex flex-col justify-start font-medium leading-5">
+                  $65,900
+                </div>
+              </div> */}
+
+              {/* Rate Button */}
+              <div className="w-[20%] grow">
+                <div className="flex space-x-2">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      onRateClicked(ideaToken, urlMetaData)
+                    }}
+                    className="flex justify-center items-center w-20 h-10 text-base font-medium text-white rounded-lg bg-black/[.8] dark:bg-gray-600 dark:text-gray-300 tracking-tightest-2"
+                  >
+                    <span>Rate</span>
+                  </button>
+                </div>
+              </div>
+
+            </div>
+
+            <div className="flex w-full">
+
+              {/* The user comment for this opinion */}
+              {opinion && opinion?.comment && opinion?.comment.length > 0 && (
+                <div className="w-full mt-4">
+                  <div className="bg-black/[.02] rounded-lg px-4 py-2 mr-10">
+                    <div className="text-black/[.5] text-xs font-semibold mb-1">
+                      COMMENT BY USER
+                    </div>
+                    <div className="text-black text-sm">{opinion?.comment}</div>
+                  </div>
                 </div>
               )}
-            </div> */}
 
-            <div className="px-6">
-              <ListingContent
-                ideaToken={ideaToken}
-                page="HomePage"
-                urlMetaData={urlMetaData}
-                useMetaData={
-                  getListingTypeFromIDTURL(ideaToken?.url) !==
-                  LISTING_TYPE.TWEET
-                }
-              />
             </div>
+
           </div>
 
-          {/* The user comment for this opinion */}
-          {opinion && opinion?.comment && opinion?.comment.length > 0 && (
-            <div className="w-[60%] mt-4">
-              <div className="bg-black/[.02] rounded-lg px-4 py-2 mr-10">
-                <div className="text-black/[.5] text-xs font-semibold mb-1">
-                  COMMENT BY USER
-                </div>
-                <div className="text-black text-sm">{opinion?.comment}</div>
-              </div>
-            </div>
-          )}
+
+
         </div>
+
       </div>
 
       {/* Mobile row */}
