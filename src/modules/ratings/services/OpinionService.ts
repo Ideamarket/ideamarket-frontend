@@ -17,7 +17,7 @@ export const getAvgRatingForIDT = async (idtAddress: string) => {
 /**
  * Get the average rating of all ratings onchain for this NFT
  */
- export const getAvgRatingForNFT = async (tokenId: number) => {
+export const getAvgRatingForNFT = async (tokenId: number) => {
   const opinions = await getLatestOpinionsAboutNFT(tokenId)
   const ratings = opinions.map((opinion) => Number(opinion.rating))
   if (!ratings || ratings?.length <= 0) return '⁠—'
@@ -74,6 +74,8 @@ export const getUsersLatestOpinions = async ({
   limit,
   orderBy,
   orderDirection,
+  filterTokens,
+  search,
 }) => {
   if (!walletAddress || walletAddress?.length <= 0) return []
   const opinions = await getOpinionsByWallet({
@@ -83,9 +85,15 @@ export const getUsersLatestOpinions = async ({
     limit,
     orderBy,
     orderDirection,
+    filterTokens,
+    search,
   })
 
-  return opinions
+  return await Promise.all(
+    opinions.map(async (opinion) => {
+      return formatApiResponseToOpinion(opinion)
+    })
+  )
 }
 
 /**
@@ -109,4 +117,55 @@ export const getIDTsLatestOpinions = async ({
   })
 
   return opinions
+}
+
+export type IdeamarketOpinion = {
+  contractAddress: string // Contract address the NFT is stored in
+  tokenID: number // tokenID of this NFT
+  minterAddress: string // Person that minted the NFT
+  content: string
+  categories: string[]
+  imageLink: string
+  isURL: boolean
+  url: string
+  blockHeight: number
+
+  ratedBy: string
+  ratedAt: string
+  rating: number
+  comment: string
+
+  averageRating: number
+  totalRatingsCount: number
+  latestRatingsCount: number
+  totalCommentsCount: number
+  latestCommentsCount: number
+}
+
+/**
+ * Format data fetched from API so that the format is consistent across entire frontend
+ */
+const formatApiResponseToOpinion = (apiPost: any): IdeamarketOpinion => {
+  return {
+    contractAddress: apiPost?.contractAddress,
+    tokenID: apiPost?.tokenID,
+    minterAddress: apiPost?.minterAddress,
+    content: apiPost?.content,
+    categories: apiPost?.categories,
+    imageLink: apiPost?.imageLink,
+    isURL: apiPost?.isURL,
+    url: apiPost?.isURL ? apiPost?.content : '', // If there is a URL that was listed, it will be in content variable
+    blockHeight: apiPost?.blockHeight,
+
+    ratedBy: apiPost?.ratedBy,
+    ratedAt: apiPost?.ratedAt,
+    rating: apiPost?.rating,
+    comment: apiPost?.comment,
+
+    averageRating: apiPost?.averageRating,
+    totalRatingsCount: apiPost?.totalRatingsCount,
+    latestRatingsCount: apiPost?.latestRatingsCount,
+    totalCommentsCount: apiPost?.totalCommentsCount,
+    latestCommentsCount: apiPost?.latestCommentsCount,
+  }
 }

@@ -17,7 +17,6 @@ import {
   getQueryBalancesOfHolders,
 } from './queries'
 import { NETWORK, L1_NETWORK, getL1Network } from 'store/networks'
-import { getAllListings } from 'actions/web2/getAllListings'
 import { getMarketSpecificsByMarketName } from './markets'
 import { getSingleListing } from 'actions/web2/getSingleListing'
 import { useContractStore } from './contractStore'
@@ -25,7 +24,7 @@ import { getOwnedListings } from 'actions/web2/getOwnedListings'
 import { getTrades } from 'actions/web2/getTrades'
 import getQuerySingleIDTByTokenAddress from './queries/getQuerySingleIDTByTokenAddress'
 import Web3 from 'web3'
-import getAllPosts from 'actions/web3/getAllPosts'
+import getAllPosts from 'actions/web2/getAllPosts'
 
 const HTTP_GRAPHQL_ENDPOINT_L1 = L1_NETWORK.getSubgraphURL()
 const HTTP_GRAPHQL_ENDPOINT = NETWORK.getSubgraphURL()
@@ -104,14 +103,21 @@ export type IdeaToken = {
 }
 
 export type IdeamarketPost = {
-  tokenId: number
-  minter: string
+  contractAddress: string // Contract address the NFT is stored in
+  tokenID: number // tokenID of this NFT
+  minterAddress: string // Person that minted the NFT
   content: string
   categories: string[]
   imageLink: string
   isURL: boolean
   url: string
   blockHeight: number
+
+  averageRating: number
+  totalRatingsCount: number
+  latestRatingsCount: number
+  totalCommentsCount: number
+  latestCommentsCount: number
 }
 
 export type IdeaTokenMarketPair = {
@@ -419,90 +425,37 @@ export async function queryMyTokensMaybeMarket(
   )
 }
 
-type Params = [
-  markets: IdeaMarket[],
-  num: number,
-  duration: number,
-  orderBy: string,
-  orderDirection: string,
-  search: string,
-  filterTokens: string[],
-  isVerifiedFilter: boolean,
-  marketFilterType: string, // Value will be 'ghost', 'onchain', or 'both'
-  jwt: string,
-  categories: string[]
-]
-
-export async function queryTokens(
-  params: Params,
-  skip = 0
-): Promise<IdeaToken[]> {
-  if (!params) {
-    return []
-  }
-
-  const [
-    markets,
-    num,
-    duration,
-    orderBy,
-    orderDirection,
-    search,
-    filterTokens,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isVerifiedFilter,
-    marketFilterType,
-    jwt,
-    categories,
-  ] = params
-
-  const fromTs = Math.floor(Date.now() / 1000) - duration
-  const marketIds = markets.map((market) => market.marketID).join()
-
-  const marketType =
-    marketFilterType === 'both'
-      ? null
-      : marketFilterType === 'ghost'
-      ? 'ghost'
-      : 'onchain'
-
-  const L2Result = await getAllListings({
-    marketType,
-    marketIds,
-    skip,
-    limit: num,
-    orderBy,
-    orderDirection,
-    filterTokens,
-    earliestPricePointTs: fromTs,
-    search,
-    isVerifiedFilter,
-    jwt,
-    categories,
-  })
-
-  return await Promise.all(
-    L2Result.map(async (token) => {
-      return newApiResponseToIdeaToken(token)
-    })
-  )
-}
-
 /**
  * Format data fetched from API so that the format is consistent across entire frontend
  */
 const formatApiResponseToPost = (apiPost: any): IdeamarketPost => {
   return {
-    tokenId: apiPost?.tokenId,
-    minter: apiPost?.minter,
+    contractAddress: apiPost?.contractAddress,
+    tokenID: apiPost?.tokenID,
+    minterAddress: apiPost?.minterAddress,
     content: apiPost?.content,
     categories: apiPost?.categories,
     imageLink: apiPost?.imageLink,
     isURL: apiPost?.isURL,
-    url: apiPost?.isURL ? apiPost?.content : '',  // If there is a URL that was listed, it will be in content variable
+    url: apiPost?.isURL ? apiPost?.content : '', // If there is a URL that was listed, it will be in content variable
     blockHeight: apiPost?.blockHeight,
+
+    averageRating: apiPost?.averageRating,
+    totalRatingsCount: apiPost?.totalRatingsCount,
+    latestRatingsCount: apiPost?.latestRatingsCount,
+    totalCommentsCount: apiPost?.totalCommentsCount,
+    latestCommentsCount: apiPost?.latestCommentsCount,
   }
 }
+
+type Params = [
+  limit: number,
+  orderBy: string,
+  orderDirection: string,
+  categories: string[],
+  filterTokens: string[],
+  search: string
+]
 
 /**
  * Call API to get all posts and then convert data to format consistent across entire frontend
@@ -515,31 +468,18 @@ export async function queryPosts(
     return []
   }
 
-  const [
-    markets,
-    num,
-    duration,
+  const [limit, orderBy, orderDirection, categories, filterTokens, search] =
+    params
+
+  const allPosts = await getAllPosts({
+    skip,
+    limit,
     orderBy,
     orderDirection,
-    search,
-    filterTokens,
-    isVerifiedFilter,
-    marketFilterType,
-    jwt,
     categories,
-  ] = params
-
-  const fromTs = Math.floor(Date.now() / 1000) - duration
-  const marketIds = markets.map((market) => market.marketID).join()
-
-  const marketType =
-    marketFilterType === 'both'
-      ? null
-      : marketFilterType === 'ghost'
-      ? 'ghost'
-      : 'onchain'
-
-  const allPosts = await getAllPosts()
+    filterTokens,
+    search,
+  })
 
   return await Promise.all(
     allPosts.map(async (post) => {
@@ -1059,14 +999,14 @@ export async function queryMyTrades(
   }
 }
 
-export function setIsWatching(token: IdeaToken, watching: boolean): void {
-  const address = token.address
+export function setIsWatching(token: any, watching: boolean): void {
+  const tokenID = token.tokenID
 
   setNestedState((s: State) => {
     if (watching) {
-      s.watching[address] = true
+      s.watching[tokenID] = true
     } else {
-      delete s.watching[address]
+      delete s.watching[tokenID]
     }
   })
 

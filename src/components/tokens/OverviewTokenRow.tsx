@@ -1,8 +1,5 @@
 import { WatchingStar } from 'components'
-import {
-  IdeaMarket,
-  IdeaToken,
-} from 'store/ideaMarketsStore'
+import { IdeaMarket, IdeaToken } from 'store/ideaMarketsStore'
 import {
   formatNumberWithCommasAsThousandsSerperator,
   formatNumberInt,
@@ -38,40 +35,44 @@ export default function TokenRow({
     getURLMetaData(token?.url)
   )
 
-  const { minter } = (token || {}) as any
+  const { minterAddress } = (token || {}) as any
 
-  const { data: userDataForMinter } = useQuery<any>([`minter-${minter}`], () =>
-    getPublicProfile({
-      username: null,
-      walletAddress: minter,
-    })
+  const { data: userDataForMinter } = useQuery<any>(
+    [`minterAddress-${minterAddress}`],
+    () =>
+      getPublicProfile({
+        username: null,
+        walletAddress: minterAddress,
+      })
   )
 
-  const displayUsernameOrWallet = convertAccountName(userDataForMinter?.username || minter)
-  const usernameOrWallet = userDataForMinter?.username || minter
+  const displayUsernameOrWallet = convertAccountName(
+    userDataForMinter?.username || minterAddress
+  )
+  const usernameOrWallet = userDataForMinter?.username || minterAddress
 
   return (
     <>
       {/* Desktop row */}
       <div ref={lastElementRef} className="hidden md:block py-6">
-
         <div className="flex text-black">
-
           {/* Icon and Name */}
           <div className="w-[40%] relative pl-6 pr-10">
             <div className="relative flex items-start w-3/4 mx-auto md:w-full text-gray-900 dark:text-gray-200">
-
               <div className="mr-4">
                 <WatchingStar token={token} />
               </div>
 
               <div>
-                {minter && (
+                {minterAddress && (
                   <div className="flex items-center pb-2 whitespace-nowrap">
                     <div className="relative rounded-full w-6 h-6">
                       <Image
                         className="rounded-full"
-                        src={userDataForMinter?.profilePhoto || '/DefaultProfilePicture.gif'}
+                        src={
+                          userDataForMinter?.profilePhoto ||
+                          '/DefaultProfilePicture.gif'
+                        }
                         alt=""
                         layout="fill"
                         objectFit="cover"
@@ -92,14 +93,14 @@ export default function TokenRow({
                     page="HomePage"
                     urlMetaData={urlMetaData}
                     useMetaData={
-                      getListingTypeFromIDTURL(token?.url) !== LISTING_TYPE.TWEET && getListingTypeFromIDTURL(token?.url) !== LISTING_TYPE.TEXT_POST
+                      getListingTypeFromIDTURL(token?.url) !==
+                        LISTING_TYPE.TWEET &&
+                      getListingTypeFromIDTURL(token?.url) !==
+                        LISTING_TYPE.TEXT_POST
                     }
                   />
                 </div>
-
               </div>
-
-
             </div>
           </div>
 
@@ -181,27 +182,27 @@ export default function TokenRow({
             </div>
           </div>
         </div> */}
-
       </div>
 
       {/* Mobile row */}
       <div ref={lastElementRef} className="md:hidden">
-
         <div className="px-3 py-4">
-
-          {minter && (
+          {minterAddress && (
             <div className="flex items-center pb-2 whitespace-nowrap">
               <div className="relative rounded-full w-6 h-6">
                 <Image
                   className="rounded-full"
-                  src={userDataForMinter?.profilePhoto || '/DefaultProfilePicture.gif'}
+                  src={
+                    userDataForMinter?.profilePhoto ||
+                    '/DefaultProfilePicture.gif'
+                  }
                   alt=""
                   layout="fill"
                   objectFit="cover"
                 />
               </div>
               <A
-                className="ml-2 font-bold hover:text-blue-600"
+                className="ml-2 font-bold text-black hover:text-blue-600"
                 href={`/u/${usernameOrWallet}`}
               >
                 {displayUsernameOrWallet}
@@ -211,13 +212,12 @@ export default function TokenRow({
 
           <ListingContent
             ideaToken={token}
-            page="MobileAccountPage"
+            page="HomePage"
             urlMetaData={urlMetaData}
             useMetaData={
               getListingTypeFromIDTURL(token?.url) !== LISTING_TYPE.TWEET
             }
           />
-
         </div>
 
         <div className="flex justify-between items-start text-center px-10 py-4 border-b border-t">
@@ -264,6 +264,5 @@ export default function TokenRow({
         </div>
       </div>
     </>
-
   )
 }

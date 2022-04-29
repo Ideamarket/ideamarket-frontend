@@ -12,8 +12,15 @@ export const getOpinionsByWallet = async ({
   limit,
   orderBy,
   orderDirection,
+  filterTokens,
+  search,
 }) => {
   if (!walletAddress || walletAddress?.length <= 0) return []
+  // const categoriesString =
+  //     categories && categories.length > 0 ? categories.join(',') : null
+  const filterTokensString =
+    filterTokens && filterTokens?.length > 0 ? filterTokens?.join(',') : null
+
   try {
     const params = {
       walletAddress: walletAddress.toLowerCase(),
@@ -22,13 +29,15 @@ export const getOpinionsByWallet = async ({
       limit,
       orderBy,
       orderDirection,
+      filterTokens: filterTokensString,
+      search,
     }
 
-    const response = await client.get(`/opinion/address/wallet`, {
+    const response = await client.get(`/post/opinions/wallet`, {
       params,
     })
 
-    return response?.data?.data?.addressOpinions
+    return response?.data?.data?.postOpinions
   } catch (error) {
     console.error(
       `Could not get opinions for this wallet: ${walletAddress}`,

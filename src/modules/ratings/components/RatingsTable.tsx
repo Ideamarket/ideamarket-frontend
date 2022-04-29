@@ -162,8 +162,7 @@ export default function RatingsTable({
                 rawPairs.map((pair: any, index) => (
                   <RatingsRow
                     key={index}
-                    ideaToken={pair.idt}
-                    opinion={pair.opinion}
+                    opinion={pair}
                     onRateClicked={onRateClicked}
                     refetch={refetch}
                     lastElementRef={

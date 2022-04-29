@@ -13,7 +13,7 @@ import {
 /* Returns several data for opinions. For NFTs, tokenId is used. For ERC20, idtAddress is used */
 export default function useOpinionsByIdentifier({
   idtAddress,
-  tokenId,
+  tokenID,
   refreshToggle = false, // Used to refresh supply whenever needed
 }) {
   const addressOpinionBase = useContractStore.getState().addressOpinionBase
@@ -34,9 +34,15 @@ export default function useOpinionsByIdentifier({
     let isCancelled = false
 
     async function run() {
-      const avgRatingResult = idtAddress ? await getAvgRatingForIDT(idtAddress) : await getAvgRatingForNFT(tokenId)
-      const totalOpinionsResult = idtAddress ? await getLatestRatingsCountForIDT(idtAddress) : await getLatestRatingsCountForNFT(tokenId)
-      const totalCommentsResult = idtAddress ? await getLatestCommentsCountForIDT(idtAddress) : await getLatestCommentsCountForNFT(tokenId)
+      const avgRatingResult = idtAddress
+        ? await getAvgRatingForIDT(idtAddress)
+        : await getAvgRatingForNFT(tokenID)
+      const totalOpinionsResult = idtAddress
+        ? await getLatestRatingsCountForIDT(idtAddress)
+        : await getLatestRatingsCountForNFT(tokenID)
+      const totalCommentsResult = idtAddress
+        ? await getLatestCommentsCountForIDT(idtAddress)
+        : await getLatestCommentsCountForNFT(tokenID)
       if (!isCancelled) {
         setAvgRating(avgRatingResult as any)
         setTotalOpinions(totalOpinionsResult)
@@ -46,12 +52,21 @@ export default function useOpinionsByIdentifier({
     }
 
     setIsLoading(true)
-    if ((idtAddress || tokenId) && addressOpinionBase && nftOpinionBase) run()
+    if ((idtAddress || tokenID) && addressOpinionBase && nftOpinionBase) run()
 
     return () => {
       isCancelled = true
     }
-  }, [idtAddress, tokenId, web3, refreshToggle, walletAddress, chainID, addressOpinionBase, nftOpinionBase])
+  }, [
+    idtAddress,
+    tokenID,
+    web3,
+    refreshToggle,
+    walletAddress,
+    chainID,
+    addressOpinionBase,
+    nftOpinionBase,
+  ])
 
   return { avgRating, totalOpinions, totalComments, isLoading }
 }

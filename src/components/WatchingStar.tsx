@@ -1,21 +1,17 @@
 import Star from '../assets/star.svg'
 import StarOn from '../assets/star-on.svg'
-import {
-  IdeaToken,
-  setIsWatching,
-  useIdeaMarketsStore,
-} from 'store/ideaMarketsStore'
+import { setIsWatching, useIdeaMarketsStore } from 'store/ideaMarketsStore'
 import classNames from 'classnames'
 
 export default function WatchingStar({
   token,
   className = '',
 }: {
-  token: IdeaToken
+  token: any
   className?: any
 }) {
   // Notice how we are using tokenID here to track "Starred" tokens
-  const watching = useIdeaMarketsStore((state) => state.watching[token.address])
+  const watching = useIdeaMarketsStore((state) => state.watching[token.tokenID])
 
   function onClick(e) {
     e.stopPropagation()
