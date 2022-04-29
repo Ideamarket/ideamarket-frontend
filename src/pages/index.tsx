@@ -8,7 +8,6 @@ import { useWalletStore } from 'store/walletStore'
 import { ScrollToTop } from 'components/tokens/ScrollToTop'
 import { NextSeo } from 'next-seo'
 import { OverviewFilters } from 'components/tokens/OverviewFilters'
-import { useMarketStore } from 'store/markets'
 import { GlobalContext } from 'pages/_app'
 import {
   getVisibleColumns,
@@ -25,10 +24,7 @@ const Home = ({ urlMarkets }: Props) => {
   // After trade or list success, the token data needs to be refetched. This toggle does that.
   const [tradeOrListSuccessToggle, setTradeOrListSuccessToggle] =
     useState(false)
-  const [isVerifiedFilterActive, setIsVerifiedFilterActive] = useState(false)
   const [isStarredFilterActive, setIsStarredFilterActive] = useState(false)
-  const [isGhostOnlyActive, setIsGhostOnlyActive] = useState(false)
-  const [selectedMarkets, setSelectedMarkets] = useState(new Set([]))
   const [selectedColumns, setSelectedColumns] = useState(new Set([]))
   const [nameSearch, setNameSearch] = useState('')
   const [orderBy, setOrderBy] = useState(SortOptionsHomeTable.AVG_RATING.value)
@@ -43,8 +39,6 @@ const Home = ({ urlMarkets }: Props) => {
   ) {
     startingOptionalColumns.push('All')
   }
-  const markets = useMarketStore((state) => state.markets)
-  const marketNames = markets.map((m) => m?.market?.name)
 
   const { setOnWalletConnectedCallback } = useContext(GlobalContext)
 
@@ -55,21 +49,12 @@ const Home = ({ urlMarkets }: Props) => {
       localStorage.setItem('clearStorage', '8')
     }
 
-    const storedMarkets = JSON.parse(localStorage.getItem('STORED_MARKETS'))
-
-    const initialMarkets = urlMarkets
-      ? urlMarkets
-      : storedMarkets
-      ? [...storedMarkets]
-      : ['All', ...marketNames]
-
-    setSelectedMarkets(new Set(initialMarkets))
     const storedColumns = JSON.parse(localStorage.getItem('STORED_COLUMNS'))
 
     const initialColumns = storedColumns || startingOptionalColumns
     setSelectedColumns(new Set(initialColumns))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [markets])
+  }, [])
 
   const onNameSearchChanged = (nameSearch) => {
     setOrderBy(SortOptionsHomeTable.AVG_RATING.value)
@@ -107,45 +92,20 @@ const Home = ({ urlMarkets }: Props) => {
     }
   }
 
-  const onMarketChanged = (markets) => {
-    localStorage.setItem('STORED_MARKETS', JSON.stringify([...markets]))
-    setSelectedMarkets(markets)
-  }
-
   const onColumnChanged = (columns) => {
     localStorage.setItem('STORED_COLUMNS', JSON.stringify([...columns]))
     setSelectedColumns(columns)
   }
 
-  /**
-   * This method is called when Ghost Filter is clicked.
-   * @param isActive -- the new state of the Ghost Filter after click
-   */
-  const onGhostFilterClicked = (isActive: boolean) => {
-    if (isActive) {
-      onOrderByChanged('totalVotes', 'desc')
-    } else {
-      onOrderByChanged('dayChange', 'desc')
-    }
-
-    setIsGhostOnlyActive(isActive)
-  }
-
   const overviewFiltersProps = {
     orderBy,
-    selectedMarkets,
     selectedColumns,
-    isVerifiedFilterActive,
     isStarredFilterActive,
-    isGhostOnlyActive,
     selectedCategories,
-    onMarketChanged,
     setOrderBy,
     onColumnChanged,
     onNameSearchChanged,
-    setIsVerifiedFilterActive,
     setIsStarredFilterActive,
-    setIsGhostOnlyActive: onGhostFilterClicked,
     setSelectedCategories,
   }
 
@@ -153,17 +113,13 @@ const Home = ({ urlMarkets }: Props) => {
     nameSearch,
     orderBy,
     orderDirection,
-    selectedMarkets,
-    isVerifiedFilterActive,
     isStarredFilterActive,
-    isGhostOnlyActive,
     columnData: visibleColumns,
     selectedCategories,
     getColumn: (column) => selectedColumns.has(column),
     onOrderByChanged,
     onTradeClicked,
     onRateClicked,
-    onMarketChanged,
     tradeOrListSuccessToggle,
     setSelectedCategories,
     setIsStarredFilterActive,
@@ -176,10 +132,7 @@ const Home = ({ urlMarkets }: Props) => {
         <div className="mx-auto transform md:px-4 md:max-w-304 -translate-y-28 font-inter">
           <OverviewFilters {...overviewFiltersProps} />
           <div className="bg-white border-brand-gray-3 dark:border-gray-500 rounded-b-xlg shadow-home">
-            {/* selectedMarkets is empty on load. If none selected, it will have 1 element called 'None' */}
-            {visibleColumns && selectedMarkets.size > 0 && (
-              <Table {...tableProps} />
-            )}
+            {visibleColumns && <Table {...tableProps} />}
           </div>
         </div>
         <ScrollToTop />

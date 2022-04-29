@@ -1,20 +1,7 @@
 import React from 'react'
 import classNames from 'classnames'
-import BigNumber from 'bignumber.js'
 import Tooltip from 'components/tooltip/Tooltip'
 import { A } from 'components'
-import { useQuery } from 'react-query'
-import { queryInterestManagerTotalShares } from 'store/ideaMarketsStore'
-import { queryDaiBalance } from 'store/daiStore'
-import { NETWORK } from 'store/networks'
-import BN from 'bn.js'
-import {
-  bigNumberTenPow18,
-  formatNumber,
-  formatNumberWithCommasAsThousandsSerperator,
-  bnToFloatString,
-} from 'utils'
-import { useMarketStore } from 'store/markets'
 import { SortAscendingIcon, SortDescendingIcon } from '@heroicons/react/solid'
 import { StarIcon } from '@heroicons/react/solid'
 import SelectableButton from 'components/buttons/SelectableButton'
@@ -24,10 +11,8 @@ type Props = {
   orderBy: string
   orderDirection: string
   columnData: Array<any>
-  selectedMarkets: Set<string>
   isStarredFilterActive: boolean
   columnClicked: (column: string) => void
-  onMarketChanged: (set: Set<string>) => void
   setIsStarredFilterActive: (isActive: boolean) => void
 }
 
@@ -58,65 +43,11 @@ export const OverviewColumns = ({
   orderBy,
   orderDirection,
   columnData,
-  selectedMarkets,
   isStarredFilterActive,
   columnClicked,
-  onMarketChanged,
   setIsStarredFilterActive,
 }: Props) => {
-  const { data: interestManagerTotalShares } = useQuery(
-    'interest-manager-total-shares',
-    queryInterestManagerTotalShares
-  )
-
-  const interestManagerAddress =
-    NETWORK.getDeployedAddresses().interestManagerAVM
-  const { data: interestManagerDaiBalance } = useQuery(
-    ['interest-manager-dai-balance'],
-    () => queryDaiBalance(interestManagerAddress)
-  )
-
-  const marketObjects = useMarketStore((state) => state.markets)
-  const markets = marketObjects.map((m) => m.market)
-
-  // const twitterMarketSpecifics = getMarketSpecificsByMarketName('Twitter')
-
-  let allPlatformsEarnedBN = new BigNumber('0')
-  const platformEarnedPairs = [] // { name, earned } -- name = platform name, earned = amount platform earned
-  markets.forEach((market) => {
-    const platformEarnedBN =
-      interestManagerTotalShares && interestManagerDaiBalance
-        ? new BigNumber(market.rawPlatformFeeInvested.toString())
-            .dividedBy(new BigNumber(interestManagerTotalShares.toString()))
-            .multipliedBy(new BigNumber(interestManagerDaiBalance.toString()))
-            .plus(
-              new BigNumber(
-                (market.rawPlatformFeeRedeemed || new BN('0')).toString()
-              )
-            )
-        : new BigNumber('0')
-
-    const platformEarned = bnToFloatString(
-      platformEarnedBN,
-      bigNumberTenPow18,
-      4
-    )
-    platformEarnedPairs.push({
-      name: market.name,
-      earned:
-        parseFloat(platformEarned) < 1000
-          ? formatNumber(parseFloat(platformEarned))
-          : formatNumberWithCommasAsThousandsSerperator(
-              parseInt(platformEarned)
-            ),
-    })
-    allPlatformsEarnedBN = allPlatformsEarnedBN.plus(platformEarnedBN)
-  })
-
   function getColumnContent(column) {
-    // const isURLSelected = selectedMarkets.has('URL')
-    // const isPeopleSelected = selectedMarkets.has('Twitter')
-
     switch (column.value) {
       case 'name':
         return (

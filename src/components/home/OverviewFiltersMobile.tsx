@@ -11,7 +11,6 @@ import SelectableButton, {
 } from 'components/buttons/SelectableButton'
 // import { getIconVersion } from 'utils/icons'
 import { OverviewSearchbar } from 'components/tokens/OverviewSearchbar'
-import { IMarketSpecifics } from 'store/markets'
 import DropdownButtons from 'components/dropdowns/DropdownButtons'
 import { useRef, useState } from 'react'
 import {
@@ -22,40 +21,24 @@ import {
 
 type Props = {
   orderBy: string
-  isVerifiedFilterActive: boolean
   isStarredFilterActive: boolean
-  isGhostOnlyActive: boolean
   categoriesData: any[]
   selectedCategories: string[]
-  isURLSelected: boolean
-  isPeopleSelected: boolean
-  twitterMarketSpecifics: IMarketSpecifics
   setOrderBy: (value: string) => void
   onNameSearchChanged: (value: string) => void
-  setIsVerifiedFilterActive: (isActive: boolean) => void
   setIsStarredFilterActive: (isActive: boolean) => void
-  setIsGhostOnlyActive: (isActive: boolean) => void
   onCategoryClicked: (newClickedCategoryId: string) => void
-  toggleMarket: (marketName: string) => void
 }
 
 const OverviewFiltersMobile = ({
   orderBy,
-  isVerifiedFilterActive,
   isStarredFilterActive,
-  isGhostOnlyActive,
   categoriesData,
   selectedCategories,
-  isURLSelected,
-  isPeopleSelected,
-  twitterMarketSpecifics,
   setOrderBy,
   onNameSearchChanged,
-  setIsVerifiedFilterActive,
   setIsStarredFilterActive,
-  setIsGhostOnlyActive,
   onCategoryClicked,
-  toggleMarket,
 }: Props) => {
   const [isSortingDropdownOpen, setIsSortingDropdownOpen] = useState(false)
   const ref = useRef()

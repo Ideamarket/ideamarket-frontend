@@ -44,7 +44,7 @@ export default function RateModal({
 
   const { avgRating, totalOpinions } = useOpinionsByIdentifier({
     idtAddress: ideaToken?.address || null,
-    tokenId: ideaToken?.tokenId || null,
+    tokenID: ideaToken?.tokenID || null,
   })
 
   function onTradeComplete(
@@ -68,7 +68,11 @@ export default function RateModal({
     try {
       const web3TxMethod = isNFT ? ratePost : rateIDT
       // tokenId , rating, comment
-      const ratingArgs = [isNFT ? ideaToken?.tokenId : ideaToken.address, inputRating, inputComment]
+      const ratingArgs = [
+        isNFT ? ideaToken?.tokenID : ideaToken.address,
+        inputRating,
+        inputComment,
+      ]
       await txManager.executeTx('Rate', web3TxMethod, ...ratingArgs)
     } catch (ex) {
       console.log(ex)
@@ -93,31 +97,36 @@ export default function RateModal({
       ? urlMetaData?.ogTitle
       : marketSpecifics?.convertUserInputToTokenName(ideaToken?.url)
 
-  const { minter } = (ideaToken || {}) as any
+  const { minterAddress } = (ideaToken || {}) as any
 
-  const { data: userDataForMinter } = useQuery<any>([`minter-${minter}`], () =>
-    getPublicProfile({
-      username: null,
-      walletAddress: minter,
-    })
+  const { data: userDataForMinter } = useQuery<any>(
+    [`minterAddress-${minterAddress}`],
+    () =>
+      getPublicProfile({
+        username: null,
+        walletAddress: minterAddress,
+      })
   )
 
-  const displayUsernameOrWallet = convertAccountName(userDataForMinter?.username || minter)
-  const usernameOrWallet = userDataForMinter?.username || minter
+  const displayUsernameOrWallet = convertAccountName(
+    userDataForMinter?.username || minterAddress
+  )
+  const usernameOrWallet = userDataForMinter?.username || minterAddress
 
   return (
     <Modal close={close}>
       <div className="w-full md:w-136 mx-auto bg-white dark:bg-gray-700 rounded-xl">
-
         <div className="px-6 py-4 bg-black/[.05] text-base font-medium leading-5 truncate">
-
           {/* Display minter image, username/wallet */}
-          {minter && (
+          {minterAddress && (
             <div className="flex items-center pb-2 whitespace-nowrap">
               <div className="relative rounded-full w-6 h-6">
                 <Image
                   className="rounded-full"
-                  src={userDataForMinter?.profilePhoto || '/DefaultProfilePicture.gif'}
+                  src={
+                    userDataForMinter?.profilePhoto ||
+                    '/DefaultProfilePicture.gif'
+                  }
                   alt=""
                   layout="fill"
                   objectFit="cover"
@@ -135,7 +144,7 @@ export default function RateModal({
           {/* Show meta data for URLs and content for text posts */}
           {!ideaToken?.isURL ? (
             <div>{ideaToken?.content}</div>
-          ): (
+          ) : (
             <>
               {displayName && (
                 <div>
@@ -164,7 +173,6 @@ export default function RateModal({
               </a>
             </>
           )}
-
         </div>
 
         <div className="px-6 py-4">

@@ -6,15 +6,9 @@ import React, {
   useRef,
   useState,
 } from 'react'
-import { useInfiniteQuery, useQuery } from 'react-query'
+import { useInfiniteQuery } from 'react-query'
 
-import { WEEK_SECONDS } from 'utils'
-import {
-  IdeaToken,
-  IdeaMarket,
-  queryMarkets,
-  queryPosts,
-} from 'store/ideaMarketsStore'
+import { IdeaToken, IdeaMarket, queryPosts } from 'store/ideaMarketsStore'
 import { useIdeaMarketsStore } from 'store/ideaMarketsStore'
 import TokenRow from './OverviewTokenRow'
 import TokenRowSkeleton from './OverviewTokenRowSkeleton'
@@ -24,10 +18,7 @@ import { GlobalContext } from 'lib/GlobalContext'
 import { SortOptionsHomeTable } from 'utils/tables'
 
 type Props = {
-  selectedMarkets: Set<string>
-  isVerifiedFilterActive: boolean
   isStarredFilterActive: boolean
-  isGhostOnlyActive: boolean
   nameSearch: string
   orderBy: string
   orderDirection: string
@@ -37,16 +28,12 @@ type Props = {
   onOrderByChanged: (o: string, d: string) => void
   onTradeClicked: (token: IdeaToken, market: IdeaMarket) => void
   onRateClicked: (idt: IdeaToken, urlMetaData: any) => void
-  onMarketChanged: (set: Set<string>) => void
   tradeOrListSuccessToggle: boolean
   setIsStarredFilterActive: (isActive: boolean) => void
 }
 
 export default function Table({
-  selectedMarkets,
-  isVerifiedFilterActive,
   isStarredFilterActive,
-  isGhostOnlyActive,
   nameSearch,
   orderBy,
   orderDirection,
@@ -56,7 +43,6 @@ export default function Table({
   onOrderByChanged,
   onTradeClicked,
   onRateClicked,
-  onMarketChanged,
   tradeOrListSuccessToggle,
   setIsStarredFilterActive,
 }: Props) {
@@ -66,7 +52,6 @@ export default function Table({
 
   const [currentColumn, setCurrentColumn] = useState('')
 
-  const [markets, setMarkets] = useState<IdeaMarket[]>([])
   const observer: MutableRefObject<any> = useRef()
 
   const watchingTokens = Object.keys(
@@ -74,15 +59,6 @@ export default function Table({
   )
 
   const filterTokens = isStarredFilterActive ? watchingTokens : undefined
-
-  const { isFetching: isMarketLoading, refetch: refetchMarkets } = useQuery(
-    [`market-${Array.from(selectedMarkets)}`],
-    () => queryMarkets(Array.from(selectedMarkets)),
-    {
-      refetchOnWindowFocus: false,
-      enabled: false,
-    }
-  )
 
   const {
     data: infiniteData,
@@ -92,33 +68,22 @@ export default function Table({
     hasNextPage: canFetchMore,
   } = useInfiniteQuery(
     [
-      `tokens-${Array.from(selectedMarkets)}`,
-      markets,
       TOKENS_PER_PAGE,
-      WEEK_SECONDS,
       orderBy,
       orderDirection,
-      nameSearch,
-      filterTokens,
-      isVerifiedFilterActive,
-      isGhostOnlyActive ? 'ghost' : 'onchain',
-      jwtToken,
       selectedCategories,
+      filterTokens,
+      nameSearch,
     ],
     ({ pageParam = 0 }) =>
       queryPosts(
         [
-          markets,
           TOKENS_PER_PAGE,
-          WEEK_SECONDS,
           orderBy,
           orderDirection,
-          nameSearch,
-          filterTokens,
-          isVerifiedFilterActive,
-          isGhostOnlyActive ? 'ghost' : 'onchain',
-          jwtToken,
           selectedCategories,
+          filterTokens,
+          nameSearch,
         ],
         pageParam
       ),
@@ -157,35 +122,21 @@ export default function Table({
   const tokenData = flatten(infiniteData?.pages || [])
 
   useEffect(() => {
-    const fetch = async () => {
-      const markets = (await refetchMarkets()) as any
-      setMarkets(markets?.data as IdeaMarket[])
-    }
-    fetch()
-  }, [refetchMarkets, selectedMarkets])
-
-  useEffect(() => {
-    if (markets && markets?.length !== 0) {
-      refetch()
-    }
+    refetch()
   }, [
-    markets,
-    isVerifiedFilterActive,
     isStarredFilterActive,
     filterTokens?.length, // Need this to detect change in starred tokens. Otherwise, you click a star and it shows no tokens if starred filter is on
     orderBy,
     orderDirection,
     nameSearch,
     tradeOrListSuccessToggle,
-    isGhostOnlyActive,
     refetch,
     jwtToken,
     selectedCategories,
-    isTxPending,  // If any transaction starts or stop, refresh home table data
+    isTxPending, // If any transaction starts or stop, refresh home table data
   ])
 
-  const isLoading =
-    isMarketLoading || isTokenDataLoading
+  const isLoading = isTokenDataLoading
 
   function columnClicked(column: string) {
     if (currentColumn === column) {
@@ -229,10 +180,8 @@ export default function Table({
                 orderBy={orderBy}
                 orderDirection={orderDirection}
                 columnData={columnData}
-                selectedMarkets={selectedMarkets}
                 isStarredFilterActive={isStarredFilterActive}
                 columnClicked={columnClicked}
-                onMarketChanged={onMarketChanged}
                 setIsStarredFilterActive={setIsStarredFilterActive}
               />
             </div>

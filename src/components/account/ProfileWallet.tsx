@@ -12,7 +12,6 @@ import {
   queryOwnedTokensMaybeMarket,
   queryMyTrades,
   useIdeaMarketsStore,
-  querySingleIDTByTokenAddress,
   IdeaToken,
 } from 'store/ideaMarketsStore'
 import ModalService from 'components/modals/ModalService'
@@ -158,16 +157,11 @@ export default function ProfileWallet({ userData }: Props) {
       limit: numTokens,
       orderBy,
       orderDirection,
+      filterTokens,
+      search: nameSearch,
     })
-    // Add in the token here by doing subgraph call
-    const ratingsPairs = await Promise.all(
-      latestUserOpinions?.map(async (opinion: any) => {
-        const idt = await querySingleIDTByTokenAddress(opinion?.tokenAddress)
-        return { opinion, idt }
-      })
-    )
 
-    return ratingsPairs || []
+    return latestUserOpinions || []
   }
 
   async function ownedQueryFunction(numTokens: number, skip: number = 0) {
@@ -236,11 +230,11 @@ export default function ProfileWallet({ userData }: Props) {
   const onRateClicked = (token: IdeaToken, urlMetaData: any) => {
     if (!useWalletStore.getState().web3) {
       setOnWalletConnectedCallback(() => () => {
-        ModalService.open(RateModal, { ideaToken: token, urlMetaData }, refetch)
+        ModalService.open(RateModal, { ideaToken: token, urlMetaData })
       })
       ModalService.open(WalletModal)
     } else {
-      ModalService.open(RateModal, { ideaToken: token, urlMetaData }, refetch)
+      ModalService.open(RateModal, { ideaToken: token, urlMetaData })
     }
   }
 

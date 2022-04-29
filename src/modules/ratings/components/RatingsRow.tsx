@@ -7,22 +7,16 @@ import {
 import { useQuery } from 'react-query'
 import { getURLMetaData } from 'actions/web2/getURLMetaData'
 import { ChatIcon } from '@heroicons/react/outline'
-// import { getTimeDifferenceIndays } from 'lib/utils/dateUtil'
-// import { convertAccountName } from 'lib/utils/stringUtil'
-// import A from 'components/A'
-// import { isETHAddress } from 'utils/addresses'
 import ListingContent from 'components/tokens/ListingContent'
 import {
   getListingTypeFromIDTURL,
   LISTING_TYPE,
 } from 'components/tokens/utils/ListingUtils'
-import { getMarketSpecificsByMarketName } from 'store/markets'
 import { getPublicProfile } from 'lib/axios'
 import { convertAccountName } from 'lib/utils/stringUtil'
 import Image from 'next/image'
 
 type Props = {
-  ideaToken: any
   opinion: any
   refetch: () => void
   onRateClicked: (idt: IdeaToken, urlMetaData: any) => void
@@ -30,72 +24,54 @@ type Props = {
 }
 
 export default function RatingsRow({
-  ideaToken,
   opinion,
   refetch,
   onRateClicked,
   lastElementRef,
 }: Props) {
-  const marketSpecifics = getMarketSpecificsByMarketName(
-    ideaToken?.market?.name
+  const { data: urlMetaData } = useQuery([opinion?.url], () =>
+    getURLMetaData(opinion?.url)
   )
 
-  const { data: urlMetaData } = useQuery([ideaToken?.url], () =>
-    getURLMetaData(ideaToken?.url)
+  const { minterAddress } = (opinion || {}) as any
+
+  const { data: userDataForMinter } = useQuery<any>(
+    [`minterAddress-${minterAddress}`],
+    () =>
+      getPublicProfile({
+        username: null,
+        walletAddress: minterAddress,
+      })
   )
 
-  const { minter } = (ideaToken || {}) as any
-
-  const { data: userDataForMinter } = useQuery<any>([`minter-${minter}`], () =>
-    getPublicProfile({
-      username: null,
-      walletAddress: minter,
-    })
+  const displayUsernameOrWallet = convertAccountName(
+    userDataForMinter?.username || minterAddress
   )
-
-  const displayUsernameOrWallet = convertAccountName(userDataForMinter?.username || minter)
-  const usernameOrWallet = userDataForMinter?.username || minter
-
-  // const { onchainListedAt, onchainListedBy } =
-  //   (ideaToken || {}) as any
-
-  // const isOnchainListedByETHAddress = isETHAddress(onchainListedBy)
-
-  // const timeAfterOnChainListedInDays = useMemo(() => {
-  //   if (!onchainListedAt) return null
-  //   const onchainListedAtDate = new Date(onchainListedAt)
-  //   const currentDate = new Date()
-  //   return getTimeDifferenceIndays(onchainListedAtDate, currentDate)
-  // }, [onchainListedAt])
-
-  const displayName =
-    urlMetaData && urlMetaData?.ogTitle
-      ? urlMetaData?.ogTitle
-      : marketSpecifics?.convertUserInputToTokenName(ideaToken?.url)
+  const usernameOrWallet = userDataForMinter?.username || minterAddress
 
   return (
     <>
       {/* Desktop row */}
-      <div className="hidden md:block py-6">
+      <div ref={lastElementRef} className="hidden md:block py-6">
         <div className="flex text-black">
           {/* Icon and Name */}
           <div className="w-[40%] relative pl-6 pr-10">
             <div className="relative flex items-start w-3/4 mx-auto md:w-full text-gray-900 dark:text-gray-200">
-
               <div className="mr-4">
-                <WatchingStar token={ideaToken} />
+                <WatchingStar token={opinion} />
               </div>
 
               <div className="grow text-base font-medium leading-5 truncate z-30">
-
                 <div className="pr-6">
-
-                  {minter && (
+                  {minterAddress && (
                     <div className="flex items-center pb-2 whitespace-nowrap">
                       <div className="relative rounded-full w-6 h-6">
                         <Image
                           className="rounded-full"
-                          src={userDataForMinter?.profilePhoto || '/DefaultProfilePicture.gif'}
+                          src={
+                            userDataForMinter?.profilePhoto ||
+                            '/DefaultProfilePicture.gif'
+                          }
                           alt=""
                           layout="fill"
                           objectFit="cover"
@@ -111,26 +87,23 @@ export default function RatingsRow({
                   )}
 
                   <ListingContent
-                    ideaToken={ideaToken}
+                    ideaToken={opinion}
                     page="HomePage"
                     urlMetaData={urlMetaData}
                     useMetaData={
-                      getListingTypeFromIDTURL(ideaToken?.url) !==
-                      LISTING_TYPE.TWEET && getListingTypeFromIDTURL(ideaToken?.url) !==
-                      LISTING_TYPE.TEXT_POST
+                      getListingTypeFromIDTURL(opinion?.url) !==
+                        LISTING_TYPE.TWEET &&
+                      getListingTypeFromIDTURL(opinion?.url) !==
+                        LISTING_TYPE.TEXT_POST
                     }
                   />
-
                 </div>
-
               </div>
             </div>
           </div>
 
           <div className="w-[60%]">
-
             <div className="flex w-full">
-
               {/* Rating By User */}
               <div className="w-[20%] grow">
                 <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-300">
@@ -183,7 +156,7 @@ export default function RatingsRow({
                   <button
                     onClick={(e) => {
                       e.stopPropagation()
-                      onRateClicked(ideaToken, urlMetaData)
+                      onRateClicked(opinion, urlMetaData)
                     }}
                     className="flex justify-center items-center w-20 h-10 text-base font-medium text-white rounded-lg bg-black/[.8] dark:bg-gray-600 dark:text-gray-300 tracking-tightest-2"
                   >
@@ -191,11 +164,9 @@ export default function RatingsRow({
                   </button>
                 </div>
               </div>
-
             </div>
 
             <div className="flex w-full">
-
               {/* The user comment for this opinion */}
               {opinion && opinion?.comment && opinion?.comment.length > 0 && (
                 <div className="w-full mt-4">
@@ -207,58 +178,43 @@ export default function RatingsRow({
                   </div>
                 </div>
               )}
-
             </div>
-
           </div>
-
-
-
         </div>
-
       </div>
 
       {/* Mobile row */}
-      <div className="md:hidden">
-        <div className="w-full relative px-3 pt-4">
-          <div className="relative flex items-center w-3/4 text-gray-900 dark:text-gray-200">
-            <div className="text-base font-medium leading-5 truncate z-30">
-              {displayName && (
-                <div>
-                  <a
-                    href={`/i/${ideaToken?.address}`}
-                    onClick={(event) => event.stopPropagation()}
-                    className="text-xs md:text-base font-bold hover:underline"
-                  >
-                    {displayName?.substr(
-                      0,
-                      displayName?.length > 50 ? 50 : displayName?.length
-                    ) + (displayName?.length > 50 ? '...' : '')}
-                  </a>
-                </div>
-              )}
-              <a
-                href={ideaToken?.url}
-                className="text-xs md:text-sm text-brand-blue hover:underline"
-                target="_blank"
-                rel="noopener noreferrer"
+      <div ref={lastElementRef} className="md:hidden">
+        <div className="w-full relative px-3 py-4">
+          {minterAddress && (
+            <div className="flex items-center pb-2 whitespace-nowrap">
+              <div className="relative rounded-full w-6 h-6">
+                <Image
+                  className="rounded-full"
+                  src={
+                    userDataForMinter?.profilePhoto ||
+                    '/DefaultProfilePicture.gif'
+                  }
+                  alt=""
+                  layout="fill"
+                  objectFit="cover"
+                />
+              </div>
+              <A
+                className="ml-2 font-bold text-black hover:text-blue-600"
+                href={`/u/${usernameOrWallet}`}
               >
-                {ideaToken?.url.substr(
-                  0,
-                  ideaToken?.url.length > 50 ? 50 : ideaToken?.url.length
-                ) + (ideaToken?.url.length > 50 ? '...' : '')}
-              </a>
+                {displayUsernameOrWallet}
+              </A>
             </div>
-          </div>
-        </div>
+          )}
 
-        <div className="px-3 py-4">
           <ListingContent
-            ideaToken={ideaToken}
+            ideaToken={opinion}
             page="MobileAccountPage"
             urlMetaData={urlMetaData}
             useMetaData={
-              getListingTypeFromIDTURL(ideaToken?.url) !== LISTING_TYPE.TWEET
+              getListingTypeFromIDTURL(opinion?.url) !== LISTING_TYPE.TWEET
             }
           />
         </div>
@@ -303,13 +259,13 @@ export default function RatingsRow({
 
         <div className="flex justify-between items-center px-10 py-4 border-t">
           <div className="">
-            <WatchingStar token={ideaToken} />
+            <WatchingStar token={opinion} />
           </div>
 
           <button
             onClick={(e) => {
               e.stopPropagation()
-              onRateClicked(ideaToken, urlMetaData)
+              onRateClicked(opinion, urlMetaData)
             }}
             className="flex justify-center items-center w-20 h-10 text-base font-medium text-white rounded-lg bg-black/[.8] dark:bg-gray-600 dark:text-gray-300 tracking-tightest-2"
           >
