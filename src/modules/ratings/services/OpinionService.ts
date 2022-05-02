@@ -1,4 +1,4 @@
-import { getOpinionsByIDT } from 'actions/web2/getOpinionsByIDT'
+import { getOpinionsByTokenID } from 'actions/web2/getOpinionsByTokenID'
 import { getOpinionsByWallet } from 'actions/web2/getOpinionsByWallet'
 import getLatestOpinionsAboutAddress from 'actions/web3/getLatestOpinionsAboutAddress'
 import getLatestOpinionsAboutNFT from 'actions/web3/getLatestOpinionsAboutNFT'
@@ -97,26 +97,34 @@ export const getUsersLatestOpinions = async ({
 }
 
 /**
- * Get latest opinions on this IDT (doesn't include duplicates from past)
+ * Get latest opinions of this NFT
  */
-export const getIDTsLatestOpinions = async ({
-  tokenAddress,
+export const getLatestOpinionsAboutNFTForTable = async ({
+  tokenID,
   skip,
   limit,
   orderBy,
   orderDirection,
+  filterTokens,
+  search,
 }) => {
-  if (!tokenAddress || tokenAddress?.length <= 0) return []
-  const opinions = await getOpinionsByIDT({
-    tokenAddress,
+  if (!tokenID) return []
+  const opinions = await getOpinionsByTokenID({
+    tokenID,
     latest: true,
     skip,
     limit,
     orderBy,
     orderDirection,
+    filterTokens,
+    search,
   })
 
-  return opinions
+  return await Promise.all(
+    opinions.map(async (opinion) => {
+      return formatApiResponseToOpinion(opinion)
+    })
+  )
 }
 
 export type IdeamarketOpinion = {

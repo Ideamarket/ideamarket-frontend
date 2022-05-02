@@ -1,47 +1,33 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useQuery, useInfiniteQuery } from 'react-query'
-import { DefaultLayout, WalletModal, WatchingStar } from 'components'
-import {
-  IdeaToken,
-  queryMarket,
-  querySingleToken,
-} from 'store/ideaMarketsStore'
+import { A, DefaultLayout, WalletModal, WatchingStar } from 'components'
+import { useIdeaMarketsStore } from 'store/ideaMarketsStore'
 import { GetServerSideProps } from 'next'
 import ModalService from 'components/modals/ModalService'
 import ListingSEO from 'components/listing-page/ListingSEO'
 import { ReactElement, useContext, useEffect, useState } from 'react'
-import {
-  bigNumberTenPow18,
-  calculateCurrentPriceBN,
-  formatNumberInt,
-  formatNumberWithCommasAsThousandsSerperator,
-  web3BNToFloatString,
-} from 'utils'
+import { formatNumberInt } from 'utils'
 import { ChatIcon, ShareIcon } from '@heroicons/react/outline'
-import { useBalance } from 'actions'
-import { useWeb3React } from '@web3-react/core'
 import { getURLMetaData } from 'actions/web2/getURLMetaData'
 import { useWalletStore } from 'store/walletStore'
 import { GlobalContext } from 'lib/GlobalContext'
-// import { getTimeDifferenceIndays } from 'lib/utils/dateUtil'
-import { getMarketSpecificsByMarketName } from 'store/markets'
 import ListingContent from 'components/tokens/ListingContent'
 import RateModal from 'components/trade/RateModal'
-import {
-  getListingTypeFromIDTURL,
-  LISTING_TYPE,
-} from 'components/tokens/utils/ListingUtils'
-import useOpinionsByIdentifier from 'modules/ratings/hooks/useOpinionsByIdentifier'
 import copy from 'copy-to-clipboard'
 import { getURL } from 'utils/seo-constants'
 import toast from 'react-hot-toast'
-import getLatestOpinionsAboutAddress from 'actions/web3/getLatestOpinionsAboutAddress'
 import { flatten } from 'lodash'
 import OpinionTable from 'modules/ratings/components/ListingPage/OpinionTable'
 import classNames from 'classnames'
-import { getOpinionsByIDT } from 'actions/web2/getOpinionsByIDT'
-import { getIDTsLatestOpinions } from 'modules/ratings/services/OpinionService'
 import { SortOptionsListingPageOpinions } from 'utils/tables'
+import { getLatestOpinionsAboutNFTForTable } from 'modules/ratings/services/OpinionService'
+import {
+  getPostByTokenID,
+  IdeamarketPost,
+} from 'modules/posts/services/PostService'
+import { getPublicProfile } from 'lib/axios'
+import { convertAccountName } from 'lib/utils/stringUtil'
+import Image from 'next/image'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const DetailsSkeleton = () => (
@@ -69,48 +55,36 @@ const infiniteQueryConfig = {
 }
 
 const TokenDetails = ({ rawTokenId }: { rawTokenId: string }) => {
-  const { account } = useWeb3React()
-  const { jwtToken } = useContext(GlobalContext)
-
   const {
     data: token,
     isLoading: isTokenLoading,
     refetch,
-  } = useQuery(['single-listing'], () =>
-    querySingleToken(null, null, null, rawTokenId, jwtToken)
+  } = useQuery(['single-post', rawTokenId], () =>
+    getPostByTokenID({ tokenID: rawTokenId })
   )
 
-  const { onchainListedAt, onchainListedBy } = (token || {}) as any
-
-  // const timeAfterOnChainListedInDays = useMemo(() => {
-  //   if (!onchainListedAt) return null
-  //   const onchainListedAtDate = new Date(onchainListedAt)
-  //   const currentDate = new Date()
-  //   return getTimeDifferenceIndays(onchainListedAtDate, currentDate)
-  // }, [onchainListedAt])
-
-  const marketName = token?.marketName
-  const tokenName = token?.name ? token?.name : token?.url
-
-  const marketSpecifics = getMarketSpecificsByMarketName(marketName)
-
-  const { data: market, isLoading: isMarketLoading } = useQuery(
-    [`market-${marketName}`],
-    () => queryMarket(marketName)
-  )
-
+  const [isStarredFilterActive, setIsStarredFilterActive] = useState(false)
   const [orderBy, setOrderBy] = useState(
     SortOptionsListingPageOpinions.RATING.value
   )
   const [orderDirection, setOrderDirection] = useState('desc')
+  const [nameSearch, setNameSearch] = useState('')
+
+  const watchingTokens = Object.keys(
+    useIdeaMarketsStore((store) => store.watching)
+  )
+
+  const filterTokens = isStarredFilterActive ? watchingTokens : undefined
 
   async function opinionsQueryFunction(numTokens: number, skip: number = 0) {
-    const latestOpinions = await getIDTsLatestOpinions({
-      tokenAddress: token?.address,
+    const latestOpinions = await getLatestOpinionsAboutNFTForTable({
+      tokenID: rawTokenId,
       skip,
       limit: numTokens,
       orderBy,
       orderDirection,
+      filterTokens,
+      search: nameSearch,
     })
     return latestOpinions || []
   }
@@ -122,32 +96,12 @@ const TokenDetails = ({ rawTokenId }: { rawTokenId: string }) => {
     refetch: refetchOpinions,
     hasNextPage: canFetchMoreOpinions,
   } = useInfiniteQuery(
-    ['opinions', token],
+    ['opinions', token, orderBy, orderDirection, nameSearch],
     ({ pageParam = 0 }) => opinionsQueryFunction(TOKENS_PER_PAGE, pageParam),
     infiniteQueryConfig
   )
 
   const opinionPairs = flatten(infiniteOpinionsData?.pages || [])
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [tradeToggle, setTradeToggle] = useState(false) // Need toggle to reload balances after trade
-
-  const [isStarredFilterActive, setIsStarredFilterActive] = useState(false)
-  const [nameSearch, setNameSearch] = useState('')
-
-  const [, ideaTokenBalanceBN] = useBalance(
-    token?.address,
-    account,
-    18,
-    tradeToggle
-  )
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const ideaTokenBalanceDisplay = ideaTokenBalanceBN
-    ? formatNumberWithCommasAsThousandsSerperator(
-        web3BNToFloatString(ideaTokenBalanceBN, bigNumberTenPow18, 2)
-      )
-    : '0'
 
   const { setOnWalletConnectedCallback } = useContext(GlobalContext)
 
@@ -184,70 +138,46 @@ const TokenDetails = ({ rawTokenId }: { rawTokenId: string }) => {
     }
   }, [rawTokenId])
 
+  const { minterAddress } = (token || {}) as any
+
+  const { data: userDataForMinter } = useQuery<any>(
+    [`minterAddress-${minterAddress}`],
+    () =>
+      getPublicProfile({
+        username: null,
+        walletAddress: minterAddress,
+      })
+  )
+
+  const displayUsernameOrWallet = convertAccountName(
+    userDataForMinter?.username || minterAddress
+  )
+  const usernameOrWallet = userDataForMinter?.username || minterAddress
+
   const url = token?.url
 
   const { data: urlMetaData } = useQuery([url], () => getURLMetaData(url))
 
-  const displayName =
-    urlMetaData && urlMetaData?.ogTitle
-      ? urlMetaData?.ogTitle
-      : marketSpecifics?.convertUserInputToTokenName(token?.url)
-
-  const isLoading = isTokenLoading || isMarketLoading /*||
-    isInterestManagerTotalSharesLoading ||
-    isInterestManagerDaiBalanceLoading*/
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const tokenPrice =
-    isLoading || !token || !token?.isOnChain
-      ? ''
-      : web3BNToFloatString(
-          calculateCurrentPriceBN(
-            token?.rawSupply,
-            market.rawBaseCost,
-            market.rawPriceRise,
-            market.rawHatchTokens
-          ),
-          bigNumberTenPow18,
-          2
-        )
-
-  // const onTradeComplete = () => {
-  //   refetch()
-  //   setTradeToggle(!tradeToggle)
-  // }
-
-  // const onTradeClicked = (tradeType: TX_TYPES) => {
-  //   if (!useWalletStore.getState().web3) {
-  //     setOnWalletConnectedCallback(() => () => {
-  //       ModalService.open(
-  //         TradeModal,
-  //         { ideaToken: token, market, startingTradeType: tradeType },
-  //         onTradeComplete
-  //       )
-  //     })
-  //     ModalService.open(WalletModal)
-  //   } else {
-  //     ModalService.open(
-  //       TradeModal,
-  //       { ideaToken: token, market, startingTradeType: tradeType },
-  //       onTradeComplete
-  //     )
-  //   }
-  // }
-
-  // const onVerifyClicked = () => {
-  //   const onClose = () => refetch()
-  //   ModalService.open(VerifyModal, { market, token }, onClose)
-  // }
-
   const copyListingPageURL = () => {
-    const url = `${getURL()}/i/${token?.address}`
+    const url = `${getURL()}/post/${token?.tokenID}`
     copy(url)
     toast.success('Copied listing page URL')
   }
 
-  const onRateClicked = (token: IdeaToken, urlMetaData: any) => {
+  function headerClicked(headerValue: string) {
+    if (orderBy === headerValue) {
+      if (orderDirection === 'asc') {
+        setOrderDirection('desc')
+      } else {
+        setOrderDirection('asc')
+      }
+    } else {
+      setOrderBy(headerValue)
+      setOrderDirection('desc')
+    }
+  }
+
+  const onRateClicked = (token: IdeamarketPost, urlMetaData: any) => {
     if (!useWalletStore.getState().web3) {
       setOnWalletConnectedCallback(() => () => {
         ModalService.open(RateModal, { ideaToken: token, urlMetaData }, refetch)
@@ -258,15 +188,9 @@ const TokenDetails = ({ rawTokenId }: { rawTokenId: string }) => {
     }
   }
 
-  const listingType = getListingTypeFromIDTURL(token?.url)
-
   return (
     <div className=" mx-auto">
-      <ListingSEO
-        tokenName={tokenName}
-        rawMarketName={marketName}
-        rawTokenName={rawTokenId}
-      />
+      <ListingSEO tokenName={rawTokenId} rawTokenName={rawTokenId} />
 
       {/* Start of top section of listing page */}
       <div className="max-w-[50rem] mt-10 px-5 md:mx-auto">
@@ -275,68 +199,54 @@ const TokenDetails = ({ rawTokenId }: { rawTokenId: string }) => {
         {/* Desktop and tablet -- top section of listing page */}
         <div className="hidden md:flex items-start w-full mt-4">
           <div className="w-2/3 flex items-start">
-            {listingType === LISTING_TYPE.TWEET ? (
+            {/* This wrapper div combined with object-cover keeps images in correct size */}
+            {urlMetaData && urlMetaData?.ogImage && (
+              <div className="aspect-[16/9] w-56">
+                {/* Didn't use Next image because can't do wildcard domain allow in next config file */}
+                <img
+                  className="rounded-xl h-full object-cover"
+                  src={
+                    urlMetaData && urlMetaData?.ogImage
+                      ? urlMetaData.ogImage
+                      : '/gray.svg'
+                  }
+                  alt=""
+                  referrerPolicy="no-referrer"
+                />
+              </div>
+            )}
+
+            <div>
+              {minterAddress && (
+                <div className="flex items-center pb-2 whitespace-nowrap">
+                  <div className="relative rounded-full w-6 h-6">
+                    <Image
+                      className="rounded-full"
+                      src={
+                        userDataForMinter?.profilePhoto ||
+                        '/DefaultProfilePicture.gif'
+                      }
+                      alt=""
+                      layout="fill"
+                      objectFit="cover"
+                    />
+                  </div>
+                  <A
+                    className="ml-2 font-bold hover:text-blue-600"
+                    href={`/u/${usernameOrWallet}`}
+                  >
+                    {displayUsernameOrWallet}
+                  </A>
+                </div>
+              )}
+
               <ListingContent
                 ideaToken={token}
                 page="ListingPage"
                 urlMetaData={urlMetaData}
                 useMetaData={false}
               />
-            ) : (
-              <>
-                {/* This wrapper div combined with object-cover keeps images in correct size */}
-                <div className="aspect-[16/9] w-36">
-                  {/* Didn't use Next image because can't do wildcard domain allow in next config file */}
-                  <img
-                    className="rounded-xl h-full object-cover"
-                    src={
-                      urlMetaData && urlMetaData?.ogImage
-                        ? urlMetaData.ogImage
-                        : '/gray.svg'
-                    }
-                    alt=""
-                    referrerPolicy="no-referrer"
-                  />
-                </div>
-
-                <div className="ml-4 text-base font-medium leading-5 truncate z-30">
-                  <div>
-                    <a
-                      href={`/i/${token?.address}`}
-                      onClick={(event) => event.stopPropagation()}
-                      className="text-xs md:text-base font-bold hover:underline"
-                    >
-                      {displayName?.substr(
-                        0,
-                        displayName?.length > 50 ? 50 : displayName?.length
-                      ) + (displayName?.length > 50 ? '...' : '')}
-                    </a>
-                  </div>
-                  <a
-                    href={token?.url}
-                    className="text-xs md:text-sm text-brand-blue hover:underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {token?.url.substr(
-                      0,
-                      token?.url.length > 50 ? 50 : token?.url.length
-                    ) + (token?.url.length > 50 ? '...' : '')}
-                  </a>
-                  <div className="w-96 mt-2 text-xs text-left text-black/[.5] leading-4 whitespace-normal">
-                    {urlMetaData &&
-                      urlMetaData?.ogDescription &&
-                      urlMetaData?.ogDescription.substr(
-                        0,
-                        urlMetaData?.ogDescription.length > 160
-                          ? 160
-                          : urlMetaData?.ogDescription.length
-                      ) +
-                        (urlMetaData?.ogDescription.length > 160 ? '...' : '')}
-                  </div>
-                </div>
-              </>
-            )}
+            </div>
           </div>
 
           <div className="w-1/3 flex flex-col items-end">
@@ -394,69 +304,55 @@ const TokenDetails = ({ rawTokenId }: { rawTokenId: string }) => {
 
         {/* Mobile -- top section of listing page */}
         <div className="md:hidden flex flex-col justify-center w-full mt-4">
-          <div>
-            {listingType === LISTING_TYPE.TWEET ? (
+          <div className="flex items-start">
+            {/* This wrapper div combined with object-cover keeps images in correct size */}
+            {urlMetaData && urlMetaData?.ogImage && (
+              <div className="aspect-[16/9] w-56">
+                {/* Didn't use Next image because can't do wildcard domain allow in next config file */}
+                <img
+                  className="rounded-xl h-full object-cover"
+                  src={
+                    urlMetaData && urlMetaData?.ogImage
+                      ? urlMetaData.ogImage
+                      : '/gray.svg'
+                  }
+                  alt=""
+                  referrerPolicy="no-referrer"
+                />
+              </div>
+            )}
+
+            <div>
+              {minterAddress && (
+                <div className="flex items-center pb-2 whitespace-nowrap">
+                  <div className="relative rounded-full w-6 h-6">
+                    <Image
+                      className="rounded-full"
+                      src={
+                        userDataForMinter?.profilePhoto ||
+                        '/DefaultProfilePicture.gif'
+                      }
+                      alt=""
+                      layout="fill"
+                      objectFit="cover"
+                    />
+                  </div>
+                  <A
+                    className="ml-2 font-bold hover:text-blue-600"
+                    href={`/u/${usernameOrWallet}`}
+                  >
+                    {displayUsernameOrWallet}
+                  </A>
+                </div>
+              )}
+
               <ListingContent
                 ideaToken={token}
                 page="ListingPage"
                 urlMetaData={urlMetaData}
                 useMetaData={false}
               />
-            ) : (
-              <>
-                {/* This wrapper div combined with object-cover keeps images in correct size */}
-                <div className="aspect-[16/9] w-36">
-                  {/* Didn't use Next image because can't do wildcard domain allow in next config file */}
-                  <img
-                    className="rounded-xl h-full object-cover"
-                    src={
-                      urlMetaData && urlMetaData?.ogImage
-                        ? urlMetaData.ogImage
-                        : '/gray.svg'
-                    }
-                    alt=""
-                    referrerPolicy="no-referrer"
-                  />
-                </div>
-
-                <div className="ml-4 text-base font-medium leading-5 truncate z-30">
-                  <div>
-                    <a
-                      href={`/i/${token?.address}`}
-                      onClick={(event) => event.stopPropagation()}
-                      className="text-xs md:text-base font-bold hover:underline"
-                    >
-                      {displayName?.substr(
-                        0,
-                        displayName?.length > 50 ? 50 : displayName?.length
-                      ) + (displayName?.length > 50 ? '...' : '')}
-                    </a>
-                  </div>
-                  <a
-                    href={token?.url}
-                    className="text-xs md:text-sm text-brand-blue hover:underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {token?.url.substr(
-                      0,
-                      token?.url.length > 50 ? 50 : token?.url.length
-                    ) + (token?.url.length > 50 ? '...' : '')}
-                  </a>
-                  <div className="w-96 mt-2 text-xs text-left text-black/[.5] leading-4 whitespace-normal">
-                    {urlMetaData &&
-                      urlMetaData?.ogDescription &&
-                      urlMetaData?.ogDescription.substr(
-                        0,
-                        urlMetaData?.ogDescription.length > 160
-                          ? 160
-                          : urlMetaData?.ogDescription.length
-                      ) +
-                        (urlMetaData?.ogDescription.length > 160 ? '...' : '')}
-                  </div>
-                </div>
-              </>
-            )}
+            </div>
           </div>
 
           <div className="flex flex-col items-end my-10">
@@ -498,8 +394,10 @@ const TokenDetails = ({ rawTokenId }: { rawTokenId: string }) => {
         <OpinionTable
           opinionPairs={opinionPairs}
           orderBy={orderBy}
+          orderDirection={orderDirection}
           setOrderBy={setOrderBy}
           setNameSearch={setNameSearch}
+          headerClicked={headerClicked}
         />
       </div>
 

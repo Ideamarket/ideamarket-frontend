@@ -78,7 +78,7 @@ export default function LockedTokenRowNew({
       className="grid grid-cols-3 border-b cursor-pointer dark:border-gray-500 dark:hover:bg-gray-500 md:table-row hover:bg-brand-gray border-brand-border-gray"
       onClick={() => {
         router.push(
-          `/i/${marketSpecifics.getMarketNameURLRepresentation()}/${marketSpecifics.getTokenNameURLRepresentation(
+          `/post/${marketSpecifics.getMarketNameURLRepresentation()}/${marketSpecifics.getTokenNameURLRepresentation(
             token.name
           )}`
         )

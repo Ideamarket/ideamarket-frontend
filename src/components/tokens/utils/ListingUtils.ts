@@ -9,7 +9,7 @@
   WIKI, // Ex: https://en.wikipedia.org/wiki/Optimism
   TWEET, // Ex: https://twitter.com/Shmojii/status/1506024575171280913
   GENERAL_URL, // Any URL that is not one of the above URL types
-  TEXT_POST,  // Text post stored on chain
+  TEXT_POST, // Text post stored on chain
 }
 
 /**

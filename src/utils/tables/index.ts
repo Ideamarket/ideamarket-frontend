@@ -1,5 +1,6 @@
 export enum TABLE_NAMES {
-  HOME,
+  HOME_POSTS,
+  HOME_USERS,
   ACCOUNT_HOLDINGS,
   ACCOUNT_TRADES,
   ACCOUNT_OPINIONS,
@@ -57,7 +58,7 @@ export const SortOptionsAccountOpinions = {
 
 const getSortOptionsByTable = (tableName: TABLE_NAMES) => {
   switch (tableName) {
-    case TABLE_NAMES.HOME:
+    case TABLE_NAMES.HOME_POSTS:
       return SortOptionsHomeTable
     case TABLE_NAMES.ACCOUNT_OPINIONS:
       return SortOptionsAccountOpinions

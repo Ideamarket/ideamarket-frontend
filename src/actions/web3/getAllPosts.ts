@@ -29,9 +29,8 @@ export default async function getAllPosts() {
     )
 
     return allPosts
-  } catch(error) {
+  } catch (error) {
     console.error('ideamarketPosts.methods.getPost(tokenId) failed')
     return null
   }
-
 }

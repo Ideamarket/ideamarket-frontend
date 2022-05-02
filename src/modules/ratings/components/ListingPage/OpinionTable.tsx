@@ -9,6 +9,7 @@ import {
   SortOptionsListingPageOpinions,
   TABLE_NAMES,
 } from 'utils/tables'
+import { SortAscendingIcon, SortDescendingIcon } from '@heroicons/react/solid'
 
 type DropdownButtonProps = {
   toggleOption: (value: any) => void
@@ -67,15 +68,19 @@ const DropdownButton = ({ toggleOption, orderBy }: DropdownButtonProps) => {
 type Props = {
   opinionPairs: any[]
   orderBy: string
+  orderDirection: string
   setOrderBy: (value: string) => void
   setNameSearch: (value: string) => void
+  headerClicked: (value: string) => void
 }
 
 const OpinionTable = ({
   opinionPairs,
   orderBy,
+  orderDirection,
   setOrderBy,
   setNameSearch,
+  headerClicked,
 }: Props) => {
   return (
     <>
@@ -87,7 +92,24 @@ const OpinionTable = ({
             <span>USER</span>
           </div>
 
-          <div className="w-[14%]">RATING</div>
+          <div
+            onClick={() =>
+              headerClicked(SortOptionsListingPageOpinions.RATING.value)
+            }
+            className="w-[14%] flex items-center cursor-pointer"
+          >
+            <span className="mr-1">RATING</span>
+            <div
+              className="h-8 z-[42] text-[.65rem] flex justify-center items-center"
+              title="SORT"
+            >
+              {orderDirection === 'desc' ? (
+                <SortDescendingIcon className="w-3.5 text-blue-500" />
+              ) : (
+                <SortAscendingIcon className="w-3.5 text-blue-500" />
+              )}
+            </div>
+          </div>
 
           <div className="w-[60%] flex items-center pr-3">
             <span>COMMENT</span>

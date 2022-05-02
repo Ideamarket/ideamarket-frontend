@@ -67,13 +67,15 @@ const ListingContent = ({
           {generalURLDisplayName && (
             <div>
               <a
-                href={`/i/${ideaToken?.address}`}
+                href={`/post/${ideaToken?.address}`}
                 onClick={(event) => event.stopPropagation()}
                 className="w-full text-xs md:text-base font-bold hover:underline"
               >
                 {generalURLDisplayName?.substr(
                   0,
-                  generalURLDisplayName?.length > 50 ? 50 : generalURLDisplayName?.length
+                  generalURLDisplayName?.length > 50
+                    ? 50
+                    : generalURLDisplayName?.length
                 ) + (generalURLDisplayName?.length > 50 ? '...' : '')}
               </a>
             </div>
@@ -92,7 +94,7 @@ const ListingContent = ({
           </a>
 
           <a
-            href={`/i/${ideaToken?.address}`}
+            href={`/post/${ideaToken?.address}`}
             className="cursor-pointer"
             target="_blank"
             rel="noopener noreferrer"
@@ -103,7 +105,6 @@ const ListingContent = ({
                 urlMetaData.ogDescription}
             </div>
           </a>
-
         </div>
       )}
 
@@ -139,13 +140,15 @@ const ListingContent = ({
           {generalURLDisplayName && (
             <div>
               <a
-                href={`/i/${ideaToken?.address}`}
+                href={`/post/${ideaToken?.address}`}
                 onClick={(event) => event.stopPropagation()}
                 className="w-full text-xs md:text-base font-bold hover:underline"
               >
                 {generalURLDisplayName?.substr(
                   0,
-                  generalURLDisplayName?.length > 50 ? 50 : generalURLDisplayName?.length
+                  generalURLDisplayName?.length > 50
+                    ? 50
+                    : generalURLDisplayName?.length
                 ) + (generalURLDisplayName?.length > 50 ? '...' : '')}
               </a>
             </div>
@@ -163,7 +166,7 @@ const ListingContent = ({
             ) + (ideaToken?.url.length > 50 ? '...' : '')}
           </a>
           <a
-            href={`/i/${ideaToken?.address}`}
+            href={`/post/${ideaToken?.address}`}
             className="cursor-pointer"
             target="_blank"
             rel="noopener noreferrer"

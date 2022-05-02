@@ -85,7 +85,10 @@ const OverviewFiltersMobile = ({
             <span className="text-sm text-blue-500 font-semibold flex items-center">
               {/* <span>{getSortByIcon(selectedSortOptionID)}</span> */}
               <span>
-                {getSortOptionDisplayNameByValue(orderBy, TABLE_NAMES.HOME)}
+                {getSortOptionDisplayNameByValue(
+                  orderBy,
+                  TABLE_NAMES.HOME_POSTS
+                )}
               </span>
             </span>
             <span>

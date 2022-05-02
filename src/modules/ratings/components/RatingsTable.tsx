@@ -1,5 +1,4 @@
 import classNames from 'classnames'
-// import { Tooltip } from 'components'
 import { useCallback, useRef, MutableRefObject } from 'react'
 import { IdeaToken, IdeaTokenMarketPair } from 'store/ideaMarketsStore'
 import { SortAscendingIcon, SortDescendingIcon } from '@heroicons/react/solid'

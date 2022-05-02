@@ -65,7 +65,7 @@ const MyTradesRowNew = ({
       ref={lastElementRef}
       className="md:h-28 grid grid-cols-3 border-b cursor-pointer md:table-row hover:bg-black/[.02] border-brand-border-gray dark:hover:bg-gray-600 dark:border-gray-500"
       onClick={() => {
-        router.push(`/i/${ideaToken?.listingId}`)
+        router.push(`/post/${ideaToken?.listingId}`)
       }}
     >
       <td className="col-span-3 px-4 py-4 truncate whitespace-nowrap">
