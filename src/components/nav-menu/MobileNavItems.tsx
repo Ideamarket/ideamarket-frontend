@@ -30,7 +30,9 @@ const MobileNavItems = ({ isMobileNavOpen, user }: Props) => {
 
         <A
           className="inline-flex px-4 py-2 text-lg leading-5 text-white transition duration-150 ease-in-out bg-transparent rounded-md shadow-sm cursor-pointer md:justify-center hover:text-gray-500 active:text-gray-800"
-          href={`/u/${user && user.username ? user.username : user?.walletAddress}`}
+          href={`/u/${
+            user && user.username ? user.username : user?.walletAddress
+          }`}
         >
           <span>My Profile</span>
         </A>

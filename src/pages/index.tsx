@@ -16,7 +16,9 @@ import {
 import { HomeHeader } from 'components'
 import { CheckboxFilters } from 'components/tokens/utils/OverviewUtils'
 import RateModal from 'components/trade/RateModal'
-import { SortOptionsHomeTable } from 'utils/tables'
+import { SortOptionsHomeTable, TABLE_NAMES } from 'utils/tables'
+import { MenuAlt2Icon, UserIcon } from '@heroicons/react/outline'
+import classNames from 'classnames'
 
 type Props = { urlMarkets?: string[] }
 
@@ -30,6 +32,7 @@ const Home = ({ urlMarkets }: Props) => {
   const [orderBy, setOrderBy] = useState(SortOptionsHomeTable.AVG_RATING.value)
   const [orderDirection, setOrderDirection] = useState<'desc' | 'asc'>('desc')
   const [selectedCategories, setSelectedCategories] = useState([])
+  const [selectedTable, setSelectedTable] = useState(TABLE_NAMES.HOME_POSTS)
 
   const visibleColumns = getVisibleColumns(selectedColumns)
 
@@ -129,7 +132,44 @@ const Home = ({ urlMarkets }: Props) => {
       <NextSeo title="Home" />
       <div className="overflow-x-hidden lg:overflow-x-visible bg-brand-gray dark:bg-gray-900">
         <HomeHeader />
-        <div className="mx-auto transform md:px-4 md:max-w-304 -translate-y-28 font-inter">
+
+        {/* 2 buttons: Posts and Users */}
+        <div className="flex items-center space-x-3 mx-2 md:mx-auto md:px-4 mb-5 pt-10 md:max-w-304 transform -translate-y-40">
+          <button
+            onClick={() => setSelectedTable(TABLE_NAMES.HOME_POSTS)}
+            className={classNames(
+              selectedTable === TABLE_NAMES.HOME_POSTS
+                ? 'bg-white/[.2]'
+                : 'hover:bg-white/[.05]',
+              'w-1/2 h-20 p-3 border border-white/[.2] rounded-xl text-white text-left'
+            )}
+          >
+            <div className="flex items-center">
+              <MenuAlt2Icon className="w-5" />
+              <span className="text-lg font-bold ml-2">Posts</span>
+            </div>
+            <div className="text-xs">The most confident opinions</div>
+          </button>
+
+          <button
+            onClick={() => setSelectedTable(TABLE_NAMES.HOME_USERS)}
+            className={classNames(
+              selectedTable === TABLE_NAMES.HOME_USERS
+                ? 'bg-white/[.2]'
+                : 'hover:bg-white/[.05]',
+              'w-1/2 h-20 p-3 border border-white/[.2] rounded-xl text-white text-left'
+            )}
+          >
+            <div className="flex items-center">
+              <UserIcon className="w-5" />
+              <span className="text-lg font-bold ml-2">Users</span>
+            </div>
+            <div className="text-xs">The most trusted voices</div>
+          </button>
+        </div>
+
+        {/* Transform and translate place table on top of background image defined in HomeHeader */}
+        <div className="mx-auto transform md:px-4 md:max-w-304 -translate-y-40 font-inter">
           <OverviewFilters {...overviewFiltersProps} />
           <div className="bg-white border-brand-gray-3 dark:border-gray-500 rounded-b-xlg shadow-home">
             {visibleColumns && <Table {...tableProps} />}

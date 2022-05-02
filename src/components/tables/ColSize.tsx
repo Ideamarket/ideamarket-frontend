@@ -21,7 +21,7 @@ const ColSize = ({ columnData, tableName }: Props) => {
    * This method defines width of columns
    */
   const getColumnWidth = (column: any): string => {
-    if (tableName === TABLE_NAMES.HOME) {
+    if (tableName === TABLE_NAMES.HOME_POSTS) {
       switch (column.value) {
         case 'name':
           return '35%'

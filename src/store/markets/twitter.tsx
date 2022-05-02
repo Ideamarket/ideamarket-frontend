@@ -126,7 +126,7 @@ export default class TwitterMarketSpecifics implements IMarketSpecifics {
       <span>
         Verifying myself on the credibility layer of the internet:{' '}
         <b>
-          {sha} attn.to/i/{listingId}
+          {sha} attn.to/post/{listingId}
         </b>
       </span>
     )

@@ -14,7 +14,7 @@ export default async function getAllCategories(): Promise<string[]> {
       .call()
 
     return activeCategories
-  } catch(error) {
+  } catch (error) {
     console.error('ideamarketPosts.methods.getActiveCategories() failed', error)
     return null
   }

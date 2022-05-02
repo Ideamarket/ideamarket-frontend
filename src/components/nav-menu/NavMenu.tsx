@@ -14,6 +14,8 @@ import { GlobalContext } from 'lib/GlobalContext'
 import { PencilIcon } from '@heroicons/react/outline'
 import ModalService from 'components/modals/ModalService'
 import NewPostModal from 'components/NewPostModal'
+import WalletModal from 'components/wallet/WalletModal'
+import { useWalletStore } from 'store/walletStore'
 
 const NavMenu = () => {
   const { user } = useContext(GlobalContext)
@@ -54,6 +56,19 @@ const NavMenu = () => {
     active && setVisibility(true)
   }
 
+  const { setOnWalletConnectedCallback } = useContext(GlobalContext)
+
+  const onNewPostClicked = () => {
+    if (!useWalletStore.getState().web3) {
+      setOnWalletConnectedCallback(() => () => {
+        ModalService.open(NewPostModal)
+      })
+      ModalService.open(WalletModal)
+    } else {
+      ModalService.open(NewPostModal)
+    }
+  }
+
   useEffect(() => {
     return () => {
       timerId && clearTimeout(timerId)
@@ -87,7 +102,6 @@ const NavMenu = () => {
             className="flex items-center cursor-pointer ml-auto mr-auto md:ml-0 md:mr-0"
             onClick={() => router.push('/')}
           >
-
             <div className="relative w-10 h-8">
               <Image
                 src="/logo.png"
@@ -108,7 +122,6 @@ const NavMenu = () => {
               ))}
             </div>
             {/* Desktop END */}
-
           </div>
 
           <div className="flex md:hidden">
@@ -123,9 +136,8 @@ const NavMenu = () => {
           </div>
 
           <div className="hidden md:flex items-center">
-
             <button
-              onClick={() => ModalService.open(NewPostModal)}
+              onClick={onNewPostClicked}
               className="flex items-center space-x-2 h-9 bg-gradient-to-br from-brand-blue-1 to-brand-blue-2 text-white text-sm font-semibold px-3 py-1 mr-4 rounded-lg"
             >
               <span>New Post</span>
@@ -147,12 +159,10 @@ const NavMenu = () => {
               )}
             </div>
           </div>
-
         </nav>
       </div>
 
       <MobileNavItems isMobileNavOpen={isMobileNavOpen} user={user} />
-
     </div>
   )
 }

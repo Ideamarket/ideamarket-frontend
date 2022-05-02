@@ -1,7 +1,7 @@
 import { getMarketSpecifics } from 'store/markets'
 import { removeHttpProtocol } from './httpProtocol'
 
-const IDEAMARKET_LISTING_URL_PREFIX = 'ideamarket.io/i/'
+const IDEAMARKET_LISTING_URL_PREFIX = 'ideamarket.io/post/'
 
 /**
  * Returns whether the redirection url is valid or not

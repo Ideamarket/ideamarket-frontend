@@ -105,17 +105,17 @@ export const OverviewColumns = ({
   const getColumnStyle = (column) => {
     switch (column.value) {
       case 'name':
-        return 'w-[40%] pl-6 pr-24'
+        return 'w-[52%] pl-6 pr-24'
       case SortOptionsHomeTable.AVG_RATING.value:
-        return 'w-[20%]'
+        return 'w-[16%]'
       // case 'compositeRating':
       //   return 'w-[12%]'
       case SortOptionsHomeTable.COMMENTS.value:
-        return 'w-[20%]'
+        return 'w-[16%]'
       // case 'marketInterest':
       //   return 'w-[12%]'
       case 'txButtons':
-        return 'w-[20%]'
+        return 'w-[16%]'
       default:
         return ''
     }

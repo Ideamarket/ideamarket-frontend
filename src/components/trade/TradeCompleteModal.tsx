@@ -70,7 +70,7 @@ const getTweetUrl = (transactionType: TX_TYPES, listingId: string) => {
     transactionType === TX_TYPES.GIFT ||
     transactionType === TX_TYPES.RATE
   ) {
-    tweetUrl = `https://ideamarket.io/i/${listingId}`
+    tweetUrl = `https://ideamarket.io/post/${listingId}`
   } else if (transactionType === TX_TYPES.CLAIM) {
     tweetUrl = `https://ideamarket.io/claim`
   } else if (transactionType === TX_TYPES.STAKE) {

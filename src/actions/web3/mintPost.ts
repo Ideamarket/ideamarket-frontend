@@ -10,7 +10,7 @@ export default function mintPost(
   categoryTags: string[],
   imageLink: string,
   isURL: boolean,
-  urlContent: string,
+  urlContent: string
 ) {
   const ideamarketPosts = useContractStore.getState().ideamarketPosts
   const connectedAddress = useWalletStore.getState().address

@@ -54,7 +54,7 @@ export default function MutualToken({
                   Rank {token.rank}
                 </p>
                 <A
-                  href={`/i/${marketSpecifics.getMarketNameURLRepresentation()}/${marketSpecifics.getTokenNameURLRepresentation(
+                  href={`/post/${marketSpecifics.getMarketNameURLRepresentation()}/${marketSpecifics.getTokenNameURLRepresentation(
                     token.name
                   )}`}
                 >
@@ -72,7 +72,7 @@ export default function MutualToken({
             </div>
             <div className="flex justify-center mt-5 lg:mt-0">
               <A
-                href={`/i/${marketSpecifics.getMarketNameURLRepresentation()}/${marketSpecifics.getTokenNameURLRepresentation(
+                href={`/post/${marketSpecifics.getMarketNameURLRepresentation()}/${marketSpecifics.getTokenNameURLRepresentation(
                   token.name
                 )}`}
               >

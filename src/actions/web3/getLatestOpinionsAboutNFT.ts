@@ -5,9 +5,7 @@ import { NETWORK } from 'store/networks'
  * Get latest ratings/opinions that are onchain (doesn't include past ratings from users, just most recent).
  * @param tokenId -- tokenId of NFT that has been rated
  */
-export default async function getLatestOpinionsAboutNFT(
-  tokenId: number
-) {
+export default async function getLatestOpinionsAboutNFT(tokenId: number) {
   if (!tokenId) {
     console.error(`tokenId ${tokenId} is not valid`)
     return []
@@ -26,7 +24,10 @@ export default async function getLatestOpinionsAboutNFT(
       .getLatestOpinionsAboutNFT(deployedAddresses.ideamarketPosts, tokenId)
       .call()
   } catch (error) {
-    console.error('nftOpinionBase.methods.getLatestOpinionsAboutNFT failed', error)
+    console.error(
+      'nftOpinionBase.methods.getLatestOpinionsAboutNFT failed',
+      error
+    )
     return null
   }
 }

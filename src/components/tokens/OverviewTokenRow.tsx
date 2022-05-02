@@ -54,10 +54,21 @@ export default function TokenRow({
   return (
     <>
       {/* Desktop row */}
-      <div ref={lastElementRef} className="hidden md:block py-6">
+      <div
+        ref={lastElementRef}
+        className="hidden relative md:block py-6 hover:bg-black/[.02]"
+      >
+        {/* Makes so entire row can be clicked to go to Post page */}
+        <a
+          href={`/post/${token?.tokenID}`}
+          className="absolute top-0 left-0 w-full h-full z-40"
+        >
+          <span className="invisible">Go to post page</span>
+        </a>
+
         <div className="flex text-black">
           {/* Icon and Name */}
-          <div className="w-[40%] relative pl-6 pr-10">
+          <div className="w-[52%] relative pl-6 pr-10">
             <div className="relative flex items-start w-3/4 mx-auto md:w-full text-gray-900 dark:text-gray-200">
               <div className="mr-4">
                 <WatchingStar token={token} />
@@ -105,7 +116,7 @@ export default function TokenRow({
           </div>
 
           {/* Average Rating */}
-          <div className="w-[20%]">
+          <div className="w-[16%]">
             <div className="flex flex-col justify-start font-medium leading-5">
               <span className="mb-1">
                 <span className="w-10 h-8 flex justify-center items-center rounded-lg bg-blue-100 text-blue-600 dark:text-gray-300 font-extrabold text-xl">
@@ -123,7 +134,7 @@ export default function TokenRow({
           </div>
 
           {/* latestCommentsCount */}
-          <div className="w-[20%]">
+          <div className="w-[16%]">
             <div className="flex items-center font-medium text-lg text-black">
               <ChatIcon className="w-4 mr-1" />
               {formatNumberWithCommasAsThousandsSerperator(
@@ -153,35 +164,20 @@ export default function TokenRow({
           </div> */}
 
           {/* Rate Button */}
-          <div className="w-[20%]">
+          <div className="w-[16%]">
             <div className="flex space-x-2">
               <button
                 onClick={(e) => {
                   e.stopPropagation()
                   onRateClicked(token, urlMetaData)
                 }}
-                className="flex justify-center items-center w-20 h-10 text-base font-medium text-white rounded-lg bg-black/[.8] dark:bg-gray-600 dark:text-gray-300 tracking-tightest-2"
+                className="flex justify-center items-center w-20 h-10 text-base font-medium text-white rounded-lg bg-black/[.8] dark:bg-gray-600 dark:text-gray-300 tracking-tightest-2 z-50"
               >
                 <span>Rate</span>
               </button>
             </div>
           </div>
         </div>
-
-        {/* <div className="flex w-full pl-8 pr-10">
-          <div className="w-[40%] flex flex-col">
-            <div className="px-6">
-              <ListingContent
-                ideaToken={token}
-                page="HomePage"
-                urlMetaData={urlMetaData}
-                useMetaData={
-                  getListingTypeFromIDTURL(token?.url) !== LISTING_TYPE.TWEET && getListingTypeFromIDTURL(token?.url) !== LISTING_TYPE.TEXT_POST
-                }
-              />
-            </div>
-          </div>
-        </div> */}
       </div>
 
       {/* Mobile row */}

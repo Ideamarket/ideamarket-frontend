@@ -149,7 +149,7 @@ export default function RateModal({
               {displayName && (
                 <div>
                   <a
-                    href={`/i/${ideaToken?.listingId}`}
+                    href={`/post/${ideaToken?.listingId}`}
                     onClick={(event) => event.stopPropagation()}
                     className="text-xs md:text-base font-bold hover:underline"
                   >
