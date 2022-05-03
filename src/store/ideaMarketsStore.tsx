@@ -24,7 +24,7 @@ import { getOwnedListings } from 'actions/web2/getOwnedListings'
 import { getTrades } from 'actions/web2/getTrades'
 import getQuerySingleIDTByTokenAddress from './queries/getQuerySingleIDTByTokenAddress'
 import Web3 from 'web3'
-import getAllPosts from 'actions/web2/getAllPosts'
+import getAllPosts from 'actions/web2/posts/getAllPosts'
 
 const HTTP_GRAPHQL_ENDPOINT_L1 = L1_NETWORK.getSubgraphURL()
 const HTTP_GRAPHQL_ENDPOINT = NETWORK.getSubgraphURL()

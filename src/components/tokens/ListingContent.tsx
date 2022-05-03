@@ -5,6 +5,7 @@ import TwitterProfileMobileContent from 'components/listing-page/TwitterProfileM
 import WikiContent from 'components/listing-page/WikiContent'
 import { ReactElement, useEffect } from 'react'
 import { getMarketSpecificsByMarketName } from 'store/markets'
+import { urlify } from 'utils/display/DisplayUtils'
 import { getListingTypeFromIDTURL, LISTING_TYPE } from './utils/ListingUtils'
 
 const ListingContent = ({
@@ -83,7 +84,7 @@ const ListingContent = ({
           {/* Display the URL */}
           <a
             href={ideaToken?.url}
-            className="text-xs md:text-sm text-brand-blue hover:underline z-50"
+            className="text-xs md:text-sm text-brand-blue hover:underline relative z-50"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -110,7 +111,10 @@ const ListingContent = ({
 
       {/* Text post listing content */}
       {!showMetaData && listingType === LISTING_TYPE.TEXT_POST && (
-        <div>{ideaToken?.content}</div>
+        <div
+          dangerouslySetInnerHTML={{ __html: urlify(ideaToken?.content) }}
+          className="whitespace-pre-wrap break-words relative z-50"
+        />
       )}
 
       {/* Wikipedia listing content */}
@@ -156,7 +160,7 @@ const ListingContent = ({
           {/* Display the URL */}
           <a
             href={ideaToken?.url}
-            className="text-xs md:text-sm text-brand-blue hover:underline z-50"
+            className="text-xs md:text-sm text-brand-blue hover:underline relative z-50"
             target="_blank"
             rel="noopener noreferrer"
           >

@@ -74,7 +74,7 @@ export default function TokenRow({
                 <WatchingStar token={token} />
               </div>
 
-              <div>
+              <div className="w-full">
                 {minterAddress && (
                   <div className="flex items-center pb-2 whitespace-nowrap">
                     <div className="relative rounded-full w-6 h-6">

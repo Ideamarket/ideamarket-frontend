@@ -1,5 +1,5 @@
-import { getOpinionsByTokenID } from 'actions/web2/getOpinionsByTokenID'
-import { getOpinionsByWallet } from 'actions/web2/getOpinionsByWallet'
+import { getOpinionsByTokenID } from 'actions/web2/opinions/getOpinionsByTokenID'
+import { getOpinionsByWallet } from 'actions/web2/opinions/getOpinionsByWallet'
 import getLatestOpinionsAboutAddress from 'actions/web3/getLatestOpinionsAboutAddress'
 import getLatestOpinionsAboutNFT from 'actions/web3/getLatestOpinionsAboutNFT'
 
