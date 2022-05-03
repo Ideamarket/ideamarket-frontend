@@ -23,6 +23,9 @@ export const getMerkleContract = (
   if (airdropType === AIRDROP_TYPES.LOCKING2) {
     return contractStore.locking2MerkleDistributorContract
   }
+  if (airdropType === AIRDROP_TYPES.LOCKING3) {
+    return contractStore.locking3MerkleDistributorContract
+  }
   return contractStore.twitterVerifyMerkleDistributor
 }
 

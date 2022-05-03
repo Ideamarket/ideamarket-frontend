@@ -33,7 +33,8 @@ export const NotEligible: React.FC<Props> = ({
           <div className="my-6 text-5xl font-extrabold font-gilroy-bold opacity-75">
             You are <span className="text-red-700">NOT</span> eligible{' '}
             {airdropType === AIRDROP_TYPES.LOCKING ||
-            airdropType === AIRDROP_TYPES.LOCKING2
+            airdropType === AIRDROP_TYPES.LOCKING2 ||
+            airdropType === AIRDROP_TYPES.LOCKING3
               ? 'to claim rewards'
               : 'for an airdrop!'}
           </div>

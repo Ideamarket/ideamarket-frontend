@@ -4,4 +4,5 @@ export enum AIRDROP_TYPES {
   TWITTER_VERIFICATION = 'twitter',
   LOCKING = 'locking',
   LOCKING2 = 'locking-month2',
+  LOCKING3 = 'locking-month3',
 }

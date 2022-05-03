@@ -22,6 +22,7 @@
   "communityMerkleDistributor": "0x214a14850329Bec9fa577D4cE6e00b69dfD287d4",
   "lockingMerkleDistributor": "0x6e0D915c0d57eFAD33cA9a42bf1d8F7a3D348F7D",
   "locking2MerkleDistributor": "0x69F70619d67467369bc6C71597EA3d94f5aA51ED",
+  "locking3MerkleDistributor": "0x0CF2C86De59bb616DE9366Fb0640b357dE774F0F",
   "imo": "0xB41bd4C99dA73510d9e081C5FADBE7A27Ac1F814",
   "imoStaking": "0xe4CC6152F0173604f07C6ced613C302f21D77184",
   "sushiStaking": "0xb0448763523E129Bfc2Cd20ceeFAcC16c620F726",

@@ -17,7 +17,9 @@ const displayDescripton = (airdropType: AIRDROP_TYPES) => {
   if (airdropType === AIRDROP_TYPES.LOCKING)
     return 'If you have had tokens locked during the first month rewards window (Feb 2 - March 2), you may be eligible to receive $IMO tokens. Click below to get started!'
   if (airdropType === AIRDROP_TYPES.LOCKING2)
-    return 'If you have had tokens locked during the first month rewards window (March 2 - April 2), you may be eligible to receive $IMO tokens. Click below to get started!'
+    return 'If you have had tokens locked during the second month rewards window (March 2 - April 2), you may be eligible to receive $IMO tokens. Click below to get started!'
+  if (airdropType === AIRDROP_TYPES.LOCKING3)
+    return 'If you have had tokens locked during the third month rewards window (April 2 - May 2), you may be eligible to receive $IMO tokens. Click below to get started!'
 
   return 'If you are part of an eligible community, you may be able to recieve $IMO tokens. Click below to get started!'
 }

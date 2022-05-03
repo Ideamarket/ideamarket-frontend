@@ -18,7 +18,8 @@ const ClaimDashboard = () => {
       airdropType === AIRDROP_TYPES.COMMUNITY ||
       airdropType === AIRDROP_TYPES.TWITTER_VERIFICATION ||
       airdropType === AIRDROP_TYPES.LOCKING ||
-      airdropType === AIRDROP_TYPES.LOCKING2
+      airdropType === AIRDROP_TYPES.LOCKING2 ||
+      airdropType === AIRDROP_TYPES.LOCKING3
     )
       return
     router.push('/')

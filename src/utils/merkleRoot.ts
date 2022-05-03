@@ -2,6 +2,7 @@ import UserMerkleRoot from 'assets/merkle-root.json'
 import CommunityMerkleRoot from 'assets/community-merkle-root.json'
 import LockingMerkleRoot from 'assets/locking-merkle-root.json'
 import Locking2MerkleRoot from 'assets/locking-month2-merkle-root.json'
+import Locking3MerkleRoot from 'assets/locking-month3-merkle-root.json'
 import TwitterVerifyMerkleRoot from 'assets/twitter-verify-merkle-root.json'
 import BigNumber from 'bignumber.js'
 import BN from 'bn.js'
@@ -22,6 +23,9 @@ export const getMerkleRoot = (airdropType: AIRDROP_TYPES) => {
   }
   if (airdropType === AIRDROP_TYPES.LOCKING2) {
     return Locking2MerkleRoot
+  }
+  if (airdropType === AIRDROP_TYPES.LOCKING3) {
+    return Locking3MerkleRoot
   }
   return TwitterVerifyMerkleRoot
 }

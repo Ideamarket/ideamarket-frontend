@@ -106,6 +106,10 @@ export const getNavbarConfig = (user: any) => ({
           name: 'Second Month Locking Claim',
           onClick: () => router.push(`/claim/${AIRDROP_TYPES.LOCKING2}`),
         },
+        {
+          name: 'Third Month Locking Claim',
+          onClick: () => router.push(`/claim/${AIRDROP_TYPES.LOCKING3}`),
+        },
       ],
     },
   ],
