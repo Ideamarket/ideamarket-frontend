@@ -63,7 +63,7 @@ const ListingContent = ({
     >
       {/* GENERAL_URL listing content (OG title and URL shown) */}
       {!showMetaData && listingType === LISTING_TYPE.GENERAL_URL && (
-        <div className="pb-2 text-base font-medium leading-5 truncate z-30 whitespace-normal">
+        <div className="pb-2 text-base font-medium leading-5 truncate whitespace-normal">
           {generalURLDisplayName && (
             <div>
               <a
@@ -83,7 +83,7 @@ const ListingContent = ({
           {/* Display the URL */}
           <a
             href={ideaToken?.url}
-            className="text-xs md:text-sm text-brand-blue hover:underline"
+            className="text-xs md:text-sm text-brand-blue hover:underline z-50"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -156,7 +156,7 @@ const ListingContent = ({
           {/* Display the URL */}
           <a
             href={ideaToken?.url}
-            className="text-xs md:text-sm text-brand-blue hover:underline"
+            className="text-xs md:text-sm text-brand-blue hover:underline z-50"
             target="_blank"
             rel="noopener noreferrer"
           >

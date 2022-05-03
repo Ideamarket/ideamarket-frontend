@@ -6,11 +6,7 @@ import 'rc-slider/assets/index.css'
 import { useContext, useState } from 'react'
 import classNames from 'classnames'
 import { getMarketSpecificsByMarketName } from 'store/markets'
-import {
-  formatNumber,
-  formatNumberWithCommasAsThousandsSerperator,
-  useTransactionManager,
-} from 'utils'
+import { formatNumber, useTransactionManager } from 'utils'
 import rateIDT from 'actions/web3/rateIDT'
 import TxPending from './TxPending'
 import useOpinionsByIdentifier from 'modules/ratings/hooks/useOpinionsByIdentifier'
@@ -45,7 +41,7 @@ export default function RateModal({
   const [inputRating, setInputRating] = useState(50)
   const [inputComment, setInputComment] = useState('')
 
-  const { avgRating, totalOpinions } = useOpinionsByIdentifier({
+  const { avgRating } = useOpinionsByIdentifier({
     idtAddress: ideaToken?.address || null,
     tokenID: ideaToken?.tokenID || null,
   })
@@ -197,9 +193,9 @@ export default function RateModal({
               <span className="text-blue-600 font-bold mr-1">
                 {formatNumber(avgRating)}
               </span>
-              <span>
+              {/* <span>
                 ({formatNumberWithCommasAsThousandsSerperator(totalOpinions)})
-              </span>
+              </span> */}
             </div>
           </div>
 

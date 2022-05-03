@@ -62,6 +62,7 @@ export const OverviewFilters = ({
                 label={`#${cat}`}
                 isSelected={selectedCategories.includes(cat)}
                 onClick={() => onCategoryClicked(cat)}
+                roundedSize="3xl"
                 key={cat}
               />
             ))}

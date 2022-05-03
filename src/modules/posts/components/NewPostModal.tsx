@@ -4,7 +4,7 @@ import { useContext, useState } from 'react'
 import classNames from 'classnames'
 import { useTransactionManager } from 'utils'
 import TxPending from 'components/trade/TxPending'
-import { GlobeAltIcon, MenuAlt2Icon } from '@heroicons/react/outline'
+import { MenuAlt2Icon } from '@heroicons/react/outline'
 import TradeCompleteModal, {
   TX_TYPES,
 } from 'components/trade/TradeCompleteModal'
@@ -138,7 +138,7 @@ export default function NewPostModal({ close }: { close: () => void }) {
     setSelectedCategories([])
   }
 
-  const isListingDisabled = inputContent?.length > 10000
+  const isListingDisabled = inputContent?.length > 360
 
   return (
     <Modal close={close}>
@@ -163,7 +163,7 @@ export default function NewPostModal({ close }: { close: () => void }) {
                 <span>Text Post</span>
               </button>
 
-              <button
+              {/* <button
                 onClick={() => setInputPostType(TX_TYPES.URL_LIST)}
                 className={classNames(
                   inputPostType === TX_TYPES.URL_LIST
@@ -174,10 +174,15 @@ export default function NewPostModal({ close }: { close: () => void }) {
               >
                 <GlobeAltIcon className="w-4" />
                 <span>URL</span>
-              </button>
+              </button> */}
             </div>
 
-            <span>{inputContent?.length}/10000</span>
+            <span>
+              <span className={classNames(isListingDisabled && 'text-red-500')}>
+                {inputContent?.length}
+              </span>
+              /360
+            </span>
           </div>
 
           <textarea
@@ -310,7 +315,7 @@ export default function NewPostModal({ close }: { close: () => void }) {
             disabled={isListingDisabled}
             onClick={onListClicked}
           >
-            List
+            Post
           </button>
 
           <div className="text-xs text-center font-semibold">

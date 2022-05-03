@@ -14,6 +14,7 @@ type Props = {
   label: any
   className?: string
   joined?: JOINED_TYPES // Whether button is connected to another button on a side
+  roundedSize?: string // How rounded should corners be?
 }
 
 const SelectableButton = ({
@@ -22,22 +23,23 @@ const SelectableButton = ({
   label,
   className,
   joined,
+  roundedSize = 'md',
 }: Props) => {
   const roundedStyle = () => {
     switch (joined) {
       case JOINED_TYPES.NONE:
         return ''
       case JOINED_TYPES.L:
-        return 'rounded-r-md'
+        return `rounded-r-${roundedSize}`
       case JOINED_TYPES.R:
-        return 'rounded-l-md'
+        return `rounded-l-${roundedSize}`
       case JOINED_TYPES.T:
-        return 'rounded-b-md'
+        return `rounded-b-${roundedSize}`
       case JOINED_TYPES.B:
-        return 'rounded-t-md'
+        return `rounded-t-${roundedSize}`
 
       default:
-        return 'rounded-md' // Round all corners by default
+        return `rounded-${roundedSize}` // Round all corners by default
     }
   }
 

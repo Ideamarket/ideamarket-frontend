@@ -131,7 +131,7 @@ const OpinionTable = ({
                 <div className="w-[26%] flex items-center pl-3">
                   <A
                     className="underline font-bold hover:text-blue-600"
-                    href={`https://arbiscan.io/address/${opinion?.ratedBy}`}
+                    href={`/u/${opinion?.ratedBy}`}
                   >
                     {convertAccountName(opinion?.ratedBy)}
                   </A>

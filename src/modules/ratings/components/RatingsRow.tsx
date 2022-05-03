@@ -52,7 +52,18 @@ export default function RatingsRow({
   return (
     <>
       {/* Desktop row */}
-      <div ref={lastElementRef} className="hidden md:block py-6">
+      <div
+        ref={lastElementRef}
+        className="hidden relative md:block py-6 hover:bg-black/[.02]"
+      >
+        {/* Makes so entire row can be clicked to go to Post page */}
+        <a
+          href={`/post/${opinion?.tokenID}`}
+          className="absolute top-0 left-0 w-full h-full z-40"
+        >
+          <span className="invisible">Go to post page</span>
+        </a>
+
         <div className="flex text-black">
           {/* Icon and Name */}
           <div className="w-[40%] relative pl-6 pr-10">
@@ -61,7 +72,7 @@ export default function RatingsRow({
                 <WatchingStar token={opinion} />
               </div>
 
-              <div className="grow text-base font-medium leading-5 truncate z-30">
+              <div className="grow text-base font-medium leading-5 truncate">
                 <div className="pr-6">
                   {minterAddress && (
                     <div className="flex items-center pb-2 whitespace-nowrap">
@@ -78,7 +89,7 @@ export default function RatingsRow({
                         />
                       </div>
                       <A
-                        className="ml-2 font-bold hover:text-blue-600"
+                        className="ml-2 font-bold hover:text-blue-600 z-50"
                         href={`/u/${usernameOrWallet}`}
                       >
                         {displayUsernameOrWallet}
@@ -130,13 +141,13 @@ export default function RatingsRow({
                       {formatNumberInt(opinion?.averageRating)}
                     </span>
                   </span>
-                  <span className="text-black/[.3] text-sm">
+                  {/* <span className="text-black/[.3] text-sm">
                     (
                     {formatNumberWithCommasAsThousandsSerperator(
                       opinion?.latestRatingsCount
                     )}
                     )
-                  </span>
+                  </span> */}
                 </div>
               </div>
 
@@ -158,7 +169,7 @@ export default function RatingsRow({
                       e.stopPropagation()
                       onRateClicked(opinion, urlMetaData)
                     }}
-                    className="flex justify-center items-center w-20 h-10 text-base font-medium text-white rounded-lg bg-black/[.8] dark:bg-gray-600 dark:text-gray-300 tracking-tightest-2"
+                    className="flex justify-center items-center w-20 h-10 text-base rounded-lg border-brand-blue text-white bg-brand-blue font-medium hover:bg-blue-800 z-50"
                   >
                     <span>Rate</span>
                   </button>
@@ -226,13 +237,13 @@ export default function RatingsRow({
               <span className="text-blue-600 dark:text-gray-300 mr-1 font-extrabold text-xl">
                 {formatNumberInt(opinion?.averageRating)}
               </span>
-              <span className="text-black/[.3] text-sm">
+              {/* <span className="text-black/[.3] text-sm">
                 (
                 {formatNumberWithCommasAsThousandsSerperator(
                   opinion?.latestRatingsCount
                 )}
                 )
-              </span>
+              </span> */}
             </div>
           </div>
           <div>
@@ -267,7 +278,7 @@ export default function RatingsRow({
               e.stopPropagation()
               onRateClicked(opinion, urlMetaData)
             }}
-            className="flex justify-center items-center w-20 h-10 text-base font-medium text-white rounded-lg bg-black/[.8] dark:bg-gray-600 dark:text-gray-300 tracking-tightest-2"
+            className="flex justify-center items-center w-20 h-10 text-base rounded-lg border-brand-blue text-white bg-brand-blue font-medium  hover:bg-blue-800"
           >
             <span>Rate</span>
           </button>
