@@ -13,7 +13,7 @@ import { useWeb3React } from '@web3-react/core'
 import { GlobalContext } from 'lib/GlobalContext'
 import { PencilIcon } from '@heroicons/react/outline'
 import ModalService from 'components/modals/ModalService'
-import NewPostModal from 'components/NewPostModal'
+import NewPostModal from 'modules/posts/components/NewPostModal'
 import WalletModal from 'components/wallet/WalletModal'
 import { useWalletStore } from 'store/walletStore'
 

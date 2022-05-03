@@ -3,11 +3,13 @@ import 'rc-slider/assets/index.css'
 import { useContext, useState } from 'react'
 import classNames from 'classnames'
 import { useTransactionManager } from 'utils'
-import TxPending from './trade/TxPending'
+import TxPending from 'components/trade/TxPending'
 import { GlobeAltIcon, MenuAlt2Icon } from '@heroicons/react/outline'
-import TradeCompleteModal, { TX_TYPES } from './trade/TradeCompleteModal'
+import TradeCompleteModal, {
+  TX_TYPES,
+} from 'components/trade/TradeCompleteModal'
 import mintPost from 'actions/web3/mintPost'
-import ModalService from './modals/ModalService'
+import ModalService from 'components/modals/ModalService'
 import { getValidURL } from 'actions/web2/getValidURL'
 import { useQuery } from 'react-query'
 import { getURLMetaData } from 'actions/web2/getURLMetaData'
@@ -15,6 +17,7 @@ import { GlobalContext } from 'lib/GlobalContext'
 import getAllCategories from 'actions/web3/getAllCategories'
 import { XIcon } from '@heroicons/react/solid'
 import { useContractStore } from 'store/contractStore'
+import { syncPosts } from 'actions/web2/posts/syncPosts'
 
 export default function NewPostModal({ close }: { close: () => void }) {
   const txManager = useTransactionManager()
@@ -112,7 +115,17 @@ export default function NewPostModal({ close }: { close: () => void }) {
     ]
 
     try {
-      await txManager.executeTx('New Post', mintPost, ...mintingArgs)
+      await txManager.executeTxWithCallbacks(
+        'New Post',
+        mintPost,
+        {
+          onReceipt: async (receipt: any) => {
+            await syncPosts(receipt?.events?.Transfer?.returnValues?.tokenId)
+            setIsTxPending(false)
+          },
+        },
+        ...mintingArgs
+      )
     } catch (ex) {
       console.log(ex)
       onTradeComplete(false, 'error', 'error', TX_TYPES.NONE)
@@ -122,7 +135,6 @@ export default function NewPostModal({ close }: { close: () => void }) {
     }
 
     onTradeComplete(true, 'success', 'success', TX_TYPES.RATE)
-    setIsTxPending(false)
     setSelectedCategories([])
   }
 

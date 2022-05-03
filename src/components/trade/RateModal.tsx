@@ -3,7 +3,7 @@ import ModalService from 'components/modals/ModalService'
 import TradeCompleteModal, { TX_TYPES } from './TradeCompleteModal'
 import Slider from 'rc-slider'
 import 'rc-slider/assets/index.css'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import classNames from 'classnames'
 import { getMarketSpecificsByMarketName } from 'store/markets'
 import {
@@ -20,6 +20,8 @@ import A from 'components/A'
 import { useQuery } from 'react-query'
 import { getPublicProfile } from 'lib/axios'
 import Image from 'next/image'
+import { syncNFTOpinions } from 'actions/web2/opinions/syncNFTOpinions'
+import { GlobalContext } from 'lib/GlobalContext'
 
 const CustomSlider = Slider.createSliderWithTooltip(Slider)
 
@@ -38,6 +40,7 @@ export default function RateModal({
   urlMetaData: any
 }) {
   const txManager = useTransactionManager()
+  const { setIsTxPending } = useContext(GlobalContext)
 
   const [inputRating, setInputRating] = useState(50)
   const [inputComment, setInputComment] = useState('')
@@ -63,6 +66,7 @@ export default function RateModal({
   }
 
   const onRateClicked = async () => {
+    setIsTxPending(true)
     const isNFT = !ideaToken.address // If there is not a token address, then it is NFT
 
     try {
@@ -73,9 +77,20 @@ export default function RateModal({
         inputRating,
         inputComment,
       ]
-      await txManager.executeTx('Rate', web3TxMethod, ...ratingArgs)
+      await txManager.executeTxWithCallbacks(
+        'Rate',
+        web3TxMethod,
+        {
+          onReceipt: async (receipt: any) => {
+            await syncNFTOpinions(ideaToken?.tokenID)
+            setIsTxPending(false)
+          },
+        },
+        ...ratingArgs
+      )
     } catch (ex) {
       console.log(ex)
+      setIsTxPending(false)
       onTradeComplete(
         false,
         ideaToken?.listingId,
