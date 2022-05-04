@@ -15,9 +15,10 @@ import DropdownButtons from 'components/dropdowns/DropdownButtons'
 import { useRef, useState } from 'react'
 import {
   getSortOptionDisplayNameByValue,
-  SortOptionsHomeTable,
+  SortOptionsHomePostsTable,
   TABLE_NAMES,
 } from 'utils/tables'
+import Tooltip from 'components/tooltip/Tooltip'
 
 type Props = {
   orderBy: string
@@ -66,7 +67,7 @@ const OverviewFiltersMobile = ({
 
   return (
     <div className="md:hidden bg-white dark:bg-gray-700 rounded-t-xl">
-      <div className="p-3 border-b-4">
+      <div className="p-3 border-b-[6px]">
         <div className="flex justify-between space-x-2 w-full h-10 mb-2">
           <SelectableButton
             onClick={setIsStarredFilterActive}
@@ -98,7 +99,7 @@ const OverviewFiltersMobile = ({
             {isSortingDropdownOpen && (
               <DropdownButtons
                 container={ref}
-                filters={Object.values(SortOptionsHomeTable)}
+                filters={Object.values(SortOptionsHomePostsTable)}
                 selectedOptions={new Set([orderBy])}
                 toggleOption={setOrderBy}
               />
@@ -109,58 +110,52 @@ const OverviewFiltersMobile = ({
         <OverviewSearchbar onNameSearchChanged={onNameSearchChanged} />
       </div>
 
-      <div className="p-3 flex items-center overflow-x-scroll">
-        {/* <div className="flex items-center space-x-2 pr-2 border-r-2">
-          <button
-            className={classNames(
-              'h-10 flex justify-center items-center md:px-3 p-2 rounded-md text-sm font-semibold',
-              {
-                'text-brand-blue dark:text-white bg-blue-100 dark:bg-very-dark-blue':
-                  isURLSelected,
-              },
-              { 'text-brand-black dark:text-gray-50': !isURLSelected }
-            )}
-            onClick={() => {
-              toggleMarket('URL')
-            }}
-          >
-            <GlobeAltIcon className="w-5 mr-1" />
-            <span>URLs</span>
-          </button>
-          <button
-            className={classNames(
-              'h-10 flex justify-center items-center md:px-3 p-2 rounded-md text-sm font-semibold',
-              {
-                'text-brand-blue dark:text-white bg-blue-100 dark:bg-very-dark-blue':
-                  isPeopleSelected,
-              },
-              { 'text-brand-black dark:text-gray-50': !isPeopleSelected }
-            )}
-            onClick={() => {
-              toggleMarket('Twitter')
-            }}
-          >
-            <span className="w-5 mr-1">
-              {twitterMarketSpecifics?.getMarketSVGTheme(
-                resolvedTheme,
-                isPeopleSelected
-              )}
-            </span>
-            <span>Users</span>
-          </button>
-        </div> */}
+      <div className="flex gap-x-2 pl-2 py-3 overflow-x-scroll">
+        {categoriesData &&
+          categoriesData.map((cat: any) => (
+            <SelectableButton
+              label={`#${cat}`}
+              isSelected={selectedCategories.includes(cat)}
+              onClick={() => onCategoryClicked(cat)}
+              roundedSize="3xl"
+              key={cat}
+            />
+          ))}
+      </div>
 
-        <div className="flex gap-x-2 pl-2">
-          {categoriesData &&
-            categoriesData.map((cat: any) => (
-              <SelectableButton
-                label={`#${cat}`}
-                isSelected={selectedCategories.includes(cat)}
-                onClick={() => onCategoryClicked(cat)}
-                key={cat}
-              />
-            ))}
+      <div className="w-full flex gap-x-3 px-3 py-3 border-t-[6px] leading-4 text-xs text-black/[.5] font-semibold">
+        <div className="w-1/4 flex items-start">
+          <span className="mr-1">
+            MARKET
+            <br />
+            INTERST
+          </span>
+          <Tooltip>
+            <div className="w-40 md:w-64">
+              The total amount of IMO staked on all users who rated a post
+            </div>
+          </Tooltip>
         </div>
+
+        <div className="w-1/4 flex items-start">
+          <span className="mr-1">
+            COMPOSITE
+            <br />
+            RATING
+          </span>
+          <Tooltip>
+            <div className="w-40 md:w-64">
+              Average rating, weighted by amount of IMO staked on each user (the
+              more IMO staked on a user, the more their ratings impact Composite
+              Rating). Ratings by users without staked IMO do not impact
+              Composite Rating, but do impact Average Rating.
+            </div>
+          </Tooltip>
+        </div>
+
+        <div className="w-1/4">COMMENTS</div>
+
+        <div className="w-1/4">RATE</div>
       </div>
     </div>
   )

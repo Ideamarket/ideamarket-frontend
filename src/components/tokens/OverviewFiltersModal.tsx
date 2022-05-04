@@ -11,7 +11,7 @@ import {
 import IdeaverifyIconBlue from '../../assets/IdeaverifyIconBlue.svg'
 import mixpanel from 'mixpanel-browser'
 import getConfig from 'next/config'
-import { SortOptionsHomeTable } from 'utils/tables'
+import { SortOptionsHomePostsTable } from 'utils/tables'
 
 const { publicRuntimeConfig } = getConfig()
 const { MIX_PANEL_KEY } = publicRuntimeConfig
@@ -105,7 +105,7 @@ export default function OverviewFiltersModal({
           </button>
 
           <div className="text-sm text-gray-400 mb-2 mt-4">SORT BY</div>
-          {Object.values(SortOptionsHomeTable).map((filter) => (
+          {Object.values(SortOptionsHomePostsTable).map((filter) => (
             <button
               className={classNames(
                 'flex flex-grow justify-start items-center w-full p-2 mb-1 border rounded-md text-sm font-semibold',

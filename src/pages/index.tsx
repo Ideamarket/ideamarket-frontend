@@ -1,7 +1,7 @@
 import { DefaultLayout } from 'components'
 import React, { ReactElement, useContext, useEffect, useState } from 'react'
-import { IdeaMarket, IdeaToken } from 'store/ideaMarketsStore'
-import { Table, TradeModal, WalletModal } from 'components'
+import { IdeaToken } from 'store/ideaMarketsStore'
+import { Table, WalletModal } from 'components'
 import ModalService from 'components/modals/ModalService'
 
 import { useWalletStore } from 'store/walletStore'
@@ -16,7 +16,7 @@ import {
 import { HomeHeader } from 'components'
 import { CheckboxFilters } from 'components/tokens/utils/OverviewUtils'
 import RateModal from 'components/trade/RateModal'
-import { SortOptionsHomeTable, TABLE_NAMES } from 'utils/tables'
+import { SortOptionsHomePostsTable, TABLE_NAMES } from 'utils/tables'
 import { MenuAlt2Icon, UserIcon } from '@heroicons/react/outline'
 import classNames from 'classnames'
 
@@ -29,7 +29,9 @@ const Home = ({ urlMarkets }: Props) => {
   const [isStarredFilterActive, setIsStarredFilterActive] = useState(false)
   const [selectedColumns, setSelectedColumns] = useState(new Set([]))
   const [nameSearch, setNameSearch] = useState('')
-  const [orderBy, setOrderBy] = useState(SortOptionsHomeTable.AVG_RATING.value)
+  const [orderBy, setOrderBy] = useState(
+    SortOptionsHomePostsTable.AVG_RATING.value
+  )
   const [orderDirection, setOrderDirection] = useState<'desc' | 'asc'>('desc')
   const [selectedCategories, setSelectedCategories] = useState([])
   const [selectedTable, setSelectedTable] = useState(TABLE_NAMES.HOME_POSTS)
@@ -60,26 +62,13 @@ const Home = ({ urlMarkets }: Props) => {
   }, [])
 
   const onNameSearchChanged = (nameSearch) => {
-    setOrderBy(SortOptionsHomeTable.AVG_RATING.value)
+    setOrderBy(SortOptionsHomePostsTable.AVG_RATING.value)
     setNameSearch(nameSearch)
   }
 
   const onOrderByChanged = (orderBy: string, direction: string) => {
     setOrderBy(orderBy)
     setOrderDirection(direction as any)
-  }
-
-  const onTradeClicked = (token: IdeaToken, market: IdeaMarket) => {
-    const onClose = () => setTradeOrListSuccessToggle(!tradeOrListSuccessToggle)
-
-    if (!useWalletStore.getState().web3) {
-      setOnWalletConnectedCallback(() => () => {
-        ModalService.open(TradeModal, { ideaToken: token, market }, onClose)
-      })
-      ModalService.open(WalletModal)
-    } else {
-      ModalService.open(TradeModal, { ideaToken: token, market }, onClose)
-    }
   }
 
   const onRateClicked = (token: IdeaToken, urlMetaData: any) => {
@@ -121,7 +110,6 @@ const Home = ({ urlMarkets }: Props) => {
     selectedCategories,
     getColumn: (column) => selectedColumns.has(column),
     onOrderByChanged,
-    onTradeClicked,
     onRateClicked,
     tradeOrListSuccessToggle,
     setSelectedCategories,

@@ -81,7 +81,7 @@ export default function RatingsRow({
                           className="rounded-full"
                           src={
                             userDataForMinter?.profilePhoto ||
-                            '/DefaultProfilePicture.gif'
+                            '/DefaultProfilePicture.png'
                           }
                           alt=""
                           layout="fill"
@@ -204,7 +204,7 @@ export default function RatingsRow({
                   className="rounded-full"
                   src={
                     userDataForMinter?.profilePhoto ||
-                    '/DefaultProfilePicture.gif'
+                    '/DefaultProfilePicture.png'
                   }
                   alt=""
                   layout="fill"

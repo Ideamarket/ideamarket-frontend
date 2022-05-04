@@ -1,5 +1,5 @@
 import { WatchingStar } from 'components'
-import { IdeaMarket, IdeaToken } from 'store/ideaMarketsStore'
+import { IdeaToken } from 'store/ideaMarketsStore'
 import {
   formatNumberWithCommasAsThousandsSerperator,
   formatNumberInt,
@@ -18,7 +18,6 @@ type Props = {
   token: any
   getColumn: (column: string) => any
   lastElementRef?: (node) => void
-  onTradeClicked: (token: IdeaToken, market: IdeaMarket) => void
   onRateClicked: (idt: IdeaToken, urlMetaData: any) => void
   refetch: () => any
 }
@@ -26,7 +25,6 @@ type Props = {
 export default function TokenRow({
   token,
   getColumn,
-  onTradeClicked,
   onRateClicked,
   lastElementRef,
   refetch,
@@ -67,28 +65,29 @@ export default function TokenRow({
         </a>
 
         <div className="flex text-black">
-          {/* Icon and Name */}
-          <div className="w-[52%] relative pl-6 pr-10">
+          {/* Icon and Name and ListingContent */}
+          <div className="w-[45%] lg:w-[55%] relative pl-6 lg:pr-10">
             <div className="relative flex items-start w-3/4 mx-auto md:w-full text-gray-900 dark:text-gray-200">
-              <div className="mr-4">
+              <div className="mr-4 flex flex-col items-center space-y-2">
+                <div className="relative rounded-full w-6 h-6">
+                  <Image
+                    className="rounded-full"
+                    src={
+                      userDataForMinter?.profilePhoto ||
+                      '/DefaultProfilePicture.png'
+                    }
+                    alt=""
+                    layout="fill"
+                    objectFit="cover"
+                  />
+                </div>
+
                 <WatchingStar token={token} />
               </div>
 
-              <div className="w-full">
+              <div className="pr-6 w-full">
                 {minterAddress && (
                   <div className="flex items-center pb-2 whitespace-nowrap">
-                    <div className="relative rounded-full w-6 h-6">
-                      <Image
-                        className="rounded-full"
-                        src={
-                          userDataForMinter?.profilePhoto ||
-                          '/DefaultProfilePicture.gif'
-                        }
-                        alt=""
-                        layout="fill"
-                        objectFit="cover"
-                      />
-                    </div>
                     <A
                       className="ml-2 font-bold hover:text-blue-600 z-50"
                       href={`/u/${usernameOrWallet}`}
@@ -98,43 +97,52 @@ export default function TokenRow({
                   </div>
                 )}
 
-                <div className="pr-6">
-                  <ListingContent
-                    ideaToken={token}
-                    page="HomePage"
-                    urlMetaData={urlMetaData}
-                    useMetaData={
-                      getListingTypeFromIDTURL(token?.url) !==
-                        LISTING_TYPE.TWEET &&
-                      getListingTypeFromIDTURL(token?.url) !==
-                        LISTING_TYPE.TEXT_POST
-                    }
-                  />
-                </div>
+                <ListingContent
+                  ideaToken={token}
+                  page="HomePage"
+                  urlMetaData={urlMetaData}
+                  useMetaData={
+                    getListingTypeFromIDTURL(token?.url) !==
+                      LISTING_TYPE.TWEET &&
+                    getListingTypeFromIDTURL(token?.url) !==
+                      LISTING_TYPE.TEXT_POST
+                  }
+                />
               </div>
             </div>
           </div>
 
+          {/* Composite Rating */}
+          <div className="w-[11%] lg:w-[9%] flex items-start">
+            <div className="relative w-5 h-5 mr-1">
+              <Image
+                src="/logo.png"
+                alt="IM-logo-composite-rating"
+                layout="fill"
+                objectFit="contain"
+              />
+            </div>
+            <span className="text-base text-blue-500 font-bold">97</span>
+          </div>
+
           {/* Average Rating */}
-          <div className="w-[16%]">
+          <div className="w-[11%] lg:w-[9%]">
+            <div className="text-black font-semibold">
+              {formatNumberInt(token?.averageRating)}
+            </div>
+          </div>
+
+          {/* Market Interest */}
+          <div className="w-[11%] lg:w-[9%] pr-2">
             <div className="flex flex-col justify-start font-medium leading-5">
-              <span className="mb-1">
-                <span className="w-10 h-8 flex justify-center items-center rounded-lg bg-blue-100 text-blue-600 dark:text-gray-300 font-extrabold text-xl">
-                  {formatNumberInt(token?.averageRating)}
-                </span>
-              </span>
-              {/* <span className="text-black/[.3] text-sm">
-                (
-                {formatNumberWithCommasAsThousandsSerperator(
-                  token?.latestRatingsCount
-                )}
-                )
-              </span> */}
+              65,900
+              <br />
+              IMO
             </div>
           </div>
 
           {/* latestCommentsCount */}
-          <div className="w-[16%]">
+          <div className="w-[11%] lg:w-[9%]">
             <div className="flex items-center font-medium text-lg text-black">
               <ChatIcon className="w-4 mr-1" />
               {formatNumberWithCommasAsThousandsSerperator(
@@ -143,28 +151,8 @@ export default function TokenRow({
             </div>
           </div>
 
-          {/* Composite Rating */}
-          {/* <div className="w-[12%] pt-12">
-            <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-300">
-              Composite Rating
-            </p>
-            <div className="font-medium leading-5">
-              68
-            </div>
-          </div> */}
-
-          {/* Market Interest */}
-          {/* <div className="w-[12%] pt-12">
-            <p className="text-sm font-medium md:hidden tracking-tightest text-brand-gray-4 dark:text-gray-300">
-              Market Interest
-            </p>
-            <div className="flex flex-col justify-start font-medium leading-5">
-              $65,900
-            </div>
-          </div> */}
-
           {/* Rate Button */}
-          <div className="w-[16%]">
+          <div className="w-[11%] lg:w-[9%]">
             <div className="flex space-x-2">
               <button
                 onClick={(e) => {
@@ -182,21 +170,26 @@ export default function TokenRow({
 
       {/* Mobile row */}
       <div ref={lastElementRef} className="md:hidden">
-        <div className="px-3 py-4">
+        <div className="px-3 pt-4">
           {minterAddress && (
             <div className="flex items-center pb-2 whitespace-nowrap">
+              <div className="mr-3">
+                <WatchingStar token={token} />
+              </div>
+
               <div className="relative rounded-full w-6 h-6">
                 <Image
                   className="rounded-full"
                   src={
                     userDataForMinter?.profilePhoto ||
-                    '/DefaultProfilePicture.gif'
+                    '/DefaultProfilePicture.png'
                   }
                   alt=""
                   layout="fill"
                   objectFit="cover"
                 />
               </div>
+
               <A
                 className="ml-2 font-bold text-black hover:text-blue-600"
                 href={`/u/${usernameOrWallet}`}
@@ -216,36 +209,33 @@ export default function TokenRow({
           />
         </div>
 
-        <div className="flex justify-between items-start text-center px-10 py-4 border-b border-t">
-          <div>
-            <div className="font-semibold text-black/[.5]">Average Rating</div>
-            <div className="flex items-center">
-              <span className="text-blue-600 dark:text-gray-300 mr-1 font-extrabold text-xl">
-                {formatNumberInt(token?.averageRating)}
-              </span>
-              {/* <span className="text-black/[.3] text-sm">
-                (
-                {formatNumberWithCommasAsThousandsSerperator(
-                  token?.latestRatingsCount
-                )}
-                )
-              </span> */}
-            </div>
+        <div className="flex justify-between items-center text-center px-3 py-4">
+          {/* Market interest */}
+          <div className="flex items-center">
+            <span className="text-base text-black/[.5] font-medium">
+              58,533 IMO
+            </span>
           </div>
-          <div>
-            <div className="font-semibold text-black/[.5]">Comments</div>
-            <div className="flex items-center font-medium text-lg text-black">
-              <ChatIcon className="w-4 mr-1" />
-              {formatNumberWithCommasAsThousandsSerperator(
-                token?.latestCommentsCount
-              )}
-            </div>
-          </div>
-        </div>
 
-        <div className="flex justify-between items-center px-10 py-4 border-t">
-          <div className="">
-            <WatchingStar token={token} />
+          {/* Composite rating */}
+          <div className="flex items-center">
+            <div className="relative w-5 h-5">
+              <Image
+                src="/logo.png"
+                alt="IM-logo-composite-rating"
+                layout="fill"
+                objectFit="contain"
+              />
+            </div>
+            <span className="text-base text-blue-500 font-semibold">97</span>
+          </div>
+
+          {/* Latest comments count */}
+          <div className="flex items-center font-medium text-lg text-black">
+            <ChatIcon className="w-4 mr-1" />
+            {formatNumberWithCommasAsThousandsSerperator(
+              token?.latestCommentsCount
+            )}
           </div>
 
           <button
@@ -253,7 +243,7 @@ export default function TokenRow({
               e.stopPropagation()
               onRateClicked(token, urlMetaData)
             }}
-            className="flex justify-center items-center w-20 h-10 text-base rounded-lg border-brand-blue text-white bg-brand-blue font-medium hover:bg-blue-800"
+            className="flex justify-center items-center w-20 h-10 text-base border rounded-lg text-blue-500 bg-transparent font-bold"
           >
             <span>Rate</span>
           </button>

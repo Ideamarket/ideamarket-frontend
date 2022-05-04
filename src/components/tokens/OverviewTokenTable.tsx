@@ -8,14 +8,14 @@ import React, {
 } from 'react'
 import { useInfiniteQuery } from 'react-query'
 
-import { IdeaToken, IdeaMarket, queryPosts } from 'store/ideaMarketsStore'
+import { IdeaToken, queryPosts } from 'store/ideaMarketsStore'
 import { useIdeaMarketsStore } from 'store/ideaMarketsStore'
 import TokenRow from './OverviewTokenRow'
 import TokenRowSkeleton from './OverviewTokenRowSkeleton'
 import { OverviewColumns } from './table/OverviewColumns'
 import { flatten } from 'utils/lodash'
 import { GlobalContext } from 'lib/GlobalContext'
-import { SortOptionsHomeTable } from 'utils/tables'
+import { SortOptionsHomePostsTable } from 'utils/tables'
 
 type Props = {
   isStarredFilterActive: boolean
@@ -26,7 +26,6 @@ type Props = {
   selectedCategories: string[]
   getColumn: (column: string) => boolean
   onOrderByChanged: (o: string, d: string) => void
-  onTradeClicked: (token: IdeaToken, market: IdeaMarket) => void
   onRateClicked: (idt: IdeaToken, urlMetaData: any) => void
   tradeOrListSuccessToggle: boolean
   setIsStarredFilterActive: (isActive: boolean) => void
@@ -41,7 +40,6 @@ export default function Table({
   selectedCategories,
   getColumn,
   onOrderByChanged,
-  onTradeClicked,
   onRateClicked,
   tradeOrListSuccessToggle,
   setIsStarredFilterActive,
@@ -162,10 +160,10 @@ export default function Table({
         onOrderByChanged('lockedAmount', 'desc')
       } else if (column === 'holders') {
         onOrderByChanged('holders', 'desc')
-      } else if (column === SortOptionsHomeTable.AVG_RATING.value) {
-        onOrderByChanged(SortOptionsHomeTable.AVG_RATING.value, 'desc')
-      } else if (column === SortOptionsHomeTable.COMMENTS.value) {
-        onOrderByChanged(SortOptionsHomeTable.COMMENTS.value, 'desc')
+      } else if (column === SortOptionsHomePostsTable.AVG_RATING.value) {
+        onOrderByChanged(SortOptionsHomePostsTable.AVG_RATING.value, 'desc')
+      } else if (column === SortOptionsHomePostsTable.COMMENTS.value) {
+        onOrderByChanged(SortOptionsHomePostsTable.COMMENTS.value, 'desc')
       }
     }
   }
@@ -201,7 +199,6 @@ export default function Table({
                     key={index}
                     token={token}
                     getColumn={getColumn}
-                    onTradeClicked={onTradeClicked}
                     onRateClicked={onRateClicked}
                     refetch={refetch}
                     lastElementRef={

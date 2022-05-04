@@ -113,7 +113,7 @@ const ListingContent = ({
       {!showMetaData && listingType === LISTING_TYPE.TEXT_POST && (
         <div
           dangerouslySetInnerHTML={{ __html: urlify(ideaToken?.content) }}
-          className="whitespace-pre-wrap break-words relative z-50"
+          className="whitespace-pre-wrap break-words relative z-50 text-black font-medium"
         />
       )}
 

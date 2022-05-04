@@ -5,7 +5,7 @@ import { A } from 'components'
 import { SortAscendingIcon, SortDescendingIcon } from '@heroicons/react/solid'
 import { StarIcon } from '@heroicons/react/solid'
 import SelectableButton from 'components/buttons/SelectableButton'
-import { SortOptionsHomeTable } from 'utils/tables'
+import { SortOptionsHomePostsTable } from 'utils/tables'
 
 type Props = {
   orderBy: string
@@ -89,7 +89,7 @@ export const OverviewColumns = ({
             Change
           </>
         )
-      case SortOptionsHomeTable.AVG_RATING.value:
+      case SortOptionsHomePostsTable.AVG_RATING.value:
         return (
           <>
             Average
@@ -105,17 +105,17 @@ export const OverviewColumns = ({
   const getColumnStyle = (column) => {
     switch (column.value) {
       case 'name':
-        return 'w-[52%] pl-6 pr-24'
-      case SortOptionsHomeTable.AVG_RATING.value:
-        return 'w-[16%]'
-      // case 'compositeRating':
-      //   return 'w-[12%]'
-      case SortOptionsHomeTable.COMMENTS.value:
-        return 'w-[16%]'
-      // case 'marketInterest':
-      //   return 'w-[12%]'
+        return 'w-[45%] lg:w-[55%] pl-6 pr-24'
+      case SortOptionsHomePostsTable.COMPOSITE_RATING.value:
+        return 'w-[11%] lg:w-[9%]'
+      case SortOptionsHomePostsTable.AVG_RATING.value:
+        return 'w-[11%] lg:w-[9%]'
+      case SortOptionsHomePostsTable.MARKET_INTEREST.value:
+        return 'w-[11%] lg:w-[9%]'
+      case SortOptionsHomePostsTable.COMMENTS.value:
+        return 'w-[11%] lg:w-[9%]'
       case 'txButtons':
-        return 'w-[16%]'
+        return 'w-[11%] lg:w-[9%]'
       default:
         return ''
     }

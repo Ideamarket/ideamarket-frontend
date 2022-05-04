@@ -50,8 +50,7 @@ export default function ListTokenModal({ close }: { close: () => void }) {
   const [isBuyValid, setIsBuyValid] = useState(false)
   const [recipientAddress, setRecipientAddress] = useState('')
   const [isENSAddressValid, setIsENSAddressValid] = useState(false)
-  const [hexAddress, setHexAddress] = useState('')
-  const [isGiftChecked, setIsGiftChecked] = useState(false)
+  // const [hexAddress, setHexAddress] = useState('')
 
   const [isUnlockPermanentChecked, setIsUnlockPermanentChecked] =
     useState(false)
@@ -90,14 +89,14 @@ export default function ListTokenModal({ close }: { close: () => void }) {
     !isValidTokenName ||
     txManager.isPending ||
     (isWantBuyChecked && !isBuyValid) ||
-    (isGiftChecked && !isValidAddress)
+    !isValidAddress
 
   const isTradeButtonDisabled =
     selectedMarket === undefined ||
     !isValidTokenName ||
     txManager.isPending ||
     (isWantBuyChecked && (isMissingAllowance || !isBuyValid)) ||
-    (isGiftChecked && !isValidAddress)
+    !isValidAddress
 
   async function tokenNameInputChanged(userInput) {
     // Only reason this is needed before API call is because cannot encode/decode EM dashes, so need to replace them
@@ -123,27 +122,23 @@ export default function ListTokenModal({ close }: { close: () => void }) {
     tokenSymbol: string,
     tokenAmount: BN,
     slippage: number,
-    lock: boolean,
     isUnlockOnceChecked: boolean,
     isUnlockPermanentChecked: boolean,
     isValid: boolean,
     recipientAddress: string,
     isENSAddressValid: boolean,
-    hexAddress: string,
-    isGiftChecked: boolean
+    hexAddress: string
   ) {
     setBuyInputAmountBN(tokenAmount)
     setBuyPayWithAddress(tokenAddress)
     setBuyPayWithSymbol(tokenSymbol)
     setBuyOutputAmountBN(ideaTokenAmount)
     setBuySlippage(slippage)
-    setBuyLock(lock)
     setIsUnlockPermanentChecked(isUnlockPermanentChecked)
     setIsBuyValid(isValid)
     setRecipientAddress(recipientAddress)
     setIsENSAddressValid(isENSAddressValid)
-    setHexAddress(hexAddress)
-    setIsGiftChecked(isGiftChecked)
+    // setHexAddress(hexAddress)
   }
 
   function onTradeComplete(
@@ -164,7 +159,7 @@ export default function ListTokenModal({ close }: { close: () => void }) {
     mixpanel.track(`ADD_LISTING_${selectedMarket.name.toUpperCase()}`)
 
     if (isWantBuyChecked) {
-      const giftAddress = isENSAddressValid ? hexAddress : recipientAddress
+      // const giftAddress = isENSAddressValid ? hexAddress : recipientAddress
       try {
         await txManager.executeTx(
           'List and buy',
@@ -176,7 +171,7 @@ export default function ListTokenModal({ close }: { close: () => void }) {
           buyInputAmountBN,
           buySlippage,
           buyLock ? 31556952 : 0,
-          isGiftChecked ? giftAddress : account
+          account
         )
       } catch (ex) {
         console.log(ex)

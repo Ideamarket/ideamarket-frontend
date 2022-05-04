@@ -13,15 +13,27 @@ const orderByIndividualRating = 'rating'
 const orderByAverageRating = 'averageRating'
 const orderByLatestCommentsCount = 'latestCommentsCount'
 // const orderByLatestRatingsCount = 'latestRatingsCount'
+const orderByCompositeRating = 'compositeRating'
+const orderByMarketInterest = 'marketInterest'
 
-export const SortOptionsHomeTable = {
-  AVG_RATING: {
+export const SortOptionsHomePostsTable = {
+  COMPOSITE_RATING: {
     id: 1,
+    value: orderByCompositeRating,
+    displayName: 'Composite Rating',
+  },
+  AVG_RATING: {
+    id: 2,
     value: orderByAverageRating,
     displayName: 'Average Rating',
   },
+  MARKET_INTEREST: {
+    id: 3,
+    value: orderByMarketInterest,
+    displayName: 'Market Interest',
+  },
   COMMENTS: {
-    id: 2,
+    id: 4,
     value: orderByLatestCommentsCount,
     displayName: 'Comments',
   },
@@ -60,7 +72,7 @@ export const SortOptionsAccountOpinions = {
 const getSortOptionsByTable = (tableName: TABLE_NAMES) => {
   switch (tableName) {
     case TABLE_NAMES.HOME_POSTS:
-      return SortOptionsHomeTable
+      return SortOptionsHomePostsTable
     case TABLE_NAMES.ACCOUNT_OPINIONS:
       return SortOptionsAccountOpinions
     case TABLE_NAMES.LISTING_PAGE_OPINIONS:

@@ -133,7 +133,7 @@ export default function RateModal({
                   className="rounded-full"
                   src={
                     userDataForMinter?.profilePhoto ||
-                    '/DefaultProfilePicture.gif'
+                    '/DefaultProfilePicture.png'
                   }
                   alt=""
                   layout="fill"

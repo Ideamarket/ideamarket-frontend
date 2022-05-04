@@ -21,7 +21,6 @@ import {
   calculateIdeaTokenDaiValue,
   floatToWeb3BN,
   formatBigNumber,
-  formatNumber,
   formatNumberWithCommasAsThousandsSerperator,
   useTransactionManager,
   web3BNToFloatString,
@@ -58,9 +57,6 @@ import { useQuery } from 'react-query'
 import { queryDaiBalance } from 'store/daiStore'
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/solid'
 import moment from 'moment'
-import ToggleSwitch from 'components/ToggleSwitch'
-import { A } from 'components'
-import { getLockingAPR } from 'lib/axios'
 import { isETHAddress } from 'utils/addresses'
 import unlockIDT from 'actions/web3/unlockIDT'
 
@@ -90,14 +86,12 @@ type TradeInterfaceProps = {
     tokenSymbol: string,
     calculatedTokenAmount: BN,
     maxSlippage: number,
-    lock: boolean,
     isUnlockOnceChecked: boolean,
     isUnlockPermanentChecked: boolean,
     isValid: boolean,
     recipientAddress: string,
     isENSAddressValid: boolean | string,
-    hexAddress: boolean | string,
-    isGiftChecked: boolean
+    hexAddress: boolean | string
   ) => void
   resetOn: boolean
   centerTypeSelection: boolean
@@ -152,12 +146,8 @@ export default function TradeInterface({
       : '0.00'
 
   const { account } = useWeb3React()
-  const [lockingAPR, setLockingAPR] = useState(undefined)
   const [tradeType, setTradeType] = useState(startingTradeType) // Used for smart contracts and which trade UI tab user is on
-  const [showLockOptions, setShowLockOptions] = useState(false)
-  const [lockPeriod, setLockPeriod] = useState('3month')
-  const [recipientAddress, setRecipientAddress] = useState('')
-  const [isENSAddressValid, hexAddress] = useENSAddress(recipientAddress)
+  const [isENSAddressValid, hexAddress] = useENSAddress(account)
 
   const [pairsToggle, setPairsToggle] = useState([])
   const togglePairVisibility = (pairsIndex: number) => {
@@ -166,8 +156,6 @@ export default function TradeInterface({
     setPairsToggle(pairs)
   }
 
-  const [isLockChecked, setIsLockChecked] = useState(false)
-  const [isGiftChecked, setIsGiftChecked] = useState(false)
   const [isUnlockOnceChecked, setIsUnlockOnceChecked] = useState(false)
   const [isUnlockPermanentChecked, setIsUnlockPermanentChecked] = useState(true)
 
@@ -336,8 +324,7 @@ export default function TradeInterface({
 
   const spender =
     tradeType === TX_TYPES.BUY
-      ? selectedToken?.address === NETWORK.getExternalAddresses().dai &&
-        !isLockChecked
+      ? selectedToken?.address === NETWORK.getExternalAddresses().dai
         ? exchangeContractAddress
         : multiActionContractAddress
       : selectedToken.address !== NETWORK.getExternalAddresses().dai
@@ -443,14 +430,12 @@ export default function TradeInterface({
       spendTokenSymbol,
       selectedTokenAmountBNLocal,
       maxSlippage,
-      isLockChecked,
       isUnlockOnceChecked,
       isUnlockPermanentChecked,
       isValid,
-      recipientAddress,
+      account,
       isENSAddressValid,
-      hexAddress,
-      isGiftChecked
+      hexAddress
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -459,17 +444,15 @@ export default function TradeInterface({
     selectedToken,
     calculatedIdeaTokenAmountBN,
     calculatedTokenAmountBN,
-    isLockChecked,
     maxSlippage,
     isUnlockOnceChecked,
     isUnlockPermanentChecked,
     isCalculatedIdeaTokenAmountLoading,
     isCalculatedTokenAmountLoading,
     isSelectedTokenDAIValueLoading,
-    recipientAddress,
+    account,
     isENSAddressValid,
     hexAddress,
-    isGiftChecked,
     spendTokenSymbol,
   ])
 
@@ -488,10 +471,6 @@ export default function TradeInterface({
     } else {
       setSelectedTokenAmount(tokenBalance)
     }
-  }
-
-  const onLockPeriodChanged = (event) => {
-    setLockPeriod(event.target.id)
   }
 
   const tradeFinishUp = () => {
@@ -526,11 +505,6 @@ export default function TradeInterface({
       BigNumber.ROUND_DOWN
     )
 
-    const giftAddress = isENSAddressValid ? hexAddress : recipientAddress
-
-    const oneMonthInSecs = 2592000
-    const threeMonthsInSecs = 7776000
-
     const args =
       tradeType === TX_TYPES.BUY
         ? [
@@ -539,12 +513,8 @@ export default function TradeInterface({
             ideaTokenAmountBNLocal,
             selectedTokenAmountBNLocal,
             maxSlippage,
-            isLockChecked
-              ? lockPeriod === '3month'
-                ? threeMonthsInSecs
-                : oneMonthInSecs
-              : 0,
-            isGiftChecked ? giftAddress : account,
+            0,
+            account,
           ]
         : [
             ideaToken.address,
@@ -552,7 +522,7 @@ export default function TradeInterface({
             ideaTokenAmountBNLocal,
             selectedTokenAmountBNLocal,
             maxSlippage,
-            isGiftChecked ? giftAddress : account,
+            account,
           ]
 
     try {
@@ -594,24 +564,22 @@ export default function TradeInterface({
     tradeFinishUp()
   }
 
-  // Did user type a valid ENS address or hex-address?
-  const isValidAddress = !isENSAddressValid
-    ? isETHAddress(recipientAddress)
-    : true
+  // Is user's address a valid hex-address?
+  const isValidAddress = !isENSAddressValid ? isETHAddress(account) : true
 
   const isApproveButtonDisabled =
     txManager.isPending ||
     !isValid ||
     exceedsBalance ||
     !isMissingAllowance ||
-    (isGiftChecked && !isValidAddress)
+    !isValidAddress
 
   const isTradeButtonDisabled =
     txManager.isPending ||
     !isValid ||
     exceedsBalance ||
     isMissingAllowance ||
-    (isGiftChecked && !isValidAddress)
+    !isValidAddress
 
   const { tokenIconURL } = useTokenIconURL({
     marketSpecifics,
@@ -667,17 +635,6 @@ export default function TradeInterface({
     selectedIdeaToken: newIdeaToken || selectedIdeaToken,
     tokenValue: ideaTokenValue,
   }
-
-  useEffect(() => {
-    getLockingAPR()
-      .then((response) => {
-        const { data } = response
-        if (data.success) {
-          setLockingAPR(Number(data.data.apr))
-        } else setLockingAPR(0)
-      })
-      .catch(() => setLockingAPR(0))
-  }, [])
 
   return (
     <div>
@@ -792,24 +749,6 @@ export default function TradeInterface({
                 <span>Unlock</span>
               </button>
             )}
-            {/* <button
-            className={classNames(
-              'h-10 flex justify-center items-center px-4 py-2 border rounded-md text-sm font-semibold',
-              {
-                'text-brand-blue dark:text-white bg-gray-100 dark:bg-very-dark-blue':
-                  TX_TYPES.CLAIM === tradeType,
-              },
-              { 'text-brand-black dark:text-gray-50': !(TX_TYPES.CLAIM === tradeType) }
-            )}
-            onClick={() => {
-              setIdeaTokenAmount('0')
-              setSelectedTokenAmount('0')
-              setTradeType(TX_TYPES.CLAIM)
-            }}
-          >
-            <span className="mr-1">{getIconVersion('crown', resolvedTheme)}</span>
-            <span>Claim Listing</span>
-          </button> */}
           </div>
         )}
 
@@ -903,6 +842,7 @@ export default function TradeInterface({
                     )}
               </div>
             </div>
+
             <TradeInterfaceBox
               {...commonProps}
               label="Receive"
@@ -911,189 +851,8 @@ export default function TradeInterface({
                 : { ...selectedTokenProps })}
             />
 
-            <div className={classNames('flex flex-col my-2 text-sm')}>
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  className="border-2 border-gray-200 rounded-sm cursor-pointer"
-                  id="giftCheckbox"
-                  disabled={txManager.isPending || disabled}
-                  checked={isGiftChecked}
-                  onChange={(e) => {
-                    setIsGiftChecked(e.target.checked)
-                  }}
-                />
-                <label
-                  htmlFor="giftCheckbox"
-                  className={classNames(
-                    'ml-2 cursor-pointer',
-                    isGiftChecked
-                      ? 'text-brand-blue dark:text-blue-400'
-                      : 'text-gray-500 dark:text-white'
-                  )}
-                >
-                  Gift
-                </label>
-                <Tooltip className="ml-2">
-                  <div className="w-32 md:w-64">
-                    Send this purchase to someone else's wallet, such as the
-                    listing owner or a friend.
-                  </div>
-                </Tooltip>
-              </div>
-            </div>
-
-            {isGiftChecked && (
-              <div className="flex flex-col items-center justify-between mb-2 md:flex-row">
-                <input
-                  type="text"
-                  id="recipient-input"
-                  className={classNames(
-                    'h-full border rounded-md sm:text-sm my-1 text-black dark:text-gray-300 dark:bg-gray-600 dark:placeholder-gray-200',
-                    !ideaToken ||
-                      (ideaToken && ideaToken.tokenOwner === ZERO_ADDRESS)
-                      ? 'w-full'
-                      : 'w-full md:w-96',
-                    isETHAddress(recipientAddress) || isENSAddressValid
-                      ? 'border-gray-200 focus:ring-indigo-500 focus:border-indigo-500'
-                      : 'border-brand-red focus:border-brand-red focus:ring-red-500'
-                  )}
-                  placeholder="Recipient address or ENS"
-                  value={recipientAddress}
-                  onChange={(e) => {
-                    setRecipientAddress(e.target.value)
-                  }}
-                />
-                {ideaToken &&
-                  ideaToken.tokenOwner &&
-                  ideaToken.tokenOwner !== ZERO_ADDRESS && (
-                    <button
-                      className="p-1 mt-1 text-base font-medium bg-white border-2 rounded-lg cursor-pointer md:mt-0 dark:bg-gray-600 md:table-cell border-brand-blue text-brand-blue dark:text-gray-300 hover:text-white tracking-tightest-2 hover:bg-brand-blue"
-                      onClick={() => setRecipientAddress(ideaToken.tokenOwner)}
-                    >
-                      Listing owner
-                    </button>
-                  )}
-              </div>
-            )}
-
-            {tradeType === TX_TYPES.BUY && (
-              <div className="mb-4 flex justify-between items-center">
-                <div className="flex items-center space-x-1">
-                  <span className="font-bold">Lock for</span>
-                  <div className="w-44 flex justify-between items-center px-3 py-1 border border-gray-200 rounded-2xl text-sm">
-                    <span>
-                      {lockPeriod === '3month' ? '3 months' : '1 month'}
-                    </span>
-                    {/* <span className="text-green-500">
-                      {lockPeriod === '3month' ? '(22% APR)' : '(12% APR)'}
-                    </span> */}
-                    {showLockOptions ? (
-                      <ChevronUpIcon
-                        onClick={() => setShowLockOptions(!showLockOptions)}
-                        className="w-5 h-5 cursor-pointer text-gray-400"
-                      />
-                    ) : (
-                      <ChevronDownIcon
-                        onClick={() => setShowLockOptions(!showLockOptions)}
-                        className="w-5 h-5 cursor-pointer text-gray-400"
-                      />
-                    )}
-                  </div>
-                  <Tooltip>
-                    <div className="w-32 md:w-64">
-                      Lock tokens to show your long-term confidence in a
-                      listing. You will be unable to sell or withdraw locked
-                      tokens for the time period specified.
-                      <br />
-                      <br />
-                      For more information, see{' '}
-                      <A
-                        href="https://docs.ideamarket.io/user-guide/tutorial#buy-upvotes"
-                        target="_blank"
-                        className="underline"
-                      >
-                        locking tokens
-                      </A>
-                      .
-                    </div>
-                  </Tooltip>
-                </div>
-
-                <ToggleSwitch
-                  handleChange={() => setIsLockChecked(!isLockChecked)}
-                  isOn={isLockChecked}
-                />
-              </div>
-            )}
-
-            {showLockOptions && tradeType === TX_TYPES.BUY && (
-              <div className="flex space-x-2 my-8">
-                <div className="flex flex-col justify-between border border-transparent rounded-lg pr-2 py-2 text-sm">
-                  <div className="flex flex-col">
-                    <span>Locked Period</span>
-                    <span className="text-xs opacity-0">(x days)</span>
-                  </div>
-                  <div className="mt-4 mb-1">Estimated APR</div>
-                  <div>Redemption Date</div>
-                </div>
-
-                <div
-                  className={classNames(
-                    lockPeriod === '1month' && 'bg-blue-100 border-blue-600',
-                    'relative w-52 flex flex-col justify-between items-end border rounded-lg p-2'
-                  )}
-                >
-                  <input
-                    onChange={onLockPeriodChanged}
-                    className="absolute -top-4 right-4 w-6 h-6"
-                    checked={lockPeriod === '1month'}
-                    type="radio"
-                    id="1month"
-                    name="lock-period"
-                  />
-                  <div className="flex flex-col items-end">
-                    <span className="font-bold">1 month</span>
-                    <span className="text-xs">(30 days)</span>
-                  </div>
-                  <div className="text-green-500 font-bold">
-                    {formatNumber(lockingAPR)}%
-                  </div>
-                  <div>
-                    {moment(new Date(Date.now() + 2629800000)).format('LL')}
-                  </div>
-                </div>
-
-                <div
-                  className={classNames(
-                    lockPeriod === '3month' && 'bg-blue-100 border-blue-600',
-                    'relative w-52 flex flex-col justify-between items-end border rounded-lg p-2'
-                  )}
-                >
-                  <input
-                    onChange={onLockPeriodChanged}
-                    className="absolute -top-4 right-4 w-6 h-6"
-                    checked={lockPeriod === '3month'}
-                    type="radio"
-                    id="3month"
-                    name="lock-period"
-                  />
-                  <div className="flex flex-col items-end">
-                    <span className="font-bold">3 months</span>
-                    <span className="text-xs">(90 days)</span>
-                  </div>
-                  <div className="text-green-500 font-bold">
-                    {formatNumber(lockingAPR * 1.2)}%
-                  </div>
-                  <div>
-                    {moment(new Date(Date.now() + 7889400000)).format('LL')}
-                  </div>
-                </div>
-              </div>
-            )}
-
             {showTradeButton && (
-              <>
+              <div className="mt-4">
                 <ApproveButton
                   tokenAddress={spendTokenAddress}
                   tokenName={spendTokenSymbol}
@@ -1130,7 +889,7 @@ export default function TradeInterface({
                 </div>
 
                 <TxPending txManager={txManager} />
-              </>
+              </div>
             )}
           </div>
         ) : tradeType === TX_TYPES.LOCK ? (
