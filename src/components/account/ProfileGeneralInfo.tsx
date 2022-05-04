@@ -3,8 +3,6 @@ import ModalService from 'components/modals/ModalService'
 import Image from 'next/image'
 import ProfileSettingsModal from './ProfileSettingsModal'
 import { BiCog, BiWallet } from 'react-icons/bi'
-import { BsFillBellFill } from 'react-icons/bs'
-import SpearkIcon from '../../assets/speaker.svg'
 import { ClipboardCopyIcon } from '@heroicons/react/outline'
 import copy from 'copy-to-clipboard'
 import { getURL } from 'utils/seo-constants'
@@ -115,7 +113,7 @@ const ProfileGeneralInfo: React.FC<Props> = ({ userData }) => {
             )}
 
             {isConnectedWalletSameAsPublicWallet && !userData?.email && (
-              <div className="flex flex-col mt-1">
+              <div className="flex flex-col mt-1 w-48">
                 <div className="bg-brand-blue rounded-lg font-bold my-2">
                   <div
                     onClick={onClickSettings}
@@ -126,13 +124,8 @@ const ProfileGeneralInfo: React.FC<Props> = ({ userData }) => {
                     </span>
                   </div>
                   <div className="p-2 text-xs flex flex-col">
-                    <div className="flex">
-                      <span className="ml-1">
-                        <BsFillBellFill className="w-4 h-4 text-yellow-1" />{' '}
-                        receive notificaions, updates <br />
-                        and announcements <SpearkIcon className="w-4 h-4" />
-                      </span>
-                    </div>
+                    Set a username, bio, and profile photo to show across
+                    Ideamarket
                   </div>
                 </div>
               </div>
@@ -217,7 +210,7 @@ const ProfileGeneralInfo: React.FC<Props> = ({ userData }) => {
             )}
 
             {isConnectedWalletSameAsPublicWallet && !userData?.email && (
-              <div className="flex flex-col w-full mx-auto mt-1">
+              <div className="flex flex-col mt-1 w-full">
                 <div className="bg-brand-blue rounded-lg font-bold my-2">
                   <div
                     onClick={onClickSettings}
@@ -228,13 +221,8 @@ const ProfileGeneralInfo: React.FC<Props> = ({ userData }) => {
                     </span>
                   </div>
                   <div className="p-2 text-xs flex flex-col">
-                    <div className="flex">
-                      <span className="ml-1">
-                        <BsFillBellFill className="w-4 h-4 text-yellow-1" />{' '}
-                        receive notificaions, updates <br />
-                        and announcements <SpearkIcon className="w-4 h-4" />
-                      </span>
-                    </div>
+                    Set a username, bio, and profile photo to show across
+                    Ideamarket
                   </div>
                 </div>
               </div>

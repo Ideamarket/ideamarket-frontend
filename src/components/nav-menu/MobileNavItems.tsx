@@ -2,7 +2,7 @@ import { Transition } from '@headlessui/react'
 import A from 'components/A'
 import { getNavbarConfig } from './constants'
 import NavItem from './NavItem'
-import NavThemeButton from './NavThemeButton'
+// import NavThemeButton from './NavThemeButton'
 
 type Props = {
   isMobileNavOpen: boolean
@@ -37,9 +37,9 @@ const MobileNavItems = ({ isMobileNavOpen, user }: Props) => {
           <span>My Profile</span>
         </A>
 
-        <div className="flex px-1 mt-5">
+        {/* <div className="flex px-1 mt-5">
           <NavThemeButton />
-        </div>
+        </div> */}
       </div>
     </Transition>
   )

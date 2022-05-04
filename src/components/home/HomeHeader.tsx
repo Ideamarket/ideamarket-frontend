@@ -2,36 +2,8 @@ import React from 'react'
 import Image from 'next/image'
 import A from 'components/A'
 import { ExternalLinkIcon } from '@heroicons/react/outline'
-import { useQuery } from 'react-query'
-import BN from 'bn.js'
-import {
-  bigNumberTenPow18,
-  formatNumberWithCommasAsThousandsSerperator,
-  web3BNToFloatString,
-} from 'utils'
-import { queryDaiBalance } from 'store/daiStore'
-import { NETWORK } from 'store/networks'
 
 const HomeHeader = () => {
-  const { interestManagerAVM: interestManagerAddress } =
-    NETWORK.getDeployedAddresses()
-
-  const { data: interestManagerDaiBalance } = useQuery(
-    ['interest-manager-dai-balance'],
-    () => queryDaiBalance(interestManagerAddress),
-    {
-      refetchOnWindowFocus: false,
-    }
-  )
-
-  const daiBalance = formatNumberWithCommasAsThousandsSerperator(
-    web3BNToFloatString(
-      interestManagerDaiBalance || new BN('0'),
-      bigNumberTenPow18,
-      0
-    )
-  )
-
   return (
     <div className="bg-cover bg-top-mobile md:bg-top-desktop pb-48">
       <div className="px-6 pt-10 text-center text-white font-inter dark:text-gray-200">
@@ -111,12 +83,8 @@ const HomeHeader = () => {
         </div>
 
         <div className="flex flex-col items-center justify-center mt-4 md:mt-10 text-md md:text-3xl font-gilroy-bold md:flex-row">
-          <div className="text-2xl text-brand-blue md:text-5xl">
-            ${daiBalance}
-          </div>
-          <div className="md:ml-2">of information valued</div>
           <div
-            className="flex justify-center flex-grow-0 flex-shrink-0 mt-8 md:mt-0 md:ml-6 mr-8 md:mr-0"
+            className="flex justify-center flex-grow-0 flex-shrink-0 mt-8 md:mt-0 mr-8 md:mr-0"
             data-aos="zoom-y-out"
           >
             <A href="https://docs.ideamarket.io/contracts/audit">

@@ -52,15 +52,6 @@ export const getNavbarConfig = (user: any) => ({
           onClick: () =>
             window.open('https://twitter.com/ideamarket_io', '_blank'),
         },
-        // {
-        //   name: 'Reddit',
-        //   onClick: () =>
-        //     window.open('https://www.reddit.com/r/ideamarket/', '_blank'),
-        // },
-        {
-          name: `We're hiring`,
-          onClick: () => window.open('https://jobs.ideamarket.io', '_blank'),
-        },
         {
           name: 'Swag Shop',
           onClick: () => {
@@ -72,6 +63,15 @@ export const getNavbarConfig = (user: any) => ({
     {
       name: '$IMO',
       subMenu: [
+        {
+          name: <b>Buy IMO on SushiSwap</b>,
+          onClick: () => {
+            window.open(
+              'https://app.sushi.com/swap?inputCurrency=ETH&outputCurrency=0xB41bd4C99dA73510d9e081C5FADBE7A27Ac1F814',
+              '_blank'
+            )
+          },
+        },
         {
           name: 'Token Address',
           onClick: () => {
@@ -85,6 +85,11 @@ export const getNavbarConfig = (user: any) => ({
           name: 'Stake',
           onClick: () => router.push('/stake'),
         },
+      ],
+    },
+    {
+      name: 'Claim',
+      subMenu: [
         {
           name: 'Early User Airdrop Claim',
           onClick: () => router.push(`/claim/${AIRDROP_TYPES.USER}`),

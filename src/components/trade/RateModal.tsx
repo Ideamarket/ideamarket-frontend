@@ -5,7 +5,6 @@ import Slider from 'rc-slider'
 import 'rc-slider/assets/index.css'
 import { useContext, useState } from 'react'
 import classNames from 'classnames'
-import { getMarketSpecificsByMarketName } from 'store/markets'
 import { formatNumber, useTransactionManager } from 'utils'
 import rateIDT from 'actions/web3/rateIDT'
 import TxPending from './TxPending'
@@ -18,6 +17,11 @@ import { getPublicProfile } from 'lib/axios'
 import Image from 'next/image'
 import { syncNFTOpinions } from 'actions/web2/opinions/syncNFTOpinions'
 import { GlobalContext } from 'lib/GlobalContext'
+import ListingContent from 'components/tokens/ListingContent'
+import {
+  getListingTypeFromIDTURL,
+  LISTING_TYPE,
+} from 'components/tokens/utils/ListingUtils'
 
 const CustomSlider = Slider.createSliderWithTooltip(Slider)
 
@@ -101,13 +105,6 @@ export default function RateModal({
 
   const isRatingDisabled = inputRating === 50 || inputComment?.length > 560
 
-  const marketSpecifics = getMarketSpecificsByMarketName(ideaToken?.marketName)
-
-  const displayName =
-    urlMetaData && urlMetaData?.ogTitle
-      ? urlMetaData?.ogTitle
-      : marketSpecifics?.convertUserInputToTokenName(ideaToken?.url)
-
   const { minterAddress } = (ideaToken || {}) as any
 
   const { data: userDataForMinter } = useQuery<any>(
@@ -152,38 +149,16 @@ export default function RateModal({
             </div>
           )}
 
-          {/* Show meta data for URLs and content for text posts */}
-          {!ideaToken?.isURL ? (
-            <div>{ideaToken?.content}</div>
-          ) : (
-            <>
-              {displayName && (
-                <div>
-                  <a
-                    href={`/post/${ideaToken?.listingId}`}
-                    onClick={(event) => event.stopPropagation()}
-                    className="text-xs md:text-base font-bold hover:underline"
-                  >
-                    {displayName?.substr(
-                      0,
-                      displayName?.length > 50 ? 50 : displayName?.length
-                    ) + (displayName?.length > 50 ? '...' : '')}
-                  </a>
-                </div>
-              )}
-              <a
-                href={ideaToken?.url}
-                className="text-xs md:text-sm text-brand-blue hover:underline"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {ideaToken?.url.substr(
-                  0,
-                  ideaToken?.url.length > 50 ? 50 : ideaToken?.url.length
-                ) + (ideaToken?.url.length > 50 ? '...' : '')}
-              </a>
-            </>
-          )}
+          <ListingContent
+            ideaToken={ideaToken}
+            page="RateModal"
+            urlMetaData={urlMetaData}
+            useMetaData={
+              getListingTypeFromIDTURL(ideaToken?.url) !== LISTING_TYPE.TWEET &&
+              getListingTypeFromIDTURL(ideaToken?.url) !==
+                LISTING_TYPE.TEXT_POST
+            }
+          />
         </div>
 
         <div className="px-6 py-4">

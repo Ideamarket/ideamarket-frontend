@@ -144,7 +144,6 @@ const ListingContent = ({
           {generalURLDisplayName && (
             <div>
               <a
-                href={`/post/${ideaToken?.address}`}
                 onClick={(event) => event.stopPropagation()}
                 className="w-full text-xs md:text-base font-bold hover:underline"
               >
@@ -170,7 +169,6 @@ const ListingContent = ({
             ) + (ideaToken?.url.length > 50 ? '...' : '')}
           </a>
           <a
-            href={`/post/${ideaToken?.address}`}
             className="cursor-pointer"
             target="_blank"
             rel="noopener noreferrer"

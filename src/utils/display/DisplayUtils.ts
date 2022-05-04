@@ -7,7 +7,7 @@ import DOMPurify from 'dompurify'
 export const urlify = (text: string) => {
   const urlRegex = /(https?:\/\/[^\s]+)/g
 
-  return text.replace(urlRegex, function (url) {
+  return text?.replace(urlRegex, function (url) {
     let hyperlink = url
     if (!hyperlink.match('^https?://')) {
       hyperlink = 'http://' + hyperlink

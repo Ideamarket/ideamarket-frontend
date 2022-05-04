@@ -3,7 +3,6 @@ import classNames from 'classnames'
 import { A } from 'components'
 import { useRef, useState } from 'react'
 import useOnClickOutside from 'utils/useOnClickOutside'
-import ImoNavbarTooltip from './ImoNavbarTooltip'
 
 const NavItem = ({ menuItem }) => {
   const ref = useRef()
@@ -18,14 +17,13 @@ const NavItem = ({ menuItem }) => {
   return (
     <div className="relative">
       <A
-        className="inline-flex px-4 py-2 text-lg leading-5 text-white transition duration-150 ease-in-out bg-transparent rounded-md shadow-sm cursor-pointer md:justify-center hover:text-gray-500 active:text-gray-800"
+        className="inline-flex px-3 py-2 text-md leading-5 text-white transition duration-150 ease-in-out bg-transparent rounded-md shadow-sm cursor-pointer md:justify-center hover:text-gray-500 active:text-gray-800"
         onClick={onMenuItemClick}
         href={menuItem?.href}
       >
         <span>{menuItem.name}</span>
         {menuItem.subMenu && <ChevronDownIcon className="w-5 h-5" />}
       </A>
-      {menuItem.name === '$IMO' && <ImoNavbarTooltip />}
       {menuItem.subMenu && (
         <div
           ref={ref}

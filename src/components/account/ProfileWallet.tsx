@@ -22,6 +22,7 @@ import { getUsersLatestOpinions } from 'modules/ratings/services/OpinionService'
 import RateModal from 'components/trade/RateModal'
 import { GlobalContext } from 'lib/GlobalContext'
 import { SortOptionsAccountOpinions, TABLE_NAMES } from 'utils/tables'
+// import UserPostsTable from 'modules/posts/components/UserPostsTable'
 
 const TOKENS_PER_PAGE = 10
 
@@ -71,6 +72,20 @@ export default function ProfileWallet({ userData }: Props) {
 
   const allMarkets = useMarketStore((state) => state.markets)
   const marketNames = allMarkets.map((m) => m?.market?.name)
+
+  // const {
+  //   data: infiniteUserPostData,
+  //   isFetching: isUserPostDataLoading,
+  //   fetchNextPage: fetchMoreUserPosts,
+  //   refetch: refetchUserPosts,
+  //   hasNextPage: canFetchMoreUserPosts,
+  // } = useInfiniteQuery(
+  //   ['user-posts'],
+  //   ({ pageParam = 0 }) => userPostsQueryFunction(TOKENS_PER_PAGE, pageParam),
+  //   infiniteQueryConfig
+  // )
+
+  // const userPostPairs = flatten(infiniteUserPostData?.pages || [])
 
   const {
     data: infiniteRatingsData,
@@ -149,6 +164,20 @@ export default function ProfileWallet({ userData }: Props) {
     isLockedFilterActive,
     nameSearch,
   ])
+
+  // async function userPostsQueryFunction(numTokens: number, skip: number = 0) {
+  //   const latestUserOpinions = await getUsersLatestOpinions({
+  //     walletAddress: userData?.walletAddress,
+  //     skip,
+  //     limit: numTokens,
+  //     orderBy,
+  //     orderDirection,
+  //     filterTokens,
+  //     search: nameSearch,
+  //   })
+
+  //   return latestUserOpinions || []
+  // }
 
   async function ratingsQueryFunction(numTokens: number, skip: number = 0) {
     const latestUserOpinions = await getUsersLatestOpinions({
@@ -320,6 +349,23 @@ export default function ProfileWallet({ userData }: Props) {
               </button>
             </div>
           )}
+
+          {/* {table === TABLE_NAMES.ACCOUNT_POSTS &&
+            !selectedMarkets?.has('None') &&
+            web3 !== undefined && (
+              <UserPostsTable
+                rawPairs={}
+                isPairsDataLoading={isRatingsDataLoading}
+                refetch={refetch}
+                canFetchMore={canFetchMoreRatings}
+                orderDirection={orderDirection}
+                orderBy={orderBy}
+                fetchMore={fetchMoreRatings}
+                headerClicked={headerClicked}
+                onRateClicked={onRateClicked}
+              />
+            )} */}
+
           {table === TABLE_NAMES.ACCOUNT_OPINIONS &&
             !selectedMarkets?.has('None') &&
             web3 !== undefined && (
