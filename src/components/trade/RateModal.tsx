@@ -22,6 +22,8 @@ import {
 } from 'components/tokens/utils/ListingUtils'
 import { getAccount } from 'actions/web2/user-market/apiUserActions'
 import IMTextArea from 'modules/forms/components/IMTextArea'
+import { ArrowCircleRightIcon } from '@heroicons/react/outline'
+import TransakModal from './TransakModal'
 
 const CustomSlider = Slider.createSliderWithTooltip(Slider)
 
@@ -203,9 +205,19 @@ export default function RateModal({
             defaultRows={3}
           />
 
+          <div
+            onClick={() => ModalService.open(TransakModal)}
+            className="bg-blue-100 text-blue-600 w-full mt-2 mb-4 px-3 py-2 flex justify-between items-center rounded-lg cursor-pointer"
+          >
+            <span className="font-bold text-sm">
+              Don't own any Arbitrum-ETH? Buy some with credit/debit
+            </span>
+            <ArrowCircleRightIcon className="w-5" />
+          </div>
+
           <button
             className={classNames(
-              'py-4 mt-4 mb-2 text-lg font-bold rounded-2xl w-full font-sf-compact-medium',
+              'py-4 mb-2 text-lg font-bold rounded-2xl w-full',
               isRatingDisabled
                 ? 'text-brand-gray-2 dark:text-gray-300 bg-brand-gray dark:bg-gray-500 cursor-default border-brand-gray'
                 : 'border-brand-blue text-white bg-brand-blue font-medium  hover:bg-blue-800'
