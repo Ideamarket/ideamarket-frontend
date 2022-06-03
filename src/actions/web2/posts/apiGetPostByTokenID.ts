@@ -9,6 +9,7 @@ export const apiGetPostByTokenID = async ({ tokenID }) => {
 
   try {
     const params = {
+      contractAddress: '0xe38409367699014145b7ADc41d7EbcD441370633',
       tokenID,
     }
 

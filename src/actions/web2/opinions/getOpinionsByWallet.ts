@@ -23,6 +23,7 @@ export const getOpinionsByWallet = async ({
 
   try {
     const params = {
+      contractAddress: '0xe38409367699014145b7ADc41d7EbcD441370633',
       walletAddress: walletAddress.toLowerCase(),
       latest,
       skip,

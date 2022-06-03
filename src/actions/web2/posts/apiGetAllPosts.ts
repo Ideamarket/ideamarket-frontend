@@ -20,6 +20,7 @@ export default async function apiGetAllPosts({
       filterTokens && filterTokens?.length > 0 ? filterTokens?.join(',') : null
     const response = await client.get(`/post`, {
       params: {
+        contractAddress: '0xe38409367699014145b7ADc41d7EbcD441370633',
         skip,
         limit,
         orderBy,
