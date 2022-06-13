@@ -8,7 +8,6 @@ import React, {
 } from 'react'
 import { useInfiniteQuery } from 'react-query'
 
-import { IdeaToken } from 'store/ideaMarketsStore'
 import { useIdeaMarketsStore } from 'store/ideaMarketsStore'
 import TokenRow from './OverviewTokenRow'
 import TokenRowSkeleton from './OverviewTokenRowSkeleton'
@@ -16,7 +15,7 @@ import { OverviewColumns } from './table/OverviewColumns'
 import { flatten } from 'utils/lodash'
 import { GlobalContext } from 'lib/GlobalContext'
 import { SortOptionsHomePostsTable, TABLE_NAMES } from 'utils/tables'
-import { getAllPosts } from 'modules/posts/services/PostService'
+import { getAllPosts, IdeamarketPost } from 'modules/posts/services/PostService'
 import EmptyTableBody from 'modules/tables/components/EmptyTableBody'
 
 type Props = {
@@ -29,7 +28,7 @@ type Props = {
   selectedTable: TABLE_NAMES
   getColumn: (column: string) => boolean
   onOrderByChanged: (o: string, d: string) => void
-  onRateClicked: (idt: IdeaToken, urlMetaData: any) => void
+  onRateClicked: (idt: IdeamarketPost, urlMetaData: any) => void
   tradeOrListSuccessToggle: boolean
   setIsStarredFilterActive: (isActive: boolean) => void
   onNameSearchChanged: (value: string) => void
@@ -219,7 +218,7 @@ export default function Table({
                 return (
                   <TokenRow
                     key={index}
-                    token={token}
+                    imPost={token}
                     getColumn={getColumn}
                     onRateClicked={onRateClicked}
                     refetch={refetch}

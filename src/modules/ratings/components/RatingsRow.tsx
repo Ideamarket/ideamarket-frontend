@@ -144,7 +144,7 @@ export default function RatingsRow({
                 </div>
 
                 <ListingContent
-                  ideaToken={opinion}
+                  imPost={opinion}
                   page="HomePage"
                   urlMetaData={urlMetaData}
                   useMetaData={
@@ -297,7 +297,7 @@ export default function RatingsRow({
           )}
 
           <ListingContent
-            ideaToken={opinion}
+            imPost={opinion}
             page="MobileAccountPage"
             urlMetaData={urlMetaData}
             useMetaData={

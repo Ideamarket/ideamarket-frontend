@@ -1,4 +1,3 @@
-import { IdeaToken } from 'store/ideaMarketsStore'
 import { formatNumberWithCommasAsThousandsSerperator } from 'utils'
 import { useQuery } from 'react-query'
 import { getURLMetaData } from 'actions/web2/getURLMetaData'
@@ -12,17 +11,18 @@ import { useRouter } from 'next/router'
 import Link from 'next/link'
 import classNames from 'classnames'
 import { getIMORatingColors } from 'utils/display/DisplayUtils'
+import { IdeamarketPost } from 'modules/posts/services/PostService'
 
 type Props = {
-  token: any
+  imPost: IdeamarketPost
   getColumn: (column: string) => any
   lastElementRef?: (node) => void
-  onRateClicked: (idt: IdeaToken, urlMetaData: any) => void
+  onRateClicked: (idt: IdeamarketPost, urlMetaData: any) => void
   refetch: () => any
 }
 
 export default function TokenRow({
-  token,
+  imPost,
   getColumn,
   onRateClicked,
   lastElementRef,
@@ -30,23 +30,23 @@ export default function TokenRow({
 }: Props) {
   const router = useRouter()
 
-  const { data: urlMetaData } = useQuery([token?.url], () =>
-    getURLMetaData(token?.url)
+  const { data: urlMetaData } = useQuery([imPost?.url], () =>
+    getURLMetaData(imPost?.url)
   )
 
-  const { minterAddress } = (token || {}) as any
+  const { minterAddress } = (imPost || {}) as any
 
   const displayUsernameOrWallet = convertAccountName(
-    token?.minterToken?.username || minterAddress
+    imPost?.minterToken?.username || minterAddress
   )
-  const usernameOrWallet = token?.minterToken?.username || minterAddress
+  const usernameOrWallet = imPost?.minterToken?.username || minterAddress
 
   return (
     <div ref={lastElementRef}>
       {/* Desktop row */}
       <div className="hidden relative md:block py-6 hover:bg-black/[.02]">
         {/* Makes so entire row can be clicked to go to Post page */}
-        <Link href={`/post/${token?.tokenID}`}>
+        <Link href={`/post/${imPost?.tokenID}`}>
           <a
             className="absolute top-0 left-0 w-full h-full z-40"
             // title="open in new tab"
@@ -66,7 +66,7 @@ export default function TokenRow({
                   <Image
                     className="rounded-full"
                     src={
-                      token?.minterToken?.profilePhoto ||
+                      imPost?.minterToken?.profilePhoto ||
                       '/DefaultProfilePicture.png'
                     }
                     alt=""
@@ -75,7 +75,7 @@ export default function TokenRow({
                   />
                 </div>
 
-                {/* <WatchingStar token={token} /> */}
+                {/* <WatchingStar token={imPost} /> */}
               </div>
 
               <div className="pr-6 w-full">
@@ -86,7 +86,7 @@ export default function TokenRow({
                   >
                     {displayUsernameOrWallet}
                   </A>
-                  {token?.minterToken?.twitterUsername && (
+                  {imPost?.minterToken?.twitterUsername && (
                     <A
                       className="flex items-center space-x-1 z-50"
                       href={`/u/${usernameOrWallet}`}
@@ -99,20 +99,20 @@ export default function TokenRow({
                         />
                       </div>
                       <span className="text-sm opacity-50">
-                        @{token?.minterToken?.twitterUsername}
+                        @{imPost?.minterToken?.twitterUsername}
                       </span>
                     </A>
                   )}
                 </div>
 
                 <ListingContent
-                  ideaToken={token}
+                  imPost={imPost}
                   page="HomePage"
                   urlMetaData={urlMetaData}
                   useMetaData={
-                    getListingTypeFromIDTURL(token?.url) !==
+                    getListingTypeFromIDTURL(imPost?.content) !==
                       LISTING_TYPE.TWEET &&
-                    getListingTypeFromIDTURL(token?.url) !==
+                    getListingTypeFromIDTURL(imPost?.content) !==
                       LISTING_TYPE.TEXT_POST
                   }
                 />
@@ -125,7 +125,7 @@ export default function TokenRow({
             <div className="w-[13.75%] lg:w-[11.25%] grow pr-2">
               <div className="mt-0.5 font-medium">
                 {formatNumberWithCommasAsThousandsSerperator(
-                  Math.round(token?.marketInterest)
+                  Math.round(imPost?.marketInterest)
                 )}
               </div>
             </div>
@@ -135,15 +135,15 @@ export default function TokenRow({
               <span
                 className={classNames(
                   getIMORatingColors(
-                    token?.totalRatingsCount > 0
-                      ? Math.round(token?.compositeRating)
+                    imPost?.totalRatingsCount > 0
+                      ? Math.round(imPost?.compositeRating)
                       : -1
                   ),
                   'w-10 h-8 flex justify-center items-center rounded-lg font-extrabold text-xl'
                 )}
               >
-                {token?.totalRatingsCount > 0
-                  ? Math.round(token?.compositeRating)
+                {imPost?.totalRatingsCount > 0
+                  ? Math.round(imPost?.compositeRating)
                   : '—'}
               </span>
             </div>
@@ -151,7 +151,7 @@ export default function TokenRow({
             {/* Average Rating */}
             {/* <div className="w-[11%] lg:w-[9%] grow">
               <div className="text-black font-semibold">
-                {formatNumberInt(token?.averageRating)}
+                {formatNumberInt(imPost?.averageRating)}
               </div>
             </div> */}
 
@@ -159,7 +159,7 @@ export default function TokenRow({
             <div className="w-[13.75%] lg:w-[11.25%] grow">
               <div className="flex items-center font-medium text-lg text-black">
                 {formatNumberWithCommasAsThousandsSerperator(
-                  token?.latestRatingsCount
+                  imPost?.latestRatingsCount
                 )}
               </div>
             </div>
@@ -170,7 +170,7 @@ export default function TokenRow({
                 <button
                   onClick={(e) => {
                     e.stopPropagation()
-                    onRateClicked(token, urlMetaData)
+                    onRateClicked(imPost, urlMetaData)
                   }}
                   className="flex justify-center items-center w-20 h-10 text-base font-bold rounded-lg border-brand-blue text-white bg-brand-blue hover:bg-blue-800 z-50"
                 >
@@ -184,21 +184,21 @@ export default function TokenRow({
 
       {/* Mobile row */}
       <div
-        onClick={() => router.push(`/post/${token?.tokenID}`)}
+        onClick={() => router.push(`/post/${imPost?.tokenID}`)}
         className="md:hidden"
       >
         <div className="px-3 pt-4">
           {minterAddress && (
             <div className="flex items-center pb-2 whitespace-nowrap">
               {/* <div className="mr-3">
-                <WatchingStar token={token} />
+                <WatchingStar token={imPost} />
               </div> */}
 
               <div className="relative rounded-full w-6 h-6">
                 <Image
                   className="rounded-full"
                   src={
-                    token?.minterToken?.profilePhoto ||
+                    imPost?.minterToken?.profilePhoto ||
                     '/DefaultProfilePicture.png'
                   }
                   alt=""
@@ -214,7 +214,7 @@ export default function TokenRow({
                 >
                   {displayUsernameOrWallet}
                 </A>
-                {token?.minterToken?.twitterUsername && (
+                {imPost?.minterToken?.twitterUsername && (
                   <A
                     className="flex items-center space-x-1 hover:text-blue-500 z-50"
                     href={`/u/${usernameOrWallet}`}
@@ -227,25 +227,25 @@ export default function TokenRow({
                       />
                     </div>
                     <span className="text-sm">
-                      @{token?.minterToken?.twitterUsername}
+                      @{imPost?.minterToken?.twitterUsername}
                     </span>
                   </A>
                 )}
               </div>
 
               <ArrowRightIcon
-                onClick={() => router.push(`/post/${token?.tokenID}`)}
+                onClick={() => router.push(`/post/${imPost?.tokenID}`)}
                 className="ml-auto w-5 text-blue-600"
               />
             </div>
           )}
 
           <ListingContent
-            ideaToken={token}
+            imPost={imPost}
             page="HomePage"
             urlMetaData={urlMetaData}
             useMetaData={
-              getListingTypeFromIDTURL(token?.url) !== LISTING_TYPE.TWEET
+              getListingTypeFromIDTURL(imPost?.content) !== LISTING_TYPE.TWEET
             }
           />
         </div>
@@ -255,7 +255,7 @@ export default function TokenRow({
           <div className="flex items-center">
             <span className="text-base text-black/[.5] font-medium">
               {formatNumberWithCommasAsThousandsSerperator(
-                Math.round(token?.marketInterest)
+                Math.round(imPost?.marketInterest)
               )}
             </span>
           </div>
@@ -266,15 +266,15 @@ export default function TokenRow({
               <span
                 className={classNames(
                   getIMORatingColors(
-                    token?.totalRatingsCount > 0
-                      ? Math.round(token?.compositeRating)
+                    imPost?.totalRatingsCount > 0
+                      ? Math.round(imPost?.compositeRating)
                       : -1
                   ),
                   'w-10 h-8 flex justify-center items-center rounded-lg font-extrabold text-xl'
                 )}
               >
-                {token?.totalRatingsCount > 0
-                  ? Math.round(token?.compositeRating)
+                {imPost?.totalRatingsCount > 0
+                  ? Math.round(imPost?.compositeRating)
                   : '—'}
               </span>
             </span>
@@ -283,14 +283,14 @@ export default function TokenRow({
           {/* latestRatingsCount */}
           <div className="flex items-center font-medium text-lg text-black">
             {formatNumberWithCommasAsThousandsSerperator(
-              token?.latestRatingsCount
+              imPost?.latestRatingsCount
             )}
           </div>
 
           <button
             onClick={(e) => {
               e.stopPropagation()
-              onRateClicked(token, urlMetaData)
+              onRateClicked(imPost, urlMetaData)
             }}
             className="flex justify-center items-center w-20 h-10 text-base font-bold border rounded-lg text-blue-500 bg-transparent z-[500]"
           >

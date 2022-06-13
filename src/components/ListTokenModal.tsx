@@ -100,10 +100,9 @@ export default function ListTokenModal({ close }: { close: () => void }) {
       selectedMarket.name
     ).convertUserInputToTokenName(userInput)
 
-    const { isValid, isAlreadyOnChain, finalTokenValue } =
-      await verifyTokenName(nameBeforeAPI)
+    const { isValid, isAlreadyOnChain } = await verifyTokenName(nameBeforeAPI)
 
-    setTokenName(finalTokenValue)
+    setTokenName(userInput)
 
     if (isAlreadyOnChain) setErrorMessage('This token is already listed')
     else setErrorMessage('')

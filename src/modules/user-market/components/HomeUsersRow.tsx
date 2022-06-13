@@ -6,12 +6,13 @@ import { convertAccountName } from 'lib/utils/stringUtil'
 import Image from 'next/image'
 import { ArrowRightIcon } from '@heroicons/react/solid'
 import { useRouter } from 'next/router'
+import { IdeamarketPost } from 'modules/posts/services/PostService'
 
 type Props = {
   token: any
   getColumn: (column: string) => any
   lastElementRef?: (node) => void
-  onRateClicked: (idt: IdeaToken, urlMetaData: any) => void
+  onRateClicked: (idt: IdeamarketPost, urlMetaData: any) => void
   onStakeClicked: (idt: IdeaToken) => void
   refetch: () => any
 }

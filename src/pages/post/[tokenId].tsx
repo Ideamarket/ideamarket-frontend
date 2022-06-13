@@ -283,7 +283,7 @@ const TokenDetails = ({ rawTokenId }: { rawTokenId: string }) => {
               )}
 
               <ListingContent
-                ideaToken={token}
+                imPost={token}
                 page="ListingPage"
                 urlMetaData={urlMetaData}
                 useMetaData={false}
@@ -389,7 +389,7 @@ const TokenDetails = ({ rawTokenId }: { rawTokenId: string }) => {
               )}
 
               <ListingContent
-                ideaToken={token}
+                imPost={token}
                 page="ListingPage"
                 urlMetaData={urlMetaData}
                 useMetaData={false}

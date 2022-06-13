@@ -18,6 +18,7 @@ import { getAllUsers } from '../services/UserMarketService'
 import HomeUsersRowSkeleton from './HomeUsersRowSkeleton'
 import HomeUsersRow from './HomeUsersRow'
 import EmptyTableBody from 'modules/tables/components/EmptyTableBody'
+import { IdeamarketPost } from 'modules/posts/services/PostService'
 
 type Props = {
   isStarredFilterActive: boolean
@@ -29,7 +30,7 @@ type Props = {
   selectedTable: TABLE_NAMES
   getColumn: (column: string) => boolean
   onOrderByChanged: (o: string, d: string) => void
-  onRateClicked: (idt: IdeaToken, urlMetaData: any) => void
+  onRateClicked: (idt: IdeamarketPost, urlMetaData: any) => void
   onStakeClicked: (idt: IdeaToken) => void
   tradeOrListSuccessToggle: boolean
   setIsStarredFilterActive: (isActive: boolean) => void
