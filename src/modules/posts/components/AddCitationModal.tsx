@@ -1,6 +1,7 @@
 import {
   ArrowCircleLeftIcon,
   ArrowCircleRightIcon,
+  ArrowSmRightIcon,
   ChevronDownIcon,
   PencilIcon,
 } from '@heroicons/react/outline'
@@ -8,6 +9,8 @@ import { useWeb3React } from '@web3-react/core'
 import classNames from 'classnames'
 import { A, Modal } from 'components'
 import DropdownButtons from 'components/dropdowns/DropdownButtons'
+import ModalService from 'components/modals/ModalService'
+import { GlobalContext } from 'lib/GlobalContext'
 import { convertAccountName } from 'lib/utils/stringUtil'
 import { flatten } from 'lodash'
 import { getUsersLatestOpinions } from 'modules/ratings/services/OpinionService'
@@ -15,6 +18,7 @@ import Image from 'next/image'
 import {
   MutableRefObject,
   useCallback,
+  useContext,
   useEffect,
   useRef,
   useState,
@@ -28,6 +32,7 @@ import {
 } from 'utils/tables'
 import useOnClickOutside from 'utils/useOnClickOutside'
 import { getAllPosts, IdeamarketPost } from '../services/PostService'
+import NewPostModal from './NewPostModal'
 
 const TOKENS_PER_PAGE = 5
 
@@ -66,6 +71,7 @@ export default function AddCitationModal({
   setInFavorArray,
   setSelectedPosts,
 }: AddCitationModalProps) {
+  const { isTxPending } = useContext(GlobalContext)
   const { account } = useWeb3React()
 
   const [isSortingDropdownOpen, setIsSortingDropdownOpen] = useState(false)
@@ -98,7 +104,7 @@ export default function AddCitationModal({
 
   useEffect(() => {
     refetchRatings()
-  }, [orderBy, postSearchText, refetchRatings])
+  }, [orderBy, postSearchText, refetchRatings, isTxPending])
 
   async function ratingsQueryFunction(numTokens: number, skip: number = 0) {
     const latestUserOpinions = await getUsersLatestOpinions({
@@ -140,7 +146,7 @@ export default function AddCitationModal({
 
   useEffect(() => {
     refetchSearchedPosts()
-  }, [orderBy, postSearchText, refetchSearchedPosts])
+  }, [orderBy, postSearchText, refetchSearchedPosts, isTxPending])
 
   const onAddCitationClicked = () => {
     setCitations(localCitations)
@@ -231,6 +237,17 @@ export default function AddCitationModal({
         </div>
 
         <div className="px-6 py-4">
+          <div className="flex justify-center items-center space-x-1 text-sm">
+            <span>Can't find a good post to cite?</span>
+            <span
+              onClick={() => ModalService.open(NewPostModal)}
+              className="flex items-center text-blue-600 font-semibold cursor-pointer"
+            >
+              <span>Create your own post</span>
+              <ArrowSmRightIcon className="w-5" />
+            </span>
+          </div>
+
           <div className="pb-6">
             <button
               onClick={onAddCitationClicked}
