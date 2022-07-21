@@ -107,8 +107,8 @@ select:-webkit-autofill:focus {
 .toggle-switch {
   position: relative;
   display: inline-block;
-  width: 33px;
-  height: 20px;
+  width: 22px;
+  height: 12px;
 }
 .toggle-switch input[type="checkbox"] {
   display: none;
@@ -127,10 +127,10 @@ select:-webkit-autofill:focus {
 .toggle-switch .switch::before {
   position: absolute;
   content: "";
-  left: 2px;
-  top: 2px;
-  width: 16px;
-  height: 16px;
+  left: 0px;
+  top: 0px;
+  width: 12px;
+  height: 12px;
   background-color: white;
   border-radius: 50%;
   transition: transform 0.3s ease;

@@ -1,8 +1,11 @@
 import React, {
+  MutableRefObject,
+  useCallback,
   // MutableRefObject,
   // useCallback,
   useContext,
   useEffect,
+  useRef,
   // useRef,
 } from 'react'
 import { useInfiniteQuery } from 'react-query'
@@ -15,9 +18,13 @@ import ListingContent from 'components/tokens/ListingContent'
 import Image from 'next/image'
 import { A } from 'components'
 import { convertAccountName } from 'lib/utils/stringUtil'
-import { HOME_PAGE_VIEWS } from 'pages/home-cards'
-import { PlusIcon, XIcon } from '@heroicons/react/solid'
+// import { PlusIcon, XIcon } from '@heroicons/react/solid'
 import classNames from 'classnames'
+import { HOME_PAGE_VIEWS } from 'pages/cards-in-cols'
+import OpenRateModal from 'modules/ratings/components/OpenRateModal'
+import { EyeIcon, UsersIcon } from '@heroicons/react/outline'
+import { formatNumberWithCommasAsThousandsSerperator } from 'utils'
+import { getIMORatingColors } from 'utils/display/DisplayUtils'
 
 type Props = {
   activeOverlayPostID: string
@@ -27,10 +34,11 @@ type Props = {
   selectedCategories: string[]
   selectedView: HOME_PAGE_VIEWS
   timeFilter: TIME_FILTER
+  isAdvancedView: boolean
   setActiveOverlayPostID: (activeOverlayPostID: string) => void
 }
 
-const IMPostCardView = ({
+const IMPostsViewMobile = ({
   activeOverlayPostID,
   nameSearch,
   orderBy,
@@ -38,20 +46,19 @@ const IMPostCardView = ({
   selectedCategories,
   selectedView,
   timeFilter,
+  isAdvancedView,
   setActiveOverlayPostID,
 }: Props) => {
   const TOKENS_PER_PAGE = 10
 
   const { jwtToken, isTxPending } = useContext(GlobalContext)
 
-  // const observer: MutableRefObject<any> = useRef()
-
   const {
     data: infiniteData,
     // isFetching: isTokenDataLoading,
-    // fetchNextPage: fetchMore,
+    fetchNextPage: fetchMore,
     refetch,
-    // hasNextPage: canFetchMore,
+    hasNextPage: canFetchMore,
   } = useInfiniteQuery(
     [TOKENS_PER_PAGE, orderBy, orderDirection, selectedCategories, nameSearch],
     ({ pageParam = 0 }) =>
@@ -87,20 +94,21 @@ const IMPostCardView = ({
 
   const imPostPairs = flatten(infiniteData?.pages || [])
 
-  // const lastElementRef = useCallback(
-  //   (node) => {
-  //     if (observer.current) observer.current.disconnect()
+  const observer: MutableRefObject<any> = useRef()
+  const lastElementRef = useCallback(
+    (node) => {
+      if (observer.current) observer.current.disconnect()
 
-  //     observer.current = new IntersectionObserver((entries) => {
-  //       if (entries[0].isIntersecting && canFetchMore) {
-  //         fetchMore()
-  //       }
-  //     })
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && canFetchMore) {
+          fetchMore()
+        }
+      })
 
-  //     if (node) observer.current.observe(node)
-  //   },
-  //   [canFetchMore, fetchMore]
-  // )
+      if (node) observer.current.observe(node)
+    },
+    [canFetchMore, fetchMore]
+  )
 
   useEffect(() => {
     refetch()
@@ -116,7 +124,8 @@ const IMPostCardView = ({
   ])
 
   return (
-    <div className="flex flex-col space-y-4">
+    <div className="md:hidden mt-6">
+
       {imPostPairs &&
         imPostPairs.length > 0 &&
         imPostPairs.map((imPost, pInd) => {
@@ -128,26 +137,36 @@ const IMPostCardView = ({
           const usernameOrWallet =
             imPost?.minterToken?.username || minterAddress
 
-          const isThisPostOverlaySelected =
-            activeOverlayPostID &&
-            activeOverlayPostID === imPost.tokenID.toString()
+          // const isThisPostOverlaySelected =
+          //   activeOverlayPostID &&
+          //   activeOverlayPostID === imPost.tokenID.toString()
 
           return (
-            <div className="rounded-xl border p-4 w-[30rem]" key={pInd}>
-              <div className="w-full">
-                <ListingContent
-                  imPost={imPost}
-                  page="HomePage"
-                  urlMetaData={null}
-                  useMetaData={false}
-                />
+            <div ref={lastElementRef} className="flex flex-col space-y-2 px-4 mb-10" key={pInd}>
 
-                <div className="flex justify-end items-center space-x-2 text-xs mt-2">
-                  <span className="italic text-black/[.25] font-semibold">
-                    NFT minted by
+              <div className={classNames("")}>
+                {/* The actual Post card */}
+                <A
+                  href={`/post/${imPost?.tokenID}`}
+                  className="relative block p-4 bg-gray-100 rounded-lg"
+                >
+
+                  <span
+                    className={classNames(
+                      getIMORatingColors(
+                        imPost?.totalRatingsCount > 0
+                          ? Math.round(imPost?.compositeRating)
+                          : -1
+                      ),
+                      'absolute top-0 right-0 w-14 h-12 flex justify-center items-center rounded-tr-lg rounded-bl-lg font-extrabold text-xl'
+                    )}
+                  >
+                    {imPost?.totalRatingsCount > 0
+                      ? Math.round(imPost?.compositeRating) + '%'
+                      : '—'}
                   </span>
 
-                  <div className="flex items-center whitespace-nowrap">
+                  <div className="flex items-center whitespace-nowrap text-xs">
                     <div className="relative rounded-full w-5 h-5">
                       <Image
                         className="rounded-full"
@@ -188,32 +207,56 @@ const IMPostCardView = ({
                       )}
                     </div>
                   </div>
-                </div>
 
-                <div
-                  onClick={() => {
-                    const newValue = activeOverlayPostID
-                      ? null
-                      : imPost.tokenID.toString()
-                    setActiveOverlayPostID(newValue)
-                  }}
-                  className={classNames(
-                    isThisPostOverlaySelected && 'bg-blue-100',
-                    'relative flex justify-center items-center border rounded-3xl w-10 h-10 ml-auto mt-2 cursor-pointer'
-                  )}
-                >
-                  {isThisPostOverlaySelected ? (
-                    <XIcon className="w-3 h-3" />
-                  ) : (
-                    <PlusIcon className="w-3 h-3" />
-                  )}
-                </div>
+                  <div className="py-4 border-b font-bold">
+                    <ListingContent
+                      imPost={imPost}
+                      page="HomePage"
+                      urlMetaData={null}
+                      useMetaData={false}
+                    />
+                  </div>
+
+                  <div className="flex items-center pt-4">
+
+                    <div className="w-1/2">
+                      <div className="flex justify-center items-center space-x-2">
+                        <UsersIcon className="w-5 h-5" />
+                        <div>
+                          <div className="text-xs text-black/[.5] font-semibold">Ratings</div>
+                          <div className="font-bold">{formatNumberWithCommasAsThousandsSerperator(imPost.totalRatingsCount)}</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="w-1/2">
+                      <div className="flex justify-center items-center space-x-2">
+                        <EyeIcon className="w-5 h-5" />
+                        <div>
+                          <div className="text-xs text-black/[.5] font-semibold">Controversial</div>
+                          <div className="font-bold">{formatNumberWithCommasAsThousandsSerperator(
+                            Math.round(imPost.marketInterest))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+
+                </A>
+
               </div>
+
+              <div className={classNames("")}>
+                <OpenRateModal imPost={imPost} />
+              </div>
+
             </div>
           )
         })}
+
     </div>
   )
 }
 
-export default IMPostCardView
+export default IMPostsViewMobile

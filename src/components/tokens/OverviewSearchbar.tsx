@@ -29,7 +29,7 @@ export const OverviewSearchbar = ({
           id="search-input"
           className={classNames(
             bgColor,
-            'block w-full h-full pl-10 border-2 border-gray-200 rounded-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:text-gray-300 dark:bg-gray-600 dark:placeholder-gray-200'
+            'block w-full h-full pl-10 border border-gray-200 rounded-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:text-gray-300 dark:bg-gray-600 dark:placeholder-gray-200'
           )}
           placeholder="Search"
           onChange={handleOnSearch}

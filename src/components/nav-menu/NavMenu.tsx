@@ -11,7 +11,8 @@ import NavItem from './NavItem'
 import { ProfileTooltip } from './ProfileTooltip'
 import { useWeb3React } from '@web3-react/core'
 import { GlobalContext } from 'lib/GlobalContext'
-import { PencilIcon } from '@heroicons/react/outline'
+import { PencilIcon as OutlinePencilIcon } from '@heroicons/react/outline'
+import { PencilIcon as SolidPencilIcon } from '@heroicons/react/solid'
 import ModalService from 'components/modals/ModalService'
 import NewPostModal from 'modules/posts/components/NewPostModal'
 import WalletModal from 'components/wallet/WalletModal'
@@ -123,7 +124,7 @@ const NavMenu = ({ bgColor, textColor = 'text-white' }: Props) => {
               className="flex items-center space-x-2 h-9 bg-gradient-to-br from-brand-blue-1 to-brand-blue-2 text-white text-sm font-bold px-3 py-1 ml-3 rounded-lg"
             >
               <span>New Post</span>
-              <PencilIcon className="w-3" />
+              <OutlinePencilIcon className="w-3" />
             </button>
 
             {/* <NavThemeButton /> */}
@@ -179,6 +180,13 @@ const NavMenu = ({ bgColor, textColor = 'text-white' }: Props) => {
         <div className="flex">
           <WalletStatusWithConnectButton />
         </div>
+
+        <button
+          onClick={onNewPostClicked}
+          className="w-8 h-8 flex justify-center items-center text-white bg-gradient-to-br from-brand-blue-1 to-brand-blue-2 rounded-2xl"
+        >
+          <SolidPencilIcon className="w-5 h-5" />
+        </button>
       </div>
 
       <MobileNavItems
