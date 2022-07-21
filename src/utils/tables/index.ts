@@ -7,6 +7,7 @@ export enum TABLE_NAMES {
   ACCOUNT_POSTS,
   ACCOUNT_HOLDERS, // The wallets/users that are staked on this account
   ACCOUNT_STAKED_ON, // The wallets/users that this account is staked on
+  ACCOUNT_BOUNTIES,
   LISTING_PAGE_OPINIONS,
   ADD_CITATION_MODAL, // Not a table, but needed to sort data in add citation modal
 }
@@ -22,6 +23,8 @@ const orderByDeposits = 'deposits'
 // const orderBy7DChange = 'weekChange'
 const orderByHolderCount = 'holders'
 const orderByPostedAt = 'postedAt'
+
+const orderByGroupAmount = 'groupAmount'
 
 export const SortOptionsHomePostsTable = {
   COMPOSITE_RATING: {
@@ -211,6 +214,14 @@ export const SortOptionsAccountOpinions = {
     id: 3,
     value: orderByLatestRatingsCount,
     displayName: 'Ratings',
+  },
+}
+
+export const SortOptionsAccountBounties = {
+  GROUP_AMOUNT: {
+    id: 1,
+    value: orderByGroupAmount,
+    displayName: 'Amount',
   },
 }
 

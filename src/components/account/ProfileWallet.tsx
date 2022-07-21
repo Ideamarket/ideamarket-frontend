@@ -32,6 +32,7 @@ import UserPostsTable from 'modules/posts/components/UserPostsTable'
 import { getAllPosts } from 'modules/posts/services/PostService'
 import HoldersView from 'modules/user-market/components/HoldersView'
 import HoldingsView from 'modules/user-market/components/HoldingsView'
+import AccountBounties from 'modules/bounties/components/AccountBounties'
 
 const TOKENS_PER_PAGE = 10
 
@@ -289,6 +290,23 @@ export default function ProfileWallet({ userData }: Props) {
 
           <div
             className={classNames(
+              selectedView === TABLE_NAMES.ACCOUNT_BOUNTIES
+                ? 'text-white'
+                : 'text-brand-gray text-opacity-60 cursor-pointer',
+              'text-lg font-semibold flex flex-col justify-end mb-2.5 pr-6'
+            )}
+            onClick={() => {
+              setSelectedView(TABLE_NAMES.ACCOUNT_BOUNTIES)
+              // TODO:
+              setOrderBy(SortOptionsHomeUsersTable.STAKED.value)
+              setOrderDirection('desc')
+            }}
+          >
+            Bounties
+          </div>
+
+          <div
+            className={classNames(
               selectedView === TABLE_NAMES.ACCOUNT_HOLDERS
                 ? 'text-white'
                 : 'text-brand-gray text-opacity-60 cursor-pointer',
@@ -365,7 +383,8 @@ export default function ProfileWallet({ userData }: Props) {
 
       {/* Don't show table HTML if selected view is not table */}
       {selectedView !== TABLE_NAMES.ACCOUNT_HOLDERS &&
-        selectedView !== TABLE_NAMES.ACCOUNT_STAKED_ON && (
+        selectedView !== TABLE_NAMES.ACCOUNT_STAKED_ON &&
+        selectedView !== TABLE_NAMES.ACCOUNT_BOUNTIES && (
           <div className="bg-white border rounded-md dark:bg-gray-700 dark:border-gray-500 border-brand-border-gray ">
             <WalletFilters
               selectedView={selectedView}
@@ -471,6 +490,10 @@ export default function ProfileWallet({ userData }: Props) {
             </div>
           </div>
         )}
+
+      {selectedView === TABLE_NAMES.ACCOUNT_BOUNTIES && (
+        <AccountBounties userData={userData} />
+      )}
 
       {selectedView === TABLE_NAMES.ACCOUNT_HOLDERS && web3 !== undefined && (
         <HoldersView selectedView={selectedView} userData={userData} />
