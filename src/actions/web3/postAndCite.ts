@@ -8,9 +8,6 @@ import { useWalletStore } from 'store/walletStore'
 export default function postAndCite(
   content: string,
   rating: number,
-  categoryTags: string[],
-  isURL: boolean,
-  urlContent: string,
   tokenId: number
 ) {
   if (!tokenId) {
@@ -28,20 +25,23 @@ export default function postAndCite(
 
   const connectedAddress = useWalletStore.getState().address
 
+  console.log('content==', content)
+  console.log('rating==', rating)
   console.log('connectedAddress==', connectedAddress)
+  console.log('tokenId==', tokenId)
+
+  const fee = '2000000000000000' // 0.001 ETH for posting and 0.001 ETH for rating
 
   try {
+    // content, rating, recipient, tokenId
     return citationMultiAction.methods
       .postAndCite(
         content,
         rating,
-        categoryTags,
-        isURL,
-        urlContent,
         connectedAddress,
         tokenId
       )
-      .send()
+      .send({ value: fee })
   } catch (error) {
     console.error('citationMultiAction.methods.postAndCite failed')
     return null

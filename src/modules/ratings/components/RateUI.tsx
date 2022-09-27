@@ -24,7 +24,6 @@ import IMTextArea from 'modules/forms/components/IMTextArea'
 import { useContractStore } from 'store/contractStore'
 import { XIcon } from '@heroicons/react/solid'
 import { syncPosts } from 'actions/web2/posts/syncPosts'
-import mintPost from 'actions/web3/mintPost'
 import TradeCompleteModal, {
   TX_TYPES,
 } from 'components/trade/TradeCompleteModal'
@@ -38,6 +37,7 @@ import { getCategories } from 'actions/web2/getCategories'
 import { syncUserRelationsForWallet } from 'actions/web2/user-market/syncUserRelationsForWallet'
 import StakeUserModal from 'modules/user-market/components/StakeUserModal'
 import { USER_MARKET } from 'modules/user-market/utils/UserMarketUtils'
+import postAndCite from 'actions/web3/postAndCite'
 
 export default function RateUI({
   close = () => null,
@@ -111,17 +111,25 @@ export default function RateUI({
     })
   }
 
-  const onPostClicked = async () => {
+  const onPostAndRateClicked = async () => {
     setIsTxPending(true)
-    // content
-    const mintingArgs = [inputText]
 
     try {
+      const web3TxMethod = postAndCite
+      // content, rating, tokenId
+      const citationMultiactionArgs = [
+        inputText,
+        inputRating,
+        imPost?.tokenID,
+      ]
+
       await txManager.executeTxWithCallbacks(
-        'New Post',
-        mintPost,
+        'Post and Rate',
+        web3TxMethod,
         {
           onReceipt: async (receipt: any) => {
+            console.log('receipt==', receipt)
+            // TODO: no events from multiaction so use getTotalPostsCount
             await updatePostMetadata({
               tokenID: receipt?.events?.Transfer?.returnValues?.tokenId,
               minterAddress: account,
@@ -131,27 +139,43 @@ export default function RateUI({
 
             await syncPosts(receipt?.events?.Transfer?.returnValues?.tokenId)
 
-            setCitations([receipt?.events?.Transfer?.returnValues?.tokenId])
-            const newPostCitations = [
-              receipt?.events?.Transfer?.returnValues?.tokenId,
-            ]
-            const newPostInFavor = [inputRating > 50]
-            setIsTxPending(false)
+            await syncNFTOpinions(imPost?.tokenID)
+
+            // Not using await for now in case algorithm takes lot of time to finish. Also, if this API doesn't work, using a triggered webjob may be better and more efficient at scale.
+            syncUserRelationsForWallet({
+              walletAddress: account,
+              ratedPostID: imPost?.tokenID,
+              rating: inputRating,
+            })
+
+            setCitations([])
             setSelectedCategories([])
-            await onRateClicked(newPostCitations, newPostInFavor)
+            setIsTxPending(false)
+
+            onTradeComplete(
+              true,
+              imPost?.listingId,
+              imPost?.name,
+              TX_TYPES.RATE
+            )
           },
         },
-        ...mintingArgs
+        ...citationMultiactionArgs
       )
     } catch (ex) {
       console.log(ex)
-      onTradeComplete(false, 'error', 'error', TX_TYPES.NONE)
-      setIsTxPending(false)
+      setCitations([])
       setSelectedCategories([])
+      setIsTxPending(false)
+      onTradeComplete(
+        false,
+        imPost?.listingId,
+        imPost?.name,
+        TX_TYPES.NONE
+      )
       return
     }
 
-    // onTradeComplete(true, 'success', 'success', TX_TYPES.RATE)
   }
 
   // If creating new post, need to pass citations and inFavor in since setting local state is not sync
@@ -672,7 +696,7 @@ export default function RateUI({
               disabled={isRatingDisabled}
               onClick={async () => {
                 if (isCreatingNewPost) {
-                  await onPostClicked()
+                  await onPostAndRateClicked()
                 } else {
                   await onRateClicked()
                 }
