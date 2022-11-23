@@ -109,7 +109,7 @@ export default function ProfileWallet({ userData }: Props) {
     refetch: refetchUserPosts,
     hasNextPage: canFetchMoreUserPosts,
   } = useInfiniteQuery(
-    ['user-posts'],
+    ['user-posts', selectedView, userData?.walletAddress],
     ({ pageParam = 0 }) => userPostsQueryFunction(TOKENS_PER_PAGE, pageParam),
     infiniteQueryConfig
   )
@@ -123,7 +123,7 @@ export default function ProfileWallet({ userData }: Props) {
     refetch: refetchRatings,
     hasNextPage: canFetchMoreRatings,
   } = useInfiniteQuery(
-    ['ratings'],
+    ['ratings', selectedView, userData?.walletAddress],
     ({ pageParam = 0 }) => ratingsQueryFunction(TOKENS_PER_PAGE, pageParam),
     infiniteQueryConfig
   )
