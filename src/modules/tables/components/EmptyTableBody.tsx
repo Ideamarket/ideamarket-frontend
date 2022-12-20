@@ -6,7 +6,7 @@ const EmptyTableBody = () => {
   return (
     <div className="w-full h-96 pt-16 flex flex-col items-center bg-white">
       <div className="text-black/[.2] text-3xl font-gilroy-bold">
-        down for planned maintenance, be back soon :)
+        There's nothing here... yet
       </div>
 
       <A
