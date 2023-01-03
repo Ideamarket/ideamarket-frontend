@@ -63,7 +63,7 @@ const Home = () => {
   const [selectedCategories, setSelectedCategories] = useState([])
   const [selectedView /*setSelectedView*/] = useState(HOME_PAGE_VIEWS.POSTS)
   const [isAdvancedView /*setIsAdvancedView*/] = useState(true)
-  const [timeFilter, setTimeFilter] = useState(TIME_FILTER.ONE_DAY)
+  const [timeFilter, setTimeFilter] = useState(TIME_FILTER.ALL_TIME)
 
   // const [isTimeFilterDropdownOpen, setIsTimeFilterDropdownOpen] =
   //   useState(false)
