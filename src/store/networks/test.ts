@@ -54,6 +54,6 @@ export default class TestNetworkSpecifics implements INetworkSpecifics {
   }
 
   getRPCURL(): string {
-    return 'https://rinkeby.infura.io/v3/98ca28d50f234e618a22a8b0d83c40b2'
+    return 'https://rinkeby.infura.io/v3/628f48a852c5452597813331041ee3a4'
   }
 }
